@@ -1,8 +1,8 @@
 {
-  "name": "@subvertic/react",
+  "name": "@subvertic/sveltekit",
   "version": "0.1.0",
   "type": "module",
-  "description": "React adapter for rendering VRL diagrams.",
+  "description": "SvelteKit load helpers for rendering VRL diagrams.",
   "license": "MIT",
   "author": {
     "name": "Pedro Guzmán"
@@ -12,18 +12,19 @@
       "name": "Pedro Guzmán"
     }
   ],
-  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-react#readme",
+  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-sveltekit#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vertical-route-language/vrl.git",
-    "directory": "packages/vrl-react"
+    "directory": "packages/vrl-sveltekit"
   },
   "bugs": {
     "url": "https://github.com/vertical-route-language/vrl/issues"
   },
   "keywords": [
     "vrl",
-    "react",
+    "sveltekit",
+    "svelte",
     "canyoning",
     "canyoneering",
     "barranquismo",
@@ -32,7 +33,8 @@
   ],
   "main": "./src/index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./VrlDiagram.svelte": "./src/VrlDiagram.svelte"
   },
   "files": [
     "src",
@@ -48,10 +50,10 @@
     "provenance": true
   },
   "peerDependencies": {
-    "react": ">=18.0.0"
+    "@sveltejs/kit": ">=2.0.0",
+    "svelte": ">=4.0.0"
   },
   "dependencies": {
-    "@subvertic/core": "0.1.0",
-    "@subvertic/render-svg": "0.1.0"
+    "@subvertic/svelte": "0.1.0"
   }
 }

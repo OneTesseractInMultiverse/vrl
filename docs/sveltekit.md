@@ -1,35 +1,42 @@
 # SvelteKit Example
 
-The Svelte package exposes both a component and an SSR-friendly markup helper.
+The SvelteKit package exposes reusable load helpers and a component that reads precomputed diagram state from `data.vrl` by default.
 
 ```svelte
 <script>
-  import VrlDiagram from "@stev/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
 
   export let data;
 </script>
 
-<VrlDiagram source={data.routeSource} options={{ theme: "light" }} />
+<VrlDiagram {data} />
 ```
 
-Server-side loading can read VRL source from a local file, CMS, database, or API endpoint before passing the text into the page component.
+When `createVrlSvelteKitLoad` uses a custom `key`, pass the same value as `diagramKey`.
+
+Server-side loading can read VRL source from a local file, CMS, database, or API endpoint before passing compiled diagram state into the page component.
 
 ```js
-export async function load({ fetch }) {
-  const response = await fetch("/routes/rio-azul.vrl");
-  return {
-    routeSource: await response.text()
-  };
-}
+import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+
+export const load = createVrlSvelteKitLoad({
+  source: async ({ fetch }) => {
+    const response = await fetch("/routes/rio-azul.vrl");
+    return response.text();
+  },
+  options: { theme: "light" }
+});
 ```
 
 For server-only rendering, use the markup helper:
 
 ```js
-import { renderVrlSvelteMarkup } from "@stev/svelte";
+import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+import { renderVrlSvelteMarkup } from "@subvertic/svelte";
 
 export function renderRoute(source) {
-  return renderVrlSvelteMarkup(source, { theme: "dark" });
+  const diagram = createVrlSvelteKitData(source, { theme: "dark" });
+  return renderVrlSvelteMarkup("", {}, { diagram });
 }
 ```
 

@@ -4,7 +4,7 @@ The React adapter uses dependency injection so the package can keep React as a p
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent } from "@stev/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 
@@ -19,10 +19,11 @@ exit "Left bank trail"
 `;
 
 export function RoutePage() {
-  return <VrlDiagram source={source} options={{ theme: "dark" }} />;
+  const diagram = createVrlReactDiagramState(source, { theme: "dark" });
+  return <VrlDiagram diagram={diagram} />;
 }
 ```
 
 If parsing or validation fails, the component renders formatted diagnostics in a `<pre>` block. If the route is valid, it renders accessible SVG inside a `div` with `role="img"`.
 
-For API-backed routes, load the source string in the parent component and pass it through the same `source` prop. Rendering options are plain data, so they can be stored in application settings, CMS fields, or route metadata.
+For API-backed routes, load the source string in the parent component and pass it through the same `source` prop, or precompute diagram state with `createVrlReactDiagramState` when the parent owns memoization or caching. Rendering options are plain data, so they can be stored in application settings, CMS fields, or route metadata.

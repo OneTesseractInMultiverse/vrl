@@ -4,7 +4,7 @@ VRL is prepared as an MIT-licensed open source project with community governance
 
 ## Package Scope
 
-The package names use the `@stev` npm scope for Sociedad Técnica de Exploración Vertical. Before publishing, confirm that the npm organization owns this scope and that trusted maintainers have appropriate publishing access.
+The package names use the `@subvertic` npm scope for the VRL project family. Before publishing, confirm that the npm organization owns this scope and that trusted maintainers have appropriate publishing access.
 
 ## Community Maintenance
 

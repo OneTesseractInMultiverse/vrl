@@ -19,6 +19,7 @@ packages/
   vrl-render-svg/      SVG rendering adapter.
   vrl-react/           React component factory adapter.
   vrl-svelte/          Svelte markup helper and component adapter.
+  vrl-sveltekit/       SvelteKit load/data helper and component adapter.
 ```
 
 Dependencies point inward. Domain and application code do not import React, Svelte, the DOM, file systems, network services, or package tooling. Framework packages depend on the core and renderer packages.
@@ -50,11 +51,11 @@ Community and release files:
 - [docs/release-checklist.md](docs/release-checklist.md)
 - [docs/open-source.md](docs/open-source.md)
 
-The npm package scope is `@stev`, from Sociedad Técnica de Exploración Vertical, the organization behind the VRL project family. Confirm npm organization ownership before first publication.
+The npm package scope is `@subvertic`, the publishing scope for the VRL project family. Confirm npm organization ownership before first publication.
 
 ## Public APIs
 
-`@stev/core` exports:
+`@subvertic/core` exports:
 
 - `parseVrl(source)` for parsing compact VRL source into an AST and syntax diagnostics.
 - `validateRoute(ast)` for semantic diagnostics.
@@ -64,20 +65,28 @@ The npm package scope is `@stev`, from Sociedad Técnica de Exploración Vertica
 - `createRouteCompiler(overrides)` for injecting alternate parser, validator, layout, normalization, or export ports.
 - `exportRouteJson(model)` for structured JSON output.
 
-`@stev/render-svg` exports:
+`@subvertic/render-svg` exports:
 
 - `renderTopoSvg(model, layout, options)` for SVG topo output.
 - `resolveTheme(theme, overrides)` plus light and dark theme tokens.
 - `symbolCode(element, profile)` and `resolveSymbolProfile(profile)` for federation-oriented canyon topo abbreviations.
 
-`@stev/react` exports:
+`@subvertic/react` exports:
 
 - `createVrlDiagramComponent(React)`, a dependency-injected React component factory.
+- `createVrlReactDiagramState(source, options)` for framework-controlled rendering flows.
 
-`@stev/svelte` exports:
+`@subvertic/svelte` exports:
 
+- `createVrlSvelteDiagramState(source, options)` for component and SSR state.
 - `renderVrlSvelteMarkup(source, options)` for SSR-friendly markup.
 - `VrlDiagram.svelte` as a Svelte component entry.
+
+`@subvertic/sveltekit` exports:
+
+- `createVrlSvelteKitData(source, options)` for load-ready diagram state.
+- `createVrlSvelteKitLoad({ source, options, key })` for reusable SvelteKit `load` functions.
+- `VrlDiagram.svelte` as a SvelteKit-friendly component entry that reads `data.vrl` by default.
 
 ## DSL Grammar Draft
 
@@ -132,7 +141,7 @@ npm run coverage
 2. Add section-aware block parsing while preserving compact syntax.
 3. Expand domain types for access, anchors, water features, escapes, communication points, and rescue notes.
 4. Add profile and route-card renderers as separate adapters.
-5. Add framework-specific packages with native build pipelines once peer dependencies are installed by consuming apps.
+5. Add framework-specific package examples with native build pipelines once peer dependencies are installed by consuming apps.
 6. Publish documentation with executable examples and architecture review checks.
 
 ## Minimal Example

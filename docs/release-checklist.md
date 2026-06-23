@@ -2,7 +2,7 @@
 
 Use this checklist before publishing npm packages.
 
-1. Confirm package names and npm scope ownership. The project uses the `@stev` scope for Sociedad Técnica de Exploración Vertical.
+1. Confirm package names and npm scope ownership. The project uses the `@subvertic` scope.
 2. Confirm repository URLs in all `package.json` files.
 3. Run `make ci`.
 4. Run `make check`.

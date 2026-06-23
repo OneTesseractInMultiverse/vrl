@@ -1,19 +1,20 @@
 <script>
-  import { compileRoute, formatDiagnostic } from "@stev/core";
-  import { renderTopoSvg } from "@stev/render-svg";
+  import { createVrlSvelteDiagramState } from "./index.js";
 
   export let source = "";
   export let options = {};
+  export let diagram = null;
+  export let className = "vrl-diagram";
+  export let diagnosticsClassName = "vrl-diagram__diagnostics";
+  export let role = "img";
 
-  $: result = compileRoute(source, options);
-  $: svg = result.ok ? renderTopoSvg(result.model, result.layout, options) : "";
-  $: diagnostics = result.diagnostics.map(formatDiagnostic).join("\n");
+  $: state = diagram ?? createVrlSvelteDiagramState(source, options);
 </script>
 
-{#if result.ok}
-  <div class="vrl-diagram" role="img">
-    {@html svg}
+{#if state.ok}
+  <div class={className} {role}>
+    {@html state.svg}
   </div>
 {:else}
-  <pre class="vrl-diagram__diagnostics">{diagnostics}</pre>
+  <pre class={diagnosticsClassName}>{state.diagnosticsText}</pre>
 {/if}

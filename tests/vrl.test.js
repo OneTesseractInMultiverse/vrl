@@ -2,10 +2,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import * as core from "@stev/core";
-import * as svg from "@stev/render-svg";
-import { createVrlDiagramComponent } from "@stev/react";
-import { renderVrlSvelteMarkup } from "@stev/svelte";
+import * as core from "@subvertic/core";
+import * as svg from "@subvertic/render-svg";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
 
 const VALID_SOURCE = `route "Rio Azul"
 metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III" entrance_elevation=1240m exit_elevation=1170m
@@ -683,6 +684,10 @@ test("renderTopoSvg includes terrain profile layer", () => {
   assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /vrl-terrain-profile/);
 });
 
+test("renderTopoSvg stacks dense labels", () => {
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /vrl-label-leader/);
+});
+
 test("terrainProfilePath handles empty layouts", () => {
   assert.equal(svg.terrainProfilePath({ width: 100, height: 80, nodes: [] }), "M 0 80 L 100 80 L 100 26 L 0 46 Z");
 });
@@ -843,7 +848,7 @@ test("renderRedirectionMarkers renders redirection anchors", () => {
 });
 
 test("renderRedirectionMarkers handles geometry without bottomX", () => {
-  assert.match(svg.renderRedirectionMarkers({ dropX: 20, startY: 100, endY: 200 }, { attributes: { height: { meters: 35 }, redirections: [{ distance: { meters: 12 }, side: "left" }] } }, svg.resolveTheme()), /text-anchor="end"/);
+  assert.match(svg.renderRedirectionMarkers({ dropX: 20, startY: 100, endY: 200 }, { attributes: { height: { meters: 35 }, redirections: [{ distance: { meters: 12 }, side: "left" }] } }, svg.resolveTheme()), /text-anchor="start"/);
 });
 
 test("renderRedirectionMarkers omits unknown side text", () => {
@@ -851,7 +856,11 @@ test("renderRedirectionMarkers omits unknown side text", () => {
 });
 
 test("renderRedirectionMarkers places leftward labels after the marker", () => {
-  assert.match(svg.renderRedirectionMarkers({ dropX: 20, bottomX: 10, startY: 100, endY: 200 }, { attributes: { height: { meters: 35 }, redirections: [{ distance: { meters: 12 }, side: "left" }] } }, svg.resolveTheme()), /text-anchor="start"/);
+  assert.match(svg.renderRedirectionMarkers({ dropX: 20, bottomX: 10, startY: 100, endY: 200 }, { attributes: { height: { meters: 35 }, redirections: [{ distance: { meters: 12 }, side: "left" }] } }, svg.resolveTheme()), /text-anchor="end"/);
+});
+
+test("renderRedirectionMarkers abbreviates right labels", () => {
+  assert.match(svg.renderRedirectionMarkers({ dropX: 20, bottomX: 10, startY: 100, endY: 200 }, { attributes: { height: { meters: 35 }, redirections: [{ distance: { meters: 12 }, side: "right" }] } }, svg.resolveTheme()), />12m R<\/text>/);
 });
 
 test("renderSegmentLabels includes traverse labels", () => {
@@ -906,8 +915,28 @@ test("renderNode strokes labels for line clearance", () => {
   assert.match(svg.renderNode(validCompiled().layout.nodes[2], svg.resolveTheme()), /paint-order="stroke"/);
 });
 
+test("renderNodes stacks close node labels", () => {
+  assert.match(svg.renderNodes({ nodes: [{ x: 10, y: 20, element: { type: "walk", id: "W1", attributes: {} } }, { x: 12, y: 22, element: { type: "pool", id: "P1", attributes: {} } }] }, svg.resolveTheme()), /vrl-label-leader/);
+});
+
+test("nodeLabelPlacement honors minimum label positions", () => {
+  assert.equal(svg.nodeLabelPlacement({ x: 10, y: 20, element: { type: "walk" } }, 50).titleY, 50);
+});
+
+test("renderLabelLeader skips natural labels", () => {
+  assert.equal(svg.renderLabelLeader({ x: 10, y: 20 }, { labelX: 38, titleY: 11 }, svg.resolveTheme()), "");
+});
+
+test("renderLabelLeader draws shifted labels", () => {
+  assert.match(svg.renderLabelLeader({ x: 10, y: 20 }, { labelX: 38, titleY: 50 }, svg.resolveTheme()), /vrl-label-leader/);
+});
+
 test("renderAnchorMarks renders anchor count marks", () => {
   assert.match(svg.renderAnchorMarks(validCompiled().layout.nodes[2], validCompiled().model.elements[2], svg.resolveTheme()), /aria-label="2 anchors"/);
+});
+
+test("renderAnchorMarks can place marks right", () => {
+  assert.match(svg.renderAnchorMarks({ x: 10, y: 20 }, { attributes: { anchor_count: 1 } }, svg.resolveTheme(), "right"), /cx="24"/);
 });
 
 test("renderAnchorMarks skips missing anchor counts", () => {
@@ -995,7 +1024,7 @@ test("formatTopoLabel formats rappel height labels", () => {
 });
 
 test("formatTopoDetail formats rappel rope labels", () => {
-  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[2]), "70m / 20m+15m / 2 redir / 2 anchors / pool / medium / 80%");
+  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[2]), "70m / 2 anchors / pool / medium / 80%");
 });
 
 test("formatTopoDetail formats downclimb landing labels", () => {
@@ -1007,7 +1036,7 @@ test("formatTopoDetail keeps plain rappel details without expressive fields", ()
 });
 
 test("formatTopoDetail formats singular redirection counts", () => {
-  assert.equal(svg.formatTopoDetail({ type: "rappel", attributes: { rope: { meters: 20 }, redirections: [{ distance: { meters: 12 }, side: "left" }] } }), "20m / 1 redir");
+  assert.equal(svg.formatTopoDetail({ type: "rappel", attributes: { rope: { meters: 20 }, redirections: [{ distance: { meters: 12 }, side: "left" }] } }), "20m");
 });
 
 test("formatTopoDetail keeps plain downclimb details without landings", () => {
@@ -1160,6 +1189,14 @@ test("createVrlDiagramComponent requires createElement", () => {
   assert.throws(() => createVrlDiagramComponent({}), TypeError);
 });
 
+test("createVrlReactDiagramState renders valid SVG", () => {
+  assert.match(createVrlReactDiagramState(VALID_SOURCE).svg, /<svg/);
+});
+
+test("createVrlReactDiagramState reports invalid sources", () => {
+  assert.equal(createVrlReactDiagramState("teleport").ok, false);
+});
+
 test("React adapter renders valid SVG containers", () => {
   const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
   assert.equal(Component({ source: VALID_SOURCE }).type, "div");
@@ -1170,12 +1207,109 @@ test("React adapter renders diagnostics", () => {
   assert.equal(Component({ source: "teleport" }).type, "pre");
 });
 
+test("React adapter applies container props", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
+  assert.equal(Component({ source: VALID_SOURCE, containerProps: { id: "route" } }).props.id, "route");
+});
+
+test("React adapter applies custom class names", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
+  assert.equal(Component({ source: VALID_SOURCE, className: "custom-route" }).props.className, "custom-route");
+});
+
+test("React adapter applies custom roles", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
+  assert.equal(Component({ source: VALID_SOURCE, role: "presentation" }).props.role, "presentation");
+});
+
+test("React adapter applies diagnostics props", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
+  assert.equal(Component({ source: "teleport", diagnosticsProps: { id: "diagnostics" } }).props.id, "diagnostics");
+});
+
+test("React adapter applies diagnostics class names", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
+  assert.equal(Component({ source: "teleport", diagnosticsClassName: "custom-diagnostics" }).props.className, "custom-diagnostics");
+});
+
+test("React adapter supports default source", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) }, { source: VALID_SOURCE });
+  assert.equal(Component().type, "div");
+});
+
+test("React adapter supports injected diagram state", () => {
+  const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
+  const state = createVrlReactDiagramState(VALID_SOURCE);
+  assert.equal(Component({ diagram: state }).props.dangerouslySetInnerHTML.__html, state.svg);
+});
+
+test("createVrlSvelteDiagramState renders valid SVG", () => {
+  assert.match(createVrlSvelteDiagramState(VALID_SOURCE).svg, /<svg/);
+});
+
+test("createVrlSvelteDiagramState reports invalid sources", () => {
+  assert.equal(createVrlSvelteDiagramState("teleport").ok, false);
+});
+
 test("Svelte helper renders valid SVG markup", () => {
   assert.match(renderVrlSvelteMarkup(VALID_SOURCE), /class="vrl-diagram"/);
 });
 
 test("Svelte helper renders diagnostics", () => {
   assert.match(renderVrlSvelteMarkup("teleport"), /vrl-diagram__diagnostics/);
+});
+
+test("Svelte helper applies custom class names", () => {
+  assert.match(renderVrlSvelteMarkup(VALID_SOURCE, {}, { className: "custom-route" }), /class="custom-route"/);
+});
+
+test("Svelte helper applies custom roles", () => {
+  assert.match(renderVrlSvelteMarkup(VALID_SOURCE, {}, { role: "presentation" }), /role="presentation"/);
+});
+
+test("Svelte helper escapes diagnostics classes", () => {
+  assert.match(renderVrlSvelteMarkup("teleport", {}, { diagnosticsClassName: "bad\"class" }), /class="bad&quot;class"/);
+});
+
+test("Svelte helper supports injected diagram state", () => {
+  const state = createVrlSvelteDiagramState(VALID_SOURCE);
+  assert.match(renderVrlSvelteMarkup("", {}, { diagram: state }), /<svg/);
+});
+
+test("createVrlSvelteKitData renders valid data", () => {
+  assert.equal(createVrlSvelteKitData(VALID_SOURCE).ok, true);
+});
+
+test("createVrlSvelteKitData reports invalid data", () => {
+  assert.equal(createVrlSvelteKitData("teleport").ok, false);
+});
+
+test("createVrlSvelteKitLoad returns default keys", async () => {
+  const load = createVrlSvelteKitLoad({ source: VALID_SOURCE });
+  assert.equal((await load({})).vrl.ok, true);
+});
+
+test("createVrlSvelteKitLoad returns custom keys", async () => {
+  const load = createVrlSvelteKitLoad({ source: VALID_SOURCE, key: "diagram" });
+  assert.equal(Object.hasOwn(await load({}), "diagram"), true);
+});
+
+test("createVrlSvelteKitLoad resolves source factories", async () => {
+  const load = createVrlSvelteKitLoad({ source: (event) => event.locals.source });
+  assert.equal((await load({ locals: { source: VALID_SOURCE } })).vrl.ok, true);
+});
+
+test("createVrlSvelteKitLoad resolves option factories", async () => {
+  const load = createVrlSvelteKitLoad({ source: VALID_SOURCE, options: () => ({ symbology: "spanish" }) });
+  assert.match((await load({})).vrl.svg, />P<\/text>/);
+});
+
+test("createVrlSvelteKitLoad rejects invalid keys", () => {
+  assert.throws(() => createVrlSvelteKitLoad({ source: VALID_SOURCE, key: "" }), TypeError);
+});
+
+test("createVrlSvelteKitLoad rejects invalid sources", () => {
+  assert.throws(() => createVrlSvelteKitLoad({ source: null }), TypeError);
 });
 
 test("example route compiles", () => {

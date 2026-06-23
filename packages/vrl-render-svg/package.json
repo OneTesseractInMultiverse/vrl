@@ -1,5 +1,5 @@
 {
-  "name": "@stev/render-svg",
+  "name": "@subvertic/render-svg",
   "version": "0.1.0",
   "type": "module",
   "description": "SVG topo rendering adapter for normalized VRL route models.",

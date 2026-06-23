@@ -1,25 +1,30 @@
-# @stev/react
+# @subvertic/react
 
 React adapter for Vertical Route Language.
 
-This package exposes a dependency-injected React component factory. It keeps React as a peer dependency and delegates parsing, validation, layout, and SVG rendering to the core and renderer packages.
+This package exposes a dependency-injected React component factory and a framework-neutral diagram state helper. It keeps React as a peer dependency and delegates parsing, validation, layout, and SVG rendering to the core and renderer packages.
 
 ## Install
 
 ```sh
-npm install @stev/react @stev/core @stev/render-svg react
+npm install @subvertic/react @subvertic/core @subvertic/render-svg react
 ```
 
 ## Usage
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent } from "@stev/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 
 export function RouteDiagram({ source }) {
   return <VrlDiagram source={source} options={{ symbology: "spanish" }} />;
+}
+
+export function RoutePreview({ source }) {
+  const diagram = createVrlReactDiagramState(source, { symbology: "spanish" });
+  return <VrlDiagram diagram={diagram} className="route-preview" />;
 }
 ```
 

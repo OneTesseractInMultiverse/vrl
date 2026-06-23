@@ -10,7 +10,7 @@ import { escapeXml } from "./xml.js";
 
 export function renderTopoSvg(route, layout, options = {}) {
   const theme = resolveTheme(options.theme, options.themeTokens);
-  const nodes = layout.nodes.map((node) => renderNode(node, theme, options.symbology)).join("");
+  const nodes = renderNodes(layout, theme, options.symbology);
   const terrainProfile = renderTerrainProfile(layout, theme);
   const waterSegments = renderWaterSegments(layout, theme);
   const routeSegments = renderRouteSegments(layout, theme);
@@ -35,6 +35,16 @@ export function renderTopoSvg(route, layout, options = {}) {
   ${stationTicks}
   ${nodes}
 </svg>`;
+}
+
+export function renderNodes(layout, theme, symbology = "federation") {
+  let nextTitleY = null;
+
+  return layout.nodes.map((node) => {
+    const placement = nodeLabelPlacement(node, nextTitleY);
+    nextTitleY = placement.detailY + 16;
+    return renderNode(node, theme, symbology, placement);
+  }).join("");
 }
 
 export function renderTerrainProfile(layout, theme) {
@@ -186,13 +196,13 @@ export function renderStageBoundary(geometry, ratio, theme) {
 }
 
 export function renderRedirectionMarkers(geometry, element, theme) {
-  const labelDirection = technicalLabelDirection(geometry);
+  const labelDirection = -technicalLabelDirection(geometry);
   const textAnchor = labelDirection === -1 ? "end" : "start";
 
   return redirectionsForElement(element).map((redirection) => {
     const ratio = redirectionRatio(redirection, element);
     const point = technicalLinePoint(geometry, ratio);
-    const label = redirection.side === "unknown" ? formatMeters(redirection.distance) : `${formatMeters(redirection.distance)} ${redirection.side}`;
+    const label = redirectionLabel(redirection);
 
     return `<g class="vrl-redirection-anchor" aria-label="Redirection anchor ${escapeXml(label)}">
       <path d="M ${point.x} ${point.y - 6} L ${point.x + 6} ${point.y} L ${point.x} ${point.y + 6} L ${point.x - 6} ${point.y} Z" fill="${theme.panel}" stroke="${theme.routeLine}" stroke-width="1.4"/>
@@ -280,33 +290,55 @@ export function renderStationTicks(layout, theme) {
     .join("");
 }
 
-export function renderNode(node, theme, symbology = "federation") {
+export function renderNode(node, theme, symbology = "federation", placement = nodeLabelPlacement(node)) {
   const element = node.element;
   const color = theme[elementColorToken(element)];
   const title = formatTopoLabel(element);
   const detail = formatTopoDetail(element, node);
   const marker = renderSymbolMarker(node, element, color, symbology, theme.panel);
   const anchorMarks = renderAnchorMarks(node, element, theme);
-  const labelX = node.x + labelOffsetX(element);
+  const detailLine = detail === "" ? "" : `<text x="${placement.labelX}" y="${placement.detailY}" font-family="system-ui, sans-serif" font-size="10" fill="${theme.mutedText}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(detail)}</text>`;
 
   return `<g class="vrl-node vrl-node-${element.type}" aria-label="${escapeXml(formatElementTitle(element))}">
     ${anchorMarks}
     ${marker}
-    <text x="${labelX}" y="${node.y - 9}" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="${theme.text}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(title)}</text>
-    <text x="${labelX}" y="${node.y + 14}" font-family="system-ui, sans-serif" font-size="10" fill="${theme.mutedText}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(detail)}</text>
+    ${renderLabelLeader(node, placement, theme)}
+    <text x="${placement.labelX}" y="${placement.titleY}" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="${theme.text}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(title)}</text>
+    ${detailLine}
   </g>`;
 }
 
-export function renderAnchorMarks(node, element, theme) {
+export function nodeLabelPlacement(node, minimumTitleY = null) {
+  const naturalTitleY = node.y - 9;
+  const titleY = Math.max(naturalTitleY, minimumTitleY ?? naturalTitleY);
+
+  return {
+    labelX: node.x + labelOffsetX(node.element),
+    titleY,
+    detailY: titleY + 18
+  };
+}
+
+export function renderLabelLeader(node, placement, theme) {
+  if (Math.abs(placement.titleY - (node.y - 9)) < 6) {
+    return "";
+  }
+
+  return `<path class="vrl-label-leader" d="M ${node.x + 12} ${node.y - 2} L ${placement.labelX - 8} ${placement.titleY - 4}" fill="none" stroke="${theme.mutedText}" stroke-width="1" stroke-linecap="round" stroke-dasharray="3 3"/>`;
+}
+
+export function renderAnchorMarks(node, element, theme, side = "left") {
   const count = anchorMarkCount(element);
   if (count === 0) {
     return "";
   }
 
+  const direction = side === "left" ? -1 : 1;
+
   return `<g class="vrl-anchor-marks" aria-label="${count} anchors">
     ${Array.from({ length: count }, (_, index) => {
-      const x = node.x - 5 + (index * 8);
-      const y = node.y - 20;
+      const x = node.x + (direction * (14 + (index * 8)));
+      const y = node.y - 24;
       return `<circle cx="${x}" cy="${y}" r="3" fill="${theme.panel}" stroke="${theme.routeLine}" stroke-width="1.4"/>`;
     }).join("")}
   </g>`;
@@ -364,7 +396,7 @@ export function formatTopoDetail(element, node = null) {
   }
 
   if (element.type === "rappel") {
-    return [formatMeasurement(element.attributes.rope), stageSummary(element), redirectionSummary(element), anchorSummary(element), landingSummary(element), flowSummary(element), inclinationSummary(element)]
+    return [formatMeasurement(element.attributes.rope), anchorSummary(element), landingSummary(element), flowSummary(element), inclinationSummary(element)]
       .filter(Boolean)
       .join(" / ");
   }
@@ -409,7 +441,11 @@ function themeSafeStroke(color) {
 }
 
 function labelOffsetX(element) {
-  return needsSegmentArrow(element) ? 46 : 24;
+  if (needsSegmentArrow(element)) {
+    return 74;
+  }
+
+  return element.type === "hazard" ? 42 : 28;
 }
 
 function technicalLabelDirection(geometry) {
@@ -443,20 +479,23 @@ function inclinationSummary(element) {
   return typeof inclination === "object" && inclination !== null ? `${inclination.percent}%` : "";
 }
 
-function stageSummary(element) {
-  const stages = rappelStagesForElement(element);
-  return stages.length === 0 ? "" : stages.map(formatMeters).join("+");
-}
-
-function redirectionSummary(element) {
-  const redirections = redirectionsForElement(element);
-  if (redirections.length === 0) {
-    return "";
-  }
-
-  return redirections.length === 1 ? "1 redir" : `${redirections.length} redir`;
-}
-
 function formatMeters(measurement) {
   return `${measurement.meters}m`;
+}
+
+function redirectionLabel(redirection) {
+  const side = redirectionSideSuffix(redirection.side);
+  return side === "" ? formatMeters(redirection.distance) : `${formatMeters(redirection.distance)} ${side}`;
+}
+
+function redirectionSideSuffix(side) {
+  if (side === "left") {
+    return "L";
+  }
+
+  if (side === "right") {
+    return "R";
+  }
+
+  return "";
 }

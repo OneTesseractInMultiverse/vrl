@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
-import { compileRoute } from "@stev/core";
-import { renderTopoSvg } from "@stev/render-svg";
+import { compileRoute } from "@subvertic/core";
+import { renderTopoSvg } from "@subvertic/render-svg";
 
 const source = readFileSync(new URL("../examples/rio-azul.vrl", import.meta.url), "utf8");
 const result = compileRoute(source, { symbology: "federation" });
