@@ -62,6 +62,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [Svelte usage](docs/svelte.md)
 - [SvelteKit usage](docs/sveltekit.md)
 - [Release checklist](docs/release-checklist.md)
+- [npm trusted publishing](docs/trusted-publishing.md)
 - [Open source practices](docs/open-source.md)
 
 ## Package Architecture
@@ -92,12 +93,13 @@ make test
 make coverage
 make check
 make run
+make release-prepare
 make publish
 ```
 
 `make check` runs the 100 percent coverage gate and npm package dry-run checks. `make run` renders the example VRL document locally.
 
-`make publish` publishes the workspace packages to npm in dependency order. On the first release it publishes the current version; after packages exist on npm, the default `RELEASE=auto` resolves the next available patch version. Use `make publish VERSION=0.2.0`, `make publish RELEASE=minor`, or `make publish OTP=123456` when needed. If npm returns `E403` saying two-factor authentication is required, generate a fresh npm one-time password and rerun `make publish OTP=123456`. Local publishing disables npm provenance by default; use `PROVENANCE=true` from a supported CI environment.
+`make release-prepare` updates workspace versions and internal dependency pins before a GitHub release. The publish workflow runs `make publish-ci`, which publishes the committed version through npm Trusted Publishers without an `NPM_TOKEN` secret. `make publish` remains available for local manual publishing in dependency order. Use `make publish VERSION=0.2.0`, `make publish RELEASE=minor`, or `make publish OTP=123456` when needed. If npm returns `E403` saying two-factor authentication is required during a local publish, generate a fresh npm one-time password and rerun `make publish OTP=123456`.
 
 ## Open Source
 
@@ -110,6 +112,7 @@ Community and release files:
 - [MAINTAINERS.md](MAINTAINERS.md)
 - [CHANGELOG.md](CHANGELOG.md)
 - [docs/release-checklist.md](docs/release-checklist.md)
+- [docs/trusted-publishing.md](docs/trusted-publishing.md)
 - [docs/open-source.md](docs/open-source.md)
 
 The npm package scope is `@subvertic`, the publishing scope for the VRL project family. Confirm npm organization ownership before first publication.

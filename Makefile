@@ -2,7 +2,7 @@ RELEASE ?= auto
 PROVENANCE ?= false
 PUBLISH_ARGS = $(if $(VERSION),--version $(VERSION),--release $(RELEASE)) $(if $(OTP),--otp $(OTP),) $(if $(filter true,$(PROVENANCE)),--provenance,)
 
-.PHONY: help install ci test coverage check run render-assets pack-dry-run publish-dry-run publish-plan publish clean
+.PHONY: help install ci test coverage check run render-assets pack-dry-run publish-dry-run publish-plan release-prepare publish publish-ci clean
 
 help:
 	@printf '%s\n' 'Available targets:'
@@ -16,7 +16,9 @@ help:
 	@printf '  %-18s %s\n' 'make pack-dry-run' 'Inspect npm package contents without writing tarballs'
 	@printf '  %-18s %s\n' 'make publish-dry-run' 'Validate npm publish file lists without registry login'
 	@printf '  %-18s %s\n' 'make publish-plan' 'Show the next local npm publish plan'
+	@printf '  %-18s %s\n' 'make release-prepare' 'Update workspace versions before cutting a GitHub release'
 	@printf '  %-18s %s\n' 'make publish' 'Publish workspaces to npm; use OTP=123456 when npm 2FA is required'
+	@printf '  %-18s %s\n' 'make publish-ci' 'Publish the committed version from trusted GitHub Actions'
 	@printf '  %-18s %s\n' 'make clean' 'Remove generated local artifacts'
 
 install:
@@ -49,8 +51,14 @@ publish-dry-run:
 publish-plan:
 	npm run release:publish -- --plan $(PUBLISH_ARGS)
 
+release-prepare:
+	npm run release:publish -- --prepare $(PUBLISH_ARGS)
+
 publish:
 	npm run release:publish -- $(PUBLISH_ARGS)
+
+publish-ci:
+	npm run release:publish -- --release current --provenance --trusted-publisher
 
 clean:
 	rm -rf coverage .coverage

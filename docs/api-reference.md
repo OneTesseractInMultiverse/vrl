@@ -272,10 +272,11 @@ Local publishing is centralized through the Makefile:
 
 ```sh
 make publish-plan
+make release-prepare RELEASE=patch
 make publish
 make publish VERSION=0.2.0
 make publish RELEASE=minor
 make publish OTP=123456
 ```
 
-`make publish` runs checks, updates all workspace versions and internal pins, then publishes in dependency order. If npm returns `E403` requiring two-factor authentication, rerun with a fresh one-time password: `make publish OTP=123456`.
+`make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks, updates versions, then publishes locally in dependency order. If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.

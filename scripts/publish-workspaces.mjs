@@ -37,6 +37,13 @@ for (const workspace of workspaceManifests) {
 }
 updatePackageLock(targetVersion, internalPackageNames);
 
+if (args.prepare === true) {
+  console.log(
+    `Prepared release ${targetVersion}. Review and commit package.json, package-lock.json, and workspace package.json files before publishing.`
+  );
+  process.exit(0);
+}
+
 if (args.skipCheck === false) {
   run("npm", ["run", "check"]);
 }
@@ -67,10 +74,12 @@ function parseArgs(rawArgs) {
     dryRun: false,
     otp: "",
     plan: false,
+    prepare: false,
     provenance: false,
     release: "auto",
     skipCheck: false,
     skipRegistry: false,
+    trustedPublisher: false,
     version: ""
   };
 
@@ -86,6 +95,8 @@ function parseArgs(rawArgs) {
       index += 1;
     } else if (arg === "--plan") {
       parsed.plan = true;
+    } else if (arg === "--prepare") {
+      parsed.prepare = true;
     } else if (arg === "--provenance") {
       parsed.provenance = true;
     } else if (arg === "--provenance=false") {
@@ -97,6 +108,8 @@ function parseArgs(rawArgs) {
       parsed.skipCheck = true;
     } else if (arg === "--skip-registry") {
       parsed.skipRegistry = true;
+    } else if (arg === "--trusted-publisher") {
+      parsed.trustedPublisher = true;
     } else if (arg === "--version") {
       parsed.version = requireValue(rawArgs, index, arg);
       index += 1;
@@ -123,6 +136,18 @@ function validateArgs(parsed) {
     fail("Use either --version or --release, not both.");
   }
 
+  if (parsed.prepare === true && parsed.dryRun === true) {
+    fail("Use either --prepare or --dry-run, not both.");
+  }
+
+  if (parsed.prepare === true && parsed.otp !== "") {
+    fail("--otp can only be used when publishing.");
+  }
+
+  if (parsed.trustedPublisher === true && parsed.otp !== "") {
+    fail("--trusted-publisher cannot be combined with --otp.");
+  }
+
   if (parsed.version !== "") {
     assertSimpleSemver(parsed.version);
   }
@@ -143,8 +168,10 @@ Options:
   --provenance                              Enable npm provenance.
   --dry-run                                 Run npm publish with --dry-run.
   --plan                                    Print the resolved plan without changing files.
+  --prepare                                 Update workspace versions without publishing.
   --skip-check                              Skip npm run check.
-  --skip-registry                           Do not query existing npm versions.`);
+  --skip-registry                           Do not query existing npm versions.
+  --trusted-publisher                       Expect npm Trusted Publisher OIDC auth.`);
   process.exit(0);
 }
 
@@ -278,20 +305,34 @@ function assertTargetVersionIsPublishable(version, publishedVersions, parsed) {
 }
 
 function printPlan(currentVersion, targetVersion, parsed) {
-  const action = parsed.dryRun === true ? "Dry-run publish" : "Publish";
+  const action = parsed.prepare === true
+    ? "Prepare release"
+    : parsed.dryRun === true
+      ? "Dry-run publish"
+      : "Publish";
   console.log(`${action} plan`);
   console.log(`  current version: ${currentVersion}`);
   console.log(`  target version:  ${targetVersion}`);
+  console.log(
+    `  auth:            ${parsed.trustedPublisher ? "trusted publisher OIDC" : "local npm session or token"}`
+  );
   console.log(`  provenance:      ${parsed.provenance ? "enabled" : "disabled"}`);
   console.log(`  npm otp:         ${parsed.otp === "" ? "not provided" : "provided"}`);
-  console.log(`  run checks:      ${parsed.skipCheck ? "no" : "yes"}`);
+  console.log(`  run checks:      ${parsed.prepare || parsed.skipCheck ? "no" : "yes"}`);
   console.log("  order:");
   for (const workspace of WORKSPACES) {
     console.log(`    - ${workspace.name}`);
   }
 
-  if (parsed.dryRun === false && parsed.otp === "") {
-    console.log("  note:            npm accounts with publish 2FA must run with --otp, for example: make publish OTP=123456");
+  if (
+    parsed.prepare === false &&
+    parsed.dryRun === false &&
+    parsed.trustedPublisher === false &&
+    parsed.otp === ""
+  ) {
+    console.log(
+      "  note:            npm accounts with publish 2FA must run with --otp, for example: make publish OTP=123456"
+    );
   }
 }
 

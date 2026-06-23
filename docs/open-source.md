@@ -12,4 +12,4 @@ The project should welcome international contributors across canyoneering, canyo
 
 ## Supply Chain
 
-Published packages should use npm provenance from trusted CI. Release builds should avoid dependency caches during publishing and should run from a clean checkout.
+Published packages should use npm Trusted Publishers and provenance from trusted CI. Release builds should avoid dependency caches during publishing, run from a clean checkout, and avoid long-lived npm publish tokens. See [npm trusted publishing](trusted-publishing.md) for setup.
