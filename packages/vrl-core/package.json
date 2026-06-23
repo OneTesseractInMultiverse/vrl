@@ -1,5 +1,5 @@
 {
-  "name": "@vrl/core",
+  "name": "@stev/core",
   "version": "0.1.0",
   "type": "module",
   "description": "Framework-free parser, domain model, validation, normalization, layout, and application services for VRL.",

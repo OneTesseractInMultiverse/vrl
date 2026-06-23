@@ -4,7 +4,7 @@ The Svelte package exposes both a component and an SSR-friendly markup helper.
 
 ```svelte
 <script>
-  import VrlDiagram from "@vrl/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@stev/svelte/VrlDiagram.svelte";
 
   export let data;
 </script>
@@ -26,7 +26,7 @@ export async function load({ fetch }) {
 For server-only rendering, use the markup helper:
 
 ```js
-import { renderVrlSvelteMarkup } from "@vrl/svelte";
+import { renderVrlSvelteMarkup } from "@stev/svelte";
 
 export function renderRoute(source) {
   return renderVrlSvelteMarkup(source, { theme: "dark" });

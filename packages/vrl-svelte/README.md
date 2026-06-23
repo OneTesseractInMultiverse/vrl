@@ -1,4 +1,4 @@
-# @vrl/svelte
+# @stev/svelte
 
 Svelte adapter for Vertical Route Language.
 
@@ -7,14 +7,14 @@ This package exposes an SSR-friendly markup helper and a Svelte component for re
 ## Install
 
 ```sh
-npm install @vrl/svelte @vrl/core @vrl/render-svg svelte
+npm install @stev/svelte @stev/core @stev/render-svg svelte
 ```
 
 ## Usage
 
 ```svelte
 <script>
-  import VrlDiagram from "@vrl/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@stev/svelte/VrlDiagram.svelte";
 
   export let source = "";
 </script>

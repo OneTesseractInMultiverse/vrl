@@ -1,4 +1,4 @@
-# @vrl/core
+# @stev/core
 
 Framework-free core for Vertical Route Language.
 
@@ -7,13 +7,13 @@ This package parses compact VRL source, validates route semantics, normalizes ro
 ## Install
 
 ```sh
-npm install @vrl/core
+npm install @stev/core
 ```
 
 ## Usage
 
 ```js
-import { compileRoute } from "@vrl/core";
+import { compileRoute } from "@stev/core";
 
 const result = compileRoute('route "Rio Azul"\nrappel "R1" height=35m rope=70m anchor=bolts');
 ```

@@ -1,4 +1,4 @@
-# @vrl/react
+# @stev/react
 
 React adapter for Vertical Route Language.
 
@@ -7,14 +7,14 @@ This package exposes a dependency-injected React component factory. It keeps Rea
 ## Install
 
 ```sh
-npm install @vrl/react @vrl/core @vrl/render-svg react
+npm install @stev/react @stev/core @stev/render-svg react
 ```
 
 ## Usage
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent } from "@vrl/react";
+import { createVrlDiagramComponent } from "@stev/react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 

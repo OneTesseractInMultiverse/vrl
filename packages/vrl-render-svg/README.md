@@ -1,4 +1,4 @@
-# @vrl/render-svg
+# @stev/render-svg
 
 SVG renderer adapter for Vertical Route Language.
 
@@ -7,13 +7,13 @@ This package renders normalized VRL route models and layout data as accessible S
 ## Install
 
 ```sh
-npm install @vrl/render-svg
+npm install @stev/render-svg
 ```
 
 ## Usage
 
 ```js
-import { renderTopoSvg } from "@vrl/render-svg";
+import { renderTopoSvg } from "@stev/render-svg";
 
 const svg = renderTopoSvg(model, layout, { symbology: "federation" });
 ```

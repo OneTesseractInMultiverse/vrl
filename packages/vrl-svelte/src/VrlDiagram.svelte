@@ -1,6 +1,6 @@
 <script>
-  import { compileRoute, formatDiagnostic } from "@vrl/core";
-  import { renderTopoSvg } from "@vrl/render-svg";
+  import { compileRoute, formatDiagnostic } from "@stev/core";
+  import { renderTopoSvg } from "@stev/render-svg";
 
   export let source = "";
   export let options = {};

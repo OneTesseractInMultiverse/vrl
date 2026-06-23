@@ -4,7 +4,7 @@ The React adapter uses dependency injection so the package can keep React as a p
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent } from "@vrl/react";
+import { createVrlDiagramComponent } from "@stev/react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 

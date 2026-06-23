@@ -1,5 +1,5 @@
 {
-  "name": "@vrl/react",
+  "name": "@stev/react",
   "version": "0.1.0",
   "type": "module",
   "description": "React adapter for rendering VRL diagrams.",
@@ -51,7 +51,7 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "@vrl/core": "0.1.0",
-    "@vrl/render-svg": "0.1.0"
+    "@stev/core": "0.1.0",
+    "@stev/render-svg": "0.1.0"
   }
 }

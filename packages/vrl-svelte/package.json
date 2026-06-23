@@ -1,5 +1,5 @@
 {
-  "name": "@vrl/svelte",
+  "name": "@stev/svelte",
   "version": "0.1.0",
   "type": "module",
   "description": "Svelte adapter for rendering VRL diagrams.",
@@ -54,7 +54,7 @@
     "svelte": ">=4.0.0"
   },
   "dependencies": {
-    "@vrl/core": "0.1.0",
-    "@vrl/render-svg": "0.1.0"
+    "@stev/core": "0.1.0",
+    "@stev/render-svg": "0.1.0"
   }
 }

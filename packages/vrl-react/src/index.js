@@ -1,5 +1,5 @@
-import { compileRoute, formatDiagnostic } from "@vrl/core";
-import { renderTopoSvg } from "@vrl/render-svg";
+import { compileRoute, formatDiagnostic } from "@stev/core";
+import { renderTopoSvg } from "@stev/render-svg";
 
 export function createVrlDiagramComponent(React) {
   if (React === null || React === undefined || typeof React.createElement !== "function") {

@@ -50,11 +50,11 @@ Community and release files:
 - [docs/release-checklist.md](docs/release-checklist.md)
 - [docs/open-source.md](docs/open-source.md)
 
-The current npm package scope is `@vrl`. Confirm scope ownership before first publication or rename the packages to the final community-owned scope.
+The npm package scope is `@stev`, from Sociedad Técnica de Exploración Vertical, the organization behind the VRL project family. Confirm npm organization ownership before first publication.
 
 ## Public APIs
 
-`@vrl/core` exports:
+`@stev/core` exports:
 
 - `parseVrl(source)` for parsing compact VRL source into an AST and syntax diagnostics.
 - `validateRoute(ast)` for semantic diagnostics.
@@ -64,17 +64,17 @@ The current npm package scope is `@vrl`. Confirm scope ownership before first pu
 - `createRouteCompiler(overrides)` for injecting alternate parser, validator, layout, normalization, or export ports.
 - `exportRouteJson(model)` for structured JSON output.
 
-`@vrl/render-svg` exports:
+`@stev/render-svg` exports:
 
 - `renderTopoSvg(model, layout, options)` for SVG topo output.
 - `resolveTheme(theme, overrides)` plus light and dark theme tokens.
 - `symbolCode(element, profile)` and `resolveSymbolProfile(profile)` for federation-oriented canyon topo abbreviations.
 
-`@vrl/react` exports:
+`@stev/react` exports:
 
 - `createVrlDiagramComponent(React)`, a dependency-injected React component factory.
 
-`@vrl/svelte` exports:
+`@stev/svelte` exports:
 
 - `renderVrlSvelteMarkup(source, options)` for SSR-friendly markup.
 - `VrlDiagram.svelte` as a Svelte component entry.

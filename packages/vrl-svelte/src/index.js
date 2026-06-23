@@ -1,5 +1,5 @@
-import { compileRoute, formatDiagnostic } from "@vrl/core";
-import { escapeXml, renderTopoSvg } from "@vrl/render-svg";
+import { compileRoute, formatDiagnostic } from "@stev/core";
+import { escapeXml, renderTopoSvg } from "@stev/render-svg";
 
 export function renderVrlSvelteMarkup(source, options = {}) {
   const result = compileRoute(source, options);

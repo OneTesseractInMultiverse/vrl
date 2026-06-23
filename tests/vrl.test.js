@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import * as core from "@vrl/core";
-import * as svg from "@vrl/render-svg";
-import { createVrlDiagramComponent } from "@vrl/react";
-import { renderVrlSvelteMarkup } from "@vrl/svelte";
+import * as core from "@stev/core";
+import * as svg from "@stev/render-svg";
+import { createVrlDiagramComponent } from "@stev/react";
+import { renderVrlSvelteMarkup } from "@stev/svelte";
 
 const VALID_SOURCE = `route "Rio Azul"
 metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III"
