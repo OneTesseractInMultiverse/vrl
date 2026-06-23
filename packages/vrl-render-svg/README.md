@@ -7,15 +7,52 @@ This package renders normalized VRL route models and layout data as accessible S
 ## Install
 
 ```sh
-npm install @subvertic/render-svg
+npm install @subvertic/core @subvertic/render-svg
 ```
 
 ## Usage
 
 ```js
+import { compileRoute } from "@subvertic/core";
 import { renderTopoSvg } from "@subvertic/render-svg";
 
-const svg = renderTopoSvg(model, layout, { symbology: "federation" });
+const result = compileRoute(source, { layout: { pixelsPerMeter: 6 } });
+
+if (result.ok) {
+  const svg = renderTopoSvg(result.model, result.layout, {
+    symbology: "spanish",
+    theme: "light"
+  });
+}
+```
+
+## Options
+
+```js
+renderTopoSvg(model, layout, {
+  symbology: "federation", // federation, french, or spanish
+  theme: "light",          // light or dark
+  themeTokens: {
+    background: "#eef6f8",
+    routeLine: "#111111",
+    water: "#1479a6"
+  }
+});
+```
+
+`symbology` controls canyon topo abbreviations. The renderer uses federation-oriented text abbreviations rather than copied artwork.
+
+## Useful Exports
+
+```js
+import {
+  renderTopoSvg,
+  resolveTheme,
+  symbolCode,
+  resolveSymbolProfile,
+  formatTopoLabel,
+  formatTopoDetail
+} from "@subvertic/render-svg";
 ```
 
 ## License

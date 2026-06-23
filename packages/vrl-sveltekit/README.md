@@ -17,10 +17,10 @@ import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/rio-azul.vrl");
+    const response = await fetch("/routes/quebrada-gata.vrl");
     return response.text();
   },
-  options: { symbology: "spanish" }
+  options: { symbology: "spanish", layout: { pixelsPerMeter: 6 } }
 });
 ```
 
@@ -39,6 +39,52 @@ If your load function uses a custom key, pass the same key to the component:
 ```svelte
 <VrlDiagram {data} diagramKey="diagram" />
 ```
+
+## Load Helpers
+
+```js
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { loadRouteSource } from "$lib/routes";
+```
+
+- `createVrlSvelteKitData(source, options)` returns serializable diagram state.
+- `createVrlSvelteKitLoad({ source, options, key })` returns an async SvelteKit `load` function.
+
+`source` and `options` can be values or functions that receive the SvelteKit load event:
+
+```js
+export const load = createVrlSvelteKitLoad({
+  key: "routeDiagram",
+  source: ({ params }) => loadRouteSource(params.slug),
+  options: ({ url }) => ({
+    symbology: url.searchParams.get("profile") ?? "federation",
+    layout: { pixelsPerMeter: 6 }
+  })
+});
+```
+
+```svelte
+<VrlDiagram {data} diagramKey="routeDiagram" />
+```
+
+## Component Props
+
+```js
+{
+  data: object,
+  source: string,
+  options: object,
+  diagram: object | null,
+  diagramKey: string,
+  className: string,
+  diagnosticsClassName: string,
+  role: string
+}
+```
+
+The component reads `data.vrl` by default. Passing `diagram` overrides `data[diagramKey]`.
+
+Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
 
 ## License
 

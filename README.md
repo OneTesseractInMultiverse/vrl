@@ -2,9 +2,64 @@
 
 Vertical Route Language (VRL) is a compact domain-specific language for technical vertical route documentation. It turns route text into structured data and schematic diagrams for canyoneering, canyoning, cave approaches, waterfall routes, technical rope routes, and related vertical exploration work.
 
-The first vertical slice in this repository parses a compact VRL document, validates measurements and domain fields, normalizes route elements, computes a vertical layout, renders a basic SVG topo, exports JSON, and exposes thin React and Svelte adapters.
+The first vertical slice in this repository parses a compact VRL document, validates measurements and domain fields, normalizes route elements, computes a vertical layout, renders an SVG topo, exports JSON, and exposes thin React, Svelte, and SvelteKit adapters.
 
 VRL is MIT licensed. Pedro Guzmán is the initial author and maintainer, and the project is structured to grow into an international community-maintained open source project.
+
+## Quick Start
+
+Install the core compiler and SVG renderer:
+
+```sh
+npm install @subvertic/core @subvertic/render-svg
+```
+
+Compile VRL source and render an SVG topo:
+
+```js
+import { compileRoute, formatDiagnostic } from "@subvertic/core";
+import { renderTopoSvg } from "@subvertic/render-svg";
+
+const source = `
+route "Quebrada Gata"
+metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m total_descent=200m total_distance=1300m
+start "Quebrada Pilas entrance"
+walk distance=80m note="Short creek walk after the hanging bridge"
+rappel "R1" height=28m rope=60m anchor=bolts anchor_count=2 station=left landing=pool flow=medium inclination=90%
+rappel "R2" height=28m rope=60m anchor=tree station=left landing=pool flow=medium inclination=85%
+hazard type=swift_water severity=high note="Dry-season weather window recommended"
+exit "Old metal ladder"
+`;
+
+const result = compileRoute(source, { layout: { pixelsPerMeter: 5.5 } });
+
+if (result.ok === false) {
+  console.error(result.diagnostics.map(formatDiagnostic).join("\n"));
+} else {
+  const svg = renderTopoSvg(result.model, result.layout, { symbology: "spanish" });
+  console.log(svg);
+}
+```
+
+Framework packages are optional adapters over the same compiler and renderer:
+
+```sh
+npm install @subvertic/react react
+npm install @subvertic/svelte svelte
+npm install @subvertic/sveltekit @sveltejs/kit svelte
+```
+
+## Documentation
+
+- [API reference](docs/api-reference.md)
+- [Language reference](docs/language-reference.md)
+- [Architecture](docs/architecture.md)
+- [Symbology](docs/symbology.md)
+- [React usage](docs/react.md)
+- [Svelte usage](docs/svelte.md)
+- [SvelteKit usage](docs/sveltekit.md)
+- [Release checklist](docs/release-checklist.md)
+- [Open source practices](docs/open-source.md)
 
 ## Package Architecture
 
@@ -34,9 +89,12 @@ make test
 make coverage
 make check
 make run
+make publish
 ```
 
 `make check` runs the 100 percent coverage gate and npm package dry-run checks. `make run` renders the example VRL document locally.
+
+`make publish` publishes the workspace packages to npm in dependency order. On the first release it publishes the current version; after packages exist on npm, the default `RELEASE=auto` resolves the next available patch version. Use `make publish VERSION=0.2.0`, `make publish RELEASE=minor`, or `make publish OTP=123456` when needed. Local publishing disables npm provenance by default; use `PROVENANCE=true` from a supported CI environment.
 
 ## Open Source
 
@@ -121,7 +179,7 @@ The renderer does not invent general canyon symbols. It uses conventional French
 
 See [docs/symbology.md](docs/symbology.md) for profile details and federation context.
 
-![Rio Azul VRL topo preview](docs/assets/rio-azul.svg)
+![Quebrada Gata VRL topo preview](docs/assets/quebrada-gata.svg)
 
 Pipeline: VRL source -> parser -> AST plus diagnostics -> validator -> normalized route model -> vertical layout -> SVG topo renderer and JSON export.
 
@@ -147,21 +205,22 @@ npm run coverage
 ## Minimal Example
 
 ```vrl
-route "Rio Azul"
-metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III" entrance_elevation=1240m exit_elevation=1170m
-start "Entrance"
-walk distance=120m note="Riverbed approach"
-rappel "R1" height=35m rope=70m anchor=bolts inclination=80% stages=20m+15m redirection=12m:left note="Waterfall line"
-pool type=deep
-downclimb "D1" height=4m exposure=medium inclination=65%
-hazard type=swift_water severity=high note="Avoid after heavy rain"
-exit "Left bank trail"
+route "Quebrada Gata"
+metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m total_descent=200m total_distance=1300m
+start "Quebrada Pilas entrance"
+walk distance=80m note="Short creek walk after the hanging bridge"
+rappel "R1" height=28m rope=60m anchor=bolts anchor_count=2 station=left landing=pool flow=medium inclination=90% note="Salto del Tepescuintle"
+rappel "R2" height=28m rope=60m anchor=tree station=left landing=pool flow=medium inclination=85%
+walk distance=500m note="Pools, downclimbs, and slides"
+rappel "R4" height=20m rope=60m anchor=bolts anchor_count=2 station=left landing=pool flow=medium inclination=90% note="Catarata Celestial"
+hazard type=swift_water severity=high note="Dry-season weather window recommended"
+exit "Old metal ladder"
 ```
 
 Expressive descent attributes are ordinary `key=value` fields, so existing files remain compatible:
 
 ```vrl
-rappel "R1" height=35m rope=70m traverse=50m anchor=bolts anchor_count=2 station=left landing=pool flow=medium shape=ladder inclination=80% stages=20m+15m redirections=12m:left,27m:right
-downclimb "D1" height=4m exposure=medium anchor_count=1 station=right landing=ledge shape=ladder inclination=65%
+rappel "R1" height=28m rope=60m traverse=80m anchor=bolts anchor_count=2 station=left landing=pool flow=medium shape=ladder inclination=90%
+downclimb "D1" height=3m exposure=medium anchor_count=1 station=right landing=pool shape=ladder inclination=60%
 climb "C1" height=5m exposure=medium station=right landing=trail shape=ladder inclination=55%
 ```

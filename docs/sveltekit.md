@@ -21,7 +21,7 @@ import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/rio-azul.vrl");
+    const response = await fetch("/routes/quebrada-gata.vrl");
     return response.text();
   },
   options: { theme: "light" }
@@ -41,3 +41,29 @@ export function renderRoute(source) {
 ```
 
 Diagnostics are rendered as text when the route is invalid, which keeps validation failures visible during development and content review.
+
+Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+
+## Custom Keys and Direct State
+
+```js
+import { loadRouteSource } from "$lib/routes";
+
+export const load = createVrlSvelteKitLoad({
+  key: "routeDiagram",
+  source: ({ params }) => loadRouteSource(params.slug),
+  options: { symbology: "federation", layout: { pixelsPerMeter: 6 } }
+});
+```
+
+```svelte
+<VrlDiagram {data} diagramKey="routeDiagram" className="route-diagram" />
+```
+
+You can also bypass `data` and pass a precomputed diagram directly:
+
+```svelte
+<VrlDiagram diagram={data.routeDiagram} />
+```
+
+The component props are `data`, `source`, `options`, `diagram`, `diagramKey`, `className`, `diagnosticsClassName`, and `role`.

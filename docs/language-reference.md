@@ -7,7 +7,7 @@ VRL documents are text files. The implemented vertical slice supports a compact 
 Every document starts with a route statement.
 
 ```vrl
-route "Rio Azul"
+route "Quebrada Gata"
 ```
 
 The route name is required. It becomes the title used by JSON export and renderers.
@@ -17,26 +17,26 @@ The route name is required. It becomes the title used by JSON export and rendere
 Metadata is represented as attributes on one or more `metadata` lines.
 
 ```vrl
-metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III"
-metadata estimated_time="4h" season="dry-season" entrance_elevation=1240m exit_elevation=1170m
+metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III"
+metadata descent_time="5-7h" season="December-May" entrance_elevation=1300m exit_elevation=1100m
 ```
 
-Metadata values are normalized only when the field is measurement-bearing, such as `total_distance=1800m`, `total_descent=260m`, `entrance_elevation=1240m`, or `exit_elevation=1170m`.
+Metadata values are normalized only when the field is measurement-bearing, such as `total_distance=1300m`, `total_descent=200m`, `entrance_elevation=1300m`, or `exit_elevation=1100m`.
 
 ## Elements
 
 The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Order is meaningful and is preserved by the normalized model and renderer.
 
 ```vrl
-metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III" entrance_elevation=1240m exit_elevation=1170m
-start "Entrance"
-walk distance=120m note="Riverbed approach"
-rappel "R1" height=35m rope=70m traverse=50m anchor=bolts anchor_count=2 station=left landing=pool flow=medium shape=ladder inclination=80% stages=20m+15m redirections=12m:left,27m:right
-pool type=deep
-downclimb "D1" height=4m exposure=medium anchor_count=1 station=right landing=ledge shape=ladder inclination=65%
+metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
+start "Quebrada Pilas entrance"
+walk distance=80m note="Short creek walk after the hanging bridge"
+rappel "R1" height=28m rope=60m traverse=80m anchor=bolts anchor_count=2 station=left landing=pool flow=medium shape=ladder inclination=90%
+pool type=shallow
+downclimb "D1" height=3m exposure=medium anchor_count=1 station=right landing=pool shape=ladder inclination=60%
 climb "C1" height=5m exposure=medium station=right landing=trail shape=ladder inclination=55%
-hazard type=swift_water severity=high note="Avoid after heavy rain"
-exit "Left bank trail"
+hazard type=swift_water severity=high note="Dry-season weather window recommended"
+exit "Old metal ladder"
 note "Low-water route only"
 ```
 

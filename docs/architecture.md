@@ -1,11 +1,12 @@
 # VRL Architecture
 
-VRL follows strict hexagonal architecture. The core package owns pure domain concepts, parser contracts, validation rules, normalization, layout computation, and application use cases. External packages adapt that core into SVG, React, and Svelte surfaces.
+VRL follows strict hexagonal architecture. The core package owns pure domain concepts, parser contracts, validation rules, normalization, layout computation, and application use cases. External packages adapt that core into SVG, React, Svelte, and SvelteKit surfaces.
 
 ```mermaid
 flowchart LR
   React[React Adapter] --> App[Application Use Cases]
   Svelte[Svelte Adapter] --> App
+  SvelteKit[SvelteKit Load Adapter] --> Svelte
   SVG[SVG Renderer Adapter] --> Domain[Domain Model]
   App --> Parser[Parser]
   App --> Validator[Validator]
@@ -17,7 +18,7 @@ The domain layer has no dependency on framework code, browser APIs, file systems
 
 The renderer package receives a normalized route model and a layout. It does not parse source text and it does not validate safety rules. Its job is to convert stable route data into accessible SVG markup.
 
-Framework adapters are intentionally thin. They accept framework-specific inputs, call the core application use case, and render either diagnostics or SVG markup. This makes React, SvelteKit, Angular, CLI tools, static site generators, and future applications replaceable adapters.
+Framework adapters are intentionally thin. They accept framework-specific inputs, call the core application use case, and render either diagnostics or SVG markup. This makes React, Svelte, SvelteKit, Angular, CLI tools, static site generators, and future applications replaceable adapters.
 
 ## Main Modules
 
@@ -37,7 +38,7 @@ Framework adapters are intentionally thin. They accept framework-specific inputs
 
 ```mermaid
 flowchart TD
-  UI[React and Svelte Packages] --> Renderer[SVG Adapter]
+  UI[React, Svelte, and SvelteKit Packages] --> Renderer[SVG Adapter]
   UI --> Core[Core Application]
   Renderer --> CoreTypes[Core Route Model]
   Core --> Domain[Pure Domain]
