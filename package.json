@@ -1,0 +1,49 @@
+{
+  "name": "vertical-route-language",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Vertical Route Language monorepo for parsing, validating, normalizing, and rendering technical route documents.",
+  "license": "MIT",
+  "author": {
+    "name": "Pedro Guzmán"
+  },
+  "maintainers": [
+    {
+      "name": "Pedro Guzmán"
+    }
+  ],
+  "homepage": "https://github.com/vertical-route-language/vrl#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vertical-route-language/vrl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vertical-route-language/vrl/issues"
+  },
+  "keywords": [
+    "vrl",
+    "canyoning",
+    "canyoneering",
+    "barranquismo",
+    "topo",
+    "svg",
+    "dsl",
+    "route-documentation"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100 --test-coverage-include='packages/**/*.js' tests/*.test.js",
+    "check": "npm run coverage && npm run pack:dry-run",
+    "example": "node scripts/render-example.mjs",
+    "pack:dry-run": "npm pack --workspaces --dry-run",
+    "publish:dry-run": "npm run pack:dry-run"
+  },
+  "engines": {
+    "node": ">=25.0.0"
+  },
+  "packageManager": "npm@11.12.1"
+}

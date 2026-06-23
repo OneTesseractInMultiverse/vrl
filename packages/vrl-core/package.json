@@ -1,0 +1,50 @@
+{
+  "name": "@vrl/core",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Framework-free parser, domain model, validation, normalization, layout, and application services for VRL.",
+  "license": "MIT",
+  "author": {
+    "name": "Pedro Guzmán"
+  },
+  "maintainers": [
+    {
+      "name": "Pedro Guzmán"
+    }
+  ],
+  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-core#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vertical-route-language/vrl.git",
+    "directory": "packages/vrl-core"
+  },
+  "bugs": {
+    "url": "https://github.com/vertical-route-language/vrl/issues"
+  },
+  "keywords": [
+    "vrl",
+    "canyoning",
+    "canyoneering",
+    "barranquismo",
+    "dsl",
+    "parser",
+    "route-documentation"
+  ],
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

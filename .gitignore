@@ -1,0 +1,6 @@
+node_modules/
+coverage/
+.coverage/
+.npm-cache/
+npm-debug.log*
+.idea/

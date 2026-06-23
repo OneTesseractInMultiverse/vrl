@@ -1,0 +1,50 @@
+{
+  "name": "@vrl/render-svg",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "SVG topo rendering adapter for normalized VRL route models.",
+  "license": "MIT",
+  "author": {
+    "name": "Pedro Guzmán"
+  },
+  "maintainers": [
+    {
+      "name": "Pedro Guzmán"
+    }
+  ],
+  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-render-svg#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vertical-route-language/vrl.git",
+    "directory": "packages/vrl-render-svg"
+  },
+  "bugs": {
+    "url": "https://github.com/vertical-route-language/vrl/issues"
+  },
+  "keywords": [
+    "vrl",
+    "canyoning",
+    "canyoneering",
+    "barranquismo",
+    "svg",
+    "topo",
+    "route-documentation"
+  ],
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

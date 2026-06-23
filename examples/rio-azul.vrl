@@ -1,0 +1,9 @@
+route "Rio Azul"
+metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III"
+start "Entrance"
+walk distance=120m note="Riverbed approach"
+rappel "R1" height=35m rope=70m anchor=bolts note="Waterfall line"
+pool type=deep
+downclimb "D1" height=4m exposure=medium
+hazard type=swift_water severity=high note="Avoid after heavy rain"
+exit "Left bank trail"

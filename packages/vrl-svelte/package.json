@@ -1,0 +1,60 @@
+{
+  "name": "@vrl/svelte",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Svelte adapter for rendering VRL diagrams.",
+  "license": "MIT",
+  "author": {
+    "name": "Pedro Guzmán"
+  },
+  "maintainers": [
+    {
+      "name": "Pedro Guzmán"
+    }
+  ],
+  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-svelte#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vertical-route-language/vrl.git",
+    "directory": "packages/vrl-svelte"
+  },
+  "bugs": {
+    "url": "https://github.com/vertical-route-language/vrl/issues"
+  },
+  "keywords": [
+    "vrl",
+    "svelte",
+    "sveltekit",
+    "canyoning",
+    "canyoneering",
+    "barranquismo",
+    "svg",
+    "route-documentation"
+  ],
+  "main": "./src/index.js",
+  "svelte": "./src/VrlDiagram.svelte",
+  "exports": {
+    ".": "./src/index.js",
+    "./VrlDiagram.svelte": "./src/VrlDiagram.svelte"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "peerDependencies": {
+    "svelte": ">=4.0.0"
+  },
+  "dependencies": {
+    "@vrl/core": "0.1.0",
+    "@vrl/render-svg": "0.1.0"
+  }
+}
