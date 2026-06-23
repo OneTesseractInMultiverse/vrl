@@ -111,16 +111,9 @@ The renderer does not invent general canyon symbols. It uses conventional French
 
 See [docs/symbology.md](docs/symbology.md) for profile details and federation context.
 
-```mermaid
-flowchart TD
-  Source[VRL Source] --> Parser[Parser]
-  Parser --> AST[AST plus syntax diagnostics]
-  AST --> Validator[Validator]
-  Validator --> Model[Normalized route model]
-  Model --> Layout[Vertical layout]
-  Layout --> SVG[SVG topo renderer]
-  Model --> JSON[JSON export]
-```
+![Rio Azul VRL topo preview](docs/assets/rio-azul.svg)
+
+Pipeline: VRL source -> parser -> AST plus diagnostics -> validator -> normalized route model -> vertical layout -> SVG topo renderer and JSON export.
 
 ## Testing Strategy
 

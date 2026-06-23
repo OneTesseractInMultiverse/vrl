@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 360 578" width="100%" height="auto">
+  <title>Rio Azul topo</title>
+  <desc>Vertical Route Language schematic for Rio Azul.</desc>
+  <rect width="360" height="578" fill="#ffffff"/>
+  <line x1="96" y1="48" x2="96" y2="530" stroke="#59656f" stroke-width="3" stroke-linecap="round"/>
+  <g class="vrl-node vrl-node-start" aria-label="Start Entrance">
+    <text class="vrl-symbol vrl-symbol-standard" x="96" y="53" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#16794c">IN</text>
+    <text x="124" y="46" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Start Entrance</text>
+    <text x="124" y="65" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76"></text>
+  </g><g class="vrl-node vrl-node-walk" aria-label="Walk W1">
+    <text class="vrl-symbol vrl-symbol-standard" x="96" y="130" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#59656f">M</text>
+    <text x="124" y="123" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Walk W1</text>
+    <text x="124" y="142" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76">120m</text>
+  </g><g class="vrl-node vrl-node-rappel" aria-label="Rappel R1">
+    <text class="vrl-symbol vrl-symbol-standard" x="96" y="238" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#4b5563">R</text>
+    <text x="124" y="231" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Rappel R1</text>
+    <text x="124" y="250" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76">35m / 70m / bolts</text>
+  </g><g class="vrl-node vrl-node-pool" aria-label="Pool P1">
+    <text class="vrl-symbol vrl-symbol-standard" x="96" y="311" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#1479a6">V</text>
+    <text x="124" y="304" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Pool P1</text>
+    <text x="124" y="323" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76">deep</text>
+  </g><g class="vrl-node vrl-node-downclimb" aria-label="Downclimb D1">
+    <text class="vrl-symbol vrl-symbol-standard" x="96" y="397" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#5865d6">D</text>
+    <text x="124" y="390" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Downclimb D1</text>
+    <text x="124" y="409" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76">4m / medium</text>
+  </g><g class="vrl-node vrl-node-hazard" aria-label="Hazard H1">
+    <text class="vrl-symbol vrl-symbol-hazard" x="96" y="475" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="900" fill="#b42318">!</text>
+    <text x="124" y="467" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Hazard H1</text>
+    <text x="124" y="486" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76">Avoid after heavy rain</text>
+  </g><g class="vrl-node vrl-node-exit" aria-label="Exit Left bank trail">
+    <text class="vrl-symbol vrl-symbol-standard" x="96" y="535" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#16794c">OUT</text>
+    <text x="124" y="528" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#182026">Exit Left bank trail</text>
+    <text x="124" y="547" font-family="system-ui, sans-serif" font-size="12" fill="#5d6b76"></text>
+  </g>
+</svg>

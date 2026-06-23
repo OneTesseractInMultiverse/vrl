@@ -483,3 +483,7 @@ test("Svelte helper renders diagnostics", () => {
 test("example route compiles", () => {
   assert.equal(core.compileRoute(readFileSync(new URL("../examples/rio-azul.vrl", import.meta.url), "utf8")).ok, true);
 });
+
+test("documentation SVG preview is generated", () => {
+  assert.match(readFileSync(new URL("../docs/assets/rio-azul.svg", import.meta.url), "utf8"), /<title>Rio Azul topo<\/title>/);
+});

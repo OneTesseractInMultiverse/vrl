@@ -39,6 +39,7 @@
     "coverage": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100 --test-coverage-include='packages/**/*.js' tests/*.test.js",
     "check": "npm run coverage && npm run pack:dry-run",
     "example": "node scripts/render-example.mjs",
+    "example:svg": "node scripts/render-example.mjs docs/assets/rio-azul.svg",
     "pack:dry-run": "npm pack --workspaces --dry-run",
     "publish:dry-run": "npm run pack:dry-run"
   },
