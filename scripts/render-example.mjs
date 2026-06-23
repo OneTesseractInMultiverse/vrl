@@ -18,7 +18,10 @@ if (result.ok === false) {
   console.error(result.diagnostics);
   process.exitCode = 1;
 } else {
-  const svg = renderTopoSvg(result.model, result.layout, { symbology: "federation" });
+  const svg = renderTopoSvg(result.model, result.layout, {
+    language: "es",
+    symbology: "federation"
+  });
 
   if (outputPath === undefined) {
     console.log(svg);

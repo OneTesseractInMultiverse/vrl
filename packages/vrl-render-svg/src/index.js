@@ -6,6 +6,12 @@ export {
   formatMeasurement
 } from "./element-formatters.js";
 export {
+  diagramText,
+  elementLabel,
+  localizeDetailValue,
+  resolveDiagramLanguage
+} from "./locale.js";
+export {
   isSnakeHazard,
   resolveSymbolProfile,
   symbolCode,
@@ -24,10 +30,14 @@ export {
   redirectionRatio,
   redirectionsForElement,
   renderAnchorMarks,
+  renderDetailLine,
   renderDropLadderSegment,
   renderDropRungs,
   renderInfoBox,
   renderLabelLeader,
+  renderLegend,
+  renderLegendRow,
+  renderLevelBadge,
   renderNode,
   renderNodes,
   renderRappelStageMarkers,
@@ -39,10 +49,13 @@ export {
   renderSymbolMarker,
   renderTerrainProfile,
   renderWaterSegments,
+  resolveLevelValue,
+  resolveRenderLanguage,
   segmentLabel,
   segmentLabelPosition,
   segmentTechnicalElement,
   technicalLinePoint,
+  topoLegendHeight,
   terrainProfilePath,
   routeSegmentPath
 } from "./svg-renderer.js";

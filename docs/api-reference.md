@@ -46,7 +46,7 @@ if (result.ok === false) {
 }
 ```
 
-Layout options are nested under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
+Layout options are nested under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
 
 Returned shape:
 
@@ -93,6 +93,7 @@ const result = compileRoute(source);
 
 if (result.ok) {
   const svg = renderTopoSvg(result.model, result.layout, {
+    language: "es",
     symbology: "federation",
     theme: "light"
   });
@@ -103,7 +104,10 @@ Renderer options:
 
 ```js
 {
+  language: "en" | "es",
+  locale: "en-US" | "es-CR",
   symbology: "federation" | "french" | "spanish",
+  legend: true | false,
   theme: "light" | "dark",
   themeTokens: {
     background: "#eef6f8",
@@ -112,6 +116,8 @@ Renderer options:
   }
 }
 ```
+
+`language` controls diagram text such as element names, route-summary labels, accessibility labels, the legend, and common detail values. `locale` is accepted as an alias. If neither is set, `symbology: "spanish"` selects Spanish text; otherwise English text is used. `legend` defaults to `true`; set it to `false` only when the embedding surface already explains detail fields such as flow, exposure, severity, and inclination. Level values such as `medium`, `high`, and `critical` render as color-coded SVG badges and use matching colors in the legend.
 
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 
@@ -134,6 +140,7 @@ const VrlDiagram = createVrlDiagramComponent(React);
 export function RouteDiagram({ source }) {
   const diagram = useMemo(
     () => createVrlReactDiagramState(source, {
+      language: "es",
       symbology: "spanish",
       layout: { pixelsPerMeter: 6 }
     }),
@@ -161,7 +168,7 @@ Component props:
 
 Pass `source` and `options` for simple use. Pass `diagram` from `createVrlReactDiagramState` when the parent owns memoization, caching, or server-provided state.
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
 ## @subvertic/svelte
 
@@ -180,7 +187,7 @@ Component usage:
   export let source = "";
 </script>
 
-<VrlDiagram {source} options={{ symbology: "federation", layout: { pixelsPerMeter: 6 } }} />
+<VrlDiagram {source} options={{ language: "es", symbology: "federation", layout: { pixelsPerMeter: 6 } }} />
 ```
 
 Server-side markup helper:
@@ -189,6 +196,7 @@ Server-side markup helper:
 import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
 
 const diagram = createVrlSvelteDiagramState(source, {
+  language: "es",
   symbology: "spanish",
   layout: { pixelsPerMeter: 6 }
 });
@@ -208,7 +216,7 @@ Component props:
 }
 ```
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
 ## @subvertic/sveltekit
 
@@ -228,7 +236,7 @@ export const load = createVrlSvelteKitLoad({
     const response = await fetch("/routes/quebrada-gata.vrl");
     return response.text();
   },
-  options: { symbology: "spanish", layout: { pixelsPerMeter: 6 } }
+  options: { language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
 });
 ```
 
@@ -270,4 +278,4 @@ make publish RELEASE=minor
 make publish OTP=123456
 ```
 
-`make publish` runs checks, updates all workspace versions and internal pins, then publishes in dependency order.
+`make publish` runs checks, updates all workspace versions and internal pins, then publishes in dependency order. If npm returns `E403` requiring two-factor authentication, rerun with a fresh one-time password: `make publish OTP=123456`.

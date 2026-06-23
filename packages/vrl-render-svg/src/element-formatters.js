@@ -1,3 +1,5 @@
+import { diagramText, elementLabel, localizeDetailValue } from "./locale.js";
+
 const ELEMENT_COLOR_TOKENS = {
   start: "exit",
   exit: "exit",
@@ -10,31 +12,19 @@ const ELEMENT_COLOR_TOKENS = {
   note: "warning"
 };
 
-const ELEMENT_LABELS = {
-  start: "Start",
-  exit: "Exit",
-  walk: "Walk",
-  rappel: "Rappel",
-  downclimb: "Downclimb",
-  climb: "Climb",
-  pool: "Pool",
-  hazard: "Hazard",
-  note: "Note"
-};
-
 export function elementColorToken(element) {
   return ELEMENT_COLOR_TOKENS[element.type] ?? "routeLine";
 }
 
-export function formatElementTitle(element) {
-  const baseLabel = ELEMENT_LABELS[element.type] ?? element.type;
+export function formatElementTitle(element, language = "en") {
+  const baseLabel = elementLabel(element.type, language);
   const name = element.label ?? element.id;
   return name === null ? baseLabel : `${baseLabel} ${name}`;
 }
 
-export function formatElementDetail(element) {
+export function formatElementDetail(element, language = "en") {
   if (element.type === "rappel") {
-    return [formatMeasurement(element.attributes.height), formatMeasurement(element.attributes.rope), element.attributes.anchor]
+    return [formatMeasurement(element.attributes.height), formatMeasurement(element.attributes.rope), localizeDetailValue(element.attributes.anchor, language)]
       .filter(Boolean)
       .join(" / ");
   }
@@ -44,7 +34,7 @@ export function formatElementDetail(element) {
   }
 
   if (element.type === "downclimb" || element.type === "climb") {
-    return [formatMeasurement(element.attributes.height), element.attributes.exposure]
+    return [formatMeasurement(element.attributes.height), labeledDetail(diagramText(language).exposure, localizeDetailValue(element.attributes.exposure, language))]
       .filter(Boolean)
       .join(" / ");
   }
@@ -53,7 +43,16 @@ export function formatElementDetail(element) {
     return element.attributes.text ?? "";
   }
 
-  return element.attributes.note ?? element.attributes.type ?? "";
+  if (element.type === "hazard") {
+    return [
+      labeledDetail(diagramText(language).severity, localizeDetailValue(element.attributes.severity, language)),
+      element.attributes.note ?? localizeDetailValue(element.attributes.type, language)
+    ]
+      .filter(Boolean)
+      .join(" / ");
+  }
+
+  return element.attributes.note ?? localizeDetailValue(element.attributes.type, language) ?? "";
 }
 
 export function formatMeasurement(measurement) {
@@ -62,4 +61,8 @@ export function formatMeasurement(measurement) {
   }
 
   return `${measurement.meters}m`;
+}
+
+function labeledDetail(label, value) {
+  return value === undefined || value === "" ? "" : `${label}: ${value}`;
 }

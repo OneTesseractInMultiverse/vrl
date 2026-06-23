@@ -20,7 +20,7 @@ export const load = createVrlSvelteKitLoad({
     const response = await fetch("/routes/quebrada-gata.vrl");
     return response.text();
   },
-  options: { symbology: "spanish", layout: { pixelsPerMeter: 6 } }
+  options: { language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
 });
 ```
 
@@ -58,6 +58,7 @@ export const load = createVrlSvelteKitLoad({
   source: ({ params }) => loadRouteSource(params.slug),
   options: ({ url }) => ({
     symbology: url.searchParams.get("profile") ?? "federation",
+    language: url.searchParams.get("lang") ?? "es",
     layout: { pixelsPerMeter: 6 }
   })
 });
@@ -84,7 +85,7 @@ export const load = createVrlSvelteKitLoad({
 
 The component reads `data.vrl` by default. Passing `diagram` overrides `data[diagramKey]`.
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## License
 

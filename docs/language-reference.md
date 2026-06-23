@@ -66,6 +66,8 @@ redirections  comma-separated mid-rappel redirection anchors, such as 12m:left,2
 stages        plus-separated rappel stage lengths, such as 20m+15m
 ```
 
+The SVG renderer labels ambiguous diagram detail fields, so `flow=medium` appears as `flow: medium` and `exposure=medium` appears as `exposure: medium`. Level values such as `low`, `medium`, `high`, and `critical` render as color-coded badges. The default diagram legend uses the same colors to explain supported flow, exposure, severity, and inclination values in the selected diagram language.
+
 `shape=ladder` is the default visual behavior for rappels, downclimbs, and climbs. It renders stepped shelves, a sloped or vertical technical line with an arrow, and small rungs so the diagram reads like a classic canyon profile. `inclination=100%` is vertical; lower values slant the ladder in the direction of travel. Climbs use the same field but render upward.
 
 Use `redirection` or `redirections` when a single rappel has intermediate redirection anchors along the same rope line. The distance is measured from the rappel head and must be greater than `0m` and shorter than the rappel `height`; the side must be `left`, `right`, `center`, or `unknown`. Use `stages` when that single rappel should show multiple rope-length sections, for example before and after a redirection. Use two separate `rappel` elements when the canyon has two actual rappel stations.

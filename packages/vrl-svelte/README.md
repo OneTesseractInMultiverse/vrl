@@ -21,7 +21,7 @@ npm install @subvertic/svelte @subvertic/core @subvertic/render-svg svelte
 
 <VrlDiagram
   {source}
-  options={{ symbology: "federation", layout: { pixelsPerMeter: 6 } }}
+  options={{ language: "es", symbology: "federation", layout: { pixelsPerMeter: 6 } }}
 />
 ```
 
@@ -30,6 +30,7 @@ import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/s
 
 const diagram = createVrlSvelteDiagramState(source, {
   symbology: "spanish",
+  language: "es",
   layout: { pixelsPerMeter: 6 }
 });
 const html = renderVrlSvelteMarkup("", {}, { diagram });
@@ -50,7 +51,7 @@ const html = renderVrlSvelteMarkup("", {}, { diagram });
 
 Pass `source` for simple use. Pass `diagram` from `createVrlSvelteDiagramState` when a parent component or server route owns compilation.
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## SSR Helper
 
@@ -59,7 +60,7 @@ import { renderVrlSvelteMarkup } from "@subvertic/svelte";
 
 const html = renderVrlSvelteMarkup(
   source,
-  { symbology: "spanish" },
+  { language: "es", symbology: "spanish" },
   { className: "route-diagram", role: "img" }
 );
 ```

@@ -22,7 +22,7 @@ export function RouteDiagram({ source }) {
   return (
     <VrlDiagram
       source={source}
-      options={{ symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
+      options={{ language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
     />
   );
 }
@@ -30,6 +30,7 @@ export function RouteDiagram({ source }) {
 export function RoutePreview({ source }) {
   const diagram = createVrlReactDiagramState(source, {
     symbology: "spanish",
+    language: "es",
     layout: { pixelsPerMeter: 6 }
   });
   return <VrlDiagram diagram={diagram} className="route-preview" />;
@@ -53,7 +54,7 @@ export function RoutePreview({ source }) {
 
 Pass `source` and `options` for simple rendering. Pass `diagram` when the parent component owns memoization, caching, or server-provided compiler state.
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ```jsx
 const VrlDiagram = createVrlDiagramComponent(React, {

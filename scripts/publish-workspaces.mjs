@@ -283,10 +283,15 @@ function printPlan(currentVersion, targetVersion, parsed) {
   console.log(`  current version: ${currentVersion}`);
   console.log(`  target version:  ${targetVersion}`);
   console.log(`  provenance:      ${parsed.provenance ? "enabled" : "disabled"}`);
+  console.log(`  npm otp:         ${parsed.otp === "" ? "not provided" : "provided"}`);
   console.log(`  run checks:      ${parsed.skipCheck ? "no" : "yes"}`);
   console.log("  order:");
   for (const workspace of WORKSPACES) {
     console.log(`    - ${workspace.name}`);
+  }
+
+  if (parsed.dryRun === false && parsed.otp === "") {
+    console.log("  note:            npm accounts with publish 2FA must run with --otp, for example: make publish OTP=123456");
   }
 }
 

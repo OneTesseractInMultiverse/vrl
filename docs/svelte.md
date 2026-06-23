@@ -20,14 +20,14 @@ exit "Old metal ladder"
 
 <VrlDiagram
   {source}
-  options={{ symbology: "spanish", theme: "light" }}
+  options={{ language: "es", symbology: "spanish", theme: "light" }}
   className="route-diagram"
 />
 ```
 
 If the source is invalid, the component renders formatted diagnostics in a `<pre>` block. If it is valid, it renders the SVG inside a `div` with `role="img"` by default.
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Precomputed State
 
@@ -42,6 +42,7 @@ Use `createVrlSvelteDiagramState` when a parent component or server route owns c
 
   $: diagram = createVrlSvelteDiagramState(source, {
     symbology: "federation",
+    language: "es",
     layout: { pixelsPerMeter: 6 }
   });
 </script>
@@ -59,7 +60,7 @@ import { renderVrlSvelteMarkup } from "@subvertic/svelte";
 export function renderRouteHtml(source) {
   return renderVrlSvelteMarkup(
     source,
-    { symbology: "spanish" },
+    { language: "es", symbology: "spanish" },
     { className: "route-diagram", role: "img" }
   );
 }

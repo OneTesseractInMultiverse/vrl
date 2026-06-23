@@ -36,7 +36,10 @@ const result = compileRoute(source, { layout: { pixelsPerMeter: 5.5 } });
 if (result.ok === false) {
   console.error(result.diagnostics.map(formatDiagnostic).join("\n"));
 } else {
-  const svg = renderTopoSvg(result.model, result.layout, { symbology: "spanish" });
+  const svg = renderTopoSvg(result.model, result.layout, {
+    language: "es",
+    symbology: "spanish"
+  });
   console.log(svg);
 }
 ```
@@ -94,7 +97,7 @@ make publish
 
 `make check` runs the 100 percent coverage gate and npm package dry-run checks. `make run` renders the example VRL document locally.
 
-`make publish` publishes the workspace packages to npm in dependency order. On the first release it publishes the current version; after packages exist on npm, the default `RELEASE=auto` resolves the next available patch version. Use `make publish VERSION=0.2.0`, `make publish RELEASE=minor`, or `make publish OTP=123456` when needed. Local publishing disables npm provenance by default; use `PROVENANCE=true` from a supported CI environment.
+`make publish` publishes the workspace packages to npm in dependency order. On the first release it publishes the current version; after packages exist on npm, the default `RELEASE=auto` resolves the next available patch version. Use `make publish VERSION=0.2.0`, `make publish RELEASE=minor`, or `make publish OTP=123456` when needed. If npm returns `E403` saying two-factor authentication is required, generate a fresh npm one-time password and rerun `make publish OTP=123456`. Local publishing disables npm provenance by default; use `PROVENANCE=true` from a supported CI environment.
 
 ## Open Source
 
@@ -125,7 +128,7 @@ The npm package scope is `@subvertic`, the publishing scope for the VRL project 
 
 `@subvertic/render-svg` exports:
 
-- `renderTopoSvg(model, layout, options)` for SVG topo output.
+- `renderTopoSvg(model, layout, options)` for SVG topo output with an optional localized legend.
 - `resolveTheme(theme, overrides)` plus light and dark theme tokens.
 - `symbolCode(element, profile)` and `resolveSymbolProfile(profile)` for federation-oriented canyon topo abbreviations.
 
@@ -173,9 +176,9 @@ The longer-term grammar will also support nested route, metadata, access, and se
 
 ## Rendering Strategy
 
-The topo renderer is a schematic SVG profile. Layout is computed before rendering, so SVG output remains an adapter concern. Each route element becomes a positioned node with a stable label, federation-oriented topo abbreviation, and detail line. When `metadata entrance_elevation=... exit_elevation=...` is present, the layout uses that total elevation change. Rappel, downclimb, and climb connections default to ladder-like stepped slopes with rungs, segment labels, station ticks, and symbol clearance halos so the route line does not hide symbols. `inclination=80%` controls how much vertical elevation a technical feature contributes: `height=35m inclination=80%` drops `28m` vertically, while `100%` is vertical. A single rappel can include middle redirection anchors with `redirection=12m:left` or `redirections=12m:left,27m:right`, and can split displayed rope stages with `stages=20m+15m`. Use separate `rappel` elements when the route has true separate rappel stations. Theme tokens control terrain, text, route line, water, hazard, rappel, anchor, exit, warning, panel, and background colors.
+The topo renderer is a schematic SVG profile. Layout is computed before rendering, so SVG output remains an adapter concern. Each route element becomes a positioned node with a stable label, federation-oriented topo abbreviation, and detail line. When `metadata entrance_elevation=... exit_elevation=...` is present, the layout uses that total elevation change. Rappel, downclimb, and climb connections default to ladder-like stepped slopes with rungs, segment labels, station ticks, and symbol clearance halos so the route line does not hide symbols. Detail lines label ambiguous fields such as `landing: pool`, `flow: medium`, and `exposure: medium`; level values such as `medium`, `high`, and `critical` render as color-coded badges. The SVG includes a localized color legend by default. Set `legend: false` in renderer options when an embedding surface already explains those fields. `inclination=80%` controls how much vertical elevation a technical feature contributes: `height=35m inclination=80%` drops `28m` vertically, while `100%` is vertical. A single rappel can include middle redirection anchors with `redirection=12m:left` or `redirections=12m:left,27m:right`, and can split displayed rope stages with `stages=20m+15m`. Use separate `rappel` elements when the route has true separate rappel stations. Theme tokens control terrain, text, route line, water, hazard, rappel, anchor, exit, warning, panel, and background colors.
 
-The renderer does not invent general canyon symbols. It uses conventional French/Spanish canyon topo abbreviations through `options.symbology`: `federation`, `french`, or `spanish`. The one explicit VRL extension is a tropical snake hazard: `hazard type=snake` or `hazard type=snake_dense_area`, rendered as `SN` with a simple snake mark.
+The renderer does not invent general canyon symbols. It uses conventional French/Spanish canyon topo abbreviations through `options.symbology`: `federation`, `french`, or `spanish`. Diagram text can be generated in English or Spanish through `options.language`: `en` or `es`; `symbology: "spanish"` also selects Spanish labels by default. The one explicit VRL extension is a tropical snake hazard: `hazard type=snake` or `hazard type=snake_dense_area`, rendered as `SN` with a simple snake mark.
 
 See [docs/symbology.md](docs/symbology.md) for profile details and federation context.
 

@@ -42,7 +42,7 @@ export function renderRoute(source) {
 
 Diagnostics are rendered as text when the route is invalid, which keeps validation failures visible during development and content review.
 
-Compiler layout options live under `options.layout`. Renderer options such as `symbology`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Custom Keys and Direct State
 
@@ -52,7 +52,7 @@ import { loadRouteSource } from "$lib/routes";
 export const load = createVrlSvelteKitLoad({
   key: "routeDiagram",
   source: ({ params }) => loadRouteSource(params.slug),
-  options: { symbology: "federation", layout: { pixelsPerMeter: 6 } }
+  options: { language: "es", symbology: "federation", layout: { pixelsPerMeter: 6 } }
 });
 ```
 

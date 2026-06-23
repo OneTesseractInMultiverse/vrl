@@ -33,7 +33,7 @@ For API-backed routes, load the source string in the parent component and pass i
 ```jsx
 <VrlDiagram
   source={source}
-  options={{ symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
+  options={{ language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
   className="route-diagram"
   diagnosticsClassName="route-diagram-diagnostics"
   role="img"
@@ -42,4 +42,4 @@ For API-backed routes, load the source string in the parent component and pass i
 />
 ```
 
-`options` are passed to both the compiler/layout and SVG renderer. Compiler layout options live under `options.layout` and include `width`, `spineX`, `marginY`, `marginBottom`, and `pixelsPerMeter`; renderer options include top-level `symbology`, `theme`, and `themeTokens`.
+`options` are passed to both the compiler/layout and SVG renderer. Compiler layout options live under `options.layout` and include `width`, `spineX`, `marginY`, `marginBottom`, and `pixelsPerMeter`; renderer options include top-level `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens`. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.

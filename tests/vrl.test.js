@@ -660,28 +660,144 @@ test("resolveTheme applies overrides", () => {
   assert.equal(svg.resolveTheme("light", { background: "#eeeeee" }).background, "#eeeeee");
 });
 
+test("resolveDiagramLanguage accepts Spanish aliases", () => {
+  assert.equal(svg.resolveDiagramLanguage("es-CR"), "es");
+});
+
+test("resolveDiagramLanguage defaults non-string values", () => {
+  assert.equal(svg.resolveDiagramLanguage(null), "en");
+});
+
+test("resolveDiagramLanguage defaults unknown languages", () => {
+  assert.equal(svg.resolveDiagramLanguage("de"), "en");
+});
+
+test("diagramText returns Spanish summary labels", () => {
+  assert.equal(svg.diagramText("es").difficulty, "Dificultad");
+});
+
+test("elementLabel falls back for unknown element types", () => {
+  assert.equal(svg.elementLabel("custom", "es"), "custom");
+});
+
+test("localizeDetailValue translates known Spanish values", () => {
+  assert.equal(svg.localizeDetailValue("medium", "es"), "medio");
+});
+
+test("localizeDetailValue leaves unknown strings unchanged", () => {
+  assert.equal(svg.localizeDetailValue("technical", "es"), "technical");
+});
+
+test("localizeDetailValue leaves non-string values unchanged", () => {
+  assert.equal(svg.localizeDetailValue(3, "es"), 3);
+});
+
+test("resolveRenderLanguage uses explicit language", () => {
+  assert.equal(svg.resolveRenderLanguage({ language: "es" }), "es");
+});
+
+test("resolveRenderLanguage uses locale aliases", () => {
+  assert.equal(svg.resolveRenderLanguage({ locale: "es-CR" }), "es");
+});
+
+test("resolveRenderLanguage uses Spanish symbology as a default", () => {
+  assert.equal(svg.resolveRenderLanguage({ symbology: "spanish" }), "es");
+});
+
 test("renderTopoSvg includes an accessible title", () => {
   assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /<title>Rio Azul topo<\/title>/);
 });
 
 test("renderTopoSvg uses explicit README-safe dimensions", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="557"/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="673"/);
+});
+
+test("renderTopoSvg can hide the legend", () => {
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /width="640" height="557"/);
 });
 
 test("renderTopoSvg includes total elevation change", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /Desnivel: 70m \(1240m-1170m\)/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /Elevation change: 70m \(1240m-1170m\)/);
+});
+
+test("renderTopoSvg supports Spanish diagram labels", () => {
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { language: "es" }), /Desnivel: 70m \(1240m-1170m\)/);
 });
 
 test("renderTopoSvg passes Spanish symbology options", () => {
   assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { symbology: "spanish" }), />P<\/text>/);
 });
 
+test("renderTopoSvg uses Spanish labels with Spanish symbology", () => {
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { symbology: "spanish" }), /Poza P1/);
+});
+
 test("renderInfoBox falls back when metadata is absent", () => {
-  assert.match(svg.renderInfoBox({ name: "A" }, { width: 400 }, svg.resolveTheme()), /Dificultad: sin dato/);
+  assert.match(svg.renderInfoBox({ name: "A" }, { width: 400 }, svg.resolveTheme()), /Difficulty: no data/);
+});
+
+test("renderInfoBox supports Spanish fallback labels", () => {
+  assert.match(svg.renderInfoBox({ name: "A" }, { width: 400 }, svg.resolveTheme(), "es"), /Dificultad: sin dato/);
 });
 
 test("renderTopoSvg includes terrain profile layer", () => {
   assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /vrl-terrain-profile/);
+});
+
+test("renderTopoSvg includes a topo legend", () => {
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /vrl-legend/);
+});
+
+test("renderTopoSvg omits the legend when disabled", () => {
+  assert.doesNotMatch(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /vrl-legend/);
+});
+
+test("renderLegend color-codes English flow levels", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /vrl-level-badge-medium/);
+});
+
+test("renderLegend color-codes Spanish level labels", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme(), "es"), />medio<\/text>/);
+});
+
+test("topoLegendHeight returns default legend space", () => {
+  assert.equal(svg.topoLegendHeight(), 116);
+});
+
+test("renderDetailLine color-codes labeled levels", () => {
+  assert.match(svg.renderDetailLine("flow: medium", 10, 20, svg.resolveTheme()), /vrl-level-badge-medium/);
+});
+
+test("renderDetailLine color-codes standalone levels", () => {
+  assert.match(svg.renderDetailLine("medium", 10, 20, svg.resolveTheme()), /vrl-level-badge-medium/);
+});
+
+test("renderDetailLine keeps plain detail text", () => {
+  assert.match(svg.renderDetailLine("landing: pool", 10, 20, svg.resolveTheme()), /landing: pool/);
+});
+
+test("renderDetailLine keeps unlabeled plain text", () => {
+  assert.match(svg.renderDetailLine("plain", 10, 20, svg.resolveTheme()), /plain/);
+});
+
+test("renderDetailLine returns empty markup for empty details", () => {
+  assert.equal(svg.renderDetailLine("", 10, 20, svg.resolveTheme()), "");
+});
+
+test("renderLevelBadge renders Spanish level text", () => {
+  assert.match(svg.renderLevelBadge("medium", 10, 20, "es"), />medio<\/text>/);
+});
+
+test("renderLevelBadge rejects non-level text", () => {
+  assert.equal(svg.renderLevelBadge("technical", 10, 20), "");
+});
+
+test("resolveLevelValue maps Spanish values", () => {
+  assert.equal(svg.resolveLevelValue("medio", "es"), "medium");
+});
+
+test("resolveLevelValue rejects non-string values", () => {
+  assert.equal(svg.resolveLevelValue(3), null);
 });
 
 test("renderTopoSvg stacks dense labels", () => {
@@ -959,8 +1075,16 @@ test("formatElementTitle includes generated identifiers", () => {
   assert.equal(svg.formatElementTitle(validCompiled().model.elements[2]), "Rappel R1");
 });
 
+test("formatElementTitle supports Spanish labels", () => {
+  assert.equal(svg.formatElementTitle(validCompiled().model.elements[2], "es"), "Rapel R1");
+});
+
 test("formatElementDetail formats rappel details", () => {
   assert.equal(svg.formatElementDetail(validCompiled().model.elements[2]), "35m / 70m / bolts");
+});
+
+test("formatElementDetail supports Spanish values", () => {
+  assert.equal(svg.formatElementDetail(validCompiled().model.elements[4], "es"), "4m / exposicion: medio");
 });
 
 test("formatElementDetail formats walk details", () => {
@@ -968,7 +1092,7 @@ test("formatElementDetail formats walk details", () => {
 });
 
 test("formatElementDetail formats downclimb details", () => {
-  assert.equal(svg.formatElementDetail(validCompiled().model.elements[4]), "4m / medium");
+  assert.equal(svg.formatElementDetail(validCompiled().model.elements[4]), "4m / exposure: medium");
 });
 
 test("formatElementDetail formats note details", () => {
@@ -979,8 +1103,12 @@ test("formatElementDetail handles empty note details", () => {
   assert.equal(svg.formatElementDetail({ type: "note", attributes: {} }), "");
 });
 
-test("formatElementDetail formats default note attributes", () => {
-  assert.equal(svg.formatElementDetail(validCompiled().model.elements[5]), "Avoid after heavy rain");
+test("formatElementDetail formats hazard severity before notes", () => {
+  assert.equal(svg.formatElementDetail(validCompiled().model.elements[5]), "severity: high / Avoid after heavy rain");
+});
+
+test("formatElementDetail falls back to hazard type without notes", () => {
+  assert.equal(svg.formatElementDetail({ type: "hazard", attributes: { type: "swift_water" } }), "swift_water");
 });
 
 test("formatElementDetail formats default type attributes", () => {
@@ -1024,15 +1152,27 @@ test("formatTopoLabel formats rappel height labels", () => {
 });
 
 test("formatTopoDetail formats rappel rope labels", () => {
-  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[2]), "70m / 2 anchors / pool / medium / 80%");
+  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[2]), "70m / 2 anchors / landing: pool / flow: medium / 80%");
+});
+
+test("formatTopoDetail supports Spanish values", () => {
+  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[2], null, "es"), "70m / 2 anclajes / llegada: poza / flujo: medio / 80%");
+});
+
+test("formatTopoDetail uses singular Spanish anchor labels", () => {
+  assert.equal(svg.formatTopoDetail({ type: "rappel", attributes: { rope: { meters: 20 }, anchor_count: 1 } }, null, "es"), "20m / 1 anclaje");
 });
 
 test("formatTopoDetail formats downclimb landing labels", () => {
-  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[4]), "4m / medium / ledge / 65%");
+  assert.equal(svg.formatTopoDetail(validCompiled().model.elements[4]), "4m / exposure: medium / landing: ledge / 65%");
 });
 
 test("formatTopoDetail keeps plain rappel details without expressive fields", () => {
   assert.equal(svg.formatTopoDetail({ type: "rappel", attributes: { rope: { meters: 20 } } }), "20m");
+});
+
+test("formatTopoDetail omits empty landing labels", () => {
+  assert.equal(svg.formatTopoDetail({ type: "rappel", attributes: { rope: { meters: 20 }, landing: "" } }), "20m");
 });
 
 test("formatTopoDetail formats singular redirection counts", () => {
@@ -1040,7 +1180,7 @@ test("formatTopoDetail formats singular redirection counts", () => {
 });
 
 test("formatTopoDetail keeps plain downclimb details without landings", () => {
-  assert.equal(svg.formatTopoDetail({ type: "downclimb", attributes: { height: { meters: 4 }, exposure: "medium" } }), "4m / medium");
+  assert.equal(svg.formatTopoDetail({ type: "downclimb", attributes: { height: { meters: 4 }, exposure: "medium" } }), "4m / exposure: medium");
 });
 
 test("formatTopoDetail falls back for non-descents", () => {

@@ -16,7 +16,7 @@ help:
 	@printf '  %-18s %s\n' 'make pack-dry-run' 'Inspect npm package contents without writing tarballs'
 	@printf '  %-18s %s\n' 'make publish-dry-run' 'Validate npm publish file lists without registry login'
 	@printf '  %-18s %s\n' 'make publish-plan' 'Show the next local npm publish plan'
-	@printf '  %-18s %s\n' 'make publish' 'Publish workspaces to npm in dependency order'
+	@printf '  %-18s %s\n' 'make publish' 'Publish workspaces to npm; use OTP=123456 when npm 2FA is required'
 	@printf '  %-18s %s\n' 'make clean' 'Remove generated local artifacts'
 
 install:
