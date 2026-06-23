@@ -5,6 +5,7 @@ export {
   exportRouteJson
 } from "./application/compile-route.js";
 export { createDiagnostic, formatDiagnostic, hasBlockingDiagnostics } from "./domain/diagnostics.js";
+export { isInclinationField, normalizeInclinationValue, parseInclinationToken } from "./domain/inclinations.js";
 export {
   createEmptyRoute,
   createRouteElement,
@@ -14,6 +15,26 @@ export {
   summarizeRoute
 } from "./domain/model.js";
 export { isMeasurementField, normalizeAttributeValue, parseMeasurementToken } from "./domain/measurements.js";
-export { computeVerticalLayout, elementVisualWeight } from "./layout/vertical-layout.js";
+export {
+  isRappelStagesField,
+  isRedirectionField,
+  normalizeRappelDetailValue,
+  parseRappelStagesToken,
+  parseRedirectionToken,
+  parseRedirectionsToken
+} from "./domain/rappel-details.js";
+export {
+  computeElevationLayout,
+  computeVerticalLayout,
+  elevationSegmentDeltas,
+  elementVisualWeight,
+  hasElevationProfile,
+  horizontalProgress,
+  residualDistributionWeights,
+  routeElevationProfile,
+  technicalSegmentDelta,
+  technicalVerticalMeters,
+  verticalDirection
+} from "./layout/vertical-layout.js";
 export { parseAttributeTokens, parseVrl, stripComment, tokenize } from "./parser/line-parser.js";
 export { validateElement, validateRoute } from "./validation/validate-route.js";

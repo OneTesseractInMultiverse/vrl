@@ -23,13 +23,13 @@ Framework adapters are intentionally thin. They accept framework-specific inputs
 
 `domain/measurements.js` parses and normalizes metric measurement tokens. The first release accepts meters and stores normalized `meters` values internally.
 
-`domain/model.js` creates route elements, generates stable element identifiers, normalizes measurement-bearing attributes, and computes summary values such as highest rappel and required rope.
+`domain/model.js` creates route elements, generates stable element identifiers, normalizes measurement-bearing attributes, rappel redirections, rappel stages, and computes summary values such as highest rappel, required rope, entrance elevation, exit elevation, and total elevation change.
 
 `parser/line-parser.js` parses compact VRL source. It preserves line and column locations in diagnostics so editors, documentation pages, and CI logs can point to the source of a problem.
 
-`validation/validate-route.js` checks semantic rules such as required rappel fields, positive measurements, known anchors, known pool types, hazard severity values, and rope shorter than rappel height warnings.
+`validation/validate-route.js` checks semantic rules such as required rappel and climb fields, positive measurements, known anchors, known pool types, technical slope shape, station, landing, flow, inclination, anchor count, mid-rappel redirections, staged rappel lengths, metadata elevation syntax, hazard severity values, and rope shorter than rappel height warnings.
 
-`layout/vertical-layout.js` turns ordered route elements into positioned nodes. It is pure layout math and does not emit SVG.
+`layout/vertical-layout.js` turns ordered route elements into positioned nodes with horizontal progression, upward movement for climbs, and elevation-aware y positions when entrance and exit elevations are available. It is pure layout math and does not emit SVG.
 
 `application/compile-route.js` coordinates parse, validation, normalization, layout, and JSON export. It also exposes `createRouteCompiler(overrides)` so alternate parser, validator, layout, normalization, or export ports can be injected without changing the use-case coordinator.
 

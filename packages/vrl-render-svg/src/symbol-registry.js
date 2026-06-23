@@ -7,6 +7,7 @@ const SYMBOL_PROFILES = {
     walk: "M",
     rappel: "R",
     downclimb: "D",
+    climb: "C",
     pool: "V",
     hazard: "!",
     note: "i"
@@ -17,6 +18,7 @@ const SYMBOL_PROFILES = {
     walk: "M",
     rappel: "R",
     downclimb: "D",
+    climb: "C",
     pool: "V",
     hazard: "!",
     note: "i"
@@ -27,6 +29,7 @@ const SYMBOL_PROFILES = {
     walk: "A",
     rappel: "R",
     downclimb: "D",
+    climb: "C",
     pool: "P",
     hazard: "!",
     note: "i"

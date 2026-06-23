@@ -2,8 +2,11 @@ const MEASUREMENT_FIELDS = new Set([
   "distance",
   "height",
   "rope",
+  "traverse",
   "total_distance",
   "total_descent",
+  "entrance_elevation",
+  "exit_elevation",
   "vertical_gain",
   "descent"
 ]);

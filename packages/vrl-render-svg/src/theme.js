@@ -1,8 +1,9 @@
 export const LIGHT_THEME = {
-  background: "#ffffff",
-  text: "#182026",
-  mutedText: "#5d6b76",
-  routeLine: "#59656f",
+  background: "#e8f2f2",
+  terrain: "#d8d1bb",
+  text: "#111111",
+  mutedText: "#303030",
+  routeLine: "#111111",
   water: "#1479a6",
   hazard: "#b42318",
   warning: "#c77700",
@@ -14,6 +15,7 @@ export const LIGHT_THEME = {
 
 export const DARK_THEME = {
   background: "#14171a",
+  terrain: "#2e3129",
   text: "#eef2f5",
   mutedText: "#a8b3bd",
   routeLine: "#c3ccd4",

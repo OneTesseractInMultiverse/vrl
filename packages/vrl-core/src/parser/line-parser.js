@@ -7,6 +7,7 @@ const ELEMENT_KEYWORDS = new Set([
   "walk",
   "rappel",
   "downclimb",
+  "climb",
   "pool",
   "hazard",
   "note"
@@ -53,7 +54,7 @@ export function parseVrl(source) {
         "error",
         `Unknown VRL statement "${keyword}"`,
         location,
-        "Use route, metadata, start, exit, walk, rappel, downclimb, pool, hazard, or note."
+        "Use route, metadata, start, exit, walk, rappel, downclimb, climb, pool, hazard, or note."
       )
     );
   });

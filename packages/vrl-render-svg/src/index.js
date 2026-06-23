@@ -12,8 +12,36 @@ export {
   symbolKind
 } from "./symbol-registry.js";
 export {
+  anchorMarkCount,
+  dropLadderGeometry,
+  formatTopoDetail,
+  formatTopoLabel,
+  inclinationPercent,
+  needsSegmentArrow,
+  rappelHeightMeters,
+  rappelStagesForElement,
+  redirectionRatio,
+  redirectionsForElement,
+  renderAnchorMarks,
+  renderDropLadderSegment,
+  renderDropRungs,
+  renderInfoBox,
   renderNode,
-  renderSymbolMarker
+  renderRappelStageMarkers,
+  renderRedirectionMarkers,
+  renderRouteSegments,
+  renderSegmentLabels,
+  renderStationTicks,
+  renderStageBoundary,
+  renderSymbolMarker,
+  renderTerrainProfile,
+  renderWaterSegments,
+  segmentLabel,
+  segmentLabelPosition,
+  segmentTechnicalElement,
+  technicalLinePoint,
+  terrainProfilePath,
+  routeSegmentPath
 } from "./svg-renderer.js";
 export { renderTopoSvg } from "./svg-renderer.js";
 export { escapeXml } from "./xml.js";

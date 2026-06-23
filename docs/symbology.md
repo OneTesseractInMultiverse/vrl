@@ -13,6 +13,7 @@ The shared canyon symbols in the current implementation are deliberately conserv
 ```text
 R    rappel / rapel
 D    downclimb / desescalade / destrepe
+C    climb / escalade / escalada
 M    marche / movement on foot
 V    vasque / pool
 !    hazard
@@ -21,7 +22,7 @@ i    note
 
 The Spanish profile uses `P` for pool/poza and `A` for walking/on-foot travel. The French profile uses `DEP` and `SORT` for start and exit labels, while the Spanish profile uses `INI` and `FIN`.
 
-The renderer does not copy federation artwork. It renders these as text symbols on the route spine so public documentation stays portable and easy to diff.
+The renderer does not copy federation artwork. It renders these as text symbols on the route profile so public documentation stays portable and easy to diff. Ladder-style technical slopes, inclination, rungs, segment labels, station ticks, anchor-count marks, rappel stage labels, and mid-rappel redirection anchors are diagram structure and route detail, not a new general symbol family.
 
 ## Federation Context
 

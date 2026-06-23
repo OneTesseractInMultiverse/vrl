@@ -10,10 +10,10 @@ const VrlDiagram = createVrlDiagramComponent(React);
 
 const source = `
 route "Rio Azul"
-metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III"
+metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III" entrance_elevation=1240m exit_elevation=1170m
 start "Entrance"
 walk distance=120m
-rappel "R1" height=35m rope=70m anchor=bolts
+rappel "R1" height=35m rope=70m anchor=bolts inclination=80%
 pool type=deep
 exit "Left bank trail"
 `;

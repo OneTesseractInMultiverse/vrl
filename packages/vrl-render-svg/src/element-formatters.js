@@ -4,6 +4,7 @@ const ELEMENT_COLOR_TOKENS = {
   walk: "routeLine",
   rappel: "rappel",
   downclimb: "anchor",
+  climb: "anchor",
   pool: "water",
   hazard: "hazard",
   note: "warning"
@@ -15,6 +16,7 @@ const ELEMENT_LABELS = {
   walk: "Walk",
   rappel: "Rappel",
   downclimb: "Downclimb",
+  climb: "Climb",
   pool: "Pool",
   hazard: "Hazard",
   note: "Note"
@@ -41,7 +43,7 @@ export function formatElementDetail(element) {
     return formatMeasurement(element.attributes.distance);
   }
 
-  if (element.type === "downclimb") {
+  if (element.type === "downclimb" || element.type === "climb") {
     return [formatMeasurement(element.attributes.height), element.attributes.exposure]
       .filter(Boolean)
       .join(" / ");

@@ -59,7 +59,7 @@ The npm package scope is `@stev`, from Sociedad Técnica de Exploración Vertica
 - `parseVrl(source)` for parsing compact VRL source into an AST and syntax diagnostics.
 - `validateRoute(ast)` for semantic diagnostics.
 - `normalizeRoute(ast)` for a stable route model with generated element identifiers.
-- `computeVerticalLayout(model, options)` for route-node layout.
+- `computeVerticalLayout(model, options)` for route-node layout, including elevation-aware y positions when entrance and exit elevations are present.
 - `compileRoute(source, options)` for the first complete application use case.
 - `createRouteCompiler(overrides)` for injecting alternate parser, validator, layout, normalization, or export ports.
 - `exportRouteJson(model)` for structured JSON output.
@@ -87,12 +87,13 @@ The first implemented grammar is compact and line-oriented:
 document        := route metadata* element*
 route           := "route" quoted_text
 metadata        := "metadata" attribute*
-element         := start | exit | walk | rappel | downclimb | pool | hazard | note
+element         := start | exit | walk | rappel | downclimb | climb | pool | hazard | note
 start           := "start" quoted_text? attribute*
 exit            := "exit" quoted_text? attribute*
 walk            := "walk" attribute*
 rappel          := "rappel" quoted_id? attribute*
 downclimb       := "downclimb" quoted_id? attribute*
+climb           := "climb" quoted_id? attribute*
 pool            := "pool" attribute*
 hazard          := "hazard" attribute*
 note            := "note" quoted_text
@@ -105,7 +106,7 @@ The longer-term grammar will also support nested route, metadata, access, and se
 
 ## Rendering Strategy
 
-The initial topo renderer is a schematic vertical SVG. Layout is computed before rendering, so SVG output remains an adapter concern. Each route element becomes a node on a vertical spine with a stable label, federation-oriented topo symbol, and detail line. Theme tokens control text, route line, water, hazard, rappel, anchor, exit, warning, and background colors.
+The topo renderer is a schematic SVG profile. Layout is computed before rendering, so SVG output remains an adapter concern. Each route element becomes a positioned node with a stable label, federation-oriented topo abbreviation, and detail line. When `metadata entrance_elevation=... exit_elevation=...` is present, the layout uses that total elevation change. Rappel, downclimb, and climb connections default to ladder-like stepped slopes with rungs, segment labels, station ticks, and symbol clearance halos so the route line does not hide symbols. `inclination=80%` controls how much vertical elevation a technical feature contributes: `height=35m inclination=80%` drops `28m` vertically, while `100%` is vertical. A single rappel can include middle redirection anchors with `redirection=12m:left` or `redirections=12m:left,27m:right`, and can split displayed rope stages with `stages=20m+15m`. Use separate `rappel` elements when the route has true separate rappel stations. Theme tokens control terrain, text, route line, water, hazard, rappel, anchor, exit, warning, panel, and background colors.
 
 The renderer does not invent general canyon symbols. It uses conventional French/Spanish canyon topo abbreviations through `options.symbology`: `federation`, `french`, or `spanish`. The one explicit VRL extension is a tropical snake hazard: `hazard type=snake` or `hazard type=snake_dense_area`, rendered as `SN` with a simple snake mark.
 
@@ -138,12 +139,20 @@ npm run coverage
 
 ```vrl
 route "Rio Azul"
-metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III"
+metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III" entrance_elevation=1240m exit_elevation=1170m
 start "Entrance"
 walk distance=120m note="Riverbed approach"
-rappel "R1" height=35m rope=70m anchor=bolts note="Waterfall line"
+rappel "R1" height=35m rope=70m anchor=bolts inclination=80% stages=20m+15m redirection=12m:left note="Waterfall line"
 pool type=deep
-downclimb "D1" height=4m exposure=medium
+downclimb "D1" height=4m exposure=medium inclination=65%
 hazard type=swift_water severity=high note="Avoid after heavy rain"
 exit "Left bank trail"
+```
+
+Expressive descent attributes are ordinary `key=value` fields, so existing files remain compatible:
+
+```vrl
+rappel "R1" height=35m rope=70m traverse=50m anchor=bolts anchor_count=2 station=left landing=pool flow=medium shape=ladder inclination=80% stages=20m+15m redirections=12m:left,27m:right
+downclimb "D1" height=4m exposure=medium anchor_count=1 station=right landing=ledge shape=ladder inclination=65%
+climb "C1" height=5m exposure=medium station=right landing=trail shape=ladder inclination=55%
 ```
