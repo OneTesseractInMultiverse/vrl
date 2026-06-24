@@ -24,6 +24,7 @@ export {
   parseRedirectionsToken
 } from "./domain/rappel-details.js";
 export {
+  applyMinimumNodeGap,
   computeElevationLayout,
   computeVerticalLayout,
   elevationSegmentDeltas,
@@ -31,6 +32,7 @@ export {
   hasElevationProfile,
   horizontalProgress,
   residualDistributionWeights,
+  resolveHorizontalScale,
   routeElevationProfile,
   technicalSegmentDelta,
   technicalVerticalMeters,

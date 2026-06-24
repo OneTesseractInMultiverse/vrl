@@ -10,7 +10,17 @@ export const LIGHT_THEME = {
   anchor: "#5865d6",
   rappel: "#4b5563",
   exit: "#16794c",
-  panel: "#f6f8fa"
+  panel: "#f6f8fa",
+  flowBadge: "#1479a6",
+  flowBadgeText: "#ffffff",
+  exposureBadge: "#5865d6",
+  exposureBadgeText: "#ffffff",
+  hazardSeverityBadge: "#b42318",
+  hazardSeverityBadgeText: "#ffffff",
+  inclinationBadge: "#c77700",
+  inclinationBadgeText: "#111111",
+  levelBadge: "#4b5563",
+  levelBadgeText: "#ffffff"
 };
 
 export const DARK_THEME = {
@@ -25,7 +35,17 @@ export const DARK_THEME = {
   anchor: "#a9b3ff",
   rappel: "#d7dde3",
   exit: "#7ee0a7",
-  panel: "#1f252b"
+  panel: "#1f252b",
+  flowBadge: "#5cc8ff",
+  flowBadgeText: "#111111",
+  exposureBadge: "#a9b3ff",
+  exposureBadgeText: "#111111",
+  hazardSeverityBadge: "#ff8a80",
+  hazardSeverityBadgeText: "#111111",
+  inclinationBadge: "#ffd166",
+  inclinationBadgeText: "#111111",
+  levelBadge: "#d7dde3",
+  levelBadgeText: "#111111"
 };
 
 export function resolveTheme(theme = "light", overrides = {}) {

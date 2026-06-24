@@ -27,7 +27,9 @@ exit "Old metal ladder"
 const result = compileRoute(source, {
   layout: {
     width: 900,
-    pixelsPerMeter: 6
+    horizontalScale: 1.15,
+    pixelsPerMeter: 6,
+    minNodeGap: 68
   }
 });
 
@@ -85,12 +87,16 @@ compileRoute(source, {
   layout: {
     width: 900,
     spineX: 120,
+    horizontalScale: 1.15,
     marginY: 120,
     marginBottom: 80,
-    pixelsPerMeter: 6
+    pixelsPerMeter: 6,
+    minNodeGap: 68
   }
 });
 ```
+
+`horizontalScale` controls how far route nodes advance across the canvas. Values above `1` use more horizontal space while preserving the vertical profile. `minNodeGap` keeps dense elevation-aware diagrams readable by adding visual spacing when nearby route nodes would overlap. Set it to `0` for strict elevation scale.
 
 ## License
 

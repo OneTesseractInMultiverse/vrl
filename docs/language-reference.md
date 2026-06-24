@@ -44,7 +44,7 @@ Measurements must use meters in the first release. Values such as `35m`, `120m`,
 
 ## Elevation Profile
 
-When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining descent between entrance and exit is distributed across non-technical progression segments so the final exit node lands at the provided elevation.
+When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining descent between entrance and exit is distributed across non-technical progression segments so the final exit node lands at the provided elevation. The default layout also enforces readable visual spacing between nearby nodes, so dense hazards, pools, stations, and rappels do not stack their symbols; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
 
 ## Expressive Descent Attributes
 
@@ -66,9 +66,9 @@ redirections  comma-separated mid-rappel redirection anchors, such as 12m:left,2
 stages        plus-separated rappel stage lengths, such as 20m+15m
 ```
 
-The SVG renderer labels ambiguous diagram detail fields, so `flow=medium` appears as `flow: medium` and `exposure=medium` appears as `exposure: medium`. Level values such as `low`, `medium`, `high`, and `critical` render as color-coded badges. The default diagram legend uses the same colors to explain supported flow, exposure, severity, and inclination values in the selected diagram language.
+The SVG renderer labels ambiguous diagram detail fields, so `flow=medium` appears as `flow: medium` and `exposure=medium` appears as `exposure: medium`. Flow, exposure, hazard severity, and inclination values render as category-colored badges. Values such as `dry`, `low`, `medium`, `high`, and `critical` share the color of their field category instead of using separate intensity colors. The default diagram legend explains the active topo abbreviation profile and uses the same category colors to explain supported flow, exposure, severity, and inclination values in the selected diagram language.
 
-`shape=ladder` is the default visual behavior for rappels, downclimbs, and climbs. It renders stepped shelves, a sloped or vertical technical line with an arrow, and small rungs so the diagram reads like a classic canyon profile. `inclination=100%` is vertical; lower values slant the ladder in the direction of travel. Climbs use the same field but render upward.
+`shape=ladder` is the default visual behavior for rappels, downclimbs, and climbs. It renders stepped shelves, a sloped or vertical technical line with an arrow, and small rungs so the diagram reads like a classic canyon profile. `inclination=100%` is vertical; lower values slant the ladder in the direction of travel and shorten the vertical contribution relative to the element height. Climbs use the same field but render upward.
 
 Use `redirection` or `redirections` when a single rappel has intermediate redirection anchors along the same rope line. The distance is measured from the rappel head and must be greater than `0m` and shorter than the rappel `height`; the side must be `left`, `right`, `center`, or `unknown`. Use `stages` when that single rappel should show multiple rope-length sections, for example before and after a redirection. Use two separate `rappel` elements when the canyon has two actual rappel stations.
 

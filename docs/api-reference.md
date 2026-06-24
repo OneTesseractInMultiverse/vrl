@@ -30,7 +30,9 @@ const result = compileRoute(source, {
   layout: {
     width: 900,
     spineX: 120,
+    horizontalScale: 1.15,
     pixelsPerMeter: 6,
+    minNodeGap: 68,
     marginY: 120,
     marginBottom: 80
   }
@@ -46,7 +48,7 @@ if (result.ok === false) {
 }
 ```
 
-Layout options are nested under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
+Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
 
 Returned shape:
 
@@ -117,7 +119,7 @@ Renderer options:
 }
 ```
 
-`language` controls diagram text such as element names, route-summary labels, accessibility labels, the legend, and common detail values. `locale` is accepted as an alias. If neither is set, `symbology: "spanish"` selects Spanish text; otherwise English text is used. `legend` defaults to `true`; set it to `false` only when the embedding surface already explains detail fields such as flow, exposure, severity, and inclination. Level values such as `medium`, `high`, and `critical` render as color-coded SVG badges and use matching colors in the legend.
+`language` controls diagram text such as element names, route-summary labels, accessibility labels, the legend, and common detail values. `locale` is accepted as an alias. If neither is set, `symbology: "spanish"` selects Spanish text; otherwise English text is used. `legend` defaults to `true`; set it to `false` only when the embedding surface already explains topo abbreviations and detail fields such as flow, exposure, severity, and inclination. Flow, exposure, hazard severity, and inclination values render as category-colored SVG badges and use matching colors in the legend. Lower-level helpers such as `dropLadderGeometry` and `technicalLineVerticalDelta` expose the same scaled technical-line geometry for custom renderers.
 
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 

@@ -51,7 +51,7 @@ const html = renderVrlSvelteMarkup("", {}, { diagram });
 
 Pass `source` for simple use. Pass `diagram` from `createVrlSvelteDiagramState` when a parent component or server route owns compilation.
 
-Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## SSR Helper
 

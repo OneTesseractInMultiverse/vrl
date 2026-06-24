@@ -516,6 +516,10 @@ test("computeVerticalLayout respects width options", () => {
   assert.equal(core.computeVerticalLayout(validCompiled().model, { width: 720 }).width, 720);
 });
 
+test("computeVerticalLayout applies horizontal scale options", () => {
+  assert.equal(core.computeVerticalLayout(core.normalizeRoute(core.parseVrl('route "A"\nstart "S"\nwalk distance=10m').ast), { horizontalScale: 1.5 }).nodes[1].x, 183);
+});
+
 test("computeVerticalLayout includes elevation metadata", () => {
   assert.equal(core.computeVerticalLayout(validCompiled().model).elevation.totalChangeMeters, 70);
 });
@@ -533,7 +537,7 @@ test("computeVerticalLayout honors custom weighted layout margins", () => {
 });
 
 test("computeElevationLayout honors custom pixel scale", () => {
-  assert.equal(core.computeElevationLayout(validCompiled().model, { pixelsPerMeter: 1 }).height, 242);
+  assert.equal(core.computeElevationLayout(validCompiled().model, { pixelsPerMeter: 1 }).height, 580);
 });
 
 test("computeElevationLayout handles empty elevation models", () => {
@@ -541,7 +545,27 @@ test("computeElevationLayout handles empty elevation models", () => {
 });
 
 test("computeElevationLayout honors custom elevation layout margins", () => {
-  assert.deepEqual(core.computeElevationLayout(validCompiled().model, { spineX: 10, marginY: 20, marginBottom: 5, pixelsPerMeter: 1 }).spine, { x: 10, y1: 20, y2: 90 });
+  assert.deepEqual(core.computeElevationLayout(validCompiled().model, { spineX: 10, marginY: 20, marginBottom: 5, pixelsPerMeter: 1 }).spine, { x: 10, y1: 20, y2: 428 });
+});
+
+test("computeElevationLayout enforces readable node gaps", () => {
+  assert.equal(core.computeElevationLayout(validCompiled().model).nodes[5].y - core.computeElevationLayout(validCompiled().model).nodes[4].y, 68);
+});
+
+test("computeElevationLayout can disable readable node gaps", () => {
+  assert.equal(core.computeElevationLayout(validCompiled().model, { pixelsPerMeter: 1, minNodeGap: 0 }).height, 242);
+});
+
+test("computeElevationLayout applies horizontal scale options", () => {
+  assert.equal(core.computeElevationLayout(validCompiled().model, { horizontalScale: 1.5 }).nodes[1].x, 183);
+});
+
+test("applyMinimumNodeGap preserves upward segment direction", () => {
+  assert.deepEqual(core.applyMinimumNodeGap([{ x: 0, y: 50 }, { x: 1, y: 40 }], 20, 45), [{ x: 0, y: 65 }, { x: 1, y: 45 }]);
+});
+
+test("applyMinimumNodeGap preserves larger elevation-scaled gaps", () => {
+  assert.deepEqual(core.applyMinimumNodeGap([{ y: 100 }, { y: 250 }, { y: 260 }], 68, 0).map((node) => node.y), [100, 250, 318]);
 });
 
 test("hasElevationProfile detects complete elevation metadata", () => {
@@ -644,6 +668,26 @@ test("horizontalProgress defaults progression spacing", () => {
   assert.equal(core.horizontalProgress({ type: "walk" }), 58);
 });
 
+test("resolveHorizontalScale accepts positive finite numbers", () => {
+  assert.equal(core.resolveHorizontalScale(1.25), 1.25);
+});
+
+test("resolveHorizontalScale defaults missing values", () => {
+  assert.equal(core.resolveHorizontalScale(), 1);
+});
+
+test("resolveHorizontalScale rejects non-number values", () => {
+  assert.equal(core.resolveHorizontalScale("1.25"), 1);
+});
+
+test("resolveHorizontalScale rejects non-finite values", () => {
+  assert.equal(core.resolveHorizontalScale(Number.POSITIVE_INFINITY), 1);
+});
+
+test("resolveHorizontalScale rejects nonpositive values", () => {
+  assert.equal(core.resolveHorizontalScale(0), 1);
+});
+
 test("verticalDirection moves climbs upward", () => {
   assert.equal(core.verticalDirection({ type: "climb" }), -1);
 });
@@ -709,11 +753,11 @@ test("renderTopoSvg includes an accessible title", () => {
 });
 
 test("renderTopoSvg uses explicit README-safe dimensions", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="673"/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="824"/);
 });
 
 test("renderTopoSvg can hide the legend", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /width="640" height="557"/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /width="640" height="668"/);
 });
 
 test("renderTopoSvg includes total elevation change", () => {
@@ -728,8 +772,8 @@ test("renderTopoSvg passes Spanish symbology options", () => {
   assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { symbology: "spanish" }), />P<\/text>/);
 });
 
-test("renderTopoSvg uses Spanish labels with Spanish symbology", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { symbology: "spanish" }), /Poza P1/);
+test("renderTopoSvg omits redundant Spanish pool text labels", () => {
+  assert.doesNotMatch(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { symbology: "spanish" }), />Poza P1<\/text>/);
 });
 
 test("renderInfoBox falls back when metadata is absent", () => {
@@ -752,24 +796,64 @@ test("renderTopoSvg omits the legend when disabled", () => {
   assert.doesNotMatch(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /vrl-legend/);
 });
 
-test("renderLegend color-codes English flow levels", () => {
-  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /vrl-level-badge-medium/);
+test("renderLegend color-codes English flow labels by category", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /vrl-detail-badge-flow/);
 });
 
 test("renderLegend color-codes Spanish level labels", () => {
   assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme(), "es"), />medio<\/text>/);
 });
 
-test("topoLegendHeight returns default legend space", () => {
-  assert.equal(svg.topoLegendHeight(), 116);
+test("renderLegend color-codes exposure labels by category", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /vrl-detail-badge-exposure/);
 });
 
-test("renderDetailLine color-codes labeled levels", () => {
-  assert.match(svg.renderDetailLine("flow: medium", 10, 20, svg.resolveTheme()), /vrl-level-badge-medium/);
+test("renderLegend color-codes hazard severity labels by category", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /vrl-detail-badge-hazardSeverity/);
+});
+
+test("renderLegend color-codes inclination labels by category", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /vrl-detail-badge-inclination/);
+});
+
+test("renderLegend includes federation symbol explanations", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme()), /<tspan font-weight="800" fill="#111111">M<\/tspan><tspan> = Walk<\/tspan>/);
+});
+
+test("renderLegend includes Spanish profile symbol explanations", () => {
+  assert.match(svg.renderLegend(validCompiled().layout, svg.resolveTheme(), "es", "spanish"), /<tspan font-weight="800" fill="#111111">P<\/tspan><tspan> = Poza<\/tspan>/);
+});
+
+test("legendSymbolRows uses active profile codes", () => {
+  assert.equal(svg.legendSymbolRows("es", "spanish")[0][2][0], "A");
+});
+
+test("topoLegendHeight returns default legend space", () => {
+  assert.equal(svg.topoLegendHeight(), 156);
+});
+
+test("renderDetailLine color-codes flow levels by category", () => {
+  assert.match(svg.renderDetailLine("flow: medium", 10, 20, svg.resolveTheme()), /vrl-detail-badge-flow/);
+});
+
+test("renderDetailLine color-codes exposure levels by category", () => {
+  assert.match(svg.renderDetailLine("exposure: medium", 10, 20, svg.resolveTheme()), /vrl-detail-badge-exposure/);
+});
+
+test("renderDetailLine color-codes hazard severity levels by category", () => {
+  assert.match(svg.renderDetailLine("severity: high", 10, 20, svg.resolveTheme()), /vrl-detail-badge-hazardSeverity/);
+});
+
+test("renderDetailLine color-codes inclination values by category", () => {
+  assert.match(svg.renderDetailLine("80%", 10, 20, svg.resolveTheme()), /vrl-detail-badge-inclination/);
+});
+
+test("renderDetailLine uses one flow color for different flow values", () => {
+  assert.deepEqual([...svg.renderDetailLine("flow: low / flow: high", 10, 20, svg.resolveTheme()).matchAll(/<rect[^>]+fill="([^"]+)"/g)].map((match) => match[1]), ["#1479a6", "#1479a6"]);
 });
 
 test("renderDetailLine color-codes standalone levels", () => {
-  assert.match(svg.renderDetailLine("medium", 10, 20, svg.resolveTheme()), /vrl-level-badge-medium/);
+  assert.match(svg.renderDetailLine("medium", 10, 20, svg.resolveTheme()), /vrl-detail-badge-level/);
 });
 
 test("renderDetailLine keeps plain detail text", () => {
@@ -780,12 +864,44 @@ test("renderDetailLine keeps unlabeled plain text", () => {
   assert.match(svg.renderDetailLine("plain", 10, 20, svg.resolveTheme()), /plain/);
 });
 
+test("renderDetailLine pads separators after compact measurements", () => {
+  assert.match(svg.renderDetailLine("60m / 2 anchors", 10, 20, svg.resolveTheme()), /60m<\/text><text x="31"[^>]*stroke-width="1"[^>]*> \/ <\/text><text x="52"/);
+});
+
+test("detailLineRows wraps compact detail fields at separators", () => {
+  assert.equal(svg.detailLineRows("flow: medium / exposure: high", 48, "en").length, 2);
+});
+
+test("detailLineRows wraps long plain details by words", () => {
+  assert.equal(svg.detailLineRows("severity: high / Avoid the final dam pool before the old metal ladder", 120, "en").length, 4);
+});
+
+test("detailLineRows preserves blank plain detail text", () => {
+  assert.deepEqual(svg.detailLineRows("   ", 1, "en"), [["   "]]);
+});
+
+test("detailLineRows returns empty rows for empty details", () => {
+  assert.deepEqual(svg.detailLineRows(""), []);
+});
+
+test("renderDetailLine places wrapped rows below the first detail row", () => {
+  assert.match(svg.renderDetailLine("severity: high / Avoid the final dam pool before the old metal ladder", 10, 20, svg.resolveTheme(), "en", 120), /y="34"/);
+});
+
 test("renderDetailLine returns empty markup for empty details", () => {
   assert.equal(svg.renderDetailLine("", 10, 20, svg.resolveTheme()), "");
 });
 
 test("renderLevelBadge renders Spanish level text", () => {
   assert.match(svg.renderLevelBadge("medium", 10, 20, "es"), />medio<\/text>/);
+});
+
+test("renderLevelBadge falls back to neutral category for unknown badge categories", () => {
+  assert.match(svg.renderLevelBadge("medium", 10, 20, "en", "unknown", svg.resolveTheme()), /vrl-detail-badge-level/);
+});
+
+test("renderLevelBadge rejects non-string inclination values", () => {
+  assert.equal(svg.renderLevelBadge(80, 10, 20, "en", "inclination", svg.resolveTheme()), "");
 });
 
 test("renderLevelBadge rejects non-level text", () => {
@@ -800,8 +916,9 @@ test("resolveLevelValue rejects non-string values", () => {
   assert.equal(svg.resolveLevelValue(3), null);
 });
 
-test("renderTopoSvg stacks dense labels", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /vrl-label-leader/);
+test("renderTopoSvg uses readable node spacing before rendering labels", () => {
+  const layout = validCompiled().layout;
+  assert.equal(layout.nodes.slice(1).every((node, index) => node.y - layout.nodes[index].y >= 68), true);
 });
 
 test("terrainProfilePath handles empty layouts", () => {
@@ -809,7 +926,7 @@ test("terrainProfilePath handles empty layouts", () => {
 });
 
 test("terrainProfilePath follows route nodes", () => {
-  assert.equal(svg.terrainProfilePath(validCompiled().layout), "M 0 557 L 0 152 L 38 142 L 106 122 L 164 173 L 208 243 L 266 397 L 308 453 L 366 468 L 444 507 L 640 547 L 640 557 Z");
+  assert.equal(svg.terrainProfilePath(validCompiled().layout), "M 0 668 L 0 152 L 38 142 L 106 122 L 164 190 L 208 260 L 266 414 L 308 482 L 366 550 L 444 618 L 640 658 L 640 668 Z");
 });
 
 test("renderTerrainProfile uses terrain color", () => {
@@ -852,22 +969,27 @@ test("renderRouteSegments can render direct descent shapes", () => {
   );
 });
 
+test("renderRouteSegments marks direct technical shapes without ladder rungs", () => {
+  assert.match(svg.renderRouteSegments({ nodes: [{ x: 10, y: 10, element: { type: "rappel", attributes: { shape: "direct" } } }, { x: 30, y: 40, element: { type: "pool", attributes: {} } }] }, svg.resolveTheme()), /vrl-drop-direct/);
+});
+
 test("routeSegmentPath renders traverse bends", () => {
-  assert.equal(svg.routeSegmentPath(validCompiled().layout.nodes[0], validCompiled().layout.nodes[1]), "M 96 108 L 113 134 L 154 159");
+  assert.equal(svg.routeSegmentPath(validCompiled().layout.nodes[0], validCompiled().layout.nodes[1]), "M 96 108 L 113 142 L 154 176");
 });
 
 test("routeSegmentPath renders drop ledges", () => {
-  assert.equal(svg.routeSegmentPath(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3]), "M 198 229 L 214 229 L 246 306 L 256 383");
+  assert.equal(svg.routeSegmentPath(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3]), "M 198 246 L 214 246 L 246 323 L 256 400");
 });
 
 test("dropLadderGeometry builds vertical descent coordinates by default", () => {
   assert.deepEqual(svg.dropLadderGeometry(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3], { attributes: {} }), {
     startX: 198,
-    startY: 229,
+    startY: 246,
     dropX: 232,
     bottomX: 232,
+    bottomY: 400,
     endX: 256,
-    endY: 383
+    endY: 400
   });
 });
 
@@ -877,6 +999,30 @@ test("dropLadderGeometry supports leftward drops", () => {
 
 test("dropLadderGeometry applies inclination to ladder angle", () => {
   assert.equal(svg.dropLadderGeometry(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3], validCompiled().model.elements[2]).bottomX, 246);
+});
+
+test("dropLadderGeometry scales technical line length from elevation profile", () => {
+  assert.equal(svg.dropLadderGeometry({ x: 10, y: 100 }, { x: 70, y: 200 }, { attributes: { height: { meters: 4 }, inclination: { percent: 50 } } }, { elevation: { pixelsPerMeter: 5 } }).bottomY, 110);
+});
+
+test("technicalLineVerticalDelta uses technical height and elevation scale", () => {
+  assert.equal(svg.technicalLineVerticalDelta({ y: 100 }, { y: 200 }, { attributes: { height: { meters: 4 }, inclination: { percent: 50 } } }, { elevation: { pixelsPerMeter: 5 } }), 10);
+});
+
+test("technicalLineVerticalDelta uses upward direction for scaled climbs", () => {
+  assert.equal(svg.technicalLineVerticalDelta({ y: 200 }, { y: 100 }, { attributes: { height: { meters: 4 }, inclination: { percent: 50 } } }, { elevation: { pixelsPerMeter: 5 } }), -10);
+});
+
+test("technicalLineVerticalDelta falls back to node spacing without elevation scale", () => {
+  assert.equal(svg.technicalLineVerticalDelta({ y: 100 }, { y: 200 }, { attributes: { height: { meters: 4 } } }), 100);
+});
+
+test("technicalLineVerticalDelta falls back when layout has no elevation", () => {
+  assert.equal(svg.technicalLineVerticalDelta({ y: 100 }, { y: 200 }, { attributes: { height: { meters: 4 } } }, {}), 100);
+});
+
+test("renderDirectTechnicalSegment scales the direct technical slope", () => {
+  assert.match(svg.renderDirectTechnicalSegment({ x: 10, y: 100 }, { x: 70, y: 200 }, svg.resolveTheme(), { attributes: { height: { meters: 4 }, inclination: { percent: 50 } } }, { elevation: { pixelsPerMeter: 5 } }), /L 48 110/);
 });
 
 test("renderDropLadderSegment renders rungs", () => {
@@ -921,6 +1067,14 @@ test("rappelHeightMeters reads normalized heights", () => {
 
 test("rappelHeightMeters defaults missing heights to zero", () => {
   assert.equal(svg.rappelHeightMeters({ attributes: {} }), 0);
+});
+
+test("rappelHeightMeters defaults missing attributes to zero", () => {
+  assert.equal(svg.rappelHeightMeters({}), 0);
+});
+
+test("rappelHeightMeters defaults missing elements to zero", () => {
+  assert.equal(svg.rappelHeightMeters(), 0);
 });
 
 test("redirectionRatio uses rappel height", () => {
@@ -996,7 +1150,7 @@ test("segmentLabel returns empty for unlabeled segments", () => {
 });
 
 test("segmentLabelPosition uses segment midpoint", () => {
-  assert.deepEqual(svg.segmentLabelPosition(validCompiled().layout.nodes[1], validCompiled().layout.nodes[2]), { x: 176, y: 187 });
+  assert.deepEqual(svg.segmentLabelPosition(validCompiled().layout.nodes[1], validCompiled().layout.nodes[2]), { x: 176, y: 204 });
 });
 
 test("segmentTechnicalElement uses outgoing rappel elements", () => {
@@ -1019,6 +1173,14 @@ test("renderStationTicks clears route lines under stations", () => {
   assert.match(svg.renderStationTicks(validCompiled().layout, svg.resolveTheme()), /vrl-station-tick-clearance/);
 });
 
+test("renderStationTicks skips technical nodes without station data", () => {
+  assert.equal(svg.renderStationTicks({ nodes: [{ x: 10, y: 20, element: { type: "rappel", attributes: {} } }] }, svg.resolveTheme()), "");
+});
+
+test("renderStationTick offsets right station ticks", () => {
+  assert.match(svg.renderStationTick({ x: 10, y: 20, element: { attributes: { station: "right" } } }, svg.resolveTheme()), /x1="18"/);
+});
+
 test("renderNode renders hazard symbols", () => {
   assert.match(svg.renderNode(validCompiled().layout.nodes[5], svg.resolveTheme()), /vrl-symbol-hazard/);
 });
@@ -1032,7 +1194,15 @@ test("renderNode strokes labels for line clearance", () => {
 });
 
 test("renderNodes stacks close node labels", () => {
-  assert.match(svg.renderNodes({ nodes: [{ x: 10, y: 20, element: { type: "walk", id: "W1", attributes: {} } }, { x: 12, y: 22, element: { type: "pool", id: "P1", attributes: {} } }] }, svg.resolveTheme()), /vrl-label-leader/);
+  assert.match(svg.renderNodes({ width: 120, nodes: [{ x: 10, y: 20, element: { type: "walk", id: "W1", attributes: { distance: { meters: 10 } } } }, { x: 12, y: 22, element: { type: "pool", id: "P1", attributes: { type: "deep" } } }] }, svg.resolveTheme()), /vrl-label-leader/);
+});
+
+test("renderNodes leaves compact symbol-only nodes unstacked", () => {
+  assert.doesNotMatch(svg.renderNodes({ width: 120, nodes: [{ x: 10, y: 20, element: { type: "pool", id: "P1", attributes: {} } }] }, svg.resolveTheme()), /vrl-label-leader/);
+});
+
+test("renderNode skips visible labels for symbol-only nodes without details", () => {
+  assert.doesNotMatch(svg.renderNode({ x: 10, y: 20, element: { type: "pool", id: "P1", label: null, attributes: {} } }, svg.resolveTheme()), /x="38" y="11"/);
 });
 
 test("nodeLabelPlacement honors minimum label positions", () => {
@@ -1135,6 +1305,10 @@ test("renderSymbolMarker renders clearance halos", () => {
   assert.match(svg.renderSymbolMarker({ x: 10, y: 10 }, { type: "walk", id: "W1", attributes: {} }, "#111111"), /vrl-symbol-clearance/);
 });
 
+test("renderSymbolMarker spaces standard letters above the node circle", () => {
+  assert.match(svg.renderSymbolMarker({ x: 10, y: 20 }, { type: "rappel", id: "R1", attributes: {} }, "#111111"), /<text x="10" y="5"/);
+});
+
 test("renderSymbolMarker falls back to black stroke", () => {
   assert.match(svg.renderSymbolMarker({ x: 10, y: 10 }, { type: "custom", id: "X1", attributes: {} }, ""), /stroke="#111111"/);
 });
@@ -1149,6 +1323,18 @@ test("formatTopoLabel falls back for unlabeled exits", () => {
 
 test("formatTopoLabel formats rappel height labels", () => {
   assert.equal(svg.formatTopoLabel(validCompiled().model.elements[2]), "R1, 35m");
+});
+
+test("formatTopoLabel omits generic walk labels", () => {
+  assert.equal(svg.formatTopoLabel(validCompiled().model.elements[1]), "");
+});
+
+test("formatTopoLabel omits generic pool labels", () => {
+  assert.equal(svg.formatTopoLabel(validCompiled().model.elements[3]), "");
+});
+
+test("formatTopoLabel omits generic hazard labels", () => {
+  assert.equal(svg.formatTopoLabel(validCompiled().model.elements[5]), "");
 });
 
 test("formatTopoDetail formats rappel rope labels", () => {

@@ -6,10 +6,11 @@ import { renderTopoSvg } from "@subvertic/render-svg";
 const source = readFileSync(new URL("../examples/quebrada-gata.vrl", import.meta.url), "utf8");
 const result = compileRoute(source, {
   layout: {
-    width: 1120,
-    pixelsPerMeter: 3.8,
+    width: 1200,
+    horizontalScale: 1.15,
+    pixelsPerMeter: 5.3,
     marginY: 120,
-    marginBottom: 88
+    marginBottom: 96
   }
 });
 const outputPath = process.argv[2];

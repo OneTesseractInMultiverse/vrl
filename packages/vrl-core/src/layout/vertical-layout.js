@@ -24,13 +24,14 @@ function computeWeightedLayout(route, options = {}) {
   const top = options.marginY ?? 108;
   const bottom = options.marginBottom ?? 64;
   const baseSpacing = options.baseSpacing ?? 68;
+  const horizontalScale = resolveHorizontalScale(options.horizontalScale);
   let cursorX = spineX;
   let cursorY = top;
 
   const rawNodes = route.elements.map((element, index) => {
     if (index > 0) {
       cursorY += baseSpacing * elementVisualWeight(element) * verticalDirection(element);
-      cursorX += horizontalProgress(element);
+      cursorX += horizontalProgress(element) * horizontalScale;
     }
 
     return {
@@ -67,6 +68,8 @@ export function computeElevationLayout(route, options = {}) {
   const top = options.marginY ?? 108;
   const bottom = options.marginBottom ?? 64;
   const pixelsPerMeter = options.pixelsPerMeter ?? 5.5;
+  const minNodeGap = options.minNodeGap ?? 68;
+  const horizontalScale = resolveHorizontalScale(options.horizontalScale);
   const profile = routeElevationProfile(route);
   const segmentDeltas = elevationSegmentDeltas(route);
   let cursorX = spineX;
@@ -74,7 +77,7 @@ export function computeElevationLayout(route, options = {}) {
 
   const nodesWithElevation = route.elements.map((element, index) => {
     if (index > 0) {
-      cursorX += horizontalProgress(element);
+      cursorX += horizontalProgress(element) * horizontalScale;
       cursorElevation -= segmentDeltas[index - 1];
     }
 
@@ -87,10 +90,11 @@ export function computeElevationLayout(route, options = {}) {
   });
 
   const highestElevation = Math.max(profile.entranceMeters, profile.exitMeters, ...nodesWithElevation.map((node) => node.elevationMeters));
-  const nodes = nodesWithElevation.map((node) => ({
+  const elevationNodes = nodesWithElevation.map((node) => ({
     ...node,
     y: Math.round(top + ((highestElevation - node.elevationMeters) * pixelsPerMeter))
   }));
+  const nodes = applyMinimumNodeGap(elevationNodes, minNodeGap, top);
   const lastY = nodes.length === 0 ? top : Math.max(...nodes.map((node) => node.y));
 
   return {
@@ -107,6 +111,35 @@ export function computeElevationLayout(route, options = {}) {
     },
     nodes
   };
+}
+
+export function applyMinimumNodeGap(nodes, minNodeGap = 0, top = 0) {
+  if (minNodeGap <= 0 || nodes.length < 2) {
+    return nodes;
+  }
+
+  const adjusted = [nodes[0]];
+
+  for (let index = 1; index < nodes.length; index += 1) {
+    const previousOriginal = nodes[index - 1];
+    const previousAdjusted = adjusted[index - 1];
+    const node = nodes[index];
+    const descends = node.y >= previousOriginal.y;
+    const originalGap = Math.abs(node.y - previousOriginal.y);
+    const requiredGap = Math.max(minNodeGap, originalGap);
+    const y = descends
+      ? Math.max(node.y, previousAdjusted.y + requiredGap)
+      : Math.min(node.y, previousAdjusted.y - requiredGap);
+
+    adjusted.push({ ...node, y });
+  }
+
+  const minY = Math.min(...adjusted.map((node) => node.y));
+  const shiftY = minY < top ? top - minY : 0;
+
+  return shiftY === 0
+    ? adjusted
+    : adjusted.map((node) => ({ ...node, y: node.y + shiftY }));
 }
 
 export function hasElevationProfile(route) {
@@ -200,6 +233,10 @@ export function horizontalProgress(element) {
   }
 
   return 58;
+}
+
+export function resolveHorizontalScale(value = 1) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 1;
 }
 
 export function verticalDirection(element) {

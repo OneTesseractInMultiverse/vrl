@@ -43,7 +43,7 @@ renderTopoSvg(model, layout, {
 });
 ```
 
-`language` controls diagram labels, the built-in legend, and common detail values. `symbology` controls canyon topo abbreviations. The renderer labels ambiguous values such as `flow: medium` and `exposure: medium`; level values render as color-coded badges and the default legend uses the same colors for flow, exposure, severity, and inclination levels. The renderer uses federation-oriented text abbreviations rather than copied artwork. When `language` is not set, `symbology: "spanish"` selects Spanish text by default.
+`language` controls diagram labels, the built-in legend, and common detail values. `symbology` controls canyon topo abbreviations and the symbol key shown in the legend. Generic progression nodes use the compact symbol marker only, avoiding redundant visible labels such as `Pool P1` or `Poza P1`. When the layout includes elevation metadata, the renderer scales the technical part of each rappel, downclimb, or climb from `height * inclination * pixelsPerMeter`; connector lines absorb any extra spacing needed to keep symbols readable. The renderer labels ambiguous values such as `flow: medium` and `exposure: medium`; flow, exposure, hazard severity, and inclination values render as category-colored badges. Values such as `dry`, `low`, `medium`, and `high` share the color of their field category. The renderer uses federation-oriented text abbreviations rather than copied artwork. When `language` is not set, `symbology: "spanish"` selects Spanish text by default.
 
 ## Useful Exports
 
