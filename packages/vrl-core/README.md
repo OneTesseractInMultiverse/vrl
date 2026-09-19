@@ -84,7 +84,15 @@ Diagnostics are plain objects:
 }
 ```
 
-Use `formatDiagnostic(diagnostic)` for readable CLI, build, or editor output.
+Use `formatDiagnostic(diagnostic)` for readable CLI, build, or editor output. Conflicts add optional `relatedLocations: [{ message, location }]` alongside the primary location; the formatter includes every related coordinate. `createDiagnostic` accepts these as an optional sixth argument and preserves the original record shape when the list is empty.
+
+## Document Order and Repeated Keys
+
+Documents require one route declaration first, then zero or more metadata lines, then elements. Notes and hazards begin the element phase too. Metadata lines can introduce distinct keys before that phase; they cannot resume afterward. Repeated route declarations and duplicate attribute keys are syntax errors even when values match. Keys are case-sensitive and scoped to one element or the document-wide metadata map. There is no override syntax. Route names and free-form note text still treat assignment-shaped tokens as text.
+
+The parser retains first accepted values only for error recovery and reports both source locations for conflicts. Invalid ordering statements do not enter the partial AST. Compilation returns no model, layout, or JSON after a blocking diagnostic; manual consumers must inspect diagnostics before normalizing. `parseVrl` expects a document; use `lexVrlLine` or `parseAttributeTokens` for isolated fragments. The latter retains `{ attributes, diagnostics }`, with first values and duplicate diagnostics.
+
+Braces remain cosmetic: one final standalone `{` token is removed, and standalone `}` lines are ignored, without balancing or nested scopes. They never reset document order or duplicate-key scope. See the [document grammar](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#document-order-and-duplicate-keys), [brace rules](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#provisional-brace-handling), and [recovery API](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#document-grammar-and-conflict-diagnostics).
 
 ## Quoted Text and Lexical Tokens
 

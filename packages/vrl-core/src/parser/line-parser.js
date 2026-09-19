@@ -1,8 +1,11 @@
 import { createDiagnostic } from "../domain/diagnostics.js";
 import { createEmptyRoute, createRouteElement } from "../domain/model.js";
 import { lexVrlLine } from "./lexer.js";
+import { parseAttributes } from "./attribute-parser.js";
+import { advanceDocumentOrder, initialDocumentOrder } from "./document-order.js";
 
 export { lexVrlLine, stripComment, tokenize } from "./lexer.js";
+export { parseAttributeTokens } from "./attribute-parser.js";
 
 const ELEMENT_KEYWORDS = new Set([
   "start",
@@ -17,76 +20,39 @@ const ELEMENT_KEYWORDS = new Set([
 ]);
 
 export function parseVrl(source) {
-  const ast = createEmptyRoute(source);
-  const diagnostics = [];
-
-  source.split(/\r?\n/).forEach((rawLine, index) => {
-    const lexed = lexVrlLine(rawLine, { line: index + 1, column: 1 });
-    diagnostics.push(...lexed.diagnostics);
-    if (lexed.diagnostics.length > 0) return;
-    const tokens = statementTokens(lexed.tokens);
-    if (tokens.length === 0) return;
-    const keyword = tokens[0].raw;
-    const location = tokens[0].span.start;
-
-    if (keyword === "route") {
-      parseRouteLine(ast, tokens, diagnostics, location);
-      return;
-    }
-
-    if (keyword === "metadata") {
-      parseMetadataLine(ast, tokens, diagnostics);
-      return;
-    }
-
-    if (ELEMENT_KEYWORDS.has(keyword)) {
-      ast.elements.push(parseElementLine(keyword, tokens, diagnostics, location));
-      return;
-    }
-
-    diagnostics.push(
-      createDiagnostic(
-        "syntax",
-        "error",
-        `Unknown VRL statement "${keyword}"`,
-        location,
-        "Use route, metadata, start, exit, walk, rappel, downclimb, climb, pool, hazard, or note."
-      )
-    );
-  });
-
-  return { ast, diagnostics };
+  const context = { ast: createEmptyRoute(source), diagnostics: [], order: initialDocumentOrder(), metadataKeys: new Map() };
+  source.split(/\r?\n/).forEach((rawLine, index) => parseDocumentLine(context, rawLine, index + 1));
+  return { ast: context.ast, diagnostics: context.diagnostics };
 }
 
-export function parseAttributeTokens(tokens, location) {
-  const lexed = lexVrlLine(tokens.join(" "), location);
-  return lexed.diagnostics.length > 0
-    ? { attributes: {}, diagnostics: lexed.diagnostics }
-    : parseAttributes(lexed.tokens);
+function parseDocumentLine(context, rawLine, line) {
+  const lexed = lexVrlLine(rawLine, { line, column: 1 });
+  context.diagnostics.push(...lexed.diagnostics);
+  if (lexed.diagnostics.length > 0) return;
+  const tokens = statementTokens(lexed.tokens);
+  if (tokens.length === 0) return;
+  const keyword = tokens[0].raw;
+  const location = tokens[0].span.start;
+  if (keyword !== "route" && keyword !== "metadata" && !ELEMENT_KEYWORDS.has(keyword)) {
+    context.diagnostics.push(createDiagnostic("syntax", "error", `Unknown VRL statement "${keyword}"`, location,
+      "Use route, metadata, start, exit, walk, rappel, downclimb, climb, pool, hazard, or note."));
+    return;
+  }
+  const ordered = advanceDocumentOrder(context.order, keyword, location);
+  context.order = ordered.state;
+  context.diagnostics.push(...ordered.diagnostics);
+  if (ordered.diagnostics.length > 0) return;
+  parseStatement(context, keyword, tokens, location);
 }
 
-function parseAttributes(tokens) {
-  const attributes = {};
-  const diagnostics = [];
-
-  tokens.forEach((token) => {
-    if (token.kind !== "attribute") {
-      diagnostics.push(
-        createDiagnostic(
-          "syntax",
-          "error",
-          `Expected key=value attribute but found "${token.raw}"`,
-          token.span.start,
-          "Write attributes such as height=35m or note=\"Main line\"."
-        )
-      );
-      return;
-    }
-
-    attributes[token.key] = token.value;
-  });
-
-  return { attributes, diagnostics };
+function parseStatement({ ast, diagnostics, metadataKeys }, keyword, tokens, location) {
+  if (keyword === "route") {
+    parseRouteLine(ast, tokens, diagnostics, location);
+  } else if (keyword === "metadata") {
+    parseMetadataLine(ast, tokens, diagnostics, metadataKeys);
+  } else {
+    ast.elements.push(parseElementLine(keyword, tokens, diagnostics, location));
+  }
 }
 
 function statementTokens(tokens) {
@@ -107,9 +73,11 @@ function parseRouteLine(ast, tokens, diagnostics, location) {
   ast.name = textOf(tokens.slice(1));
 }
 
-function parseMetadataLine(ast, tokens, diagnostics) {
-  const parsed = parseAttributes(tokens.slice(1));
-  Object.assign(ast.metadata, parsed.attributes);
+function parseMetadataLine(ast, tokens, diagnostics, metadataKeys) {
+  const parsed = parseAttributes(tokens.slice(1), metadataKeys);
+  // Define own properties so keys such as __proto__ remain ordinary source data.
+  Object.defineProperties(ast.metadata, Object.getOwnPropertyDescriptors(parsed.attributes));
+  parsed.keyLocations.forEach((location, key) => metadataKeys.set(key, location));
   diagnostics.push(...parsed.diagnostics);
 }
 

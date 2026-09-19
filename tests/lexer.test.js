@@ -30,19 +30,20 @@ const TEXT_CONTEXTS = [
 for (const [context, sourceFor, textFrom] of TEXT_CONTEXTS) {
   for (const [name, encoded, expected] of QUOTED_VALUES) {
     test(context + " preserves " + name, () => {
-      const result = core.parseVrl(sourceFor(encoded));
+      const source = context === "route name" ? sourceFor(encoded) : 'route "Context"\n' + sourceFor(encoded);
+      const result = core.parseVrl(source);
       assert.deepEqual({ text: textFrom(result.ast), diagnostics: result.diagnostics }, { text: expected, diagnostics: [] });
     });
   }
 }
 
 test("quoted equals signs remain labels before real attributes", () => {
-  assert.deepEqual(core.parseVrl('  start "A=B" note="C=D"').ast.elements[0], {
+  assert.deepEqual(core.parseVrl('route "Context"\n  start "A=B" note="C=D"').ast.elements[0], {
     type: "start",
     id: null,
     label: "A=B",
     attributes: { note: "C=D" },
-    sourceLocation: { line: 1, column: 3 }
+    sourceLocation: { line: 2, column: 3 }
   });
 });
 
@@ -155,9 +156,9 @@ test("lexical errors discard the entire statement and recover on the next line",
 });
 
 test("an opening quote cannot consume text from later physical lines", () => {
-  const result = core.parseVrl('route "A\nB"\nstart "Entry"');
+  const result = core.parseVrl('route "Kept"\nnote "A\nB"\nstart "Entry"');
   assert.deepEqual({ name: result.ast.name, errors: result.diagnostics.map((diagnostic) => diagnostic.location), label: result.ast.elements[0].label }, {
-    name: null, errors: [{ line: 1, column: 7 }, { line: 2, column: 2 }], label: "Entry"
+    name: "Kept", errors: [{ line: 2, column: 6 }, { line: 3, column: 2 }], label: "Entry"
   });
 });
 
@@ -174,7 +175,7 @@ test("comment content is not tokenized or validated", () => {
 });
 
 test("bare attribute values retain equals signs after the first separator", () => {
-  assert.equal(core.parseVrl("metadata expression=A=B").ast.metadata.expression, "A=B");
+  assert.equal(core.parseVrl('route "Context"\nmetadata expression=A=B').ast.metadata.expression, "A=B");
 });
 
 test("legacy unquoted text normalizes token separators and decodes quoted fragments", () => {
@@ -248,20 +249,20 @@ test("quoted text survives normalization and JSON export without being decoded t
 });
 
 test("repeated parses have identical text and locations", () => {
-  const source = 'route "A=B"\n\tstart "C # D"\nmetadata note="E\\\\F"';
+  const source = 'route "A=B"\nmetadata note="E\\\\F"\n\tstart "C # D"';
   assert.deepEqual(core.parseVrl(source), core.parseVrl(source));
 });
 
 for (const count of [1, 3, 5]) {
   test("odd backslash run " + count + " escapes the closing quote", () => {
-    const result = core.parseVrl('note "X' + "\\".repeat(count) + '"');
+    const result = core.parseVrl('route "Context"\nnote "X' + "\\".repeat(count) + '"');
     assert.equal(result.diagnostics[0].message, "Unterminated quoted text.");
   });
 }
 
 for (const count of [2, 4, 6, 10000]) {
   test("even backslash run " + count + " preserves literal backslashes", () => {
-    const result = core.parseVrl('note "X' + "\\".repeat(count) + '"');
+    const result = core.parseVrl('route "Context"\nnote "X' + "\\".repeat(count) + '"');
     assert.deepEqual({ text: result.ast.elements[0].attributes.text, diagnostics: result.diagnostics }, {
       text: "X" + "\\".repeat(count / 2), diagnostics: []
     });
