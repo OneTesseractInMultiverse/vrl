@@ -65,6 +65,14 @@ The renderer checks finite numeric canvas dimensions and positioned coordinates 
 
 React and Svelte accept caller-provided `diagram.svg` as trusted markup and bypass rendering when it is supplied. The embedding application owns that trust decision. See the [API reference](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#renderer-configuration-and-svg-attributes) for the full paint grammar, numeric limits, and precomputed-state contract.
 
+## Text and XML
+
+The summary heading is uppercased before XML encoding, so names such as `R&D <Canyon>` produce valid standalone SVG. The accessible title and description preserve original case. `computeTopoScene(...).infoBox.lines` contains the display text, including the uppercase heading, before escaping.
+
+`escapeXml` converts its input to a string and rejects XML 1.0-invalid characters with `TypeError`: forbidden C0 controls, unpaired surrogates, U+FFFE, and U+FFFF. Tabs, line feeds, carriage returns, and valid Unicode pairs remain supported. Carriage returns are encoded as character references to preserve them across XML parsing. Text and attributes use the same character policy, and original detail text is checked independently of wrapping. No invalid characters are silently replaced or stripped. Pass raw text, including literal entity-looking strings such as `&amp;`, rather than pre-escaped markup.
+
+These restrictions belong to rendering; core model/JSON consumers remain independent of XML. Framework state factories propagate rendering exceptions. See the [text contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#xml-text-and-route-titles) for character ranges and failure behavior.
+
 ## Useful Exports
 
 ```js

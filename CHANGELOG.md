@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Format raw summary titles before XML escaping so names such as `R&D <Canyon>` remain valid in standalone SVG. Prepared summary lines now contain display text; accessible titles/descriptions and the normalized model preserve original case.
+- Share XML 1.0 character validation between text and attributes. Reject invalid controls and unpaired surrogates with `TypeError`, validate original detail text independently of wrapping, and preserve carriage returns through character references. Document rendering failures independently of core source diagnostics.
+- Add independent XML parsing and recovered-text regressions for special titles, Unicode boundaries, literal entity strings, malformed characters, and framework adapter propagation. No dependencies added.
+
 - Fit complete SVG content, including labels, technical decorations, annotations, terrain, the summary, and the legend. Grow the viewport deterministically instead of clipping long routes to the requested width.
 - Add `computeTopoScene` for prepared presentation records and final bounds. Keep physical coordinates unchanged, move the summary above route content and the legend below all labels, and document provisional core dimensions and potentially negative viewport origins.
 - Separate presentation computation, bounds fitting, and SVG serialization without adding runtime dependencies. Reject unsupported derived canvas dimensions and add independent primitive-containment, determinism, immutability, and failure regressions.
