@@ -42,3 +42,4 @@ export { parseAttributeTokens, parseVrl, stripComment, tokenize } from "./parser
 export { validateElement, validateRoute } from "./validation/validate-route.js";
 export { createTraversal, technicalElementIndexesBetween } from "./domain/traversal.js";
 export { validateGeometry } from "./validation/validate-geometry.js";
+export { assertFiniteNumber, assertOptionsRecord, validateLayoutOptions } from "./layout/options.js";

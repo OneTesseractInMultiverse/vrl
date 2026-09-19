@@ -102,6 +102,10 @@ compileRoute(source, {
 
 `horizontalScale` controls how far route nodes advance across the canvas. Values above `1` use more horizontal space while preserving the vertical profile. `minNodeGap` keeps dense elevation-aware diagrams readable by adding visual spacing when nearby route nodes would overlap. Set it to `0` for strict elevation scale.
 
+Layout options must be a plain object with known keys. All values must be finite JavaScript numbers no greater than `Number.MAX_SAFE_INTEGER`; numeric strings and explicit `null` are rejected. `width`, `baseSpacing`, `horizontalScale`, and `pixelsPerMeter` must be positive; `spineX`, `marginY`, `marginBottom`, and `minNodeGap` may be zero. Omitted or `undefined` values use defaults. `baseSpacing` defaults to `68` for schematic layouts.
+
+Invalid types or keys throw `TypeError`; invalid numeric ranges throw `RangeError` when the layout stage is reached. Invalid horizontal scales no longer silently fall back to `1`. These exceptions are separate from source diagnostics and propagate to callers. `validateLayoutOptions(options)` exposes the validation and returns a shallow copy. See the repository's [API reference](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#configuration-validation) for defaults and compatibility details.
+
 ## License
 
 MIT. Copyright (c) 2026 Pedro Guzmán.

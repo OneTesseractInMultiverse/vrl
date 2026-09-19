@@ -1,3 +1,6 @@
+import { assertOptionsRecord } from "@subvertic/core";
+import { validatePaint } from "./paint.js";
+
 export const LIGHT_THEME = {
   background: "#e8f2f2",
   terrain: "#d8d1bb",
@@ -49,9 +52,19 @@ export const DARK_THEME = {
 };
 
 export function resolveTheme(theme = "light", overrides = {}) {
+  if (theme !== "light" && theme !== "dark") throw new TypeError("Theme must be light or dark.");
+  assertOptionsRecord(overrides, "Theme tokens");
+  const tokens = validateThemeTokens(overrides);
   const base = theme === "dark" ? DARK_THEME : LIGHT_THEME;
-  return {
+  return validateThemeTokens({
     ...base,
-    ...overrides
-  };
+    ...tokens
+  });
+}
+
+function validateThemeTokens(tokens) {
+  return Object.fromEntries(Object.entries(tokens).map(([name, value]) => {
+    if (!Object.hasOwn(LIGHT_THEME, name)) throw new TypeError(`Unknown theme token "${name}".`);
+    return [name, validatePaint(value)];
+  }));
 }

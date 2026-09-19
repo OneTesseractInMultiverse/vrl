@@ -77,6 +77,27 @@ const json = exportRouteJson(model);
 
 Use `createRouteCompiler(overrides)` when an application needs to inject custom parser, validator, layout, normalization, or JSON export ports for tests or integration.
 
+### Configuration validation
+
+`computeVerticalLayout` and `computeElevationLayout` validate layout options before computing positions. With the default layout port, `compileRoute` applies the same validation when valid source reaches the layout stage. Options must be plain objects, including objects with a null prototype. Arrays, custom prototypes, unknown layout keys, and `null` are rejected. Omitted options and known properties with value `undefined` use defaults.
+
+| Layout option | Accepted numeric range | Default |
+| --- | --- | --- |
+| `width` | Greater than zero | `640` |
+| `baseSpacing` | Greater than zero | `68` (schematic layout) |
+| `horizontalScale` | Greater than zero | `1` |
+| `pixelsPerMeter` | Greater than zero | `5.5` (elevation layout) |
+| `spineX` | Zero or greater | `96` |
+| `marginY` | Zero or greater | `108` |
+| `marginBottom` | Zero or greater | `64` |
+| `minNodeGap` | Zero or greater | `68` (elevation layout) |
+
+All values must be finite JavaScript numbers no greater than `Number.MAX_SAFE_INTEGER`; fractions are supported. Strings are not coerced, and `NaN` and infinities are rejected. `validateLayoutOptions(options)` exposes this check and returns a shallow copy without modifying the caller's object. `resolveHorizontalScale` follows the same positive-number contract.
+
+Configuration errors throw exceptions: `TypeError` for incorrect types or unsupported keys/values, and `RangeError` for nonfinite or out-of-range numeric values. They are caller configuration errors, not source diagnostics, and framework state factories propagate them. A source error can stop compilation before the layout configuration is inspected. Custom compiler ports own their configuration contracts.
+
+This tightens the previous API: invalid horizontal scales no longer silently fall back to `1`, and numeric strings, negative spacing, unknown layout keys, and explicit `null` values must be corrected by the caller.
+
 ### Technical traversal and geometry validation
 
 The normalized model adds `traversal: { points, segments }`. Points contain `elementIndex`, or `null` for an intermediate/outer boundary. Each segment contains:
@@ -154,6 +175,30 @@ Renderer options:
 
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 
+### Renderer configuration and SVG attributes
+
+`renderTopoSvg` accepts a plain options object. If supplied, `legend` must be a boolean and `theme` must be `"light"` or `"dark"`. Omitted or `undefined` values use defaults; `null` is invalid. The shared options object may also contain compiler options. Existing language, locale, and symbology fallback behavior is unchanged.
+
+`themeTokens` must be a plain object with only keys exported by `LIGHT_THEME` / `DARK_THEME`: `background`, `terrain`, `text`, `mutedText`, `routeLine`, `water`, `hazard`, `warning`, `anchor`, `rappel`, `exit`, `panel`, `flowBadge`, `flowBadgeText`, `exposureBadge`, `exposureBadgeText`, `hazardSeverityBadge`, `hazardSeverityBadgeText`, `inclinationBadge`, `inclinationBadgeText`, `levelBadge`, and `levelBadgeText`. Each supplied token must be a supported paint string; omit a token to inherit it. Token values of `undefined` or `null` are invalid. Overrides are copied and outer whitespace is trimmed.
+
+The paint policy intentionally accepts a subset of [CSS colors](https://www.w3.org/TR/css-color-4/):
+
+- CSS named colors, `transparent`, `currentColor`, and SVG `none`, case-insensitively.
+- Hex colors with 3, 4, 6, or 8 digits.
+- Comma-separated `rgb(r, g, b)` and `rgba(r, g, b, a)`. All three channels must use either numbers from 0 to 255 or percentages from 0 to 100%.
+- Comma-separated `hsl(h, s, l)` and `hsla(h, s, l, a)`. Hue is a finite unitless number in degrees; saturation and lightness are percentages from 0 to 100%.
+- Alpha is a number from 0 to 1 or a percentage from 0 to 100%. Components use ordinary decimal notation, optionally signed, without exponents.
+
+Resource references such as `url(...)`, including local fragments, CSS variables/expressions, escaped spellings, declarations, and other color syntaxes are rejected with `TypeError`. Space-separated modern color functions are not supported. This is a compatibility change for previously unchecked CSS strings and unknown theme names or tokens.
+
+The renderer also checks supplied layout dimensions and positioned geometry. `width` must be positive, `height` nonnegative, and both must be finite numbers no greater than `Number.MAX_SAFE_INTEGER`. Node, optional point, and segment endpoint coordinates, plus technical pixel deltas, must be finite numbers with absolute magnitude no greater than that limit. Layouts require `nodes` and `segments` arrays; `points` is optional. Derived layouts can exceed these limits even when each input option is individually accepted; rendering rejects them.
+
+Every dynamic SVG attribute is XML-encoded at serialization, including generated path strings, class names, accessibility labels, and paint values. Attribute control characters invalid in XML and nonfinite numeric attribute values throw. Lower-level SVG helpers also encode their attributes and validate paint, but callers remain responsible for their geometry and normalized-model contracts. These helpers are not a general SVG sanitizer.
+
+### Precomputed diagram trust boundary
+
+Caller-provided `diagram.svg` is **trusted markup**. React inserts it with `dangerouslySetInnerHTML`; the Svelte component uses `@html`, and `renderVrlSvelteMarkup` embeds it directly. Supplying `diagram` bypasses compilation, configuration validation, and SVG generation. Use state created by VRL's diagram factories within a trusted application pipeline. If an application accepts arbitrary SVG or precomputed states from another source, it must apply its own appropriate sanitization before passing them to these adapters. Escaping wrapper attributes or diagnostics does not sanitize `diagram.svg`. React's `containerProps` and `diagnosticsProps` are also application-owned component props.
+
 ## @subvertic/react
 
 Install:
@@ -200,6 +245,8 @@ Component props:
 ```
 
 Pass `source` and `options` for simple use. Pass `diagram` from `createVrlReactDiagramState` when the parent owns memoization, caching, or server-provided state.
+
+See the [precomputed diagram trust boundary](#precomputed-diagram-trust-boundary) before accepting cached or externally supplied diagram states.
 
 Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 

@@ -2,6 +2,10 @@
 
 The Svelte package exposes both a component and SSR-friendly helpers. The component compiles source internally unless a precomputed `diagram` state is provided.
 
+Invalid layout or renderer configuration throws `TypeError` or `RangeError`. See the [configuration contract](api-reference.md#configuration-validation) and [supported paint values](api-reference.md#renderer-configuration-and-svg-attributes).
+
+Treat a supplied `diagram.svg` as trusted markup: the component uses `@html`, and `renderVrlSvelteMarkup` embeds it directly, bypassing compilation and renderer validation. Use a trusted VRL state factory result, or sanitize arbitrary external SVG within the application before supplying it. See the [trust boundary](api-reference.md#precomputed-diagram-trust-boundary).
+
 ## Component Usage
 
 ```svelte
