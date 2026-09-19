@@ -1,3 +1,4 @@
+import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/core";
 import { resolveTheme } from "./theme.js";
 import {
   elementColorToken,
@@ -181,13 +182,14 @@ export function renderLegendSymbolRow(entries, x, y, theme) {
 }
 
 export function terrainProfilePath(layout) {
-  if (layout.nodes.length === 0) {
+  const points = layout.points ?? layout.nodes;
+  if (points.length === 0) {
     return `M 0 ${layout.height} L ${layout.width} ${layout.height} L ${layout.width} ${layout.height - 54} L 0 ${layout.height - 34} Z`;
   }
 
-  const first = layout.nodes[0];
-  const last = layout.nodes[layout.nodes.length - 1];
-  const surface = layout.nodes.map((node) => `${node.x + 10} ${node.y + 14}`).join(" L ");
+  const first = points[0];
+  const last = points[points.length - 1];
+  const surface = points.map((node) => `${node.x + 10} ${node.y + 14}`).join(" L ");
 
   return `M 0 ${layout.height} L 0 ${first.y + 44} L ${Math.max(0, first.x - 58)} ${first.y + 34} L ${surface} L ${layout.width} ${last.y + 54} L ${layout.width} ${layout.height} Z`;
 }
@@ -216,22 +218,23 @@ export function renderWaterSegments(layout, theme) {
 }
 
 export function renderRouteSegments(layout, theme, language = "en") {
-  return layout.nodes.slice(1).map((node, index) => {
-    const previous = layout.nodes[index];
-    const technicalElement = segmentTechnicalElement(previous, node);
+  if (!Array.isArray(layout.segments)) {
+    throw new TypeError("Route rendering requires layout.segments; recompute the layout with computeVerticalLayout.");
+  }
+  return layout.segments.map((segment) => renderRouteSegment(segment, theme, language)).join("");
+}
 
-    if (technicalElement !== null && (technicalElement.attributes.shape ?? "ladder") === "ladder") {
-      return renderDropLadderSegment(previous, node, theme, technicalElement, language, layout);
-    }
+function renderRouteSegment(segment, theme, language) {
+  if (segment.element === null) return renderConnectionSegment(segment, theme);
+  if ((segment.element.attributes.shape ?? "ladder") === "ladder") {
+    return renderDropLadderSegment(segment.start, segment.end, theme, segment.element, language, segment);
+  }
+  return renderDirectTechnicalSegment(segment.start, segment.end, theme, segment.element, segment);
+}
 
-    if (technicalElement !== null) {
-      return renderDirectTechnicalSegment(previous, node, theme, technicalElement, layout);
-    }
-
-    const path = routeSegmentPath(previous, node, previous.element);
-
-    return `<path class="vrl-route-segment" d="${path}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-  }).join("");
+function renderConnectionSegment(segment, theme) {
+  const path = routeSegmentPath(segment.start, segment.end, segment.start.element);
+  return `<path class="vrl-route-segment" d="${path}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
 export function routeSegmentPath(previous, node, element = previous.element) {
@@ -295,15 +298,11 @@ export function dropLadderGeometry(previous, node, element = previous.element, l
 }
 
 export function technicalLineVerticalDelta(previous, node, element = previous.element, layout = null) {
-  const height = rappelHeightMeters(element);
-  const pixelsPerMeter = layout?.elevation?.pixelsPerMeter;
-
-  if (height > 0 && typeof pixelsPerMeter === "number") {
-    const direction = node.y >= previous.y ? 1 : -1;
-    return direction * Math.max(1, Math.round(height * (inclinationPercent(element) / 100) * pixelsPerMeter));
+  if (layout?.technicalDeltaY === undefined && typeof layout?.elevation?.pixelsPerMeter === "number" && technicalVerticalMeters(element) > 0) {
+    // Compatibility for custom callers; compiled rendering uses the positioned segment.
+    return (node.y >= previous.y ? 1 : -1) * Math.max(1, Math.round(technicalVerticalMeters(element) * layout.elevation.pixelsPerMeter));
   }
-
-  return node.y - previous.y;
+  return layout?.technicalDeltaY ?? node.y - previous.y;
 }
 
 export function renderDropRungs(geometry, theme) {
@@ -692,15 +691,10 @@ export function needsSegmentArrow(element) {
 }
 
 export function segmentTechnicalElement(previous, node) {
-  if (node.element.type === "climb") {
-    return node.element;
-  }
-
-  if (previous.element.type === "rappel" || previous.element.type === "downclimb") {
-    return previous.element;
-  }
-
-  return null;
+  const elements = [previous.element, node.element];
+  const indexes = technicalElementIndexesBetween(elements, 1);
+  if (indexes.length > 1) throw new RangeError("This connection contains two technical elements; use layout.segments.");
+  return indexes.length === 0 ? null : elements[indexes[0]];
 }
 
 export function inclinationPercent(element) {

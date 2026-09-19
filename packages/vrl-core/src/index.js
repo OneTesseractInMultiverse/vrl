@@ -40,3 +40,5 @@ export {
 } from "./layout/vertical-layout.js";
 export { parseAttributeTokens, parseVrl, stripComment, tokenize } from "./parser/line-parser.js";
 export { validateElement, validateRoute } from "./validation/validate-route.js";
+export { createTraversal, technicalElementIndexesBetween } from "./domain/traversal.js";
+export { validateGeometry } from "./validation/validate-geometry.js";

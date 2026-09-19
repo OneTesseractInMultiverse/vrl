@@ -3,12 +3,14 @@ import { normalizeRoute } from "../domain/model.js";
 import { computeVerticalLayout } from "../layout/vertical-layout.js";
 import { parseVrl } from "../parser/line-parser.js";
 import { validateRoute } from "../validation/validate-route.js";
+import { validateGeometry } from "../validation/validate-geometry.js";
 
 export function createRouteCompiler(overrides = {}) {
   const dependencies = {
     parse: parseVrl,
     validate: validateRoute,
     normalize: normalizeRoute,
+    validateGeometry,
     layout: computeVerticalLayout,
     exportJson: exportRouteJson,
     ...overrides
@@ -40,6 +42,10 @@ export function compileRouteWithDependencies(source, options = {}, dependencies)
   }
 
   const model = dependencies.normalize(parsed.ast);
+  diagnostics.push(...(dependencies.validateGeometry ?? validateGeometry)(model));
+  if (hasBlockingDiagnostics(diagnostics)) {
+    return { ok: false, ast: parsed.ast, diagnostics, model: null, layout: null, json: null };
+  }
   const layout = dependencies.layout(model, options.layout);
 
   return {

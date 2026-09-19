@@ -540,8 +540,8 @@ test("computeElevationLayout honors custom pixel scale", () => {
   assert.equal(core.computeElevationLayout(validCompiled().model, { pixelsPerMeter: 1 }).height, 580);
 });
 
-test("computeElevationLayout handles empty elevation models", () => {
-  assert.equal(core.computeElevationLayout({ metadata: { entrance_elevation: { meters: 100 }, exit_elevation: { meters: 90 } }, elements: [] }).height, 172);
+test("computeElevationLayout rejects inconsistent empty elevation models", () => {
+  assert.throws(() => core.computeElevationLayout({ metadata: { entrance_elevation: { meters: 100 }, exit_elevation: { meters: 90 } }, elements: [] }), /inconsistent/);
 });
 
 test("computeElevationLayout honors custom elevation layout margins", () => {
@@ -600,8 +600,8 @@ test("elevationSegmentDeltas returns empty without elevation metadata", () => {
   assert.deepEqual(core.elevationSegmentDeltas({ metadata: {}, elements: [] }), []);
 });
 
-test("elevationSegmentDeltas returns base deltas when no segment weights exist", () => {
-  assert.deepEqual(core.elevationSegmentDeltas({ metadata: { entrance_elevation: { meters: 100 }, exit_elevation: { meters: 90 } }, elements: [{ type: "start", attributes: {} }] }), []);
+test("elevationSegmentDeltas rejects inconsistent profiles without eligible connections", () => {
+  assert.throws(() => core.elevationSegmentDeltas({ metadata: { entrance_elevation: { meters: 100 }, exit_elevation: { meters: 90 } }, elements: [{ type: "start", attributes: {} }] }), /inconsistent/);
 });
 
 test("technicalSegmentDelta uses outgoing rappels", () => {
@@ -636,8 +636,8 @@ test("residualDistributionWeights uses non-technical segment weights", () => {
   assert.deepEqual(core.residualDistributionWeights([{ type: "start" }, { type: "walk" }, { type: "pool" }], [0, 0]), [0.9, 0.85]);
 });
 
-test("residualDistributionWeights falls back to the last segment", () => {
-  assert.deepEqual(core.residualDistributionWeights([{ type: "rappel" }, { type: "pool" }, { type: "downclimb" }], [10, 2]), [0, 1]);
+test("residualDistributionWeights never assigns residuals to technical segments", () => {
+  assert.deepEqual(core.residualDistributionWeights([{ type: "rappel" }, { type: "pool" }, { type: "downclimb" }], [10, 2]), [0, 0]);
 });
 
 test("elementVisualWeight uses known weights", () => {
@@ -946,31 +946,18 @@ test("renderRouteSegments renders ladder drops by default", () => {
 });
 
 test("renderRouteSegments defaults missing descent shape to ladder", () => {
-  assert.match(
-    svg.renderRouteSegments({
-      nodes: [
-        { x: 10, y: 10, element: { type: "rappel", attributes: {} } },
-        { x: 30, y: 40, element: { type: "pool", attributes: {} } }
-      ]
-    }, svg.resolveTheme()),
-    /vrl-drop-ladder/
-  );
+  const result = core.compileRoute('route "A"\nrappel height=10m rope=20m\npool');
+  assert.match(svg.renderRouteSegments(result.layout, svg.resolveTheme()), /vrl-drop-ladder/);
 });
 
 test("renderRouteSegments can render direct descent shapes", () => {
-  assert.doesNotMatch(
-    svg.renderRouteSegments({
-      nodes: [
-        { x: 10, y: 10, element: { type: "rappel", attributes: { shape: "direct" } } },
-        { x: 30, y: 40, element: { type: "pool", attributes: {} } }
-      ]
-    }, svg.resolveTheme()),
-    /vrl-drop-ladder/
-  );
+  const result = core.compileRoute('route "A"\nrappel height=10m rope=20m shape=direct\npool');
+  assert.doesNotMatch(svg.renderRouteSegments(result.layout, svg.resolveTheme()), /vrl-drop-ladder/);
 });
 
 test("renderRouteSegments marks direct technical shapes without ladder rungs", () => {
-  assert.match(svg.renderRouteSegments({ nodes: [{ x: 10, y: 10, element: { type: "rappel", attributes: { shape: "direct" } } }, { x: 30, y: 40, element: { type: "pool", attributes: {} } }] }, svg.resolveTheme()), /vrl-drop-direct/);
+  const result = core.compileRoute('route "A"\nrappel height=10m rope=20m shape=direct\npool');
+  assert.match(svg.renderRouteSegments(result.layout, svg.resolveTheme()), /vrl-drop-direct/);
 });
 
 test("routeSegmentPath renders traverse bends", () => {

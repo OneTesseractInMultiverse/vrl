@@ -64,6 +64,10 @@ import {
 - `createRouteCompiler(overrides)` creates an injectable compiler for tests or alternate ports.
 - `exportRouteJson(model)` serializes normalized route data.
 
+Normalized models include `traversal.points` and `traversal.segments`: domain-owned endpoint references, technical element ownership, direction, and signed physical elevation changes. Positive deltas mean ascent; negative deltas mean descent. Intermediate boundaries keep adjacent descents and climbs separate, and outer boundaries preserve leading/trailing technical features. They do not add source elements.
+
+Layouts retain one `nodes` entry per route element and add all traversal `points` plus positioned `segments`. Renderers should use the latter instead of choosing a technical owner from neighboring nodes. `validateGeometry(model)` checks normalized elevation constraints; compilation calls this injectable port before layout/export. Missing measurements and underdetermined profiles are diagnosed, and inconsistent technical-only profiles block compilation. See the repository API reference for the complete contract and custom renderer migration.
+
 ## Diagnostics
 
 Diagnostics are plain objects:
