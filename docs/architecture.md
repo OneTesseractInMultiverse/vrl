@@ -52,7 +52,11 @@ Layout positions the canonical traversal points and segments. `layout.nodes` sti
 
 `application/compile-route.js` coordinates parse, validation, normalization, layout, and JSON export. It also exposes `createRouteCompiler(overrides)` so alternate parser, validator, layout, normalization, or export ports can be injected without changing the use-case coordinator.
 
-The optional `validateGeometry` port validates the normalized contract. The renderer depends inward on the first-party core package for its compatibility helpers; neither package adds third-party runtime dependencies. Scene organization beyond this segment boundary remains separate follow-up work.
+The optional `validateGeometry` port validates the normalized contract. The renderer depends inward on the first-party core package for its compatibility helpers; neither package adds third-party runtime dependencies. The SVG adapter owns complete presentation bounds: core layout dimensions do not account for adapter-specific fonts or decorations.
+
+`vrl-render-svg/src/presentation.js` contains pure geometry, formatting, label placement, and wrapping calculations extracted from serialization. `topo-scene.js` coordinates presentation preparation and computes envelopes for route decorations, shared detail rows, the summary, and the legend. Its stage/redirection placement records are shared by fitting and serialization. `scene-bounds.js` provides pure numeric envelope union, text estimation, and canvas fitting with explicit range failures. `svg-renderer.js` coordinates scene preparation and SVG serialization, retaining the existing public helper exports.
+
+The final viewport grows around these prepared bounds rather than changing physical geometry to satisfy a fixed canvas. SVG-only concerns stay outside the core, and the renderer performs no DOM measurement or I/O. Requested width determines detail wrapping once, preventing a sizing feedback loop. Conservative text envelopes trade spare space for deterministic output across supported system fonts. Strict XML tests independently inspect emitted primitive extents, alongside input immutability, repeated-render determinism, and numeric failure cases.
 
 ## Dependency Rule
 

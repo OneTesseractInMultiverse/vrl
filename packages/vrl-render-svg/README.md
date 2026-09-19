@@ -49,6 +49,14 @@ renderTopoSvg(model, layout, {
 
 `language` controls diagram labels, the built-in legend, and common detail values. `symbology` controls canyon topo abbreviations and the symbol key shown in the legend. Generic progression nodes use the compact symbol marker only, avoiding redundant visible labels such as `Pool P1` or `Poza P1`. When the layout includes elevation metadata, the renderer scales the technical part of each rappel, downclimb, or climb from `height * inclination * pixelsPerMeter`; connector lines absorb any extra spacing needed to keep symbols readable. The renderer labels ambiguous values such as `flow: medium` and `exposure: medium`; flow, exposure, hazard severity, and inclination values render as category-colored badges. Values such as `dry`, `low`, `medium`, and `high` share the color of their field category. The renderer uses federation-oriented text abbreviations rather than copied artwork. When `language` is not set, `symbology: "spanish"` selects Spanish text by default.
 
+## Canvas Fitting
+
+The final SVG grows to contain the complete route, symbols, labels, technical details, summary, and optional legend. Core layout width/height are minimum framing dimensions. The final `viewBox` can have a negative origin; physical coordinates and elevations are preserved. The summary appears above route content, and the legend follows its lowest label. Long unbroken text expands the canvas, while detail rows wrap once at the requested width.
+
+`computeTopoScene(model, layout, options)` returns the prepared presentation and final `viewBox: { x, y, width, height }` without producing SVG. Use this viewport or the rendered SVG dimensions when framing output. Treat scene records as read-only snapshots and recompute them after input changes. The legacy `topoLegendHeight` helper remains available but does not predict the full diagram height.
+
+Fitting uses conservative text envelopes without browser APIs or font dependencies. It reserves 1.25 em per UTF-16 unit plus vertical/stroke clearance. Custom CSS that changes font metrics or transforms requires independent fitting. Impossible derived dimensions throw `RangeError` rather than emitting invalid bounds. This policy grows the canvas; it does not paginate routes or eliminate symbol overlap caused by deliberately small node spacing. See the [complete bounds contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#complete-diagram-bounds).
+
 ## Configuration and Markup Contract
 
 Renderer options must be a plain object. `theme` accepts only `light` or `dark`, and `legend` must be a boolean when supplied. Theme overrides must use known token names and supported paint strings: CSS named colors, `transparent`, `currentColor`, `none`, hex colors, or comma-separated `rgb`, `rgba`, `hsl`, and `hsla` within the documented numeric ranges. Resource references (`url(...)`, even local fragments), CSS variables, expressions, and other color syntaxes are rejected. Omit a token to inherit it; explicit `undefined` or `null` token values are invalid.
@@ -62,6 +70,7 @@ React and Svelte accept caller-provided `diagram.svg` as trusted markup and bypa
 ```js
 import {
   renderTopoSvg,
+  computeTopoScene,
   resolveTheme,
   symbolCode,
   resolveSymbolProfile,

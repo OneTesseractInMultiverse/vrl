@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Fit complete SVG content, including labels, technical decorations, annotations, terrain, the summary, and the legend. Grow the viewport deterministically instead of clipping long routes to the requested width.
+- Add `computeTopoScene` for prepared presentation records and final bounds. Keep physical coordinates unchanged, move the summary above route content and the legend below all labels, and document provisional core dimensions and potentially negative viewport origins.
+- Separate presentation computation, bounds fitting, and SVG serialization without adding runtime dependencies. Reject unsupported derived canvas dimensions and add independent primitive-containment, determinism, immutability, and failure regressions.
+
 - Bound source measurements to an absolute magnitude of 1000000000m and six fractional digits; reject nonfinite conversions, unsafe anchor counts, and invalid numeric fields in metadata and all element types. Preserve valid zero/negative elevations and canonicalize negative zero.
 - Guard computed model/layout quantities and custom compiler port outputs; JSON export rejects unsupported numbers instead of silently writing null. Document numeric limits and binary floating-point precision.
 - Rename the example's descriptive metadata `rope="1x60m"` to `rope_inventory="1x60m"`, keeping `rope` consistently numeric.
