@@ -753,11 +753,16 @@ test("renderTopoSvg includes an accessible title", () => {
 });
 
 test("renderTopoSvg uses explicit README-safe dimensions", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="773"/);
+  const markup = svg.renderTopoSvg(validCompiled().model, validCompiled().layout);
+  const dimensions = markup.match(/viewBox="[^" ]+ [^" ]+ ([^" ]+) ([^" ]+)" width="([^" ]+)" height="([^" ]+)"/);
+  assert.deepEqual(dimensions.slice(1, 3), dimensions.slice(3, 5));
 });
 
 test("renderTopoSvg can hide the legend", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /width="640" height="617"/);
+  const result = validCompiled();
+  const withLegend = Number(svg.renderTopoSvg(result.model, result.layout).match(/height="([^"]+)"/)[1]);
+  const withoutLegend = Number(svg.renderTopoSvg(result.model, result.layout, { legend: false }).match(/height="([^"]+)"/)[1]);
+  assert.equal(withoutLegend < withLegend, true);
 });
 
 test("renderTopoSvg includes total elevation change", () => {

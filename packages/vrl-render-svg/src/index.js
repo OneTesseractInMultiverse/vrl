@@ -69,3 +69,4 @@ export {
 } from "./svg-renderer.js";
 export { renderTopoSvg } from "./svg-renderer.js";
 export { escapeXml } from "./xml.js";
+export { computeTopoScene } from "./topo-scene.js";

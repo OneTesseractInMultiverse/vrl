@@ -212,6 +212,41 @@ Renderer options:
 
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 
+### Complete diagram bounds
+
+`renderTopoSvg` prepares the complete presentation before serializing SVG. Requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.
+
+The route summary occupies a separate row above the route content. The legend follows the lowest route or annotation label, and its columns expand for localized text. Detail rows wrap once using the requested width; fitting does not feed the expanded width back into wrapping. Unbroken labels expand the canvas. This is deterministic growth, not pagination or a guarantee that all symbols remain separated when spacing is deliberately reduced.
+
+Use the additive `computeTopoScene(route, layout, options = {})` export to inspect the same presentation without producing markup:
+
+```js
+import { compileRoute } from "@subvertic/core";
+import { computeTopoScene } from "@subvertic/render-svg";
+
+const result = compileRoute(source, { layout: { width: 320 } });
+if (result.ok) {
+  const scene = computeTopoScene(result.model, result.layout, { language: "es" });
+  const { x, y, width, height } = scene.viewBox;
+  // Frame the diagram with these final dimensions, not result.layout.width/height.
+}
+```
+
+The returned plain record contains:
+
+- `viewBox: { x, y, width, height }`: integer outer canvas coordinates with 12 pixels of padding.
+- `contentBounds` and `bounds`: `{ minX, minY, maxX, maxY }` envelopes, respectively before and after adding the summary and legend.
+- `language`: resolved presentation language.
+- `nodes`: visual-order records containing the original `node` reference, `placement`, `title`, `detail`, `maxDetailWidth`, and prepared `detailRows`.
+- `infoBox`: summary position, dimensions, text `lines`, and bounds.
+- `legend`: position, dimensions, title, placed rows, and bounds; `null` when disabled.
+
+Treat these records as read-only snapshots and recompute them after model, layout, or option changes. Scene computation does not mutate its inputs. Core layout remains independent of SVG fonts and decoration sizes; its dimensions are provisional until the renderer prepares the presentation.
+
+Text uses a conservative envelope of 1.25 em per UTF-16 code unit, with vertical and stroke clearance. This intentionally reserves extra space for bold wide glyphs, Unicode, and fallback fonts without browser measurements, DOM access, or third-party runtime dependencies. External CSS that changes fonts, letter spacing, strokes, or transforms can invalidate the envelope and requires independent fitting by the embedding application. Canvas fitting addresses clipping; it does not redesign label spacing within individual detail rows.
+
+Both scene preparation and full rendering validate incoming layout/options. Nonfinite derived bounds, unsafe magnitudes, or a fitted span exceeding `Number.MAX_SAFE_INTEGER` throw `RangeError`, including combinations of individually valid dimensions that leave no room for padding. Invalid types follow the existing `TypeError` contract. Low-level fragment renderers do not fit a complete canvas. The compatibility helper `topoLegendHeight` still returns `156` or `0`; do not add it to core layout height to predict final SVG dimensions.
+
 ### Renderer configuration and SVG attributes
 
 `renderTopoSvg` accepts a plain options object. If supplied, `legend` must be a boolean and `theme` must be `"light"` or `"dark"`. Omitted or `undefined` values use defaults; `null` is invalid. The shared options object may also contain compiler options. Existing language, locale, and symbology fallback behavior is unchanged.

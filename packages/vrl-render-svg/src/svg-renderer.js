@@ -1,63 +1,85 @@
-import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/core";
-import { resolveTheme } from "./theme.js";
+import { computeTopoScene, prepareNodes, prepareInfoBox, prepareLegend, stagePlacements, redirectionPlacements } from "./topo-scene.js";
 import {
-  elementColorToken,
-  formatElementDetail,
-  formatElementTitle,
-  formatMeasurement
-} from "./element-formatters.js";
-import { diagramText, localizeDetailValue, resolveDiagramLanguage } from "./locale.js";
-import { resolveSymbolProfile, symbolCode, symbolKind } from "./symbol-registry.js";
+  DETAIL_FONT_SIZE,
+  DETAIL_LINE_HEIGHT,
+  DETAIL_SEPARATOR_GAP,
+  LEGEND_FONT_SIZE,
+  STANDARD_SYMBOL_CODE_Y_OFFSET,
+  terrainProfilePath,
+  routeSegmentPath,
+  dropLadderGeometry,
+  technicalLinePoint,
+  technicalBottomY,
+  segmentLabel,
+  segmentLabelPosition,
+  stationTickLine,
+  nodeLabelPlacement,
+  anchorMarkCount,
+  formatTopoLabel,
+  formatTopoDetail,
+  detailLineRows,
+  needsSegmentArrow,
+  themeSafeStroke,
+  detailBadgePart,
+  detailBadgeListWidth,
+  detailBadgeWidth,
+  resolveBadgeValue,
+  detailBadgeStyle,
+  estimatedTextWidth,
+  levelBadgeWidth,
+  anchorLabel
+} from "./presentation.js";
+export {
+  resolveRenderLanguage,
+  topoLegendHeight,
+  legendSymbolRows,
+  terrainProfilePath,
+  routeSegmentPath,
+  dropLadderGeometry,
+  technicalLineVerticalDelta,
+  technicalLinePoint,
+  redirectionRatio,
+  redirectionsForElement,
+  rappelStagesForElement,
+  rappelHeightMeters,
+  segmentLabel,
+  segmentLabelPosition,
+  nodeLabelPlacement,
+  detailLineMaxWidth,
+  nextLabelTitleY,
+  anchorMarkCount,
+  formatTopoLabel,
+  formatTopoDetail,
+  detailLineRows,
+  resolveLevelValue,
+  needsSegmentArrow,
+  segmentTechnicalElement,
+  inclinationPercent
+} from "./presentation.js";
+import { resolveTheme } from "./theme.js";
+import { elementColorToken, formatElementTitle } from "./element-formatters.js";
+import { diagramText } from "./locale.js";
+import { symbolCode, symbolKind } from "./symbol-registry.js";
 import { escapeXml } from "./xml.js";
 import { svgAttribute, svgPaint } from "./attributes.js";
-import { validateRenderLayout, validateRenderOptions } from "./render-options.js";
-
-const TOPO_LEGEND_HEIGHT = 156;
-const TOPO_LEGEND_RECT_HEIGHT = 124;
-const DETAIL_FONT_SIZE = 10;
-const DETAIL_LINE_HEIGHT = 14;
-const DETAIL_SEPARATOR_GAP = 4;
-const LEGEND_FONT_SIZE = 9;
-const STANDARD_SYMBOL_CODE_Y_OFFSET = 15;
-const LEVEL_VALUES = ["dry", "low", "medium", "high", "critical"];
-const SYMBOL_ONLY_LABEL_TYPES = new Set(["walk", "pool", "hazard", "note"]);
-const DETAIL_BADGE_TOKENS = {
-  level: ["levelBadge", "levelBadgeText"],
-  flow: ["flowBadge", "flowBadgeText"],
-  exposure: ["exposureBadge", "exposureBadgeText"],
-  hazardSeverity: ["hazardSeverityBadge", "hazardSeverityBadgeText"],
-  inclination: ["inclinationBadge", "inclinationBadgeText"]
-};
-const DETAIL_BADGE_LABELS = {
-  exposure: "exposure",
-  exposicion: "exposure",
-  flow: "flow",
-  flujo: "flow",
-  "hazard severity": "hazardSeverity",
-  "severidad de peligro": "hazardSeverity",
-  severity: "hazardSeverity",
-  severidad: "hazardSeverity",
-  inclination: "inclination",
-  inclinacion: "inclination"
-};
+import { validateRenderOptions } from "./render-options.js";
 
 export function renderTopoSvg(route, layout, options = {}) {
   validateRenderOptions(options);
-  validateRenderLayout(layout);
   const theme = resolveTheme(options.theme, options.themeTokens);
-  const language = resolveRenderLanguage(options);
+  const scene = computeTopoScene(route, layout, options);
+  const { language, viewBox } = scene;
   const text = diagramText(language);
-  const height = layout.height + topoLegendHeight(options);
-  const nodes = renderNodes(layout, theme, options.symbology, language);
+  const nodes = renderNodes(layout, theme, options.symbology, language, scene.nodes);
   const terrainProfile = renderTerrainProfile(layout, theme);
   const waterSegments = renderWaterSegments(layout, theme);
   const routeSegments = renderRouteSegments(layout, theme, language);
   const segmentLabels = renderSegmentLabels(layout, theme);
   const stationTicks = renderStationTicks(layout, theme);
-  const infoBox = renderInfoBox(route, layout, theme, language);
-  const legend = options.legend === false ? "" : renderLegend(layout, theme, language, options.symbology);
+  const infoBox = renderInfoBox(route, layout, theme, language, scene.infoBox);
+  const legend = scene.legend === null ? "" : renderLegend(layout, theme, language, options.symbology, scene.legend);
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 ${svgAttribute(layout.width)} ${svgAttribute(height)}" width="${svgAttribute(layout.width)}" height="${svgAttribute(height)}" style="max-width: 100%; height: auto;">
+  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
   <title>${escapeXml(route.name)} ${escapeXml(text.topo)}</title>
   <desc>${escapeXml(text.schematicDescription)} ${escapeXml(route.name)}.</desc>
   <defs>
@@ -65,7 +87,7 @@ export function renderTopoSvg(route, layout, options = {}) {
       <path d="M0,0 L0,6 L7,3 z" fill="${svgPaint(theme.routeLine)}"/>
     </marker>
   </defs>
-  <rect width="${svgAttribute(layout.width)}" height="${svgAttribute(height)}" fill="${svgPaint(theme.background)}"/>
+  <rect x="${svgAttribute(viewBox.x)}" y="${svgAttribute(viewBox.y)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" fill="${svgPaint(theme.background)}"/>
   ${terrainProfile}
   ${infoBox}
   ${waterSegments}
@@ -77,66 +99,20 @@ export function renderTopoSvg(route, layout, options = {}) {
 </svg>`;
 }
 
-export function resolveRenderLanguage(options = {}) {
-  return resolveDiagramLanguage(options.language ?? options.locale ?? (options.symbology === "spanish" ? "es" : "en"));
-}
-
-export function renderNodes(layout, theme, symbology = "federation", language = "en") {
-  let nextTitleY = null;
-
-  return nodesInVisualOrder(layout.nodes).map((node) => {
-    const placement = nodeLabelPlacement(node, nextTitleY);
-    const title = formatTopoLabel(node.element, language);
-    const detail = formatTopoDetail(node.element, node, language);
-    const maxDetailWidth = detailLineMaxWidth(layout.width, placement.labelX);
-    const detailRows = detailLineRows(detail, maxDetailWidth, language);
-    const hasLabelText = title !== "" || detailRows.length > 0;
-    nextTitleY = hasLabelText ? nextLabelTitleY(placement, detailRows.length) : nextTitleY;
-    return renderNode(node, theme, symbology, placement, language, { detail, detailRows, maxDetailWidth, title });
-  }).join("");
-}
-
-function nodesInVisualOrder(nodes) {
-  return [...nodes].sort((left, right) => left.y - right.y
-    || Number(Object.hasOwn(left, "anchorPointIndex")) - Number(Object.hasOwn(right, "anchorPointIndex")));
+export function renderNodes(layout, theme, symbology = "federation", language = "en", prepared = prepareNodes(layout, language)) {
+  return prepared.map(({ node, placement, ...labels }) => renderNode(node, theme, symbology, placement, language, labels)).join("");
 }
 
 export function renderTerrainProfile(layout, theme) {
   return `<path class="vrl-terrain-profile" d="${svgAttribute(terrainProfilePath(layout))}" fill="${svgPaint(theme.terrain)}"/>`;
 }
 
-export function topoLegendHeight(options = {}) {
-  return options.legend === false ? 0 : TOPO_LEGEND_HEIGHT;
-}
-
-export function renderLegend(layout, theme, language = "en", symbology = "federation") {
-  const text = diagramText(language);
-  const x = 24;
-  const y = layout.height + 16;
-  const width = Math.max(320, layout.width - 48);
-  const columnGap = 24;
-  const columnWidth = Math.round((width - columnGap - 28) / 2);
-  const symbolRows = legendSymbolRows(language, symbology);
-  const rows = [
-    { kind: "text", value: text.legendRappel },
-    { kind: "text", value: text.legendTechnical },
-    { kind: "badges", category: "flow", label: text.flow, values: ["dry", "low", "medium", "high"] },
-    { kind: "badges", category: "exposure", label: text.exposure, values: ["low", "medium", "high"] },
-    { kind: "badges", category: "hazardSeverity", label: text.hazardSeverity, values: ["low", "medium", "high", "critical"] },
-    { kind: "badges", category: "inclination", label: text.inclination, values: ["80%"], description: text.inclinationDescription }
-  ];
-
-  return `<g class="vrl-legend" aria-label="${svgAttribute(text.legendTitle)}">
-    <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(TOPO_LEGEND_RECT_HEIGHT)}" rx="4" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1"/>
-    <text x="${svgAttribute(x + 14)}" y="${svgAttribute(y + 22)}" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="${svgPaint(theme.text)}">${escapeXml(text.legendTitle)}</text>
-    ${symbolRows.map((entries, index) => renderLegendRow({ kind: "symbols", entries }, x + 14, y + 42 + (index * 16), theme, language)).join("")}
-    ${rows.map((row, index) => {
-      const column = index < 3 ? 0 : 1;
-      const rowIndex = index % 3;
-      const textX = x + 14 + (column * (columnWidth + columnGap));
-      const textY = y + 80 + (rowIndex * 16);
-      return renderLegendRow(row, textX, textY, theme, language);
-    }).join("")}
+export function renderLegend(layout, theme, language = "en", symbology = "federation", prepared = prepareLegend(layout, language, symbology)) {
+  const { x, y, width, height, title, rows } = prepared;
+  return `<g class="vrl-legend" aria-label="${svgAttribute(title)}">
+    <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" rx="4" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1"/>
+    <text x="${svgAttribute(x + 14)}" y="${svgAttribute(y + 22)}" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="${svgPaint(theme.text)}">${escapeXml(title)}</text>
+    ${rows.map((item) => renderLegendRow(item.row, item.x, item.y, theme, language)).join("")}
   </g>`;
 }
 
@@ -159,23 +135,6 @@ export function renderLegendRow(row, x, y, theme, language = "en") {
   return `<text class="vrl-legend-row" x="${svgAttribute(x)}" y="${svgAttribute(y)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(LEGEND_FONT_SIZE)}" fill="${svgPaint(theme.mutedText)}">${escapeXml(row.value)}</text>`;
 }
 
-export function legendSymbolRows(language = "en", symbology = "federation") {
-  const text = diagramText(language);
-  const profile = resolveSymbolProfile(symbology);
-  const entries = [
-    [profile.start, text.elements.start],
-    [profile.exit, text.elements.exit],
-    [profile.walk, text.elements.walk],
-    [profile.rappel, text.elements.rappel],
-    [profile.downclimb, text.elements.downclimb],
-    [profile.climb, text.elements.climb],
-    [profile.pool, text.elements.pool],
-    [profile.hazard, text.elements.hazard]
-  ];
-
-  return [entries.slice(0, 4), entries.slice(4)];
-}
-
 export function renderLegendSymbolRow(entries, x, y, theme) {
   let cursor = x;
 
@@ -190,32 +149,12 @@ export function renderLegendSymbolRow(entries, x, y, theme) {
   }).join("")}</g>`;
 }
 
-export function terrainProfilePath(layout) {
-  const points = layout.points ?? layout.nodes;
-  if (points.length === 0) {
-    return `M 0 ${layout.height} L ${layout.width} ${layout.height} L ${layout.width} ${layout.height - 54} L 0 ${layout.height - 34} Z`;
-  }
-
-  const first = points[0];
-  const last = points[points.length - 1];
-  const surface = points.map((node) => `${node.x + 10} ${node.y + 14}`).join(" L ");
-
-  return `M 0 ${layout.height} L 0 ${first.y + 44} L ${Math.max(0, first.x - 58)} ${first.y + 34} L ${surface} L ${layout.width} ${last.y + 54} L ${layout.width} ${layout.height} Z`;
-}
-
-export function renderInfoBox(route, layout, theme, language = "en") {
-  const metadata = route.metadata ?? {};
-  const x = layout.width - 282;
-  const elevation = layout.elevation;
-  const text = diagramText(language);
-
-  return `<g class="vrl-info-box" aria-label="${svgAttribute(text.routeSummary)}">
-    <rect x="${svgAttribute(x)}" y="26" width="240" height="122" fill="#86a844" stroke="${svgPaint(theme.routeLine)}" stroke-width="2"/>
-    <text x="${svgAttribute(x + 120)}" y="50" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="${svgPaint(theme.text)}">${escapeXml(route.name).toUpperCase()}</text>
-    <text x="${svgAttribute(x + 120)}" y="74" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.difficulty)}: ${escapeXml(metadata.difficulty ?? text.noData)}</text>
-    <text x="${svgAttribute(x + 120)}" y="94" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.elevationChange)}: ${escapeXml(elevationSummary(elevation, language))}</text>
-    <text x="${svgAttribute(x + 120)}" y="114" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.region)}: ${escapeXml(metadata.region ?? text.noData)}</text>
-    <text x="${svgAttribute(x + 120)}" y="134" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.country)}: ${escapeXml(metadata.country ?? text.noData)}</text>
+export function renderInfoBox(route, layout, theme, language = "en", prepared = prepareInfoBox(route, layout, language)) {
+  const { x, y, width, height, lines } = prepared;
+  return `<g class="vrl-info-box" aria-label="${svgAttribute(diagramText(language).routeSummary)}">
+    <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" fill="#86a844" stroke="${svgPaint(theme.routeLine)}" stroke-width="2"/>
+    <text x="${svgAttribute(x + width / 2)}" y="${svgAttribute(y + 24)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="${svgPaint(theme.text)}">${escapeXml(lines[0]).toUpperCase()}</text>
+    ${lines.slice(1).map((line, index) => `<text x="${svgAttribute(x + width / 2)}" y="${svgAttribute(y + 48 + index * 20)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(line)}</text>`).join("")}
   </g>`;
 }
 
@@ -246,22 +185,6 @@ function renderConnectionSegment(segment, theme) {
   return `<path class="vrl-route-segment" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
-export function routeSegmentPath(previous, node, element = previous.element) {
-  if (needsSegmentArrow(element)) {
-    const ledgeX = previous.x + 16;
-    const dropY = Math.round((previous.y + node.y) / 2);
-    const exitX = node.x - 10;
-
-    return `M ${previous.x} ${previous.y} L ${ledgeX} ${previous.y} L ${exitX} ${dropY} L ${node.x} ${node.y}`;
-  }
-
-  const midX = Math.round((previous.x + node.x) / 2);
-  const midY = Math.round((previous.y + node.y) / 2);
-  const bendX = midX - 12;
-
-  return `M ${previous.x} ${previous.y} L ${bendX} ${midY} L ${node.x} ${node.y}`;
-}
-
 export function renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null) {
   const geometry = dropLadderGeometry(previous, node, element, layout);
 
@@ -283,35 +206,6 @@ export function renderDirectTechnicalSegment(previous, node, theme, element = pr
     <path class="vrl-route-segment vrl-drop-slope" d="M ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
     <path class="vrl-route-segment vrl-drop-exit" d="M ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)} L ${svgAttribute(geometry.endX)} ${svgAttribute(geometry.endY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>`;
-}
-
-export function dropLadderGeometry(previous, node, element = previous.element, layout = null) {
-  const direction = node.x >= previous.x ? 1 : -1;
-  const dropX = previous.x + (direction * 34);
-  const lineDeltaY = technicalLineVerticalDelta(previous, node, element, layout);
-  const verticalDelta = Math.abs(lineDeltaY);
-  const bottomY = previous.y + lineDeltaY;
-  const maxRun = Math.max(0, Math.abs(node.x - dropX) - 10);
-  const rawRun = Math.round(verticalDelta * ((100 - inclinationPercent(element)) / 100) * 0.8);
-  const bottomX = dropX + (direction * Math.min(rawRun, maxRun));
-
-  return {
-    startX: previous.x,
-    startY: previous.y,
-    dropX,
-    bottomX,
-    bottomY,
-    endX: node.x,
-    endY: node.y
-  };
-}
-
-export function technicalLineVerticalDelta(previous, node, element = previous.element, layout = null) {
-  if (layout?.technicalDeltaY === undefined && typeof layout?.elevation?.pixelsPerMeter === "number" && technicalVerticalMeters(element) > 0) {
-    // Compatibility for custom callers; compiled rendering uses the positioned segment.
-    return (node.y >= previous.y ? 1 : -1) * Math.max(1, Math.round(technicalVerticalMeters(element) * layout.elevation.pixelsPerMeter));
-  }
-  return layout?.technicalDeltaY ?? node.y - previous.y;
 }
 
 export function renderDropRungs(geometry, theme) {
@@ -338,22 +232,9 @@ export function renderDropRungs(geometry, theme) {
 }
 
 export function renderRappelStageMarkers(geometry, element, theme) {
-  const stages = rappelStagesForElement(element);
-  if (stages.length === 0) {
-    return "";
-  }
-
-  const total = stages.reduce((sum, stage) => sum + stage.meters, 0);
-  const labelDirection = technicalLabelDirection(geometry);
-  const textAnchor = labelDirection === -1 ? "end" : "start";
-  let cumulative = 0;
-
-  return stages.map((stage, index) => {
-    const midpoint = technicalLinePoint(geometry, (cumulative + (stage.meters / 2)) / total);
-    cumulative += stage.meters;
-    const boundary = index === stages.length - 1 ? "" : renderStageBoundary(geometry, cumulative / total, theme);
-
-    return `${boundary}<text class="vrl-rappel-stage-label" x="${svgAttribute(midpoint.x + (labelDirection * 16))}" y="${svgAttribute(midpoint.y - 2)}" text-anchor="${svgAttribute(textAnchor)}" font-family="system-ui, sans-serif" font-size="9" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${formatMeters(stage)}</text>`;
+  return stagePlacements(geometry, element).map((item) => {
+    const boundary = item.boundaryRatio === null ? "" : renderStageBoundary(geometry, item.boundaryRatio, theme);
+    return `${boundary}<text class="vrl-rappel-stage-label" x="${svgAttribute(item.x)}" y="${svgAttribute(item.y)}" text-anchor="${svgAttribute(item.anchor)}" font-family="system-ui, sans-serif" font-size="9" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(item.text)}</text>`;
   }).join("");
 }
 
@@ -363,65 +244,13 @@ export function renderStageBoundary(geometry, ratio, theme) {
 }
 
 export function renderRedirectionMarkers(geometry, element, theme, language = "en") {
-  const labelDirection = -technicalLabelDirection(geometry);
-  const textAnchor = labelDirection === -1 ? "end" : "start";
   const text = diagramText(language);
-
-  return redirectionsForElement(element).map((redirection) => {
-    const ratio = redirectionRatio(redirection, element);
-    const point = technicalLinePoint(geometry, ratio);
-    const label = redirectionLabel(redirection, language);
-
+  return redirectionPlacements(geometry, element, language).map(({ point, x, y, text: label, anchor }) => {
     return `<g class="vrl-redirection-anchor" aria-label="${svgAttribute(text.redirectionAnchor)} ${svgAttribute(label)}">
       <path d="M ${svgAttribute(point.x)} ${svgAttribute(point.y - 6)} L ${svgAttribute(point.x + 6)} ${svgAttribute(point.y)} L ${svgAttribute(point.x)} ${svgAttribute(point.y + 6)} L ${svgAttribute(point.x - 6)} ${svgAttribute(point.y)} Z" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.4"/>
-      <text x="${svgAttribute(point.x + (labelDirection * 12))}" y="${svgAttribute(point.y + 3)}" text-anchor="${svgAttribute(textAnchor)}" font-family="system-ui, sans-serif" font-size="8" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>
+      <text x="${svgAttribute(x)}" y="${svgAttribute(y)}" text-anchor="${svgAttribute(anchor)}" font-family="system-ui, sans-serif" font-size="8" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>
     </g>`;
   }).join("");
-}
-
-export function technicalLinePoint(geometry, ratio) {
-  const clamped = Math.max(0.05, Math.min(0.95, ratio));
-  const bottomX = geometry.bottomX ?? geometry.dropX;
-  const bottomY = technicalBottomY(geometry);
-
-  return {
-    x: Math.round(geometry.dropX + ((bottomX - geometry.dropX) * clamped)),
-    y: Math.round(geometry.startY + ((bottomY - geometry.startY) * clamped))
-  };
-}
-
-function technicalBottomY(geometry) {
-  return geometry.bottomY ?? geometry.endY;
-}
-
-export function redirectionRatio(redirection, element) {
-  const height = rappelHeightMeters(element);
-  return height === 0 ? 0.5 : redirection.distance.meters / height;
-}
-
-export function redirectionsForElement(element) {
-  if (Array.isArray(element.attributes.redirections)) {
-    return element.attributes.redirections;
-  }
-
-  if (Array.isArray(element.attributes.redirection)) {
-    return element.attributes.redirection;
-  }
-
-  return [];
-}
-
-export function rappelStagesForElement(element) {
-  return Array.isArray(element.attributes.stages) ? element.attributes.stages : [];
-}
-
-export function rappelHeightMeters(element) {
-  const height = element?.attributes?.height;
-  if (typeof height === "object" && height !== null && typeof height.meters === "number") {
-    return height.meters;
-  }
-
-  return 0;
 }
 
 export function renderSegmentLabels(layout, theme) {
@@ -436,18 +265,6 @@ export function renderSegmentLabels(layout, theme) {
     const position = segmentLabelPosition(previous, node);
     return `<text class="vrl-segment-label" x="${svgAttribute(position.x)}" y="${svgAttribute(position.y)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>`;
   }).join("");
-}
-
-export function segmentLabel(previous, node) {
-  const traverse = formatMeasurement(node.element.attributes.traverse);
-  return traverse;
-}
-
-export function segmentLabelPosition(previous, node) {
-  return {
-    x: Math.round((previous.x + node.x) / 2),
-    y: Math.round((previous.y + node.y) / 2) - 7
-  };
 }
 
 export function renderStationTicks(layout, theme) {
@@ -471,15 +288,6 @@ export function renderStationTick(node, theme) {
     </g>`;
 }
 
-function stationTickLine(node, direction, offsetY) {
-  return {
-    x1: node.x + (direction * 8),
-    y1: node.y - offsetY,
-    x2: node.x + (direction * 24),
-    y2: node.y - offsetY + 6
-  };
-}
-
 export function renderNode(node, theme, symbology = "federation", placement = nodeLabelPlacement(node), language = "en", options = {}) {
   const element = node.element;
   const color = theme[elementColorToken(element)];
@@ -500,26 +308,6 @@ export function renderNode(node, theme, symbology = "federation", placement = no
     ${titleLine}
     ${detailLine}
   </g>`;
-}
-
-export function nodeLabelPlacement(node, minimumTitleY = null) {
-  const naturalTitleY = node.y - 9;
-  const titleY = Math.max(naturalTitleY, minimumTitleY ?? naturalTitleY);
-
-  return {
-    labelX: node.x + labelOffsetX(node.element),
-    titleY,
-    detailY: titleY + 18
-  };
-}
-
-export function detailLineMaxWidth(layoutWidth, labelX) {
-  return Math.max(96, layoutWidth - labelX - 24);
-}
-
-export function nextLabelTitleY(placement, detailRowCount) {
-  const rows = Math.max(1, detailRowCount);
-  return placement.titleY + 18 + (rows * DETAIL_LINE_HEIGHT) + 2;
 }
 
 export function renderLabelLeader(node, placement, theme) {
@@ -547,15 +335,6 @@ export function renderAnchorMarks(node, element, theme, side = "left", language 
   </g>`;
 }
 
-export function anchorMarkCount(element) {
-  const count = Number(element.attributes.anchor_count ?? 0);
-  if (Number.isInteger(count) === false || count <= 0) {
-    return 0;
-  }
-
-  return Math.min(count, 4);
-}
-
 export function renderSymbolMarker(node, element, color, symbology = "federation", panelColor = "#f6f8fa", language = "en") {
   const code = escapeXml(symbolCode(element, symbology));
 
@@ -581,42 +360,6 @@ export function renderSymbolMarker(node, element, color, symbology = "federation
   </g>`;
 }
 
-export function formatTopoLabel(element, language = "en") {
-  if (element.type === "start" || element.type === "exit") {
-    return element.label ?? formatElementTitle(element, language);
-  }
-
-  if (needsSegmentArrow(element)) {
-    return `${element.id}, ${formatMeasurement(element.attributes.height)}`;
-  }
-
-  if (SYMBOL_ONLY_LABEL_TYPES.has(element.type)) {
-    return "";
-  }
-
-  return formatElementTitle(element, language);
-}
-
-export function formatTopoDetail(element, node = null, language = "en") {
-  if ((element.type === "start" || element.type === "exit") && typeof node?.elevationMeters === "number") {
-    return `${node.elevationMeters}m`;
-  }
-
-  if (element.type === "rappel") {
-    return [formatMeasurement(element.attributes.rope), anchorSummary(element, language), landingSummary(element, language), flowSummary(element, language), inclinationSummary(element)]
-      .filter(Boolean)
-      .join(" / ");
-  }
-
-  if (element.type === "downclimb" || element.type === "climb") {
-    return [formatElementDetail(element, language), landingSummary(element, language), inclinationSummary(element)]
-      .filter(Boolean)
-      .join(" / ");
-  }
-
-  return formatElementDetail(element, language);
-}
-
 export function renderDetailLine(detail, x, y, theme, language = "en", maxWidth = Number.POSITIVE_INFINITY, rows = null) {
   if (detail === "") {
     return "";
@@ -626,48 +369,6 @@ export function renderDetailLine(detail, x, y, theme, language = "en", maxWidth 
   const markup = detailRows.map((row, index) => renderDetailRow(row, x, y + (index * DETAIL_LINE_HEIGHT), theme, language)).join("");
 
   return `<g class="vrl-detail-line">${markup}</g>`;
-}
-
-export function detailLineRows(detail, maxWidth = Number.POSITIVE_INFINITY, language = "en") {
-  if (detail === "") {
-    return [];
-  }
-
-  if (Number.isFinite(maxWidth) === false) {
-    return [detail.split(" / ")];
-  }
-
-  const rows = [];
-  let currentRow = [];
-
-  for (const part of detail.split(" / ")) {
-    const wrappedParts = wrapDetailPart(part, maxWidth, language);
-
-    if (wrappedParts.length > 1 && currentRow.length > 0) {
-      rows.push(currentRow);
-      currentRow = [];
-    }
-
-    for (const [index, wrappedPart] of wrappedParts.entries()) {
-      if (index > 0 && currentRow.length > 0) {
-        rows.push(currentRow);
-        currentRow = [];
-      }
-
-      if (currentRow.length > 0 && detailRowWidth([...currentRow, wrappedPart], language) > maxWidth) {
-        rows.push(currentRow);
-        currentRow = [];
-      }
-
-      currentRow.push(wrappedPart);
-    }
-  }
-
-  if (currentRow.length > 0) {
-    rows.push(currentRow);
-  }
-
-  return rows;
 }
 
 export function renderLevelBadge(value, x, y, language = "en", category = "level", theme = resolveTheme()) {
@@ -685,101 +386,6 @@ export function renderLevelBadge(value, x, y, language = "en", category = "level
     <rect x="${svgAttribute(x)}" y="${svgAttribute(y - 12)}" width="${svgAttribute(width)}" height="14" rx="3" fill="${svgPaint(style.fill)}"/>
     <text x="${svgAttribute(x + Math.round(width / 2))}" y="${svgAttribute(y - 3)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="${svgPaint(style.text)}">${escapeXml(label)}</text>
   </g>`;
-}
-
-export function resolveLevelValue(value, language = "en") {
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  return LEVEL_VALUES.find((level) => value === level || value === localizeDetailValue(level, language)) ?? null;
-}
-
-export function needsSegmentArrow(element) {
-  return element.type === "rappel" || element.type === "downclimb" || element.type === "climb";
-}
-
-export function segmentTechnicalElement(previous, node) {
-  const elements = [previous.element, node.element];
-  const indexes = technicalElementIndexesBetween(elements, 1);
-  if (indexes.length > 1) throw new RangeError("This connection contains two technical elements; use layout.segments.");
-  return indexes.length === 0 ? null : elements[indexes[0]];
-}
-
-export function inclinationPercent(element) {
-  const inclination = element?.attributes?.inclination;
-
-  if (typeof inclination === "object" && inclination !== null && typeof inclination.percent === "number") {
-    return inclination.percent;
-  }
-
-  return 100;
-}
-
-function themeSafeStroke(color) {
-  return color === "" ? "#111111" : color;
-}
-
-function labelOffsetX(element) {
-  if (needsSegmentArrow(element)) {
-    return 74;
-  }
-
-  return element.type === "hazard" ? 72 : 28;
-}
-
-function technicalLabelDirection(geometry) {
-  const bottomX = geometry.bottomX ?? geometry.dropX;
-  return bottomX >= geometry.dropX ? -1 : 1;
-}
-
-function elevationSummary(elevation, language = "en") {
-  if (elevation === undefined) {
-    return diagramText(language).noData;
-  }
-
-  return `${elevation.totalChangeMeters}m (${elevation.entranceMeters}m-${elevation.exitMeters}m)`;
-}
-
-function anchorSummary(element, language = "en") {
-  const count = anchorMarkCount(element);
-  return count === 0 ? "" : `${count} ${anchorLabel(count, language)}`;
-}
-
-function landingSummary(element, language = "en") {
-  return element.attributes.landing === undefined ? "" : labeledSummary(diagramText(language).landing, localizeDetailValue(element.attributes.landing, language));
-}
-
-function flowSummary(element, language = "en") {
-  return element.attributes.flow === undefined ? "" : labeledSummary(diagramText(language).flow, localizeDetailValue(element.attributes.flow, language));
-}
-
-function inclinationSummary(element) {
-  const inclination = element.attributes.inclination;
-  return typeof inclination === "object" && inclination !== null ? `${inclination.percent}%` : "";
-}
-
-function formatMeters(measurement) {
-  return `${measurement.meters}m`;
-}
-
-function redirectionLabel(redirection, language = "en") {
-  const side = redirectionSideSuffix(redirection.side, language);
-  return side === "" ? formatMeters(redirection.distance) : `${formatMeters(redirection.distance)} ${side}`;
-}
-
-function redirectionSideSuffix(side, language = "en") {
-  const text = diagramText(language);
-
-  if (side === "left") {
-    return text.sideLeft;
-  }
-
-  if (side === "right") {
-    return text.sideRight;
-  }
-
-  return "";
 }
 
 function renderDetailPart(part, x, y, theme, language = "en") {
@@ -813,70 +419,6 @@ function renderDetailRow(parts, x, y, theme, language = "en") {
   }).join("")}</g>`;
 }
 
-function wrapDetailPart(part, maxWidth, language = "en") {
-  if (detailPartWidth(part, language) <= maxWidth || detailBadgePart(part, language) !== null) {
-    return [part];
-  }
-
-  return wrapPlainDetailPart(part, maxWidth);
-}
-
-function wrapPlainDetailPart(part, maxWidth) {
-  const words = part.split(/\s+/).filter(Boolean);
-
-  if (words.length === 0) {
-    return [part];
-  }
-
-  const rows = [];
-  let current = "";
-
-  for (const word of words) {
-    const candidate = current === "" ? word : `${current} ${word}`;
-    if (current !== "" && estimatedTextWidth(candidate, DETAIL_FONT_SIZE) > maxWidth) {
-      rows.push(current);
-      current = word;
-    } else {
-      current = candidate;
-    }
-  }
-
-  if (current !== "") {
-    rows.push(current);
-  }
-
-  return rows;
-}
-
-function detailRowWidth(parts, language = "en") {
-  const separatorWidth = estimatedTextWidth(" / ", DETAIL_FONT_SIZE) + (DETAIL_SEPARATOR_GAP * 2);
-  return parts.reduce((width, part, index) => {
-    const prefix = index === 0 ? 0 : separatorWidth;
-    return width + prefix + detailPartWidth(part, language);
-  }, 0);
-}
-
-function detailPartWidth(part, language = "en") {
-  const tagged = detailBadgePart(part, language);
-
-  if (tagged === null) {
-    return estimatedTextWidth(part, DETAIL_FONT_SIZE);
-  }
-
-  return estimatedTextWidth(tagged.prefix, DETAIL_FONT_SIZE) + levelBadgeWidth(tagged.label);
-}
-
-function detailBadgePart(part, language = "en") {
-  const separatorIndex = part.lastIndexOf(": ");
-  const prefix = separatorIndex === -1 ? "" : part.slice(0, separatorIndex + 2);
-  const categoryLabel = separatorIndex === -1 ? "" : part.slice(0, separatorIndex);
-  const value = separatorIndex === -1 ? part : part.slice(separatorIndex + 2);
-  const category = detailBadgeCategory(categoryLabel, value, language);
-  const badge = category === null ? null : resolveBadgeValue(value, category, language);
-
-  return badge === null ? null : { prefix, value, category: badge.category, label: badge.label };
-}
-
 function renderPlainDetailText(value, x, y, theme, fontSize, strokeWidth = 3) {
   return `<text x="${svgAttribute(x)}" y="${svgAttribute(y)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(fontSize)}" fill="${svgPaint(theme.mutedText)}" stroke="${svgPaint(theme.panel)}" stroke-width="${svgAttribute(strokeWidth)}" stroke-linejoin="round" paint-order="stroke">${escapeXml(value)}</text>`;
 }
@@ -889,74 +431,4 @@ function renderLevelBadges(values, x, y, language = "en", category = "level", th
     cursor += detailBadgeWidth(value, category, language) + 4;
     return badge;
   }).join("");
-}
-
-function detailBadgeListWidth(values, category, language = "en") {
-  return values.reduce((width, value) => width + detailBadgeWidth(value, category, language) + 4, 0);
-}
-
-function detailBadgeWidth(value, category, language = "en") {
-  const badge = resolveBadgeValue(value, category, language);
-  return levelBadgeWidth(badge.label);
-}
-
-function detailBadgeCategory(label, value, language = "en") {
-  const category = DETAIL_BADGE_LABELS[normalizeDetailLabel(label)];
-
-  if (category !== undefined) {
-    return category;
-  }
-
-  if (resolveInclinationBadgeValue(value) !== null) {
-    return "inclination";
-  }
-
-  return resolveLevelValue(value, language) === null ? null : "level";
-}
-
-function resolveBadgeValue(value, category, language = "en") {
-  const normalizedCategory = DETAIL_BADGE_TOKENS[category] === undefined ? "level" : category;
-
-  if (normalizedCategory === "inclination") {
-    const inclination = resolveInclinationBadgeValue(value);
-    return inclination === null ? null : { category: normalizedCategory, className: "inclination", label: inclination };
-  }
-
-  const level = resolveLevelValue(value, language);
-  return level === null ? null : { category: normalizedCategory, className: level, label: localizeDetailValue(level, language) };
-}
-
-function resolveInclinationBadgeValue(value) {
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  const trimmed = value.trim();
-  return /^\d+(?:\.\d+)?%$/.test(trimmed) ? trimmed : null;
-}
-
-function normalizeDetailLabel(label) {
-  return label.trim().toLowerCase();
-}
-
-function detailBadgeStyle(category, theme) {
-  const tokens = DETAIL_BADGE_TOKENS[category];
-  return { fill: theme[tokens[0]], text: theme[tokens[1]] };
-}
-
-function estimatedTextWidth(value, fontSize) {
-  return Math.round(value.length * fontSize * 0.56);
-}
-
-function levelBadgeWidth(label) {
-  return Math.max(26, Math.round(label.length * 5.4) + 12);
-}
-
-function labeledSummary(label, value) {
-  return value === "" ? "" : `${label}: ${value}`;
-}
-
-function anchorLabel(count, language = "en") {
-  const text = diagramText(language);
-  return count === 1 ? text.anchor : text.anchors;
 }
