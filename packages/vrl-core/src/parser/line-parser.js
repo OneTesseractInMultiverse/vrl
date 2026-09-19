@@ -1,5 +1,8 @@
 import { createDiagnostic } from "../domain/diagnostics.js";
 import { createEmptyRoute, createRouteElement } from "../domain/model.js";
+import { lexVrlLine } from "./lexer.js";
+
+export { lexVrlLine, stripComment, tokenize } from "./lexer.js";
 
 const ELEMENT_KEYWORDS = new Set([
   "start",
@@ -18,20 +21,13 @@ export function parseVrl(source) {
   const diagnostics = [];
 
   source.split(/\r?\n/).forEach((rawLine, index) => {
-    const lineNumber = index + 1;
-    const cleanedLine = normalizeSourceLine(rawLine);
-
-    if (cleanedLine === "") {
-      return;
-    }
-
-    if (cleanedLine === "}") {
-      return;
-    }
-
-    const tokens = tokenize(cleanedLine);
-    const keyword = tokens[0];
-    const location = { line: lineNumber, column: rawLine.indexOf(keyword) + 1 };
+    const lexed = lexVrlLine(rawLine, { line: index + 1, column: 1 });
+    diagnostics.push(...lexed.diagnostics);
+    if (lexed.diagnostics.length > 0) return;
+    const tokens = statementTokens(lexed.tokens);
+    if (tokens.length === 0) return;
+    const keyword = tokens[0].raw;
+    const location = tokens[0].span.start;
 
     if (keyword === "route") {
       parseRouteLine(ast, tokens, diagnostics, location);
@@ -39,7 +35,7 @@ export function parseVrl(source) {
     }
 
     if (keyword === "metadata") {
-      parseMetadataLine(ast, tokens, diagnostics, location);
+      parseMetadataLine(ast, tokens, diagnostics);
       return;
     }
 
@@ -62,89 +58,42 @@ export function parseVrl(source) {
   return { ast, diagnostics };
 }
 
-export function stripComment(line) {
-  let inQuote = false;
-  let escaped = false;
-
-  for (let index = 0; index < line.length; index += 1) {
-    const character = line[index];
-
-    if (character === "\\" && escaped === false) {
-      escaped = true;
-      continue;
-    }
-
-    if (character === "\"" && escaped === false) {
-      inQuote = inQuote === false;
-    }
-
-    if (character === "#" && inQuote === false) {
-      return line.slice(0, index);
-    }
-
-    escaped = false;
-  }
-
-  return line;
-}
-
-export function tokenize(line) {
-  const tokens = [];
-  let token = "";
-  let inQuote = false;
-  let escaped = false;
-
-  for (const character of line) {
-    if (/\s/.test(character) && inQuote === false) {
-      pushToken(tokens, token);
-      token = "";
-      escaped = false;
-      continue;
-    }
-
-    if (character === "\"" && escaped === false) {
-      inQuote = inQuote === false;
-    }
-
-    token += character;
-    escaped = character === "\\" && escaped === false;
-  }
-
-  pushToken(tokens, token);
-  return tokens;
-}
-
 export function parseAttributeTokens(tokens, location) {
+  const lexed = lexVrlLine(tokens.join(" "), location);
+  return lexed.diagnostics.length > 0
+    ? { attributes: {}, diagnostics: lexed.diagnostics }
+    : parseAttributes(lexed.tokens);
+}
+
+function parseAttributes(tokens) {
   const attributes = {};
   const diagnostics = [];
 
   tokens.forEach((token) => {
-    const separatorIndex = token.indexOf("=");
-
-    if (separatorIndex < 1 || separatorIndex === token.length - 1) {
+    if (token.kind !== "attribute") {
       diagnostics.push(
         createDiagnostic(
           "syntax",
           "error",
-          `Expected key=value attribute but found "${token}"`,
-          location,
+          `Expected key=value attribute but found "${token.raw}"`,
+          token.span.start,
           "Write attributes such as height=35m or note=\"Main line\"."
         )
       );
       return;
     }
 
-    const key = token.slice(0, separatorIndex);
-    const value = token.slice(separatorIndex + 1);
-    attributes[key] = dequote(value);
+    attributes[token.key] = token.value;
   });
 
   return { attributes, diagnostics };
 }
 
-function normalizeSourceLine(rawLine) {
-  const withoutComment = stripComment(rawLine).trim();
-  return withoutComment.endsWith("{") ? withoutComment.slice(0, -1).trim() : withoutComment;
+function statementTokens(tokens) {
+  const last = tokens.at(-1);
+  if (last?.kind === "bare" && last.value === "{") return tokens.slice(0, -1);
+  if (tokens.length === 1 && last.kind === "bare" && last.value === "}") return [];
+  return tokens;
 }
 
 function parseRouteLine(ast, tokens, diagnostics, location) {
@@ -155,25 +104,25 @@ function parseRouteLine(ast, tokens, diagnostics, location) {
     return;
   }
 
-  ast.name = dequote(tokens.slice(1).join(" "));
+  ast.name = textOf(tokens.slice(1));
 }
 
-function parseMetadataLine(ast, tokens, diagnostics, location) {
-  const parsed = parseAttributeTokens(tokens.slice(1), location);
+function parseMetadataLine(ast, tokens, diagnostics) {
+  const parsed = parseAttributes(tokens.slice(1));
   Object.assign(ast.metadata, parsed.attributes);
   diagnostics.push(...parsed.diagnostics);
 }
 
 function parseElementLine(keyword, tokens, diagnostics, location) {
   if (keyword === "note") {
-    return createRouteElement("note", { text: dequote(tokens.slice(1).join(" ")) }, location);
+    return createRouteElement("note", { text: textOf(tokens.slice(1)) }, location);
   }
 
   const payload = tokens.slice(1);
-  const firstAttributeIndex = payload.findIndex((token) => token.includes("="));
+  const firstAttributeIndex = payload.findIndex((token) => token.kind === "attribute");
   const labelTokens = firstAttributeIndex === -1 ? payload : payload.slice(0, firstAttributeIndex);
   const attributeTokens = firstAttributeIndex === -1 ? [] : payload.slice(firstAttributeIndex);
-  const parsed = parseAttributeTokens(attributeTokens, location);
+  const parsed = parseAttributes(attributeTokens);
   diagnostics.push(...parsed.diagnostics);
 
   return createRouteElement(
@@ -194,7 +143,7 @@ function elementIdFor(keyword, labelTokens) {
     return null;
   }
 
-  return dequote(labelTokens.join(" "));
+  return textOf(labelTokens);
 }
 
 function elementLabelFor(keyword, labelTokens) {
@@ -203,22 +152,12 @@ function elementLabelFor(keyword, labelTokens) {
   }
 
   if (keyword === "start" || keyword === "exit") {
-    return dequote(labelTokens.join(" "));
+    return textOf(labelTokens);
   }
 
   return null;
 }
 
-function pushToken(tokens, token) {
-  if (token !== "") {
-    tokens.push(token);
-  }
-}
-
-function dequote(value) {
-  if (value.startsWith("\"") && value.endsWith("\"")) {
-    return value.slice(1, -1).replace(/\\"/g, "\"").replace(/\\\\/g, "\\");
-  }
-
-  return value;
+function textOf(tokens) {
+  return tokens.map((token) => token.kind === "attribute" ? token.raw : token.value).join(" ");
 }

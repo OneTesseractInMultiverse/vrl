@@ -2,6 +2,31 @@
 
 VRL documents are text files. The implemented vertical slice supports a compact line-oriented style where every non-empty line starts with a statement keyword. Comments start with `#` outside quoted strings.
 
+## Quoted Text, Escapes, and Token Boundaries
+
+Double quotes delimit text within one physical line. Quoted text preserves equals signs, hashes, Unicode, and all interior whitespace, including leading/trailing spaces and literal tabs. Only two escape sequences are supported: `\"` produces a literal double quote, and `\\` produces one literal backslash. Decoding happens once, from left to right. Spellings such as `\n`, `\t`, `\u0041`, and `\#` are errors; write Unicode and hashes directly, or double a backslash when the spelling itself is intended as text.
+
+```vrl
+route "Cañón #1"
+metadata description="Marker A=B; path A\\B"
+start "A=B"
+walk distance=1m note="Use the \"left\" bank # marked"
+note "  Preserve these spaces  "
+exit "Finish"
+```
+
+An attribute has an unquoted, nonempty key followed immediately by `=` and a bare or quoted value. Whitespace around `=` is not supported. The first equals sign outside quotes separates the key and value; further equals signs in a bare value are literal text. Thus `note="A=B"` is an attribute, while `start "A=B"` has a label and no attributes. Once an element's attributes begin, further tokens must be attributes.
+
+Tokens must be separated by whitespace. A quoted value must end before another token begins: `"A"suffix`, `prefix"A"`, `"A""B"`, and `note="A"next=1` are errors. A quote can start a token or the value immediately after `=`; quoted attribute keys are not supported. An outside `#` begins a comment even without preceding whitespace. A hash inside quotes is ordinary text, and comment contents are not tokenized. Backslashes outside quotes are literal characters and do not escape comments or whitespace.
+
+Use `""` for empty text, including an empty label, note, or text attribute. `key=` is a syntax error. Semantic rules still apply: `route ""` has a missing route name, and an empty required measurement does not satisfy that field.
+
+For compatibility, route names, note text, and element labels/identifiers may contain whitespace-separated bare and quoted fragments. Each quoted fragment is decoded independently, and separators between fragments become one space. Prefer one quoted token when exact whitespace matters or a label contains `=`. Route and note free-text contexts retain assignment-shaped tokens literally. Statement keywords themselves must be unquoted.
+
+LF and CRLF delimit physical lines. Quotes cannot continue across those boundaries. An unfinished string produces a syntax error at its opening quote; a dangling or unsupported escape points to the backslash; invalid adjacency points to the first unexpected character. Source lines and columns are one-based; columns count UTF-16 code units, with each tab counting as one unit. The parser skips a lexically invalid statement and continues with the next line for diagnostics. Compilation returns `ok: false` with no model, layout, or JSON when blocking diagnostics exist.
+
+A separate trailing `{` token and standalone `}` line remain tolerated for block-style examples; block nesting and document-order validation remain outside this lexical change. Quoted braces are text. A brace directly attached to a quoted token is invalid adjacency; a brace within a bare token is literal text.
+
 ## Route
 
 Every document starts with a route statement.

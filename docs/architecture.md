@@ -36,7 +36,9 @@ Framework adapters are intentionally thin. They accept framework-specific inputs
 
 `validation/validate-geometry.js` reports missing technical measurements and inconsistent or underdetermined elevation constraints after normalization. It does not distribute a residual over a declared technical feature. The application invokes this validation before layout and JSON export; geometry errors prevent either output.
 
-`parser/line-parser.js` parses compact VRL source. It preserves line and column locations in diagnostics so editors, documentation pages, and CI logs can point to the source of a problem.
+`parser/lexer.js` owns lexical rules: quoted/bare forms, assignment boundaries, escape decoding, comments, and source spans. It produces plain typed tokens and syntax diagnostics without external dependencies. Quotes are decoded once here; the parser does not rediscover assignments by searching decoded text. The existing raw-token/comment helpers delegate to this same lexical computation.
+
+`parser/line-parser.js` coordinates line scanning and statement parsing. It consumes typed tokens, retains statement locations, skips lexically invalid statements, and continues collecting diagnostics from later lines. Token spans remain syntax data and do not introduce renderer or framework concepts into the domain. Blocking syntax errors stop the application before normalization, geometry, layout, and export. Attribute-level semantic source mapping remains a separate contract change.
 
 `validation/validate-route.js` checks semantic rules such as required rappel and climb fields, positive measurements, known anchors, known pool types, technical slope shape, station, landing, flow, inclination, anchor count, mid-rappel redirections, staged rappel lengths, metadata elevation syntax, hazard severity values, and rope shorter than rappel height warnings.
 

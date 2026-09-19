@@ -175,7 +175,9 @@ measurement     := number "m"
 comment         := "#" text outside quoted strings
 ```
 
-The longer-term grammar will also support nested route, metadata, access, and section blocks. The parser already tolerates a trailing `{` on a statement and standalone `}` lines, but the first slice intentionally keeps section semantics out of scope.
+Quoted text preserves `=`, `#`, Unicode, and interior whitespace. Its only escapes are `\"` for a double quote and `\\` for a backslash. Other escapes, unfinished quotes, and adjacent tokens such as `"A"suffix` produce blocking syntax diagnostics. Attributes require an unquoted key and an immediate `=` followed by a value; use `key=""` for empty text. See the [lexical rules](docs/language-reference.md#quoted-text-escapes-and-token-boundaries) for precise boundaries, compatibility forms, and source locations.
+
+The longer-term grammar will also support nested route, metadata, access, and section blocks. The parser already tolerates a separate trailing `{` token on a statement and standalone `}` lines, but the first slice intentionally keeps section semantics out of scope. Quoted braces remain literal text.
 
 ## Rendering Strategy
 

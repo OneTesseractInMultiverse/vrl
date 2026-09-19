@@ -77,6 +77,27 @@ const json = exportRouteJson(model);
 
 Use `createRouteCompiler(overrides)` when an application needs to inject custom parser, validator, layout, normalization, or JSON export ports for tests or integration.
 
+### Lexical tokens and syntax failures
+
+`lexVrlLine(line, location = { line: 1, column: 1 })` scans one physical line without dependencies or I/O. It returns `{ tokens, diagnostics, commentStart }`. A token has `kind: "bare" | "quoted" | "attribute"`, its original `raw` spelling, its decoded `value`, and a `span: { start, end }`. Attribute tokens also have `key`, `valueForm: "bare" | "quoted"`, `keySpan`, and `valueSpan`. Their key/value spans exclude the `=` separator; quoted token/value spans include the delimiters. All spans are end-exclusive, with one-based source lines and UTF-16 columns relative to the supplied origin. Tabs count as one code unit. `commentStart` is the zero-based UTF-16 offset of an outside `#` in the supplied line, or `null`.
+
+```js
+import { lexVrlLine } from "@subvertic/core";
+
+const result = lexVrlLine('start "A=B"', { line: 4, column: 1 });
+// result.tokens[1]:
+// { kind: "quoted", value: "A=B", raw: '"A=B"',
+//   span: { start: { line: 4, column: 7 }, end: { line: 4, column: 12 } } }
+```
+
+The lexer reports the first lexical error on a line and retains only complete preceding tokens for tooling. `parseVrl` consumes typed tokens directly, discards the entire invalid line, and continues with later lines. Syntax diagnostics retain the existing `{ kind, severity, message, location, suggestion }` shape. Unterminated quotes point to the opening quote, escape errors to the backslash, and adjacency errors to the unexpected character. Missing values point just after `=` (which may be one column past the line end). The AST still stores statement-level element locations; lexical spans are exposed by the lexer rather than added to the normalized model.
+
+`compileRoute` returns `ok: false` and null model/layout/JSON for blocking syntax diagnostics. It does not call normalization, geometry validation, layout, or export for those documents. React and Svelte state factories return diagnostics and an empty SVG for invalid source; this differs from exceptions for invalid caller configuration.
+
+The existing `tokenize(line)` helper retains its array of raw token strings for valid input and now omits outside comments. `stripComment(line)` preserves the original spelling and whitespace before an outside comment. Both helpers use the same lexer and throw `SyntaxError` with a `diagnostics` array for malformed input. Call `lexVrlLine` or `parseVrl` for a diagnostic-returning API. `parseAttributeTokens(rawTokens, location)` remains compatible with string arrays: it joins them with single spaces and reports spans relative to that reconstructed line and origin. For original source positions, use `lexVrlLine` or `parseVrl` directly.
+
+Only escaped double quotes and backslashes are supported. Previously accepted unfinished strings, unsupported escapes, quoted keys, and invalid adjacency now fail explicitly. See the [language reference](language-reference.md#quoted-text-escapes-and-token-boundaries) for the complete lexical contract and compatibility text forms.
+
 ### Configuration validation
 
 `computeVerticalLayout` and `computeElevationLayout` validate layout options before computing positions. With the default layout port, `compileRoute` applies the same validation when valid source reaches the layout stage. Options must be plain objects, including objects with a null prototype. Arrays, custom prototypes, unknown layout keys, and `null` are rejected. Omitted options and known properties with value `undefined` use defaults.

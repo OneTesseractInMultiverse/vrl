@@ -84,6 +84,14 @@ Diagnostics are plain objects:
 
 Use `formatDiagnostic(diagnostic)` for readable CLI, build, or editor output.
 
+## Quoted Text and Lexical Tokens
+
+Quoted text preserves equals signs, hashes, Unicode, and interior whitespace. Only `\"` and `\\` are escapes. Unfinished strings, unsupported escapes, and invalid adjacency such as `"A"suffix` produce blocking syntax diagnostics. Assignment separators are recognized outside quotes, so `start "A=B"` retains its label. Empty quoted text is supported where semantic rules permit it; a route name is still required.
+
+`lexVrlLine(line, location)` exposes typed `bare`, `quoted`, and `attribute` tokens with original spelling, decoded values, and end-exclusive source spans. It returns diagnostics instead of throwing for lexical failures. Positions use one-based lines and UTF-16 columns, with a default origin of `{ line: 1, column: 1 }`. `parseVrl` skips invalid lines and continues collecting diagnostics; blocking failures prevent compilation from producing a model, layout, or JSON.
+
+The existing `tokenize` and `stripComment` helpers use the same rules and throw `SyntaxError` with a `diagnostics` array for malformed input. Valid `tokenize` results remain raw strings; outside comments are omitted. See the [language rules](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#quoted-text-escapes-and-token-boundaries) and [token API](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#lexical-tokens-and-syntax-failures) for compatibility details.
+
 ## Layout Options
 
 ```js
