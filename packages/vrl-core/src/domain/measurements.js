@@ -1,3 +1,5 @@
+import { boundedDecimal, MAX_DECIMAL_PLACES, MAX_SOURCE_MAGNITUDE } from "./numeric-policy.js";
+
 const MEASUREMENT_FIELDS = new Set([
   "distance",
   "height",
@@ -27,7 +29,10 @@ export function parseMeasurementToken(token) {
     };
   }
 
-  const meters = Number(match[1]);
+  const meters = boundedDecimal(match[1]);
+  if (meters === null) {
+    return { ok: false, reason: `expected a finite measurement within ±${MAX_SOURCE_MAGNITUDE}m with at most ${MAX_DECIMAL_PLACES} fractional digits` };
+  }
 
   return {
     ok: true,

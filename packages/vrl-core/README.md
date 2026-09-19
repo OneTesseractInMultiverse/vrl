@@ -94,6 +94,10 @@ The existing `tokenize` and `stripComment` helpers use the same rules and throw 
 
 ## Layout Options
 
+Source measurements support at most six fractional digits and an absolute magnitude up to `1000000000m`. Lengths must be positive; entrance/exit elevations may be zero or negative. Inclination is greater than zero and at most 100%, and anchor counts must be positive safe integers. These numeric rules also apply to metadata and non-technical elements. Unsupported source values produce blocking validation diagnostics. Use descriptive metadata such as `rope_inventory="1x60m"` for free text instead of the numeric `rope` field.
+
+Computed model/layout numbers must be finite with absolute magnitude at most `Number.MAX_SAFE_INTEGER`; unsupported results throw `RangeError`. This includes individually valid layout options whose combination produces excessive coordinates and numeric contract violations from custom compiler ports. JSON export rejects unsupported numbers instead of converting them to `null`. Arithmetic uses JavaScript's binary floating-point representation; derived decimals are not silently rounded to source precision. See the [numeric contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#numeric-integrity).
+
 ```js
 compileRoute(source, {
   layout: {

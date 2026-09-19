@@ -1,3 +1,5 @@
+import { requireNumericData, requireSupportedNumber } from "./numeric-policy.js";
+
 /** Technical ownership is a domain rule, independent of drawing coordinates. */
 export function technicalElementIndexesBetween(elements, index) {
   const indexes = [];
@@ -59,7 +61,7 @@ export function technicalVerticalMeters(element) {
   const percent = typeof inclination === "object" && inclination !== null && typeof inclination.percent === "number"
     ? inclination.percent
     : 100;
-  return (meters ?? 0) * (percent / 100);
+  return requireSupportedNumber((meters ?? 0) * (percent / 100), "Technical vertical distance");
 }
 
 export function measurementMeters(value) {
@@ -74,19 +76,19 @@ export function routeElevationProfile(route) {
   const entranceMeters = measurementMeters(route.metadata?.entrance_elevation);
   const exitMeters = measurementMeters(route.metadata?.exit_elevation);
   if (entranceMeters === null || exitMeters === null) return null;
-  return { entranceMeters, exitMeters, totalChangeMeters: entranceMeters - exitMeters };
+  return requireNumericData({ entranceMeters, exitMeters, totalChangeMeters: entranceMeters - exitMeters }, "Elevation profile");
 }
 
 /** Requires complete endpoint elevations and measured technical segments. */
 export function elevationResidual(route, profile) {
   const declaredDelta = routeTraversal(route).segments.reduce((sum, segment) => sum + segment.verticalDeltaMeters, 0);
-  return profile.totalChangeMeters + declaredDelta;
+  return requireSupportedNumber(profile.totalChangeMeters + declaredDelta, "Elevation residual");
 }
 
 export function hasElevationResidual(route) {
   const profile = routeElevationProfile(route);
   const segments = routeTraversal(route).segments;
-  const technicalMagnitude = segments.reduce((sum, segment) => sum + Math.abs(segment.verticalDeltaMeters), 0);
+  const technicalMagnitude = requireSupportedNumber(segments.reduce((sum, segment) => sum + Math.abs(segment.verticalDeltaMeters), 0), "Total technical distance");
   const scale = Math.max(1, Math.abs(profile.entranceMeters), Math.abs(profile.exitMeters), technicalMagnitude);
   const tolerance = Number.EPSILON * 16 * scale * (segments.length + 1);
   return Math.abs(elevationResidual(route, profile)) > tolerance;

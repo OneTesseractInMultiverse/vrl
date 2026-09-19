@@ -2,6 +2,7 @@ import { normalizeInclinationValue } from "./inclinations.js";
 import { normalizeAttributeValue } from "./measurements.js";
 import { normalizeRappelDetailValue } from "./rappel-details.js";
 import { createTraversal } from "./traversal.js";
+import { requireNumericData } from "./numeric-policy.js";
 
 const ID_PREFIXES = {
   start: "S",
@@ -79,7 +80,7 @@ export function summarizeRoute(elements, metadata = {}) {
   const entranceElevationMeters = metadataElevationMeters(metadata, "entrance_elevation");
   const exitElevationMeters = metadataElevationMeters(metadata, "exit_elevation");
 
-  return {
+  return requireNumericData({
     numberOfRappels: rappels.length,
     numberOfHazards: hazards.length,
     highestRappelMeters: highestMeasurement(rappels, "height"),
@@ -90,7 +91,7 @@ export function summarizeRoute(elements, metadata = {}) {
     totalElevationChangeMeters: entranceElevationMeters === null || exitElevationMeters === null
       ? 0
       : entranceElevationMeters - exitElevationMeters
-  };
+  }, "Route summary");
 }
 
 function highestMeasurement(elements, fieldName) {

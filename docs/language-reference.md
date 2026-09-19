@@ -67,6 +67,26 @@ note "Low-water route only"
 
 Measurements must use meters in the first release. Values such as `35m`, `120m`, and `4.5m` are accepted and normalized to `{ value, unit, meters }`.
 
+## Numeric Limits and Precision
+
+Source measurements use ordinary decimal notation with at most six fractional digits, including trailing zeros, and an absolute magnitude no greater than `1000000000m`. Scientific notation, nonfinite values, larger magnitudes, and extra fractional digits are rejected rather than rounded. The smallest positive source measurement is `0.000001m`. These representation limits keep the six-digit fractional grid distinguishable within JavaScript's numeric precision.
+
+| Numeric field | Accepted range |
+| --- | --- |
+| `entrance_elevation`, `exit_elevation` | From `-1000000000m` to `1000000000m`, including zero |
+| `distance`, `height`, `rope`, `traverse`, `total_distance`, `total_descent`, `vertical_gain`, `descent` | Greater than zero, up to `1000000000m` |
+| `inclination` | Greater than `0%` and at most `100%`, with up to six fractional digits; `%` may be omitted |
+| `anchor_count` | Decimal integer from `1` to `9007199254740991`, without leading zeros |
+| `stages`, `redirection`, `redirections` | Each contained measurement follows the same magnitude, precision, and positive-length rules |
+
+Recognized numeric fields follow these rules in metadata and on every element. Both redirection aliases are checked if both are supplied. Existing stage/height and redirection-position checks still apply. Empty numeric fields are invalid; omit an optional field when unknown. Negative zero in a parsed measurement or percentage is normalized to positive zero, so JSON preserves its numeric meaning.
+
+Unrecognized metadata remains text. Use `rope_inventory="1x60m"` for an inventory description; `rope=60m` is a metric measurement. The example route now uses `rope_inventory` to preserve its original description without overloading a numeric field.
+
+Source range and precision failures are structured validation diagnostics and block compilation before normalization and layout. Computed summaries, technical distances, and layout values must remain finite, with absolute magnitude no greater than `Number.MAX_SAFE_INTEGER`. Layout settings can be individually valid yet produce coordinates outside this limit; those combinations throw `RangeError`. JSON export rejects unsupported numbers rather than silently converting them to `null`.
+
+Normalized values and calculations use standard binary floating-point arithmetic, not exact decimal arithmetic. For example, `0.1m + 0.2m` may produce `0.30000000000000004m`; JSON retains that same value. Derived quantities may have more than six fractional digits, and pixel coordinates retain the layout's existing rounding rules. The six-digit limit applies to source spellings, not to calculated results.
+
 ## Elevation Profile
 
 When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining descent between entrance and exit is distributed across non-technical progression segments so the final traversal boundary lands at the provided elevation. The default layout also enforces readable visual spacing between nearby nodes, so dense hazards, pools, stations, and rappels do not stack their symbols; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
