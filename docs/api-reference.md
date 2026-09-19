@@ -77,6 +77,37 @@ const json = exportRouteJson(model);
 
 Use `createRouteCompiler(overrides)` when an application needs to inject custom parser, validator, layout, normalization, or JSON export ports for tests or integration.
 
+### Technical traversal and geometry validation
+
+The normalized model adds `traversal: { points, segments }`. Points contain `elementIndex`, or `null` for an intermediate/outer boundary. Each segment contains:
+
+```js
+{
+  from: 1,                 // index into traversal.points
+  to: 2,                   // index into traversal.points
+  elementIndex: 1,          // owning route.elements index; null for a connection
+  kind: "technical",       // or "connection"
+  direction: "down",       // "up" for climbs; null for connections
+  verticalDeltaMeters: -30 // positive upward, negative downward; null if unmeasured
+}
+```
+
+Connection deltas in the model are zero placeholders, not measured level terrain. Under an elevation profile, their unknown elevation changes can receive a schematic residual; compilation reports a `geometry` warning in that case. Technical deltas remain fixed. A missing downclimb height produces a warning in a schematic route and a blocking error when endpoint elevations require a measured profile. Inconsistent profiles with no eligible connections produce blocking errors. Comparisons tolerate floating-point roundoff, not a fixed rounding of measurements.
+
+`validateGeometry(model)` returns these diagnostics. `createRouteCompiler({ validateGeometry })` can replace that port. `compileRoute` runs it after normalization and returns `model`, `layout`, and `json` as `null` on an error. Lower-level consumers should call it after `normalizeRoute` and before rendering. `computeElevationLayout` and `elevationSegmentDeltas` throw `RangeError` for inconsistent or unmeasured elevation geometry; the former also requires complete elevation metadata. Without elevation metadata, `elevationSegmentDeltas` returns an empty list.
+
+`layout.nodes` retains one entry per route element. `layout.points` contains all positioned traversal boundaries. `layout.segments` augments each domain segment with `start`, `end`, `element` (the owner or `null`), and `technicalDeltaY` (positive downward in SVG coordinates, negative upward, `null` for connections). `elevationSegmentDeltas` returns descent-positive values in this segment order; its length can exceed `elements.length - 1`. Preserve physical `elevationMeters` precision independently of rounded pixel coordinates and readable spacing.
+
+Treat normalized models and layouts as snapshots. Re-normalize after editing source facts, and recompute layouts after changing options. Existing element-only models can still be passed to `computeVerticalLayout`, which derives the canonical traversal.
+
+### Custom renderer migration
+
+Use `layout.segments` to iterate technical events, `segment.element` for annotations, and `segment.start` / `segment.end` for endpoints. Do not infer ownership from adjacent entries in `layout.nodes`: a descent followed by a climb has two events in that gap. Node-only cached or custom layouts must be recomputed; `renderRouteSegments` rejects a missing `segments` array with `TypeError` instead of silently losing a feature.
+
+`segmentTechnicalElement(previous, node)` remains a compatibility helper for unambiguous pairs and now throws `RangeError` for pairs containing two technical elements. `technicalSegmentDelta(previous, element)` returns the combined descent-positive change for such a pair; a scalar net value is not a replacement for its two events.
+
+For custom geometry, pass a positioned segment as the final argument to `dropLadderGeometry`, `technicalLineVerticalDelta`, or the technical segment render helpers. They consume its `technicalDeltaY` directly. The older elevation-layout overload remains available for callers with an already unambiguous pair, but compiled rendering uses only the positioned segment contract.
+
 ## @subvertic/render-svg
 
 Install:

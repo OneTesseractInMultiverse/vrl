@@ -1,6 +1,7 @@
 import { normalizeInclinationValue } from "./inclinations.js";
 import { normalizeAttributeValue } from "./measurements.js";
 import { normalizeRappelDetailValue } from "./rappel-details.js";
+import { createTraversal } from "./traversal.js";
 
 const ID_PREFIXES = {
   start: "S",
@@ -42,6 +43,7 @@ export function normalizeRoute(ast) {
     name: ast.name,
     metadata,
     elements,
+    traversal: createTraversal(elements),
     summary: summarizeRoute(elements, metadata)
   };
 }

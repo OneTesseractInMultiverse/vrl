@@ -26,13 +26,21 @@ Framework adapters are intentionally thin. They accept framework-specific inputs
 
 `domain/model.js` creates route elements, generates stable element identifiers, normalizes measurement-bearing attributes, rappel redirections, rappel stages, and computes summary values such as highest rappel, required rope, entrance elevation, exit elevation, and total elevation change.
 
+`domain/traversal.js` owns technical event order, endpoint references, element ownership, direction, and signed physical elevation change. Normalization records these in `model.traversal`. A descent followed by a climb has an intermediate boundary and two segments. Leading climbs and trailing descents receive the missing outer boundary. These boundaries have no drawing coordinates and do not create route elements. Annotations remain on their owning normalized element, referenced by index rather than copied into a second model.
+
+`validation/validate-geometry.js` reports missing technical measurements and inconsistent or underdetermined elevation constraints after normalization. It does not distribute a residual over a declared technical feature. The application invokes this validation before layout and JSON export; geometry errors prevent either output.
+
 `parser/line-parser.js` parses compact VRL source. It preserves line and column locations in diagnostics so editors, documentation pages, and CI logs can point to the source of a problem.
 
 `validation/validate-route.js` checks semantic rules such as required rappel and climb fields, positive measurements, known anchors, known pool types, technical slope shape, station, landing, flow, inclination, anchor count, mid-rappel redirections, staged rappel lengths, metadata elevation syntax, hazard severity values, and rope shorter than rappel height warnings.
 
 `layout/vertical-layout.js` turns ordered route elements into positioned nodes with horizontal progression, upward movement for climbs, elevation-aware y positions when entrance and exit elevations are available, and readable minimum node spacing for dense features. It is pure layout math and does not emit SVG.
 
+Layout positions the canonical traversal points and segments. `layout.nodes` still contains one node per source element; `layout.points` also includes the extra boundaries, and `layout.segments` carries positioned endpoints, the owning element, and the technical pixel delta. Physical elevation values remain independent of minimum visual spacing. The renderer consumes these positioned segments and does not choose an owner by inspecting neighboring nodes. Terrain uses all traversal points so intermediate and terminal technical features remain visible.
+
 `application/compile-route.js` coordinates parse, validation, normalization, layout, and JSON export. It also exposes `createRouteCompiler(overrides)` so alternate parser, validator, layout, normalization, or export ports can be injected without changing the use-case coordinator.
+
+The optional `validateGeometry` port validates the normalized contract. The renderer depends inward on the first-party core package for its compatibility helpers; neither package adds third-party runtime dependencies. Scene organization beyond this segment boundary remains separate follow-up work.
 
 ## Dependency Rule
 

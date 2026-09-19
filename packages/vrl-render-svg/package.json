@@ -40,6 +40,9 @@
     "LICENSE"
   ],
   "sideEffects": false,
+  "dependencies": {
+    "@subvertic/core": "0.1.0"
+  },
   "engines": {
     "node": ">=20.0.0"
   },

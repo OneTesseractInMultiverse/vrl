@@ -44,7 +44,26 @@ Measurements must use meters in the first release. Values such as `35m`, `120m`,
 
 ## Elevation Profile
 
-When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining descent between entrance and exit is distributed across non-technical progression segments so the final exit node lands at the provided elevation. The default layout also enforces readable visual spacing between nearby nodes, so dense hazards, pools, stations, and rappels do not stack their symbols; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
+When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining descent between entrance and exit is distributed across non-technical progression segments so the final traversal boundary lands at the provided elevation. The default layout also enforces readable visual spacing between nearby nodes, so dense hazards, pools, stations, and rappels do not stack their symbols; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
+
+## Technical Event Boundaries
+
+A rappel or downclimb starts at its element node and proceeds to its lower boundary. A climb ends at its element node, with its upward traversal immediately before that node. When a descent is followed directly by a climb, an intermediate boundary separates them; neither event takes precedence. A leading climb receives an implicit entry boundary, and a trailing rappel/downclimb receives an implicit final boundary. These are traversal boundaries, not additional DSL statements or named route elements.
+
+```vrl
+route "Descent and ascent"
+metadata entrance_elevation=100m exit_elevation=75m
+start "Entry"
+rappel "R1" height=30m rope=60m
+climb "C1" height=5m
+exit "Finish"
+```
+
+This route has a 30 m descent to an intermediate elevation of 70 m, followed by a 5 m ascent to 75 m. Both slopes are rendered, including when readable spacing is enabled. Their net change is a 25 m descent. `inclination` applies independently to each technical feature. Stages, redirections, anchor details, and other annotations remain attached to the feature that declares them.
+
+If technical measurements cannot match the endpoint elevations and no non-technical connection can account for the difference, compilation fails with a geometry diagnostic. When connections can absorb a residual, compilation warns that intermediate elevations are schematic estimates. A downclimb without `height` is allowed schematically with a warning; a measured endpoint profile requires that missing height. Neither case silently changes a declared climb into a descent.
+
+Endpoint metadata currently calibrates the whole ordered traversal. Keep the explicit exit last when it is intended to coincide with the final elevation; independent handling of annotations after exit is tracked in issue #5.
 
 ## Expressive Descent Attributes
 
