@@ -1,7 +1,10 @@
 import { createDiagnostic } from "../domain/diagnostics.js";
 import { hasElevationResidual, routeElevationProfile, routeTraversal } from "../domain/traversal.js";
+import { validateBoundaries } from "./validate-boundaries.js";
 
 export function validateGeometry(route) {
+  const boundaryDiagnostics = validateBoundaries(route.elements);
+  if (boundaryDiagnostics.length > 0) return boundaryDiagnostics;
   const traversal = routeTraversal(route);
   const profile = routeElevationProfile(route);
   const missing = traversal.segments.filter((segment) => segment.kind === "technical" && segment.verticalDeltaMeters === null);

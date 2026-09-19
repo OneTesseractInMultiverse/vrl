@@ -84,7 +84,7 @@ export function resolveRenderLanguage(options = {}) {
 export function renderNodes(layout, theme, symbology = "federation", language = "en") {
   let nextTitleY = null;
 
-  return layout.nodes.map((node) => {
+  return nodesInVisualOrder(layout.nodes).map((node) => {
     const placement = nodeLabelPlacement(node, nextTitleY);
     const title = formatTopoLabel(node.element, language);
     const detail = formatTopoDetail(node.element, node, language);
@@ -94,6 +94,11 @@ export function renderNodes(layout, theme, symbology = "federation", language = 
     nextTitleY = hasLabelText ? nextLabelTitleY(placement, detailRows.length) : nextTitleY;
     return renderNode(node, theme, symbology, placement, language, { detail, detailRows, maxDetailWidth, title });
   }).join("");
+}
+
+function nodesInVisualOrder(nodes) {
+  return [...nodes].sort((left, right) => left.y - right.y
+    || Number(Object.hasOwn(left, "anchorPointIndex")) - Number(Object.hasOwn(right, "anchorPointIndex")));
 }
 
 export function renderTerrainProfile(layout, theme) {
