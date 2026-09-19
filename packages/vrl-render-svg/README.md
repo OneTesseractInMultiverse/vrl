@@ -49,6 +49,14 @@ renderTopoSvg(model, layout, {
 
 `language` controls diagram labels, the built-in legend, and common detail values. `symbology` controls canyon topo abbreviations and the symbol key shown in the legend. Generic progression nodes use the compact symbol marker only, avoiding redundant visible labels such as `Pool P1` or `Poza P1`. When the layout includes elevation metadata, the renderer scales the technical part of each rappel, downclimb, or climb from `height * inclination * pixelsPerMeter`; connector lines absorb any extra spacing needed to keep symbols readable. The renderer labels ambiguous values such as `flow: medium` and `exposure: medium`; flow, exposure, hazard severity, and inclination values render as category-colored badges. Values such as `dry`, `low`, `medium`, and `high` share the color of their field category. The renderer uses federation-oriented text abbreviations rather than copied artwork. When `language` is not set, `symbology: "spanish"` selects Spanish text by default.
 
+## Configuration and Markup Contract
+
+Renderer options must be a plain object. `theme` accepts only `light` or `dark`, and `legend` must be a boolean when supplied. Theme overrides must use known token names and supported paint strings: CSS named colors, `transparent`, `currentColor`, `none`, hex colors, or comma-separated `rgb`, `rgba`, `hsl`, and `hsla` within the documented numeric ranges. Resource references (`url(...)`, even local fragments), CSS variables, expressions, and other color syntaxes are rejected. Omit a token to inherit it; explicit `undefined` or `null` token values are invalid.
+
+The renderer checks finite numeric canvas dimensions and positioned coordinates and encodes every dynamic SVG attribute. Invalid configuration throws `TypeError` or `RangeError`. Low-level helpers encode attributes and validate paint, while callers remain responsible for valid geometry. This package does not sanitize arbitrary SVG.
+
+React and Svelte accept caller-provided `diagram.svg` as trusted markup and bypass rendering when it is supplied. The embedding application owns that trust decision. See the [API reference](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#renderer-configuration-and-svg-attributes) for the full paint grammar, numeric limits, and precomputed-state contract.
+
 ## Useful Exports
 
 ```js

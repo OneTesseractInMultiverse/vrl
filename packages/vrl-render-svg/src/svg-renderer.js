@@ -9,6 +9,8 @@ import {
 import { diagramText, localizeDetailValue, resolveDiagramLanguage } from "./locale.js";
 import { resolveSymbolProfile, symbolCode, symbolKind } from "./symbol-registry.js";
 import { escapeXml } from "./xml.js";
+import { svgAttribute, svgPaint } from "./attributes.js";
+import { validateRenderLayout, validateRenderOptions } from "./render-options.js";
 
 const TOPO_LEGEND_HEIGHT = 156;
 const TOPO_LEGEND_RECT_HEIGHT = 124;
@@ -40,6 +42,8 @@ const DETAIL_BADGE_LABELS = {
 };
 
 export function renderTopoSvg(route, layout, options = {}) {
+  validateRenderOptions(options);
+  validateRenderLayout(layout);
   const theme = resolveTheme(options.theme, options.themeTokens);
   const language = resolveRenderLanguage(options);
   const text = diagramText(language);
@@ -53,15 +57,15 @@ export function renderTopoSvg(route, layout, options = {}) {
   const infoBox = renderInfoBox(route, layout, theme, language);
   const legend = options.legend === false ? "" : renderLegend(layout, theme, language, options.symbology);
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 ${layout.width} ${height}" width="${layout.width}" height="${height}" style="max-width: 100%; height: auto;">
+  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 ${svgAttribute(layout.width)} ${svgAttribute(height)}" width="${svgAttribute(layout.width)}" height="${svgAttribute(height)}" style="max-width: 100%; height: auto;">
   <title>${escapeXml(route.name)} ${escapeXml(text.topo)}</title>
   <desc>${escapeXml(text.schematicDescription)} ${escapeXml(route.name)}.</desc>
   <defs>
     <marker id="vrl-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L7,3 z" fill="${theme.routeLine}"/>
+      <path d="M0,0 L0,6 L7,3 z" fill="${svgPaint(theme.routeLine)}"/>
     </marker>
   </defs>
-  <rect width="${layout.width}" height="${height}" fill="${theme.background}"/>
+  <rect width="${svgAttribute(layout.width)}" height="${svgAttribute(height)}" fill="${svgPaint(theme.background)}"/>
   ${terrainProfile}
   ${infoBox}
   ${waterSegments}
@@ -93,7 +97,7 @@ export function renderNodes(layout, theme, symbology = "federation", language = 
 }
 
 export function renderTerrainProfile(layout, theme) {
-  return `<path class="vrl-terrain-profile" d="${terrainProfilePath(layout)}" fill="${theme.terrain}"/>`;
+  return `<path class="vrl-terrain-profile" d="${svgAttribute(terrainProfilePath(layout))}" fill="${svgPaint(theme.terrain)}"/>`;
 }
 
 export function topoLegendHeight(options = {}) {
@@ -117,9 +121,9 @@ export function renderLegend(layout, theme, language = "en", symbology = "federa
     { kind: "badges", category: "inclination", label: text.inclination, values: ["80%"], description: text.inclinationDescription }
   ];
 
-  return `<g class="vrl-legend" aria-label="${escapeXml(text.legendTitle)}">
-    <rect x="${x}" y="${y}" width="${width}" height="${TOPO_LEGEND_RECT_HEIGHT}" rx="4" fill="${theme.panel}" stroke="${theme.routeLine}" stroke-width="1"/>
-    <text x="${x + 14}" y="${y + 22}" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="${theme.text}">${escapeXml(text.legendTitle)}</text>
+  return `<g class="vrl-legend" aria-label="${svgAttribute(text.legendTitle)}">
+    <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(TOPO_LEGEND_RECT_HEIGHT)}" rx="4" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1"/>
+    <text x="${svgAttribute(x + 14)}" y="${svgAttribute(y + 22)}" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="${svgPaint(theme.text)}">${escapeXml(text.legendTitle)}</text>
     ${symbolRows.map((entries, index) => renderLegendRow({ kind: "symbols", entries }, x + 14, y + 42 + (index * 16), theme, language)).join("")}
     ${rows.map((row, index) => {
       const column = index < 3 ? 0 : 1;
@@ -147,7 +151,7 @@ export function renderLegendRow(row, x, y, theme, language = "en") {
     return `${renderPlainDetailText(label, x, y, theme, LEGEND_FONT_SIZE)}${badges}${description}`;
   }
 
-  return `<text class="vrl-legend-row" x="${x}" y="${y}" font-family="system-ui, sans-serif" font-size="${LEGEND_FONT_SIZE}" fill="${theme.mutedText}">${escapeXml(row.value)}</text>`;
+  return `<text class="vrl-legend-row" x="${svgAttribute(x)}" y="${svgAttribute(y)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(LEGEND_FONT_SIZE)}" fill="${svgPaint(theme.mutedText)}">${escapeXml(row.value)}</text>`;
 }
 
 export function legendSymbolRows(language = "en", symbology = "federation") {
@@ -173,8 +177,8 @@ export function renderLegendSymbolRow(entries, x, y, theme) {
   return `<g class="vrl-legend-symbol-row">${entries.map(([code, label]) => {
     const codeText = String(code);
     const labelText = String(label);
-    const markup = `<text class="vrl-legend-symbol-entry" x="${cursor}" y="${y}" font-family="system-ui, sans-serif" font-size="${LEGEND_FONT_SIZE}" fill="${theme.mutedText}">
-      <tspan font-weight="800" fill="${theme.text}">${escapeXml(codeText)}</tspan><tspan> = ${escapeXml(labelText)}</tspan>
+    const markup = `<text class="vrl-legend-symbol-entry" x="${svgAttribute(cursor)}" y="${svgAttribute(y)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(LEGEND_FONT_SIZE)}" fill="${svgPaint(theme.mutedText)}">
+      <tspan font-weight="800" fill="${svgPaint(theme.text)}">${escapeXml(codeText)}</tspan><tspan> = ${escapeXml(labelText)}</tspan>
     </text>`;
     cursor += estimatedTextWidth(`${codeText} = ${labelText}`, LEGEND_FONT_SIZE) + 20;
     return markup;
@@ -200,20 +204,20 @@ export function renderInfoBox(route, layout, theme, language = "en") {
   const elevation = layout.elevation;
   const text = diagramText(language);
 
-  return `<g class="vrl-info-box" aria-label="${escapeXml(text.routeSummary)}">
-    <rect x="${x}" y="26" width="240" height="122" fill="#86a844" stroke="${theme.routeLine}" stroke-width="2"/>
-    <text x="${x + 120}" y="50" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="${theme.text}">${escapeXml(route.name).toUpperCase()}</text>
-    <text x="${x + 120}" y="74" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${theme.text}">${escapeXml(text.difficulty)}: ${escapeXml(metadata.difficulty ?? text.noData)}</text>
-    <text x="${x + 120}" y="94" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${theme.text}">${escapeXml(text.elevationChange)}: ${escapeXml(elevationSummary(elevation, language))}</text>
-    <text x="${x + 120}" y="114" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${theme.text}">${escapeXml(text.region)}: ${escapeXml(metadata.region ?? text.noData)}</text>
-    <text x="${x + 120}" y="134" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${theme.text}">${escapeXml(text.country)}: ${escapeXml(metadata.country ?? text.noData)}</text>
+  return `<g class="vrl-info-box" aria-label="${svgAttribute(text.routeSummary)}">
+    <rect x="${svgAttribute(x)}" y="26" width="240" height="122" fill="#86a844" stroke="${svgPaint(theme.routeLine)}" stroke-width="2"/>
+    <text x="${svgAttribute(x + 120)}" y="50" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="${svgPaint(theme.text)}">${escapeXml(route.name).toUpperCase()}</text>
+    <text x="${svgAttribute(x + 120)}" y="74" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.difficulty)}: ${escapeXml(metadata.difficulty ?? text.noData)}</text>
+    <text x="${svgAttribute(x + 120)}" y="94" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.elevationChange)}: ${escapeXml(elevationSummary(elevation, language))}</text>
+    <text x="${svgAttribute(x + 120)}" y="114" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.region)}: ${escapeXml(metadata.region ?? text.noData)}</text>
+    <text x="${svgAttribute(x + 120)}" y="134" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(text.country)}: ${escapeXml(metadata.country ?? text.noData)}</text>
   </g>`;
 }
 
 export function renderWaterSegments(layout, theme) {
   return layout.nodes
     .filter((node) => node.element.type === "pool")
-    .map((node) => `<path class="vrl-water-run" d="M ${node.x - 28} ${node.y + 4} C ${node.x - 10} ${node.y + 12}, ${node.x + 12} ${node.y + 12}, ${node.x + 34} ${node.y + 2}" fill="none" stroke="${theme.water}" stroke-width="6" stroke-linecap="round"/>`)
+    .map((node) => `<path class="vrl-water-run" d="M ${svgAttribute(node.x - 28)} ${svgAttribute(node.y + 4)} C ${svgAttribute(node.x - 10)} ${svgAttribute(node.y + 12)}, ${svgAttribute(node.x + 12)} ${svgAttribute(node.y + 12)}, ${svgAttribute(node.x + 34)} ${svgAttribute(node.y + 2)}" fill="none" stroke="${svgPaint(theme.water)}" stroke-width="6" stroke-linecap="round"/>`)
     .join("");
 }
 
@@ -234,7 +238,7 @@ function renderRouteSegment(segment, theme, language) {
 
 function renderConnectionSegment(segment, theme) {
   const path = routeSegmentPath(segment.start, segment.end, segment.start.element);
-  return `<path class="vrl-route-segment" d="${path}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return `<path class="vrl-route-segment" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
 export function routeSegmentPath(previous, node, element = previous.element) {
@@ -257,12 +261,12 @@ export function renderDropLadderSegment(previous, node, theme, element = previou
   const geometry = dropLadderGeometry(previous, node, element, layout);
 
   return `<g class="vrl-drop-ladder">
-    <path class="vrl-route-segment vrl-drop-lead" d="M ${geometry.startX} ${geometry.startY} L ${geometry.dropX} ${geometry.startY}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <path class="vrl-route-segment vrl-drop-slope" d="M ${geometry.dropX} ${geometry.startY} L ${geometry.bottomX} ${geometry.bottomY}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
+    <path class="vrl-route-segment vrl-drop-lead" d="M ${svgAttribute(geometry.startX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-slope" d="M ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
     ${renderDropRungs(geometry, theme)}
     ${renderRappelStageMarkers(geometry, element, theme)}
     ${renderRedirectionMarkers(geometry, element, theme, language)}
-    <path class="vrl-route-segment vrl-drop-exit" d="M ${geometry.bottomX} ${geometry.bottomY} L ${geometry.endX} ${geometry.endY}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-exit" d="M ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)} L ${svgAttribute(geometry.endX)} ${svgAttribute(geometry.endY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>`;
 }
 
@@ -270,9 +274,9 @@ export function renderDirectTechnicalSegment(previous, node, theme, element = pr
   const geometry = dropLadderGeometry(previous, node, element, layout);
 
   return `<g class="vrl-drop-direct">
-    <path class="vrl-route-segment vrl-drop-lead" d="M ${geometry.startX} ${geometry.startY} L ${geometry.dropX} ${geometry.startY}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <path class="vrl-route-segment vrl-drop-slope" d="M ${geometry.dropX} ${geometry.startY} L ${geometry.bottomX} ${geometry.bottomY}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
-    <path class="vrl-route-segment vrl-drop-exit" d="M ${geometry.bottomX} ${geometry.bottomY} L ${geometry.endX} ${geometry.endY}" fill="none" stroke="${theme.routeLine}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-lead" d="M ${svgAttribute(geometry.startX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-slope" d="M ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
+    <path class="vrl-route-segment vrl-drop-exit" d="M ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)} L ${svgAttribute(geometry.endX)} ${svgAttribute(geometry.endY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>`;
 }
 
@@ -324,7 +328,7 @@ export function renderDropRungs(geometry, theme) {
     const y1 = Math.round(y + (normalY * 7));
     const x2 = Math.round(x - (normalX * 7));
     const y2 = Math.round(y - (normalY * 7));
-    return `<line class="vrl-drop-rung" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${theme.routeLine}" stroke-width="1.5" stroke-linecap="round"/>`;
+    return `<line class="vrl-drop-rung" x1="${svgAttribute(x1)}" y1="${svgAttribute(y1)}" x2="${svgAttribute(x2)}" y2="${svgAttribute(y2)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.5" stroke-linecap="round"/>`;
   }).join("");
 }
 
@@ -344,13 +348,13 @@ export function renderRappelStageMarkers(geometry, element, theme) {
     cumulative += stage.meters;
     const boundary = index === stages.length - 1 ? "" : renderStageBoundary(geometry, cumulative / total, theme);
 
-    return `${boundary}<text class="vrl-rappel-stage-label" x="${midpoint.x + (labelDirection * 16)}" y="${midpoint.y - 2}" text-anchor="${textAnchor}" font-family="system-ui, sans-serif" font-size="9" fill="${theme.text}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${formatMeters(stage)}</text>`;
+    return `${boundary}<text class="vrl-rappel-stage-label" x="${svgAttribute(midpoint.x + (labelDirection * 16))}" y="${svgAttribute(midpoint.y - 2)}" text-anchor="${svgAttribute(textAnchor)}" font-family="system-ui, sans-serif" font-size="9" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${formatMeters(stage)}</text>`;
   }).join("");
 }
 
 export function renderStageBoundary(geometry, ratio, theme) {
   const point = technicalLinePoint(geometry, ratio);
-  return `<line class="vrl-rappel-stage-boundary" x1="${point.x - 8}" y1="${point.y}" x2="${point.x + 8}" y2="${point.y}" stroke="${theme.routeLine}" stroke-width="1.5" stroke-linecap="round"/>`;
+  return `<line class="vrl-rappel-stage-boundary" x1="${svgAttribute(point.x - 8)}" y1="${svgAttribute(point.y)}" x2="${svgAttribute(point.x + 8)}" y2="${svgAttribute(point.y)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.5" stroke-linecap="round"/>`;
 }
 
 export function renderRedirectionMarkers(geometry, element, theme, language = "en") {
@@ -363,9 +367,9 @@ export function renderRedirectionMarkers(geometry, element, theme, language = "e
     const point = technicalLinePoint(geometry, ratio);
     const label = redirectionLabel(redirection, language);
 
-    return `<g class="vrl-redirection-anchor" aria-label="${escapeXml(text.redirectionAnchor)} ${escapeXml(label)}">
-      <path d="M ${point.x} ${point.y - 6} L ${point.x + 6} ${point.y} L ${point.x} ${point.y + 6} L ${point.x - 6} ${point.y} Z" fill="${theme.panel}" stroke="${theme.routeLine}" stroke-width="1.4"/>
-      <text x="${point.x + (labelDirection * 12)}" y="${point.y + 3}" text-anchor="${textAnchor}" font-family="system-ui, sans-serif" font-size="8" fill="${theme.text}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>
+    return `<g class="vrl-redirection-anchor" aria-label="${svgAttribute(text.redirectionAnchor)} ${svgAttribute(label)}">
+      <path d="M ${svgAttribute(point.x)} ${svgAttribute(point.y - 6)} L ${svgAttribute(point.x + 6)} ${svgAttribute(point.y)} L ${svgAttribute(point.x)} ${svgAttribute(point.y + 6)} L ${svgAttribute(point.x - 6)} ${svgAttribute(point.y)} Z" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.4"/>
+      <text x="${svgAttribute(point.x + (labelDirection * 12))}" y="${svgAttribute(point.y + 3)}" text-anchor="${svgAttribute(textAnchor)}" font-family="system-ui, sans-serif" font-size="8" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>
     </g>`;
   }).join("");
 }
@@ -425,7 +429,7 @@ export function renderSegmentLabels(layout, theme) {
     }
 
     const position = segmentLabelPosition(previous, node);
-    return `<text class="vrl-segment-label" x="${position.x}" y="${position.y}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="${theme.text}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>`;
+    return `<text class="vrl-segment-label" x="${svgAttribute(position.x)}" y="${svgAttribute(position.y)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(label)}</text>`;
   }).join("");
 }
 
@@ -453,12 +457,12 @@ export function renderStationTick(node, theme) {
   const lineA = stationTickLine(node, direction, 8);
   const lineB = stationTickLine(node, direction, 12);
 
-  return `<g class="vrl-station-tick vrl-station-tick-clearance" stroke="${theme.panel}" stroke-width="5" stroke-linecap="round">
-      <line x1="${lineA.x1}" y1="${lineA.y1}" x2="${lineA.x2}" y2="${lineA.y2}"/>
-      <line x1="${lineB.x1}" y1="${lineB.y1}" x2="${lineB.x2}" y2="${lineB.y2}"/>
-    </g><g class="vrl-station-tick" stroke="${theme.routeLine}" stroke-width="1.5" stroke-linecap="round">
-      <line x1="${lineA.x1}" y1="${lineA.y1}" x2="${lineA.x2}" y2="${lineA.y2}"/>
-      <line x1="${lineB.x1}" y1="${lineB.y1}" x2="${lineB.x2}" y2="${lineB.y2}"/>
+  return `<g class="vrl-station-tick vrl-station-tick-clearance" stroke="${svgPaint(theme.panel)}" stroke-width="5" stroke-linecap="round">
+      <line x1="${svgAttribute(lineA.x1)}" y1="${svgAttribute(lineA.y1)}" x2="${svgAttribute(lineA.x2)}" y2="${svgAttribute(lineA.y2)}"/>
+      <line x1="${svgAttribute(lineB.x1)}" y1="${svgAttribute(lineB.y1)}" x2="${svgAttribute(lineB.x2)}" y2="${svgAttribute(lineB.y2)}"/>
+    </g><g class="vrl-station-tick" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.5" stroke-linecap="round">
+      <line x1="${svgAttribute(lineA.x1)}" y1="${svgAttribute(lineA.y1)}" x2="${svgAttribute(lineA.x2)}" y2="${svgAttribute(lineA.y2)}"/>
+      <line x1="${svgAttribute(lineB.x1)}" y1="${svgAttribute(lineB.y1)}" x2="${svgAttribute(lineB.x2)}" y2="${svgAttribute(lineB.y2)}"/>
     </g>`;
 }
 
@@ -481,10 +485,10 @@ export function renderNode(node, theme, symbology = "federation", placement = no
   const detailLine = renderDetailLine(detail, placement.labelX, placement.detailY, theme, language, options.maxDetailWidth, options.detailRows);
   const titleLine = title === ""
     ? ""
-    : `<text x="${placement.labelX}" y="${placement.titleY}" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="${theme.text}" stroke="${theme.panel}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(title)}</text>`;
+    : `<text x="${svgAttribute(placement.labelX)}" y="${svgAttribute(placement.titleY)}" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(title)}</text>`;
   const labelLeader = titleLine === "" && detailLine === "" ? "" : renderLabelLeader(node, placement, theme);
 
-  return `<g class="vrl-node vrl-node-${element.type}" aria-label="${escapeXml(formatElementTitle(element, language))}">
+  return `<g class="vrl-node vrl-node-${svgAttribute(element.type)}" aria-label="${svgAttribute(formatElementTitle(element, language))}">
     ${anchorMarks}
     ${marker}
     ${labelLeader}
@@ -518,7 +522,7 @@ export function renderLabelLeader(node, placement, theme) {
     return "";
   }
 
-  return `<path class="vrl-label-leader" d="M ${node.x + 12} ${node.y - 2} L ${placement.labelX - 8} ${placement.titleY - 4}" fill="none" stroke="${theme.mutedText}" stroke-width="1" stroke-linecap="round" stroke-dasharray="3 3"/>`;
+  return `<path class="vrl-label-leader" d="M ${svgAttribute(node.x + 12)} ${svgAttribute(node.y - 2)} L ${svgAttribute(placement.labelX - 8)} ${svgAttribute(placement.titleY - 4)}" fill="none" stroke="${svgPaint(theme.mutedText)}" stroke-width="1" stroke-linecap="round" stroke-dasharray="3 3"/>`;
 }
 
 export function renderAnchorMarks(node, element, theme, side = "left", language = "en") {
@@ -529,11 +533,11 @@ export function renderAnchorMarks(node, element, theme, side = "left", language 
 
   const direction = side === "left" ? -1 : 1;
 
-  return `<g class="vrl-anchor-marks" aria-label="${count} ${escapeXml(anchorLabel(count, language))}">
+  return `<g class="vrl-anchor-marks" aria-label="${svgAttribute(count)} ${svgAttribute(anchorLabel(count, language))}">
     ${Array.from({ length: count }, (_, index) => {
       const x = node.x + (direction * (14 + (index * 8)));
       const y = node.y - 24;
-      return `<circle cx="${x}" cy="${y}" r="3" fill="${theme.panel}" stroke="${theme.routeLine}" stroke-width="1.4"/>`;
+      return `<circle cx="${svgAttribute(x)}" cy="${svgAttribute(y)}" r="3" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.4"/>`;
     }).join("")}
   </g>`;
 }
@@ -551,24 +555,24 @@ export function renderSymbolMarker(node, element, color, symbology = "federation
   const code = escapeXml(symbolCode(element, symbology));
 
   if (symbolKind(element) === "snake") {
-    return `<g class="vrl-symbol vrl-symbol-snake" aria-label="${escapeXml(diagramText(language).snakeHazard)}">
-      <path class="vrl-symbol-clearance" d="M ${node.x - 9} ${node.y + 8} C ${node.x - 2} ${node.y - 10}, ${node.x + 4} ${node.y + 10}, ${node.x + 10} ${node.y - 8}" fill="none" stroke="${panelColor}" stroke-width="7" stroke-linecap="round"/>
-      <path d="M ${node.x - 9} ${node.y + 8} C ${node.x - 2} ${node.y - 10}, ${node.x + 4} ${node.y + 10}, ${node.x + 10} ${node.y - 8}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/>
-      <text x="${node.x}" y="${node.y + 20}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="${color}" stroke="${panelColor}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${code}</text>
+    return `<g class="vrl-symbol vrl-symbol-snake" aria-label="${svgAttribute(diagramText(language).snakeHazard)}">
+      <path class="vrl-symbol-clearance" d="M ${svgAttribute(node.x - 9)} ${svgAttribute(node.y + 8)} C ${svgAttribute(node.x - 2)} ${svgAttribute(node.y - 10)}, ${svgAttribute(node.x + 4)} ${svgAttribute(node.y + 10)}, ${svgAttribute(node.x + 10)} ${svgAttribute(node.y - 8)}" fill="none" stroke="${svgPaint(panelColor)}" stroke-width="7" stroke-linecap="round"/>
+      <path d="M ${svgAttribute(node.x - 9)} ${svgAttribute(node.y + 8)} C ${svgAttribute(node.x - 2)} ${svgAttribute(node.y - 10)}, ${svgAttribute(node.x + 4)} ${svgAttribute(node.y + 10)}, ${svgAttribute(node.x + 10)} ${svgAttribute(node.y - 8)}" fill="none" stroke="${svgPaint(color)}" stroke-width="3" stroke-linecap="round"/>
+      <text x="${svgAttribute(node.x)}" y="${svgAttribute(node.y + 20)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="${svgPaint(color)}" stroke="${svgPaint(panelColor)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${code}</text>
     </g>`;
   }
 
   if (symbolKind(element) === "hazard") {
     return `<g class="vrl-symbol vrl-symbol-hazard">
-      <path class="vrl-symbol-clearance" d="M ${node.x} ${node.y - 12} L ${node.x - 11} ${node.y + 11} L ${node.x + 11} ${node.y + 11} Z" fill="${panelColor}" stroke="${panelColor}" stroke-width="2"/>
-      <path d="M ${node.x} ${node.y - 9} L ${node.x - 8} ${node.y + 8} L ${node.x + 8} ${node.y + 8} Z" fill="#d53a2f" stroke="${themeSafeStroke(color)}" stroke-width="1"/>
+      <path class="vrl-symbol-clearance" d="M ${svgAttribute(node.x)} ${svgAttribute(node.y - 12)} L ${svgAttribute(node.x - 11)} ${svgAttribute(node.y + 11)} L ${svgAttribute(node.x + 11)} ${svgAttribute(node.y + 11)} Z" fill="${svgPaint(panelColor)}" stroke="${svgPaint(panelColor)}" stroke-width="2"/>
+      <path d="M ${svgAttribute(node.x)} ${svgAttribute(node.y - 9)} L ${svgAttribute(node.x - 8)} ${svgAttribute(node.y + 8)} L ${svgAttribute(node.x + 8)} ${svgAttribute(node.y + 8)} Z" fill="#d53a2f" stroke="${svgPaint(themeSafeStroke(color))}" stroke-width="1"/>
     </g>`;
   }
 
   return `<g class="vrl-symbol vrl-symbol-standard">
-    <circle class="vrl-symbol-clearance" cx="${node.x}" cy="${node.y}" r="8" fill="${panelColor}" stroke="${panelColor}" stroke-width="2"/>
-    <circle cx="${node.x}" cy="${node.y}" r="4" fill="#8fb04b" stroke="${themeSafeStroke(color)}" stroke-width="1"/>
-    <text x="${node.x}" y="${node.y - STANDARD_SYMBOL_CODE_Y_OFFSET}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="${themeSafeStroke(color)}" stroke="${panelColor}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${code}</text>
+    <circle class="vrl-symbol-clearance" cx="${svgAttribute(node.x)}" cy="${svgAttribute(node.y)}" r="8" fill="${svgPaint(panelColor)}" stroke="${svgPaint(panelColor)}" stroke-width="2"/>
+    <circle cx="${svgAttribute(node.x)}" cy="${svgAttribute(node.y)}" r="4" fill="#8fb04b" stroke="${svgPaint(themeSafeStroke(color))}" stroke-width="1"/>
+    <text x="${svgAttribute(node.x)}" y="${svgAttribute(node.y - STANDARD_SYMBOL_CODE_Y_OFFSET)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="${svgPaint(themeSafeStroke(color))}" stroke="${svgPaint(panelColor)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${code}</text>
   </g>`;
 }
 
@@ -672,9 +676,9 @@ export function renderLevelBadge(value, x, y, language = "en", category = "level
   const width = levelBadgeWidth(label);
   const style = detailBadgeStyle(badge.category, theme);
 
-  return `<g class="vrl-level-badge vrl-level-badge-${badge.className} vrl-detail-badge vrl-detail-badge-${badge.category}">
-    <rect x="${x}" y="${y - 12}" width="${width}" height="14" rx="3" fill="${style.fill}"/>
-    <text x="${x + Math.round(width / 2)}" y="${y - 3}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="${style.text}">${escapeXml(label)}</text>
+  return `<g class="vrl-level-badge vrl-level-badge-${svgAttribute(badge.className)} vrl-detail-badge vrl-detail-badge-${svgAttribute(badge.category)}">
+    <rect x="${svgAttribute(x)}" y="${svgAttribute(y - 12)}" width="${svgAttribute(width)}" height="14" rx="3" fill="${svgPaint(style.fill)}"/>
+    <text x="${svgAttribute(x + Math.round(width / 2))}" y="${svgAttribute(y - 3)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="${svgPaint(style.text)}">${escapeXml(label)}</text>
   </g>`;
 }
 
@@ -869,7 +873,7 @@ function detailBadgePart(part, language = "en") {
 }
 
 function renderPlainDetailText(value, x, y, theme, fontSize, strokeWidth = 3) {
-  return `<text x="${x}" y="${y}" font-family="system-ui, sans-serif" font-size="${fontSize}" fill="${theme.mutedText}" stroke="${theme.panel}" stroke-width="${strokeWidth}" stroke-linejoin="round" paint-order="stroke">${escapeXml(value)}</text>`;
+  return `<text x="${svgAttribute(x)}" y="${svgAttribute(y)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(fontSize)}" fill="${svgPaint(theme.mutedText)}" stroke="${svgPaint(theme.panel)}" stroke-width="${svgAttribute(strokeWidth)}" stroke-linejoin="round" paint-order="stroke">${escapeXml(value)}</text>`;
 }
 
 function renderLevelBadges(values, x, y, language = "en", category = "level", theme = resolveTheme()) {

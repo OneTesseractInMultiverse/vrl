@@ -54,6 +54,10 @@ export function RoutePreview({ source }) {
 
 Pass `source` and `options` for simple rendering. Pass `diagram` when the parent component owns memoization, caching, or server-provided compiler state.
 
+Caller-supplied `diagram.svg` is trusted markup: the component inserts it with `dangerouslySetInnerHTML`, bypassing compilation and renderer validation. Use a trusted state factory result or sanitize arbitrary external SVG in the application before passing it here. `containerProps` and `diagnosticsProps` are also application-owned props.
+
+Invalid layout or renderer configuration throws `TypeError` or `RangeError`; these exceptions are separate from source diagnostics. See the [configuration and paint contracts](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#configuration-validation).
+
 Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ```jsx

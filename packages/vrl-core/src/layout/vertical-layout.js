@@ -6,6 +6,7 @@ import {
   technicalVerticalMeters
 } from "../domain/traversal.js";
 import { validateGeometry } from "../validation/validate-geometry.js";
+import { assertFiniteNumber, validateLayoutOptions } from "./options.js";
 
 export { routeElevationProfile, technicalVerticalMeters } from "../domain/traversal.js";
 
@@ -22,7 +23,7 @@ const ELEMENT_WEIGHTS = {
 };
 
 export function computeVerticalLayout(route, options = {}) {
-  return hasElevationProfile(route) ? computeElevationLayout(route, options) : computeWeightedLayout(route, options);
+  return hasElevationProfile(route) ? computeElevationLayout(route, options) : computeWeightedLayout(route, validateLayoutOptions(options));
 }
 
 function computeWeightedLayout(route, options) {
@@ -53,6 +54,7 @@ function spacingElement(route, point, segment) {
 }
 
 export function computeElevationLayout(route, options = {}) {
+  options = validateLayoutOptions(options);
   requireConsistentGeometry(route);
   const profile = routeElevationProfile(route);
   if (profile === null) throw new RangeError("An elevation layout requires entrance and exit elevations.");
@@ -189,7 +191,9 @@ export function horizontalProgress(element) {
 }
 
 export function resolveHorizontalScale(value = 1) {
-  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 1;
+  assertFiniteNumber(value, "Horizontal scale");
+  if (value <= 0 || value > Number.MAX_SAFE_INTEGER) throw new RangeError("Horizontal scale must be positive and no greater than Number.MAX_SAFE_INTEGER.");
+  return value;
 }
 
 export function verticalDirection(element) {

@@ -677,15 +677,15 @@ test("resolveHorizontalScale defaults missing values", () => {
 });
 
 test("resolveHorizontalScale rejects non-number values", () => {
-  assert.equal(core.resolveHorizontalScale("1.25"), 1);
+  assert.throws(() => core.resolveHorizontalScale("1.25"), TypeError);
 });
 
 test("resolveHorizontalScale rejects non-finite values", () => {
-  assert.equal(core.resolveHorizontalScale(Number.POSITIVE_INFINITY), 1);
+  assert.throws(() => core.resolveHorizontalScale(Number.POSITIVE_INFINITY), RangeError);
 });
 
 test("resolveHorizontalScale rejects nonpositive values", () => {
-  assert.equal(core.resolveHorizontalScale(0), 1);
+  assert.throws(() => core.resolveHorizontalScale(0), RangeError);
 });
 
 test("verticalDirection moves climbs upward", () => {
