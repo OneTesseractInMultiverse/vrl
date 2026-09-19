@@ -66,6 +66,7 @@ test("normalization records technical endpoints and ownership without coordinate
   const model = normalizeRoute(parseVrl('route "A"\nrappel "R1" height=30m rope=60m\nclimb "C1" height=5m').ast);
   assert.deepEqual(model.traversal, {
     points: [{ elementIndex: 0 }, { elementIndex: null }, { elementIndex: 1 }],
+    annotations: [],
     segments: [
       { from: 0, to: 1, elementIndex: 0, kind: "technical", direction: "down", verticalDeltaMeters: -30 },
       { from: 1, to: 2, elementIndex: 1, kind: "technical", direction: "up", verticalDeltaMeters: 5 }
@@ -170,7 +171,7 @@ test("an empty route can preserve equal entrance and exit elevations", () => {
 });
 
 test("non-elevation empty traversal has no invented endpoints", () => {
-  assert.deepEqual(createTraversal([]), { points: [], segments: [] });
+  assert.deepEqual(createTraversal([]), { points: [], segments: [], annotations: [] });
 });
 
 test("geometry validation handles a manually assembled model without traversal", () => {
