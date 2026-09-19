@@ -3,18 +3,7 @@ import { normalizeAttributeValue } from "./measurements.js";
 import { normalizeRappelDetailValue } from "./rappel-details.js";
 import { createTraversal } from "./traversal.js";
 import { requireNumericData } from "./numeric-policy.js";
-
-const ID_PREFIXES = {
-  start: "S",
-  exit: "E",
-  walk: "W",
-  rappel: "R",
-  downclimb: "D",
-  climb: "C",
-  pool: "P",
-  hazard: "H",
-  note: "N"
-};
+import { allocateElementIdentifiers } from "./element-identifiers.js";
 
 export function createEmptyRoute(source = "") {
   return {
@@ -36,9 +25,9 @@ export function createRouteElement(type, attributes, sourceLocation, id = null, 
 }
 
 export function normalizeRoute(ast) {
-  const counters = {};
+  const identifiers = allocateElementIdentifiers(ast.elements);
   const metadata = normalizeAttributes(ast.metadata);
-  const elements = ast.elements.map((element) => normalizeElement(element, counters));
+  const elements = ast.elements.map((element, index) => normalizeIdentifiedElement(element, identifiers[index]));
 
   return {
     name: ast.name,
@@ -50,12 +39,14 @@ export function normalizeRoute(ast) {
 }
 
 export function normalizeElement(element, counters) {
-  const sequence = (counters[element.type] ?? 0) + 1;
-  counters[element.type] = sequence;
+  const [id] = allocateElementIdentifiers([element], counters);
+  return normalizeIdentifiedElement(element, id);
+}
 
+function normalizeIdentifiedElement(element, id) {
   return {
     ...element,
-    id: element.id ?? `${ID_PREFIXES[element.type]}${sequence}`,
+    id,
     attributes: normalizeAttributes(element.attributes)
   };
 }

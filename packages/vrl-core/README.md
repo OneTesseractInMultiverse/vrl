@@ -58,11 +58,13 @@ import {
 
 - `parseVrl(source)` returns `{ ast, diagnostics }`.
 - `validateRoute(ast)` returns semantic diagnostics.
-- `normalizeRoute(ast)` returns a stable route model with generated element IDs and summary fields.
+- `normalizeRoute(ast)` returns a deterministic route model with unique element IDs and summary fields.
 - `computeVerticalLayout(model, options)` computes SVG-ready node positions.
 - `compileRoute(source, options)` runs the full parser, validation, normalization, layout, and JSON export pipeline.
 - `createRouteCompiler(overrides)` creates an injectable compiler for tests or alternate ports.
 - `exportRouteJson(model)` serializes normalized route data.
+
+Element IDs share one case-sensitive namespace across every element type in a route. All explicit IDs are reserved before generation, including later declarations and IDs resembling another type’s prefix. Repeated or blank explicit IDs are validation errors; duplicate diagnostics identify both declarations. `normalizeRoute` also rejects invalid IDs with `RangeError` when called directly. Generated numbering is reproducible for the same input but may change across edits; explicit IDs are the author-controlled option for persistent references. The standalone `normalizeElement(element, counters)` helper only sees one element and cannot guarantee collection-wide uniqueness. Use `normalizeRoute` for collections. See the [identifier contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#element-identifiers) and [normalization API](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#element-identity-and-normalization).
 
 Normalized models include `traversal.points` and `traversal.segments`: domain-owned endpoint references, technical element ownership, direction, and signed physical elevation changes. Positive deltas mean ascent; negative deltas mean descent. Intermediate boundaries keep adjacent descents and climbs separate, and outer boundaries preserve leading/trailing technical features. They do not add source elements. `traversal.annotations` attaches notes and hazards to physical boundaries by `{ elementIndex, pointIndex }`, with a null point only for annotation-only documents. They do not add progression or absorb residual elevation.
 

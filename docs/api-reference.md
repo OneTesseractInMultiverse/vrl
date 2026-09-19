@@ -125,6 +125,18 @@ Recovery is deterministic and does not imply a valid route:
 
 Compatibility: previously accepted repeated/late routes, metadata after elements, and duplicate keys now fail. `parseVrl` expects full documents; use `lexVrlLine` or `parseAttributeTokens` for isolated token/attribute fragments. Cosmetic braces do not affect ordering or duplicate scopes; see the [precise brace rules](language-reference.md#provisional-brace-handling).
 
+### Element identity and normalization
+
+`normalizeRoute(ast)` reserves every explicit `element.id` before generating missing IDs and returns IDs unique across all elements of that route. It preserves valid explicit text, compares IDs case-sensitively without Unicode normalization, and keeps independent per-type counters. Every element consumes one counter step; generated candidates additionally skip reserved IDs. See the [language contract](language-reference.md#element-identifiers) for prefixes and examples. The AST is not mutated, and reservation/counter state is not exposed in the model or retained between calls.
+
+`null`, `undefined`, or an omitted AST `id` requests generation. Any explicit value must be a non-blank string; numbers and other non-string values are not coerced. Empty and whitespace-only strings are errors. `validateRoute(ast)` reports all invalid and duplicate IDs as blocking `validation` diagnostics, using statement-level `sourceLocation`. Each duplicate includes `relatedLocations` pointing to the first declaration. `validateElement(element)` checks an individual ID's validity but cannot detect conflicts with other elements. Parsing preserves duplicate IDs in the AST because uniqueness is a semantic rule.
+
+`compileRoute` returns `ok: false` with null model/layout/JSON and does not invoke normalization or subsequent ports when IDs are invalid. Direct `normalizeRoute` calls throw `RangeError` for the first invalid/duplicate ID, using the same domain policy. This guard enforces identity invariants; it does not replace the other semantic validation required by lower-level consumers. Custom normalizer/validator ports are responsible for preserving these contracts.
+
+`normalizeElement(element, counters)` retains its standalone helper signature and updates the supplied per-type counters, including for explicit IDs. It rejects a blank or non-string explicit ID before updating counters. It only sees that element: repeated calls cannot reserve future IDs or detect collection-wide duplicates. Use `normalizeRoute` rather than mapping this helper over a collection when IDs must be unique.
+
+Model elements, layout nodes, and JSON carry the same allocated ID. Identifiers are scoped to one route, not globally unique and not SVG definition IDs. Identical input generates identical output, but insertion, removal, reordering, or changed reservations may alter sequence-generated IDs. Explicit IDs remain unchanged when the author preserves them. Consumers requiring persistence across revisions should maintain explicit IDs; rebuild cached models after upgrading from collision-prone allocation. No public model fields or exports are added by this change.
+
 ### Configuration validation
 
 `computeVerticalLayout` and `computeElevationLayout` validate layout options before computing positions. With the default layout port, `compileRoute` applies the same validation when valid source reaches the layout stage. Options must be plain objects, including objects with a null prototype. Arrays, custom prototypes, unknown layout keys, and `null` are rejected. Omitted options and known properties with value `undefined` use defaults.
