@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Add a dependency-free lexer with typed tokens, original source spans, explicit quoted forms, and assignment separators outside quotes. Preserve labels such as `start "A=B"` and decode supported escapes exactly once.
+- Report unfinished strings/escapes, unsupported escapes, and invalid token adjacency as blocking syntax diagnostics. Document lexical rules and compatibility behavior; raw token/comment helpers now throw structured `SyntaxError` on malformed input.
 - Validate finite numeric layout configuration and supported renderer themes/paint before rendering; XML-encode all dynamic SVG attributes.
 - Reject numeric strings, invalid ranges, unknown layout/theme-token keys, and unsupported paint syntax. Invalid horizontal scales and theme names no longer silently select defaults; configuration errors throw `TypeError` or `RangeError`.
 - Document the trusted-markup contract for caller-supplied `diagram.svg`. Add independent XML structure, valid configuration, and deliberate failure regressions, using a test-only XML parser without adding runtime dependencies.
