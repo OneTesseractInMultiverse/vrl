@@ -238,7 +238,7 @@ The returned plain record contains:
 - `contentBounds` and `bounds`: `{ minX, minY, maxX, maxY }` envelopes, respectively before and after adding the summary and legend.
 - `language`: resolved presentation language.
 - `nodes`: visual-order records containing the original `node` reference, `placement`, `title`, `detail`, `maxDetailWidth`, and prepared `detailRows`.
-- `infoBox`: summary position, dimensions, text `lines`, and bounds.
+- `infoBox`: summary position, dimensions, display-text `lines` (including the uppercase route heading), and bounds. These strings are not XML-encoded.
 - `legend`: position, dimensions, title, placed rows, and bounds; `null` when disabled.
 
 Treat these records as read-only snapshots and recompute them after model, layout, or option changes. Scene computation does not mutate its inputs. Core layout remains independent of SVG fonts and decoration sizes; its dimensions are provisional until the renderer prepares the presentation.
@@ -265,7 +265,17 @@ Resource references such as `url(...)`, including local fragments, CSS variables
 
 The renderer also checks supplied layout dimensions and positioned geometry. `width` must be positive, `height` nonnegative, and both must be finite numbers no greater than `Number.MAX_SAFE_INTEGER`. Node, optional point, and segment endpoint coordinates, plus technical pixel deltas, must be finite numbers with absolute magnitude no greater than that limit. Layouts require `nodes` and `segments` arrays; `points` is optional. Core layout computation rejects derived values above this magnitude even when each option is individually accepted; the renderer independently checks caller-supplied layouts.
 
-Every dynamic SVG attribute is XML-encoded at serialization, including generated path strings, class names, accessibility labels, and paint values. Attribute control characters invalid in XML and nonfinite numeric attribute values throw. Lower-level SVG helpers also encode their attributes and validate paint, but callers remain responsible for their geometry and normalized-model contracts. These helpers are not a general SVG sanitizer.
+Every dynamic SVG attribute is XML-encoded at serialization, including generated path strings, class names, accessibility labels, and paint values. Text and attributes share the XML character policy below; nonfinite numeric attribute values also throw. Lower-level SVG helpers also encode their attributes and validate paint, but callers remain responsible for their geometry and normalized-model contracts. These helpers are not a general SVG sanitizer.
+
+### XML text and route titles
+
+Presentation transforms run on raw text before XML encoding. The summary heading is uppercase, while the accessible SVG title/description and the normalized model retain the original route name. For example, `route "R&D <Canyon>"` renders the heading `R&D <CANYON>` and serializes it as `R&amp;D &lt;CANYON&gt;`. Entity-looking source such as `&amp;` is literal text, not pre-encoded markup. Do not pass already escaped text to a renderer.
+
+`escapeXml(value)` retains its `String(value)` conversion, validates the converted text, and escapes ampersands, angle brackets, and double quotes. It preserves carriage returns using `&#13;` so XML line-ending normalization cannot change recovered text. The attribute serializer additionally encodes tabs and line feeds. These rules follow [XML 1.0 character ranges](https://www.w3.org/TR/xml/#charsets) and [line-ending handling](https://www.w3.org/TR/xml/#sec-line-ends).
+
+Unsupported characters throw `TypeError`: U+0000–U+0008, U+000B–U+000C, U+000E–U+001F, unpaired UTF-16 surrogates, U+FFFE, and U+FFFF. Valid surrogate pairs, combining characters, accents, and other XML-permitted Unicode remain supported. Invalid characters are not replaced or stripped. Original detail text is checked independently of whitespace wrapping, including when prepared rows are supplied. This is character validation for rendered values, not validation of arbitrary supplied SVG.
+
+The rule belongs to the rendering adapter: core compilation and JSON export can still retain text that XML cannot represent. `renderTopoSvg` and low-level XML escaping throw when such text reaches rendering; React, Svelte, and SvelteKit state factories propagate that exception and return no diagram state. It is not a source diagnostic. Precomputed `diagram.svg` still bypasses rendering and remains trusted caller markup.
 
 ### Precomputed diagram trust boundary
 

@@ -20,6 +20,8 @@ The renderer package receives a normalized route model and a layout. It does not
 
 Configuration validation belongs at the boundary that owns it. Core's `layout/options.js` validates numeric layout inputs; its layout entry points coordinate validation and position computation. The SVG adapter's `render-options.js` checks incoming canvas geometry and renderer settings, `paint.js` defines the supported paint grammar, and `attributes.js` serializes attribute values. SVG color and XML rules stay in the adapter and do not enter the domain. Pure validation and encoding helpers perform no I/O.
 
+The renderer's `xml.js` owns the shared XML 1.0 character policy for text and attributes, keeping those format restrictions outside the core. `escapeXml` coordinates string conversion, character validation, and pure encoding. Summary preparation transforms raw display text before sizing; serialization only escapes the prepared heading. Detail serialization validates the original text independently of prepared rows, so whitespace wrapping cannot hide an invalid control character. XML-incompatible text produces a `TypeError` rather than replacement text or a partial diagram.
+
 Framework state factories propagate configuration exceptions. Precomputed `diagram.svg` explicitly bypasses these boundaries and is trusted markup owned by the embedding application; adapters do not sanitize it. This contract is documented in the API reference and security policy.
 
 Tests parse generated SVG with a strict independent XML parser to check structure and injection resistance, alongside accepted-value and failure tests. That parser is a root development dependency only. The published core and renderer retain zero third-party runtime dependencies.

@@ -60,7 +60,7 @@ import { resolveTheme } from "./theme.js";
 import { elementColorToken, formatElementTitle } from "./element-formatters.js";
 import { diagramText } from "./locale.js";
 import { symbolCode, symbolKind } from "./symbol-registry.js";
-import { escapeXml } from "./xml.js";
+import { assertXmlCharacters, escapeXml } from "./xml.js";
 import { svgAttribute, svgPaint } from "./attributes.js";
 import { validateRenderOptions } from "./render-options.js";
 
@@ -153,7 +153,7 @@ export function renderInfoBox(route, layout, theme, language = "en", prepared = 
   const { x, y, width, height, lines } = prepared;
   return `<g class="vrl-info-box" aria-label="${svgAttribute(diagramText(language).routeSummary)}">
     <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" fill="#86a844" stroke="${svgPaint(theme.routeLine)}" stroke-width="2"/>
-    <text x="${svgAttribute(x + width / 2)}" y="${svgAttribute(y + 24)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="${svgPaint(theme.text)}">${escapeXml(lines[0]).toUpperCase()}</text>
+    <text x="${svgAttribute(x + width / 2)}" y="${svgAttribute(y + 24)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="${svgPaint(theme.text)}">${escapeXml(lines[0])}</text>
     ${lines.slice(1).map((line, index) => `<text x="${svgAttribute(x + width / 2)}" y="${svgAttribute(y + 48 + index * 20)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="${svgPaint(theme.text)}">${escapeXml(line)}</text>`).join("")}
   </g>`;
 }
@@ -361,6 +361,7 @@ export function renderSymbolMarker(node, element, color, symbology = "federation
 }
 
 export function renderDetailLine(detail, x, y, theme, language = "en", maxWidth = Number.POSITIVE_INFINITY, rows = null) {
+  assertXmlCharacters(detail);
   if (detail === "") {
     return "";
   }

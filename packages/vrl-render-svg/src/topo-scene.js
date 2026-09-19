@@ -131,10 +131,10 @@ export function redirectionPlacements(geometry, element, language) {
 export function prepareInfoBox(route, layout, language, y = 26) {
   const text = diagramText(language);
   const metadata = route.metadata ?? {};
-  const lines = [String(route.name), `${text.difficulty}: ${metadata.difficulty ?? text.noData}`,
+  const lines = [String(route.name).toUpperCase(), `${text.difficulty}: ${metadata.difficulty ?? text.noData}`,
     `${text.elevationChange}: ${elevationSummary(layout.elevation, language)}`,
     `${text.region}: ${metadata.region ?? text.noData}`, `${text.country}: ${metadata.country ?? text.noData}`];
-  const width = Math.max(240, lines.reduce((max, value, index) => Math.max(max, (index === 0 ? textEnvelopeWidth(value.toUpperCase(), 14) : textEnvelopeWidth(value, 12)) + 28), 0));
+  const width = Math.max(240, lines.reduce((max, value, index) => Math.max(max, textEnvelopeWidth(value, index === 0 ? 14 : 12) + 28), 0));
   const x = Math.max(24, layout.width - width - 42);
   return { x, y, width, height: 122, lines, bounds: bounds(x, y, x + width, y + 122, 3) };
 }
