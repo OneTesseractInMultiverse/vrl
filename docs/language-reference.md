@@ -25,7 +25,48 @@ For compatibility, route names, note text, and element labels/identifiers may co
 
 LF and CRLF delimit physical lines. Quotes cannot continue across those boundaries. An unfinished string produces a syntax error at its opening quote; a dangling or unsupported escape points to the backslash; invalid adjacency points to the first unexpected character. Source lines and columns are one-based; columns count UTF-16 code units, with each tab counting as one unit. The parser skips a lexically invalid statement and continues with the next line for diagnostics. Compilation returns `ok: false` with no model, layout, or JSON when blocking diagnostics exist.
 
-A separate trailing `{` token and standalone `}` line remain tolerated for block-style examples; block nesting and document-order validation remain outside this lexical change. Quoted braces are text. A brace directly attached to a quoted token is invalid adjacency; a brace within a bare token is literal text.
+## Document Order and Duplicate Keys
+
+After ignoring blank lines, comments, and cosmetic brace lines, a document has exactly one route declaration, zero or more metadata lines, and then zero or more elements:
+
+```text
+document := route metadata* element*
+```
+
+The route declaration must be first. Metadata must follow it and precede every element, including `note` and `hazard`. Several metadata lines are supported when they introduce different keys. Metadata cannot resume after the first element. A document containing only a named route is valid; the route name remains required.
+
+Every attribute key is unique within its element statement. Metadata keys are unique across all metadata lines in the document. Keys are case-sensitive; extension keys `custom` and `Custom` are distinct. Repeating a key is a syntax error even when its values match, use different quoting, or denote the same measurement (`30m` and `30.0m`). There is no override syntax or implicit last-value policy. The same key on different elements, or in metadata and an element, is allowed. Assignment-shaped tokens in route names and free-form `note` text remain literal text rather than attributes.
+
+```vrl
+route "Canyon survey"
+metadata country="Costa Rica"
+metadata region="Bajos del Toro"
+start "Entry"
+rappel height=30m rope=60m
+exit "Finish"
+```
+
+For a duplicate or late declaration, the syntax diagnostic identifies the offending keyword/key and includes the original declaration or ordering boundary in `relatedLocations`. Both locations use one-based lines and UTF-16 columns. For example, `rappel height=30m height=5m rope=10m` reports the second `height` and the first `height`; it cannot quietly depict a shorter descent or suppress the original short-rope warning.
+
+Compilation fails with no model, layout, or JSON when these errors occur. The parser's partial AST is for recovery only: it retains the first accepted route/key value and continues collecting errors. See the [parser recovery contract](api-reference.md#document-grammar-and-conflict-diagnostics) before consuming a partial AST.
+
+## Provisional Brace Handling
+
+Braces are cosmetic tokens in this release. They do not open scopes, close a document, allow metadata to resume, or establish nested sections. Balancing and nesting are not validated. After lexical scanning and comment removal, the parser removes at most one final unquoted token whose entire value is `{`. A line consisting only of unquoted `}` is also ignored. All remaining tokens follow the ordinary statement rules.
+
+| Spelling | Behavior |
+| --- | --- |
+| A line containing only `{` or only `}` | Ignored, even when unbalanced or before the route |
+| `route "A" {` | Route named `A`; the final brace is ignored |
+| `metadata country=CR {` | Ordinary metadata declaration |
+| `note "}" {` | Note containing literal `}` |
+| `route "{"` or `route "}"` | Quoted brace is the route name |
+| `route A{` or `route A }` | Braces remain literal route-name text |
+| `route A { {` | Only the last brace is removed; the name is `A {` |
+| `route "A"{` | Lexical adjacency error |
+| A line containing `{ {`, `} }`, or `"}"` | Unknown statement after cosmetic-token processing |
+
+These rules do not support nested `section`/`access` blocks or attribute-only lines inside `metadata { ... }`. For example, `country=CR` must still appear on a `metadata` statement. Comments and quoted text keep their normal lexical meaning.
 
 ## Route
 
@@ -39,18 +80,18 @@ The route name is required. It becomes the title used by JSON export and rendere
 
 ## Metadata
 
-Metadata is represented as attributes on one or more `metadata` lines.
+Metadata is represented as attributes on one or more `metadata` lines between the route declaration and the first element. Each line adds previously undeclared keys; duplicate keys are rejected.
 
 ```vrl
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III"
 metadata descent_time="5-7h" season="December-May" entrance_elevation=1300m exit_elevation=1100m
 ```
 
-Metadata values are normalized only when the field is measurement-bearing, such as `total_distance=1300m`, `total_descent=200m`, `entrance_elevation=1300m`, or `exit_elevation=1100m`.
+The metadata examples above are header fragments following a route declaration. Metadata values are normalized only when the field is measurement-bearing, such as `total_distance=1300m`, `total_descent=200m`, `entrance_elevation=1300m`, or `exit_elevation=1100m`.
 
 ## Elements
 
-The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression.
+The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
 
 ```vrl
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
@@ -165,4 +206,4 @@ Diagnostics are structured objects with `kind`, `severity`, `message`, `location
 
 ## Future Block Syntax
 
-The target language also includes richer block syntax for routes, sections, access, rescue notes, and organization-specific custom attributes. The first parser tolerates braces around statements, but nested section semantics are a future milestone.
+The target language also includes richer block syntax for routes, sections, access, rescue notes, and organization-specific custom attributes. The first parser tolerates only the cosmetic tokens specified in [provisional brace handling](#provisional-brace-handling); nested section semantics are a future milestone.

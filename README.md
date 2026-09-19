@@ -155,7 +155,9 @@ The npm package scope is `@subvertic`, the publishing scope for the VRL project 
 
 ## DSL Grammar Draft
 
-The first implemented grammar is compact and line-oriented:
+The implemented document order is strict: one route declaration, then metadata, then elements (including notes and hazards). Metadata keys are unique across the header, and element attribute keys are unique within their statement. All repeated keys are errors, including equal values; there is no implicit override. Diagnostics retain both relevant source locations.
+
+This compact line-oriented overview uses preferred quoted text spellings; the lexical rules below also describe compatible bare/mixed text forms:
 
 ```text
 document        := route metadata* element*
@@ -178,7 +180,7 @@ comment         := "#" text outside quoted strings
 
 Quoted text preserves `=`, `#`, Unicode, and interior whitespace. Its only escapes are `\"` for a double quote and `\\` for a backslash. Other escapes, unfinished quotes, and adjacent tokens such as `"A"suffix` produce blocking syntax diagnostics. Attributes require an unquoted key and an immediate `=` followed by a value; use `key=""` for empty text. See the [lexical rules](docs/language-reference.md#quoted-text-escapes-and-token-boundaries) for precise boundaries, compatibility forms, and source locations.
 
-The longer-term grammar will also support nested route, metadata, access, and section blocks. The parser already tolerates a separate trailing `{` token on a statement and standalone `}` lines, but the first slice intentionally keeps section semantics out of scope. Quoted braces remain literal text.
+Richer block syntax remains future work. The parser ignores at most one final standalone `{` token and standalone `}` lines without checking balance. These cosmetic tokens do not create scopes or reset document order. Quoted braces remain literal text. See the [document and duplicate-key rules](docs/language-reference.md#document-order-and-duplicate-keys) and [provisional brace handling](docs/language-reference.md#provisional-brace-handling) for exact acceptance and recovery behavior.
 
 ## Rendering Strategy
 

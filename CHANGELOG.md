@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Enforce one route declaration before metadata and elements. Keep repeated metadata lines with distinct keys, and reject metadata after any element, including notes/hazards.
+- Reject repeated attribute keys even when their values match. Preserve first values only in the recovery AST, with optional diagnostic `relatedLocations` for the original declaration or ordering boundary; readable diagnostics include both coordinates.
+- Separate document-order transitions and attribute parsing from parser orchestration. Document precise cosmetic brace handling, duplicate scopes, failure propagation, and recovery compatibility. Add single-assert correctness/failure regressions without runtime dependencies.
+
 - Format raw summary titles before XML escaping so names such as `R&D <Canyon>` remain valid in standalone SVG. Prepared summary lines now contain display text; accessible titles/descriptions and the normalized model preserve original case.
 - Share XML 1.0 character validation between text and attributes. Reject invalid controls and unpaired surrogates with `TypeError`, validate original detail text independently of wrapping, and preserve carriage returns through character references. Document rendering failures independently of core source diagnostics.
 - Add independent XML parsing and recovered-text regressions for special titles, Unicode boundaries, literal entity strings, malformed characters, and framework adapter propagation. No dependencies added.

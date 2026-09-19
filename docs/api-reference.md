@@ -63,7 +63,7 @@ Returned shape:
 }
 ```
 
-When syntax or validation blocks compilation, `ok` is `false`; `diagnostics` contains structured diagnostic objects with `kind`, `severity`, `message`, `location`, and `suggestion`.
+When syntax or validation blocks compilation, `ok` is `false`; `diagnostics` contains structured diagnostic objects with `kind`, `severity`, `message`, `location`, and `suggestion`. Declaration conflicts additionally include optional `relatedLocations`, as described below.
 
 Lower-level functions are available for tooling:
 
@@ -90,13 +90,40 @@ const result = lexVrlLine('start "A=B"', { line: 4, column: 1 });
 //   span: { start: { line: 4, column: 7 }, end: { line: 4, column: 12 } } }
 ```
 
-The lexer reports the first lexical error on a line and retains only complete preceding tokens for tooling. `parseVrl` consumes typed tokens directly, discards the entire invalid line, and continues with later lines. Syntax diagnostics retain the existing `{ kind, severity, message, location, suggestion }` shape. Unterminated quotes point to the opening quote, escape errors to the backslash, and adjacency errors to the unexpected character. Missing values point just after `=` (which may be one column past the line end). The AST still stores statement-level element locations; lexical spans are exposed by the lexer rather than added to the normalized model.
+The lexer reports the first lexical error on a line and retains only complete preceding tokens for tooling. `parseVrl` consumes typed tokens directly, discards the entire invalid line, and continues with later lines. Lexical diagnostics retain the existing `{ kind, severity, message, location, suggestion }` shape. Unterminated quotes point to the opening quote, escape errors to the backslash, and adjacency errors to the unexpected character. Missing values point just after `=` (which may be one column past the line end). The AST still stores statement-level element locations; lexical spans are exposed by the lexer rather than added to the normalized model.
 
 `compileRoute` returns `ok: false` and null model/layout/JSON for blocking syntax diagnostics. It does not call normalization, geometry validation, layout, or export for those documents. React and Svelte state factories return diagnostics and an empty SVG for invalid source; this differs from exceptions for invalid caller configuration.
 
 The existing `tokenize(line)` helper retains its array of raw token strings for valid input and now omits outside comments. `stripComment(line)` preserves the original spelling and whitespace before an outside comment. Both helpers use the same lexer and throw `SyntaxError` with a `diagnostics` array for malformed input. Call `lexVrlLine` or `parseVrl` for a diagnostic-returning API. `parseAttributeTokens(rawTokens, location)` remains compatible with string arrays: it joins them with single spaces and reports spans relative to that reconstructed line and origin. For original source positions, use `lexVrlLine` or `parseVrl` directly.
 
 Only escaped double quotes and backslashes are supported. Previously accepted unfinished strings, unsupported escapes, quoted keys, and invalid adjacency now fail explicitly. See the [language reference](language-reference.md#quoted-text-escapes-and-token-boundaries) for the complete lexical contract and compatibility text forms.
+
+### Document grammar and conflict diagnostics
+
+`parseVrl` enforces one route declaration first, followed by metadata and then elements. Metadata lines may repeat only with new keys and must precede all elements, including annotations. Repeated route declarations and attribute keys are blocking syntax errors, including equal values. Keys are case-sensitive, scoped to one element or the document-wide metadata map. There is no override syntax or semantic equality comparison. Route-name and note free text retain assignment-shaped tokens literally.
+
+`parseAttributeTokens` uses the same duplicate-key policy and retains its `{ attributes, diagnostics }` return shape. It returns the first value of a repeated key for recovery, along with a diagnostic. Its positions refer to the reconstructed line and supplied origin; `parseVrl` uses original source positions. No internal duplicate-tracking maps are added to the AST or normalized model.
+
+Declaration diagnostics add `relatedLocations: [{ message, location: { line, column } }]` when an earlier declaration or ordering boundary exists. The primary `location` points to the later keyword/key. Related locations point to the first route declaration, first key declaration, first statement, or first element as appropriate. Both use one-based lines and UTF-16 columns. `createDiagnostic(kind, severity, message, location, suggestion = "", relatedLocations = [])` accepts this optional sixth argument and omits the property when the list is empty. `formatDiagnostic` appends each related message and coordinate after the existing message/suggestion text.
+
+```js
+const result = parseVrl('route "Canyon"\nrappel height=30m height=5m rope=10m');
+const conflict = result.diagnostics[0];
+// conflict.location: { line: 2, column: 19 }
+// conflict.relatedLocations:
+// [{ message: "First declaration of this key", location: { line: 2, column: 8 } }]
+```
+
+Recovery is deterministic and does not imply a valid route:
+
+- Lexically invalid lines and unrecognized statements do not reserve declarations, metadata keys, or ordering boundaries; their errors still block compilation.
+- Recognized statements advance ordering state even when misplaced. Misplaced route/metadata/element statements are excluded from the partial AST. A late route is not adopted as the name.
+- A first route statement with a missing or empty name still reserves the route declaration. A later route cannot replace it. Existing semantic validation continues to report missing names, including empty documents.
+- Duplicate keys retain the first accepted value and source location; further duplicates point back to that first occurrence. Other valid attributes and subsequent statements remain available in the partial AST.
+
+`compileRoute` validates the partial AST for additional diagnostics but never calls normalization, geometry, layout, or export after a blocking grammar error. React, Svelte, and SvelteKit state factories expose the structured/readable diagnostics and no SVG. Manual parser consumers must inspect diagnostics before normalization; a partial AST is not an authorized override or a validated model.
+
+Compatibility: previously accepted repeated/late routes, metadata after elements, and duplicate keys now fail. `parseVrl` expects full documents; use `lexVrlLine` or `parseAttributeTokens` for isolated token/attribute fragments. Cosmetic braces do not affect ordering or duplicate scopes; see the [precise brace rules](language-reference.md#provisional-brace-handling).
 
 ### Configuration validation
 
