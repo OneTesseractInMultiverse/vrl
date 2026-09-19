@@ -477,11 +477,11 @@ test("validateElement rejects invalid inclination text", () => {
 });
 
 test("validateElement rejects inclination ranges above vertical", () => {
-  assert.equal(core.validateElement(core.createRouteElement("rappel", { height: "10m", rope: "20m", inclination: "120%" }, { line: 1, column: 1 }))[0].message, 'Field "inclination" must be between 1% and 100%.');
+  assert.equal(core.validateElement(core.createRouteElement("rappel", { height: "10m", rope: "20m", inclination: "120%" }, { line: 1, column: 1 }))[0].message, 'Field "inclination" must be greater than 0% and at most 100%.');
 });
 
 test("validateElement rejects zero inclination", () => {
-  assert.equal(core.validateElement(core.createRouteElement("rappel", { height: "10m", rope: "20m", inclination: "0%" }, { line: 1, column: 1 }))[0].message, 'Field "inclination" must be between 1% and 100%.');
+  assert.equal(core.validateElement(core.createRouteElement("rappel", { height: "10m", rope: "20m", inclination: "0%" }, { line: 1, column: 1 }))[0].message, 'Field "inclination" must be greater than 0% and at most 100%.');
 });
 
 test("validateElement rejects invalid downclimb exposure", () => {

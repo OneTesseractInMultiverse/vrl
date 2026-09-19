@@ -119,6 +119,18 @@ Configuration errors throw exceptions: `TypeError` for incorrect types or unsupp
 
 This tightens the previous API: invalid horizontal scales no longer silently fall back to `1`, and numeric strings, negative spacing, unknown layout keys, and explicit `null` values must be corrected by the caller.
 
+### Numeric integrity
+
+`parseMeasurementToken` rejects nonfinite conversions, magnitudes above `1000000000m`, and more than six fractional digits. It preserves valid zero/negative values for elevation fields and canonicalizes negative zero to zero. `parseInclinationToken` applies the same decimal representation bounds before semantic validation limits inclination to greater than zero and at most 100%. Both return `{ ok: false, reason }` for unsupported spellings; neither silently rounds a source value. See the [numeric field contract](language-reference.md#numeric-limits-and-precision).
+
+`validateRoute` checks recognized numeric fields in metadata and every element, including safe integer anchor counts and measurements inside stage/redirection lists. Source failures return structured validation diagnostics before normalization, geometry, layout, and export. Low-level normalization is not a substitute for source validation.
+
+Derived summaries, profiles, technical distances, and layout data require finite numeric values with absolute magnitude no greater than `Number.MAX_SAFE_INTEGER`. Computation helpers and layout entry points throw `RangeError` when a result exceeds that contract. `validateGeometry` returns a blocking geometry diagnostic for unsupported numeric leaves in a supplied normalized model. The compiler also checks model/layout numeric outputs at its boundaries, including outputs of custom ports; a custom port contract violation throws `RangeError` even when another custom port skips validation. Custom exporters remain responsible for their own output format.
+
+`exportRouteJson` rejects unsupported numeric values, including values returned by a serialization hook, instead of serializing nonfinite numbers as `null`. Intentional nulls such as unknown elevations remain valid. The normal model/JSON path retains JavaScript numeric values exactly through JSON round trips; calculations use binary floating-point arithmetic and may have fractional roundoff. Layout rounding remains independent of physical measurement precision.
+
+Compatibility changes: previously accepted huge or overprecise numeric spellings now fail, numeric fields no longer evade validation in metadata or on non-technical elements, and individually valid layout settings may throw when their combined geometry exceeds the supported magnitude. The sample's descriptive `metadata rope="1x60m"` moved to `rope_inventory="1x60m"`; `rope` consistently denotes a measurement.
+
 ### Technical traversal and geometry validation
 
 The normalized model contains `traversal: { points, segments, annotations }`. Points contain the index of a progression element in `route.elements`, or `null` for an intermediate/outer boundary. Notes and hazards are excluded from this physical sequence. Each segment contains:
@@ -216,7 +228,7 @@ The paint policy intentionally accepts a subset of [CSS colors](https://www.w3.o
 
 Resource references such as `url(...)`, including local fragments, CSS variables/expressions, escaped spellings, declarations, and other color syntaxes are rejected with `TypeError`. Space-separated modern color functions are not supported. This is a compatibility change for previously unchecked CSS strings and unknown theme names or tokens.
 
-The renderer also checks supplied layout dimensions and positioned geometry. `width` must be positive, `height` nonnegative, and both must be finite numbers no greater than `Number.MAX_SAFE_INTEGER`. Node, optional point, and segment endpoint coordinates, plus technical pixel deltas, must be finite numbers with absolute magnitude no greater than that limit. Layouts require `nodes` and `segments` arrays; `points` is optional. Derived layouts can exceed these limits even when each input option is individually accepted; rendering rejects them.
+The renderer also checks supplied layout dimensions and positioned geometry. `width` must be positive, `height` nonnegative, and both must be finite numbers no greater than `Number.MAX_SAFE_INTEGER`. Node, optional point, and segment endpoint coordinates, plus technical pixel deltas, must be finite numbers with absolute magnitude no greater than that limit. Layouts require `nodes` and `segments` arrays; `points` is optional. Core layout computation rejects derived values above this magnitude even when each option is individually accepted; the renderer independently checks caller-supplied layouts.
 
 Every dynamic SVG attribute is XML-encoded at serialization, including generated path strings, class names, accessibility labels, and paint values. Attribute control characters invalid in XML and nonfinite numeric attribute values throw. Lower-level SVG helpers also encode their attributes and validate paint, but callers remain responsible for their geometry and normalized-model contracts. These helpers are not a general SVG sanitizer.
 

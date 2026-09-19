@@ -4,6 +4,7 @@ import { computeVerticalLayout } from "../layout/vertical-layout.js";
 import { parseVrl } from "../parser/line-parser.js";
 import { validateRoute } from "../validation/validate-route.js";
 import { validateGeometry } from "../validation/validate-geometry.js";
+import { requireNumericData, requireSupportedNumber } from "../domain/numeric-policy.js";
 
 export function createRouteCompiler(overrides = {}) {
   const dependencies = {
@@ -46,7 +47,8 @@ export function compileRouteWithDependencies(source, options = {}, dependencies)
   if (hasBlockingDiagnostics(diagnostics)) {
     return { ok: false, ast: parsed.ast, diagnostics, model: null, layout: null, json: null };
   }
-  const layout = dependencies.layout(model, options.layout);
+  requireNumericData(model, "Normalized model");
+  const layout = requireNumericData(dependencies.layout(model, options.layout), "Layout");
 
   return {
     ok: true,
@@ -59,7 +61,7 @@ export function compileRouteWithDependencies(source, options = {}, dependencies)
 }
 
 export function exportRouteJson(model) {
-  return JSON.stringify(model, null, 2);
+  return JSON.stringify(model, (_key, value) => typeof value === "number" ? requireSupportedNumber(value, "JSON number") : value, 2);
 }
 
 const defaultRouteCompiler = createRouteCompiler();

@@ -1,3 +1,5 @@
+import { boundedDecimal, MAX_DECIMAL_PLACES, MAX_SOURCE_MAGNITUDE } from "./numeric-policy.js";
+
 const INCLINATION_PATTERN = /^(-?\d+(?:\.\d+)?)%?$/;
 
 export function isInclinationField(fieldName) {
@@ -14,7 +16,10 @@ export function parseInclinationToken(token) {
     };
   }
 
-  const percent = Number(match[1]);
+  const percent = boundedDecimal(match[1]);
+  if (percent === null) {
+    return { ok: false, reason: `expected a finite percentage within ±${MAX_SOURCE_MAGNITUDE} with at most ${MAX_DECIMAL_PLACES} fractional digits` };
+  }
 
   return {
     ok: true,

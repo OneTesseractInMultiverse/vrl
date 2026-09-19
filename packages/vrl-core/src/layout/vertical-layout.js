@@ -8,6 +8,7 @@ import {
 } from "../domain/traversal.js";
 import { validateGeometry } from "../validation/validate-geometry.js";
 import { assertFiniteNumber, validateLayoutOptions } from "./options.js";
+import { requireNumericData, requireSupportedNumber } from "../domain/numeric-policy.js";
 
 export { routeElevationProfile, technicalVerticalMeters } from "../domain/traversal.js";
 
@@ -100,7 +101,7 @@ function assembleLayout(route, traversal, positions, options, elevation) {
     .sort((left, right) => left.elementIndex - right.elementIndex);
   const bottomY = points.reduce((max, point) => Math.max(max, point.y), top);
   const contentBottom = annotations.reduce((max, node) => Math.max(max, node.y), bottomY);
-  return {
+  return requireNumericData({
     width: options.width ?? 640,
     height: Math.round(contentBottom + (options.marginBottom ?? 64)),
     spine: { x: options.spineX ?? 96, y1: top, y2: bottomY },
@@ -108,7 +109,7 @@ function assembleLayout(route, traversal, positions, options, elevation) {
     nodes,
     points,
     segments: traversal.segments.map((segment) => positionSegment(route, segment, points, elevation))
-  };
+  }, "Layout");
 }
 
 function positionAnnotations(route, annotations, points, options) {
@@ -150,7 +151,7 @@ function shiftPoints(points, top) {
 }
 
 export function applyMinimumNodeGap(nodes, minNodeGap = 0, top = 0) {
-  if (minNodeGap <= 0 || nodes.length < 2) return nodes;
+  if (minNodeGap <= 0 || nodes.length < 2) return requireNumericData(nodes, "Layout points");
   const adjusted = [nodes[0]];
   for (let index = 1; index < nodes.length; index += 1) {
     const previousOriginal = nodes[index - 1];
@@ -161,7 +162,7 @@ export function applyMinimumNodeGap(nodes, minNodeGap = 0, top = 0) {
     const y = descends ? Math.max(node.y, previousAdjusted.y + requiredGap) : Math.min(node.y, previousAdjusted.y - requiredGap);
     adjusted.push({ ...node, y });
   }
-  return shiftPoints(adjusted, top);
+  return requireNumericData(shiftPoints(adjusted, top), "Layout points");
 }
 
 export function hasElevationProfile(route) {
@@ -186,15 +187,15 @@ function computeElevationDeltas(route, traversal, profile) {
     ? elementVisualWeight(route.elements[traversal.points[segment.to].elementIndex]) : 0);
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
   const residual = elevationResidual(route, profile);
-  return traversal.segments.map((segment, index) => -segment.verticalDeltaMeters
-    + (totalWeight === 0 ? 0 : residual * weights[index] / totalWeight));
+  return requireNumericData(traversal.segments.map((segment, index) => -segment.verticalDeltaMeters
+    + (totalWeight === 0 ? 0 : residual * weights[index] / totalWeight)), "Elevation deltas");
 }
 
 /** Compatibility helper: the net change may contain two technical events. */
 export function technicalSegmentDelta(previous, element) {
   const elements = [previous, element];
-  return technicalElementIndexesBetween(elements, 1).reduce((sum, index) =>
-    sum + technicalVerticalMeters(elements[index]) * (elements[index].type === "climb" ? -1 : 1), 0);
+  return requireSupportedNumber(technicalElementIndexesBetween(elements, 1).reduce((sum, index) =>
+    sum + technicalVerticalMeters(elements[index]) * (elements[index].type === "climb" ? -1 : 1), 0), "Combined technical distance");
 }
 
 /** Compatibility helper; residuals must never be added to technical motion. */

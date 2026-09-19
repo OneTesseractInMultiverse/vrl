@@ -33,32 +33,15 @@ export function validateRoute(ast) {
 }
 
 function validateMetadata(metadata) {
-  return Object.entries(metadata).flatMap(([fieldName, value]) => {
-    if (ELEVATION_FIELDS.has(fieldName) === false) {
-      return [];
-    }
-
-    const parsed = parseMeasurementToken(value);
-    if (parsed.ok) {
-      return [];
-    }
-
-    return [
-      createDiagnostic(
-        "validation",
-        "error",
-        `Metadata field "${fieldName}" must be a metric elevation.`,
-        { line: 1, column: 1 },
-        parsed.reason
-      )
-    ];
-  });
+  const context = { attributes: metadata, sourceLocation: { line: 1, column: 1 } };
+  return [...validateMeasurements(context, "Metadata field"), ...validateNumericDetails(context)];
 }
 
 export function validateElement(element) {
   const diagnostics = [];
 
   diagnostics.push(...validateMeasurements(element));
+  diagnostics.push(...validateNumericDetails(element));
 
   if (element.type === "rappel") {
     diagnostics.push(...validateRappel(element));
@@ -91,7 +74,7 @@ export function validateElement(element) {
   return diagnostics;
 }
 
-function validateMeasurements(element) {
+function validateMeasurements(element, subject = "Field") {
   return Object.entries(element.attributes).flatMap(([fieldName, value]) => {
     if (isMeasurementField(fieldName) === false) {
       return [];
@@ -104,19 +87,19 @@ function validateMeasurements(element) {
         createDiagnostic(
           "validation",
           "error",
-          `Field "${fieldName}" must be a metric measurement.`,
+          `${subject} "${fieldName}" must be a metric ${ELEVATION_FIELDS.has(fieldName) ? "elevation" : "measurement"}.`,
           element.sourceLocation,
           parsed.reason
         )
       ];
     }
 
-    if (parsed.value.meters <= 0) {
+    if (parsed.value.meters <= 0 && !ELEVATION_FIELDS.has(fieldName)) {
       return [
         createDiagnostic(
           "validation",
           "error",
-          `Field "${fieldName}" must be greater than 0m.`,
+          `${subject} "${fieldName}" must be greater than 0m.`,
           element.sourceLocation,
           "Use a positive metric value such as 35m."
         )
@@ -146,14 +129,19 @@ function validateRappel(element) {
     diagnostics.push(...validateRopeLength(element));
   }
 
-  if (hasFieldValue(element, "redirection") || hasFieldValue(element, "redirections")) {
-    diagnostics.push(...validateRedirections(element));
-  }
+  return diagnostics;
+}
 
-  if (hasFieldValue(element, "stages")) {
-    diagnostics.push(...validateRappelStages(element));
+function validateNumericDetails(element) {
+  const diagnostics = [];
+  if (Object.hasOwn(element.attributes, "anchor_count") && !positiveInteger(element.attributes.anchor_count)) {
+    diagnostics.push(invalidValueDiagnostic(element, "anchor_count", "a positive safe integer no greater than 9007199254740991"));
   }
-
+  if (Object.hasOwn(element.attributes, "inclination")) diagnostics.push(...validateInclination(element));
+  for (const fieldName of ["redirection", "redirections"]) {
+    if (Object.hasOwn(element.attributes, fieldName)) diagnostics.push(...validateRedirections(element, fieldName));
+  }
+  if (Object.hasOwn(element.attributes, "stages")) diagnostics.push(...validateRappelStages(element));
   return diagnostics;
 }
 
@@ -184,8 +172,7 @@ function validateClimb(element) {
   return [missingFieldDiagnostic(element, "height", "Climb")];
 }
 
-function validateRedirections(element) {
-  const fieldName = hasFieldValue(element, "redirections") ? "redirections" : "redirection";
+function validateRedirections(element, fieldName) {
   const parsed = parseRedirectionsToken(element.attributes[fieldName]);
 
   if (parsed.ok === false) {
@@ -301,14 +288,6 @@ function validateTechnicalSlopeDetails(element) {
     diagnostics.push(invalidValueDiagnostic(element, "landing", "pool, ledge, dry, chaos, gallery, trail, or unknown"));
   }
 
-  if (hasFieldValue(element, "anchor_count") && positiveInteger(element.attributes.anchor_count) === false) {
-    diagnostics.push(invalidValueDiagnostic(element, "anchor_count", "a positive integer"));
-  }
-
-  if (hasFieldValue(element, "inclination")) {
-    diagnostics.push(...validateInclination(element));
-  }
-
   return diagnostics;
 }
 
@@ -332,7 +311,7 @@ function validateInclination(element) {
       createDiagnostic(
         "validation",
         "error",
-        'Field "inclination" must be between 1% and 100%.',
+        'Field "inclination" must be greater than 0% and at most 100%.',
         element.sourceLocation,
         "Use an inclination such as 75%."
       )
@@ -343,7 +322,7 @@ function validateInclination(element) {
 }
 
 function positiveInteger(value) {
-  return /^[1-9]\d*$/.test(value);
+  return /^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value));
 }
 
 function isTechnicalSlope(element) {

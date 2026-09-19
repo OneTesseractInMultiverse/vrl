@@ -1,5 +1,5 @@
 route "Quebrada Gata"
-metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m total_descent=200m total_distance=1300m approach_distance=1900m exit_distance=300m descent_time="5-7h" season="December-May" longest_rappel=30m rope="1x60m"
+metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m total_descent=200m total_distance=1300m approach_distance=1900m exit_distance=300m descent_time="5-7h" season="December-May" longest_rappel=30m rope_inventory="1x60m"
 start "Quebrada Pilas entrance"
 walk distance=80m note="Short creek walk after the hanging bridge; first slide can be bypassed on the right"
 pool type=shallow note="Small pool below the first slide"
