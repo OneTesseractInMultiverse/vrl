@@ -229,3 +229,19 @@ for (const [name, create] of [["React", createVrlReactDiagramState], ["Svelte", 
     assert.deepEqual({ ok: state.ok, svg: state.svg, model: state.model, json: state.json }, { ok: false, svg: "", model: null, json: null });
   });
 }
+
+test("annotation content extent cannot overflow the supported layout height", () => {
+  const model = core.normalizeRoute(core.parseVrl('route "Annotation bounds"\nnote "First"\nnote "Second"').ast);
+  assert.throws(() => core.computeVerticalLayout(model, { marginY: Number.MAX_SAFE_INTEGER - 50, marginBottom: 20 }), /Layout\.height must be finite/);
+});
+
+test("stacked annotation rows cannot overflow the supported coordinate range", () => {
+  const model = core.normalizeRoute(core.parseVrl('route "Annotation bounds"\nnote "First"\nnote "Second"').ast);
+  assert.throws(() => core.computeVerticalLayout(model, { marginY: Number.MAX_SAFE_INTEGER - 20, marginBottom: 0 }), /Layout\.nodes\.1\.y must be finite/);
+});
+
+test("numeric boundary measurements retain trailing annotation attachments through JSON", () => {
+  const result = core.compileRoute('route "Annotated numeric boundary"\nmetadata entrance_elevation=0m exit_elevation=-1000000000m\nrappel height=1000000000m rope=1000000000m\nexit\nnote "Exit conditions"', { layout: { minNodeGap: 0, pixelsPerMeter: 1 } });
+  const exported = JSON.parse(result.json);
+  assert.deepEqual([result.layout.nodes.at(-1).elevationMeters, exported.traversal.annotations, exported.traversal.segments[0].verticalDeltaMeters], [-1e9, [{ elementIndex: 2, pointIndex: 1 }], -1e9]);
+});

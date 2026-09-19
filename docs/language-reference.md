@@ -50,7 +50,7 @@ Metadata values are normalized only when the field is measurement-bearing, such 
 
 ## Elements
 
-The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Order is meaningful and is preserved by the normalized model and renderer.
+The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression.
 
 ```vrl
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
@@ -89,7 +89,7 @@ Normalized values and calculations use standard binary floating-point arithmetic
 
 ## Elevation Profile
 
-When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining descent between entrance and exit is distributed across non-technical progression segments so the final traversal boundary lands at the provided elevation. The default layout also enforces readable visual spacing between nearby nodes, so dense hazards, pools, stations, and rappels do not stack their symbols; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
+When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining signed elevation change is distributed across non-technical connections between progression elements. Annotations never create such connections or receive a share of that residual. Entrance metadata binds to the explicit `start`, and exit metadata binds to the explicit `exit`; if a marker is omitted, its outer physical traversal boundary is used. The default layout also enforces readable visual spacing between progression points; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
 
 ## Technical Event Boundaries
 
@@ -108,7 +108,26 @@ This route has a 30 m descent to an intermediate elevation of 70 m, followed by 
 
 If technical measurements cannot match the endpoint elevations and no non-technical connection can account for the difference, compilation fails with a geometry diagnostic. When connections can absorb a residual, compilation warns that intermediate elevations are schematic estimates. A downclimb without `height` is allowed schematically with a warning; a measured endpoint profile requires that missing height. Neither case silently changes a declared climb into a descent.
 
-Endpoint metadata currently calibrates the whole ordered traversal. Keep the explicit exit last when it is intended to coincide with the final elevation; independent handling of annotations after exit is tracked in issue #5.
+### Route boundaries and annotations
+
+A route may contain at most one `start` and one `exit`. A declared start must be the first progression element; a declared exit must be the last. Repeated markers, progression before start, and progression after exit produce blocking geometry diagnostics at the offending declaration, even without elevation metadata. Neither marker is required: implicit boundaries continue to support standalone technical features.
+
+`note` and `hazard` statements can appear before start, between features, or after exit. Each attaches to the boundary reached after the preceding progression element: the lower end of a rappel/downclimb, the upper end of a climb, or the point of another element. Leading annotations attach to the first physical boundary. A note between a rappel and a climb therefore attaches to their shared lower boundary. Feature attributes such as `note=`, anchor details, and redirections still belong to the feature that declares them.
+
+Annotations are drawn beside their attachment point and retain its physical elevation. Adding, removing, or moving annotations does not change progression coordinates, technical ownership, residual allocation, or endpoint elevations. Multiple annotations at one boundary receive separate visual rows without adding route segments. Their symbol positions are presentation coordinates, not extra measured positions. An annotation-only document has no physical traversal, and its annotations have no measured elevation; it cannot explain a nonzero endpoint elevation change.
+
+```vrl
+route "Annotated exit"
+metadata entrance_elevation=100m exit_elevation=0m
+note "Seasonal conditions"
+start "Entry"
+walk distance=10m
+exit "Finish"
+note "Trail continues left"
+hazard type=swift_water severity=high
+```
+
+Here `Entry` remains at 100 m and `Finish` at 0 m. The last two annotations attach to the exit at 0 m. Moving the leading note after the walk changes only its attachment, not the physical profile. The unmeasured walk/exit connections trigger a warning that intermediate elevations are estimates. Technical-only contradictions remain errors even when surrounded by annotations. Final boundary elevation is pinned to the supplied value after consistency validation; intermediate arithmetic retains floating-point precision.
 
 ## Expressive Descent Attributes
 

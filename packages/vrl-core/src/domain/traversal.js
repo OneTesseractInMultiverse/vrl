@@ -12,29 +12,59 @@ export function isDescent(element) {
   return element?.type === "rappel" || element?.type === "downclimb";
 }
 
+/** Notes and hazards describe the route without adding physical progression. */
+export function isAnnotation(element) {
+  return element.type === "note" || element.type === "hazard";
+}
+
 export function createTraversal(elements) {
+  const progression = progressionEntries(elements);
+  const { points, segments } = createProgression(progression, elements);
+  const annotations = attachAnnotations(elements, points);
+  return { points, segments, annotations };
+}
+
+function progressionEntries(elements) {
+  return elements.map((element, elementIndex) => ({ element, elementIndex }))
+    .filter(({ element }) => !isAnnotation(element));
+}
+
+function createProgression(progression, elements) {
   const points = [];
   const segments = [];
-
-  for (let index = 0; index < elements.length; index += 1) {
-    const owners = technicalElementIndexesBetween(elements, index);
+  const physicalElements = progression.map(({ element }) => element);
+  for (let index = 0; index < progression.length; index += 1) {
+    const owners = technicalElementIndexesBetween(physicalElements, index)
+      .map((owner) => progression[owner].elementIndex);
     if (index === 0 && owners.length > 0) points.push({ elementIndex: null });
     if (owners.length === 2) {
       points.push({ elementIndex: null });
       segments.push(createSegment(points.length - 2, owners[0], elements));
     }
-    points.push({ elementIndex: index });
+    points.push({ elementIndex: progression[index].elementIndex });
     if (points.length > 1) {
       segments.push(createSegment(points.length - 2, owners.at(-1) ?? null, elements));
     }
   }
-
-  if (isDescent(elements.at(-1))) {
+  if (isDescent(physicalElements.at(-1))) {
     points.push({ elementIndex: null });
-    segments.push(createSegment(points.length - 2, elements.length - 1, elements));
+    segments.push(createSegment(points.length - 2, progression.at(-1).elementIndex, elements));
   }
-
   return { points, segments };
+}
+
+function attachAnnotations(elements, points) {
+  const elementPoints = new Map(points.map((point, index) => [point.elementIndex, index]));
+  let pointIndex = points.length === 0 ? null : 0;
+  const annotations = [];
+  elements.forEach((element, elementIndex) => {
+    if (isAnnotation(element)) {
+      annotations.push({ elementIndex, pointIndex });
+    } else {
+      pointIndex = elementPoints.get(elementIndex) + (isDescent(element) ? 1 : 0);
+    }
+  });
+  return annotations;
 }
 
 function createSegment(from, elementIndex, elements) {
@@ -88,8 +118,12 @@ export function elevationResidual(route, profile) {
 export function hasElevationResidual(route) {
   const profile = routeElevationProfile(route);
   const segments = routeTraversal(route).segments;
+  if (segments.length === 0) return profile.totalChangeMeters !== 0;
   const technicalMagnitude = requireSupportedNumber(segments.reduce((sum, segment) => sum + Math.abs(segment.verticalDeltaMeters), 0), "Total technical distance");
+  const smallestMotion = segments.reduce((smallest, segment) => Math.min(smallest, Math.abs(segment.verticalDeltaMeters) || Infinity), Infinity);
   const scale = Math.max(1, Math.abs(profile.entranceMeters), Math.abs(profile.exitMeters), technicalMagnitude);
-  const tolerance = Number.EPSILON * 16 * scale * (segments.length + 1);
+  const roundoff = Number.EPSILON * 16 * scale * (segments.length + 1);
+  // Boundary calibration must not erase or reverse even the smallest declared motion.
+  const tolerance = Math.min(roundoff, smallestMotion / 2);
   return Math.abs(elevationResidual(route, profile)) > tolerance;
 }

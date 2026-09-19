@@ -1,5 +1,6 @@
 import {
   elevationResidual,
+  isAnnotation,
   routeElevationProfile,
   routeTraversal,
   technicalElementIndexesBetween,
@@ -28,6 +29,7 @@ export function computeVerticalLayout(route, options = {}) {
 }
 
 function computeWeightedLayout(route, options) {
+  requireConsistentGeometry(route);
   const traversal = routeTraversal(route);
   const points = weightedPoints(route, traversal, options);
   return assembleLayout(route, traversal, shiftPoints(points, options.marginY ?? 108), options);
@@ -75,6 +77,8 @@ function elevationPoints(route, traversal, deltas, options, profile) {
     if (index > 0) {
       x += horizontalProgress(spacingElement(route, point, traversal.segments[index - 1])) * scale;
       elevation -= deltas[index - 1];
+      // Consistency has been checked; avoid accumulated roundoff at the boundary.
+      if (index === traversal.points.length - 1) elevation = profile.exitMeters;
     }
     return { ...point, x: Math.round(x), elevationMeters: elevation, direction: traversal.segments[index - 1]?.direction ?? null };
   });
@@ -92,16 +96,35 @@ function assembleLayout(route, traversal, positions, options, elevation) {
     id: point.elementIndex === null ? null : route.elements[point.elementIndex].id,
     element: point.elementIndex === null ? null : route.elements[point.elementIndex]
   }));
+  const annotations = positionAnnotations(route, traversal.annotations ?? [], points, options);
+  const nodes = [...points.filter((point) => point.elementIndex !== null), ...annotations]
+    .sort((left, right) => left.elementIndex - right.elementIndex);
   const bottomY = points.reduce((max, point) => Math.max(max, point.y), top);
+  const contentBottom = annotations.reduce((max, node) => Math.max(max, node.y), bottomY);
   return requireNumericData({
     width: options.width ?? 640,
-    height: Math.round(bottomY + (options.marginBottom ?? 64)),
+    height: Math.round(contentBottom + (options.marginBottom ?? 64)),
     spine: { x: options.spineX ?? 96, y1: top, y2: bottomY },
     ...(elevation === undefined ? {} : { elevation }),
-    nodes: points.filter((point) => point.elementIndex !== null),
+    nodes,
     points,
     segments: traversal.segments.map((segment) => positionSegment(route, segment, points, elevation))
   }, "Layout");
+}
+
+function positionAnnotations(route, annotations, points, options) {
+  const counts = new Map();
+  return annotations.map(({ elementIndex, pointIndex }) => {
+    const anchor = points[pointIndex] ?? { x: options.spineX ?? 96, y: options.marginY ?? 108 };
+    const offset = counts.get(pointIndex) ?? 0;
+    counts.set(pointIndex, offset + 1);
+    const element = route.elements[elementIndex];
+    return {
+      elementIndex, id: element.id, element, anchorPointIndex: pointIndex,
+      x: anchor.x - 32, y: anchor.y + offset * 36,
+      ...(anchor.elevationMeters === undefined ? {} : { elevationMeters: anchor.elevationMeters })
+    };
+  });
 }
 
 function positionSegment(route, segment, points, elevation) {
@@ -177,7 +200,10 @@ export function technicalSegmentDelta(previous, element) {
 
 /** Compatibility helper; residuals must never be added to technical motion. */
 export function residualDistributionWeights(elements, baseDeltas) {
-  return baseDeltas.map((delta, index) => delta === 0 ? elementVisualWeight(elements[index + 1]) : 0);
+  return baseDeltas.map((delta, index) => delta === 0
+    && !isAnnotation(elements[index]) && !isAnnotation(elements[index + 1])
+    && technicalElementIndexesBetween(elements, index + 1).length === 0
+    ? elementVisualWeight(elements[index + 1]) : 0);
 }
 
 export function elementVisualWeight(element) {

@@ -537,7 +537,7 @@ test("computeVerticalLayout honors custom weighted layout margins", () => {
 });
 
 test("computeElevationLayout honors custom pixel scale", () => {
-  assert.equal(core.computeElevationLayout(validCompiled().model, { pixelsPerMeter: 1 }).height, 580);
+  assert.equal(core.computeElevationLayout(validCompiled().model, { pixelsPerMeter: 1 }).height, 512);
 });
 
 test("computeElevationLayout rejects inconsistent empty elevation models", () => {
@@ -545,7 +545,7 @@ test("computeElevationLayout rejects inconsistent empty elevation models", () =>
 });
 
 test("computeElevationLayout honors custom elevation layout margins", () => {
-  assert.deepEqual(core.computeElevationLayout(validCompiled().model, { spineX: 10, marginY: 20, marginBottom: 5, pixelsPerMeter: 1 }).spine, { x: 10, y1: 20, y2: 428 });
+  assert.deepEqual(core.computeElevationLayout(validCompiled().model, { spineX: 10, marginY: 20, marginBottom: 5, pixelsPerMeter: 1 }).spine, { x: 10, y1: 20, y2: 360 });
 });
 
 test("computeElevationLayout enforces readable node gaps", () => {
@@ -593,7 +593,7 @@ test("routeElevationProfile rejects null elevation values", () => {
 });
 
 test("elevationSegmentDeltas distributes residual descent", () => {
-  assert.deepEqual(core.elevationSegmentDeltas(validCompiled().model).map((value) => Math.round(value * 100) / 100), [9.21, 12.79, 28, 10.23, 2.6, 7.16]);
+  assert.deepEqual(core.elevationSegmentDeltas(validCompiled().model).map((value) => Math.round(value * 100) / 100), [11.26, 15.63, 28, 12.51, 2.6]);
 });
 
 test("elevationSegmentDeltas returns empty without elevation metadata", () => {
@@ -753,11 +753,11 @@ test("renderTopoSvg includes an accessible title", () => {
 });
 
 test("renderTopoSvg uses explicit README-safe dimensions", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="824"/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /width="640" height="773"/);
 });
 
 test("renderTopoSvg can hide the legend", () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /width="640" height="668"/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout, { legend: false }), /width="640" height="617"/);
 });
 
 test("renderTopoSvg includes total elevation change", () => {
@@ -916,9 +916,9 @@ test("resolveLevelValue rejects non-string values", () => {
   assert.equal(svg.resolveLevelValue(3), null);
 });
 
-test("renderTopoSvg uses readable node spacing before rendering labels", () => {
-  const layout = validCompiled().layout;
-  assert.equal(layout.nodes.slice(1).every((node, index) => node.y - layout.nodes[index].y >= 68), true);
+test("renderTopoSvg uses readable progression spacing before rendering labels", () => {
+  const points = validCompiled().layout.points;
+  assert.equal(points.slice(1).every((point, index) => point.y - points[index].y >= 68), true);
 });
 
 test("terrainProfilePath handles empty layouts", () => {
@@ -926,7 +926,7 @@ test("terrainProfilePath handles empty layouts", () => {
 });
 
 test("terrainProfilePath follows route nodes", () => {
-  assert.equal(svg.terrainProfilePath(validCompiled().layout), "M 0 668 L 0 152 L 38 142 L 106 122 L 164 190 L 208 260 L 266 414 L 308 482 L 366 550 L 444 618 L 640 658 L 640 668 Z");
+  assert.equal(svg.terrainProfilePath(validCompiled().layout), "M 0 617 L 0 152 L 38 142 L 106 122 L 164 190 L 208 276 L 266 430 L 308 499 L 386 567 L 640 607 L 640 617 Z");
 });
 
 test("renderTerrainProfile uses terrain color", () => {
@@ -965,18 +965,18 @@ test("routeSegmentPath renders traverse bends", () => {
 });
 
 test("routeSegmentPath renders drop ledges", () => {
-  assert.equal(svg.routeSegmentPath(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3]), "M 198 246 L 214 246 L 246 323 L 256 400");
+  assert.equal(svg.routeSegmentPath(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3]), "M 198 262 L 214 262 L 246 339 L 256 416");
 });
 
 test("dropLadderGeometry builds vertical descent coordinates by default", () => {
   assert.deepEqual(svg.dropLadderGeometry(validCompiled().layout.nodes[2], validCompiled().layout.nodes[3], { attributes: {} }), {
     startX: 198,
-    startY: 246,
+    startY: 262,
     dropX: 232,
     bottomX: 232,
-    bottomY: 400,
+    bottomY: 416,
     endX: 256,
-    endY: 400
+    endY: 416
   });
 });
 
@@ -1137,7 +1137,7 @@ test("segmentLabel returns empty for unlabeled segments", () => {
 });
 
 test("segmentLabelPosition uses segment midpoint", () => {
-  assert.deepEqual(svg.segmentLabelPosition(validCompiled().layout.nodes[1], validCompiled().layout.nodes[2]), { x: 176, y: 204 });
+  assert.deepEqual(svg.segmentLabelPosition(validCompiled().layout.nodes[1], validCompiled().layout.nodes[2]), { x: 176, y: 212 });
 });
 
 test("segmentTechnicalElement uses outgoing rappel elements", () => {

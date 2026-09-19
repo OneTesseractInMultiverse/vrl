@@ -1,12 +1,15 @@
 import { createDiagnostic } from "../domain/diagnostics.js";
 import { hasElevationResidual, routeElevationProfile, routeTraversal } from "../domain/traversal.js";
 import { invalidNumberPath } from "../domain/numeric-policy.js";
+import { validateBoundaries } from "./validate-boundaries.js";
 
 export function validateGeometry(route) {
   const invalid = invalidNumberPath(route, "Route");
   if (invalid !== null) {
     return [createDiagnostic("geometry", "error", `${invalid} is outside the supported numeric range.`, { line: 1, column: 1 }, "Use finite numeric values with absolute magnitude no greater than Number.MAX_SAFE_INTEGER.")];
   }
+  const boundaryDiagnostics = validateBoundaries(route.elements);
+  if (boundaryDiagnostics.length > 0) return boundaryDiagnostics;
   const traversal = routeTraversal(route);
   const profile = routeElevationProfile(route);
   const missing = traversal.segments.filter((segment) => segment.kind === "technical" && segment.verticalDeltaMeters === null);
