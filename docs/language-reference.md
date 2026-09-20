@@ -19,7 +19,7 @@ An attribute has an unquoted, nonempty key followed immediately by `=` and a bar
 
 Tokens must be separated by whitespace. A quoted value must end before another token begins: `"A"suffix`, `prefix"A"`, `"A""B"`, and `note="A"next=1` are errors. A quote can start a token or the value immediately after `=`; quoted attribute keys are not supported. An outside `#` begins a comment even without preceding whitespace. A hash inside quotes is ordinary text, and comment contents are not tokenized. Backslashes outside quotes are literal characters and do not escape comments or whitespace.
 
-Use `""` for empty text, including an empty label, note, or text attribute. `key=` is a syntax error. Semantic rules still apply: `route ""` has a missing route name, and an empty required measurement does not satisfy that field.
+Use `""` for empty text, including an empty label, note, or text attribute. `key=` is a syntax error. Semantic rules still apply: `route ""` has a missing route name, an empty required measurement does not satisfy that field, and an empty or whitespace-only explicit element identifier is invalid.
 
 For compatibility, route names, note text, and element labels/identifiers may contain whitespace-separated bare and quoted fragments. Each quoted fragment is decoded independently, and separators between fragments become one space. Prefer one quoted token when exact whitespace matters or a label contains `=`. Route and note free-text contexts retain assignment-shaped tokens literally. Statement keywords themselves must be unquoted.
 
@@ -107,6 +107,40 @@ note "Low-water route only"
 ```
 
 Measurements must use meters in the first release. Values such as `35m`, `120m`, and `4.5m` are accepted and normalized to `{ value, unit, meters }`.
+
+## Element Identifiers
+
+Normalized element IDs are unique across **all element types in one route**, including start, exit, and annotations. Different routes have independent namespaces; these IDs are not globally unique or SVG document IDs. IDs use exact, case-sensitive comparison after the usual text decoding: `R1` and `r1` differ, as do Unicode strings with different code-unit spellings. Explicit IDs must contain at least one non-whitespace character. Valid text is preserved without trimming or Unicode normalization.
+
+Text before the first attribute on `walk`, `rappel`, `downclimb`, `climb`, `pool`, or `hazard` declares its ID. For example, `rappel "survey-drop" height=5m rope=10m` uses `survey-drop`. Omit that text to request generation. Text on `start`/`exit` is a label, and `note` text is content; neither reserves an ID. An `id=...` attribute is ordinary extension data and does not set the element ID. Programmatic AST consumers can set explicit `element.id` on any element type under the same uniqueness rule.
+
+All explicit IDs are reserved before any generated ID is allocated, even when the declaration occurs later or uses another type’s prefix. Repeated explicit IDs are semantic errors, including repetitions across types or differently quoted spellings that decode to the same text. Compilation returns no model, layout, or JSON; diagnostics point to the offending statement and the first declaration. An explicit blank ID is an error, not a request for numbering.
+
+Generated IDs use these prefixes:
+
+| Type | Prefix |
+| --- | --- |
+| `start` | `S` |
+| `exit` | `E` |
+| `walk` | `W` |
+| `rappel` | `R` |
+| `downclimb` | `D` |
+| `climb` | `C` |
+| `pool` | `P` |
+| `hazard` | `H` |
+| `note` | `N` |
+
+Each type’s counter starts at zero. In source order, every element advances its type’s counter once, including explicitly named elements. For an unnamed element, allocation keeps advancing until the prefix plus counter is unreserved. Explicit IDs are preserved and their numeric-looking suffixes are never parsed into counters. This retains previous numbering where no collision occurs; the result need not be consecutive.
+
+```vrl
+route "Identifier survey"
+rappel R2 height=5m rope=10m
+rappel height=5m rope=10m
+```
+
+The IDs above are `R2`, `R3`. If the first rappel is unnamed and the second explicitly declares `R1`, the IDs are `R2`, `R1`. A later `walk R1` also reserves `R1` against earlier generated rappel IDs.
+
+Repeated compilation of identical input produces identical IDs without random values or shared state. This is separate from persistence across edits: insertion, deletion, reordering, or new reservations can renumber generated IDs. Use explicit IDs for durable author-controlled references and preserve them when editing the same feature. VRL does not infer feature identity across documents or revisions. Previously accepted duplicate/blank IDs must be renamed or omitted, and consumers must rebuild cached models after this allocation change.
 
 ## Numeric Limits and Precision
 

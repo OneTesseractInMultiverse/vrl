@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Reserve all explicit element IDs before generation and allocate unique IDs across every element type in a route. Preserve existing numbering where it does not collide, with deterministic skipping of forward and cross-type reservations.
+- Reject duplicate, blank, and non-string explicit IDs through a shared domain policy. Source failures include both declaration locations for duplicates and stop all derived output; direct normalization rejects invalid identifiers with `RangeError`.
+- Document route-wide identity scope, per-type sequencing, standalone helper limitations, cache migration, and the distinction between deterministic generation and persistence across edits. Add single-assert allocation and failure regressions without new dependencies.
+
 - Enforce one route declaration before metadata and elements. Keep repeated metadata lines with distinct keys, and reject metadata after any element, including notes/hazards.
 - Reject repeated attribute keys even when their values match. Preserve first values only in the recovery AST, with optional diagnostic `relatedLocations` for the original declaration or ordering boundary; readable diagnostics include both coordinates.
 - Separate document-order transitions and attribute parsing from parser orchestration. Document precise cosmetic brace handling, duplicate scopes, failure propagation, and recovery compatibility. Add single-assert correctness/failure regressions without runtime dependencies.

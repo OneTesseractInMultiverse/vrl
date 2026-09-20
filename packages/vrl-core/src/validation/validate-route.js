@@ -2,6 +2,7 @@ import { createDiagnostic } from "../domain/diagnostics.js";
 import { parseInclinationToken } from "../domain/inclinations.js";
 import { isMeasurementField, parseMeasurementToken } from "../domain/measurements.js";
 import { parseRappelStagesToken, parseRedirectionsToken } from "../domain/rappel-details.js";
+import { validateElementIdentifiers } from "./validate-identifiers.js";
 
 const ALLOWED_ANCHORS = new Set(["bolts", "natural", "tree", "thread", "removable", "fixed", "unknown", "mixed"]);
 const ALLOWED_DESCENT_SHAPES = new Set(["ladder", "direct", "slab"]);
@@ -24,9 +25,10 @@ export function validateRoute(ast) {
   }
 
   diagnostics.push(...validateMetadata(ast.metadata));
+  diagnostics.push(...validateElementIdentifiers(ast.elements));
 
   ast.elements.forEach((element) => {
-    diagnostics.push(...validateElement(element));
+    diagnostics.push(...validateElementAttributes(element));
   });
 
   return diagnostics;
@@ -38,6 +40,10 @@ function validateMetadata(metadata) {
 }
 
 export function validateElement(element) {
+  return [...validateElementIdentifiers([element]), ...validateElementAttributes(element)];
+}
+
+function validateElementAttributes(element) {
   const diagnostics = [];
 
   diagnostics.push(...validateMeasurements(element));

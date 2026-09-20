@@ -123,11 +123,13 @@ The npm package scope is `@subvertic`, the publishing scope for the VRL project 
 
 - `parseVrl(source)` for parsing compact VRL source into an AST and syntax diagnostics.
 - `validateRoute(ast)` for semantic diagnostics.
-- `normalizeRoute(ast)` for a stable route model with generated element identifiers.
+- `normalizeRoute(ast)` for a deterministic route model with identifiers unique within the route.
 - `computeVerticalLayout(model, options)` for route-node layout, including elevation-aware y positions when entrance and exit elevations are present.
 - `compileRoute(source, options)` for the first complete application use case.
 - `createRouteCompiler(overrides)` for injecting alternate parser, validator, layout, normalization, or export ports.
 - `exportRouteJson(model)` for structured JSON output.
+
+Element identifiers are case-sensitive and unique across all element types in one route. Explicit IDs are reserved before automatic numbering; duplicate and blank IDs fail validation. Generated IDs may change when elements are inserted, removed, or reordered. Use explicit IDs for references that need to survive those edits. See the [identifier contract](docs/language-reference.md#element-identifiers).
 
 `@subvertic/render-svg` exports:
 
