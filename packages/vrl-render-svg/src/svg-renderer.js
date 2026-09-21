@@ -6,6 +6,7 @@ import {
   LEGEND_FONT_SIZE,
   STANDARD_SYMBOL_CODE_Y_OFFSET,
   terrainProfilePath,
+  technicalAnnotationDescription,
   routeSegmentPath,
   dropLadderGeometry,
   technicalLinePoint,
@@ -70,6 +71,7 @@ export function renderTopoSvg(route, layout, options = {}) {
   const scene = computeTopoScene(route, layout, options);
   const { language, viewBox } = scene;
   const text = diagramText(language);
+  const description = [`${text.schematicDescription} ${route.name}.`, technicalAnnotationDescription(layout, language)].filter(Boolean).join(" ");
   const nodes = renderNodes(layout, theme, options.symbology, language, scene.nodes);
   const terrainProfile = renderTerrainProfile(layout, theme);
   const waterSegments = renderWaterSegments(layout, theme);
@@ -81,7 +83,7 @@ export function renderTopoSvg(route, layout, options = {}) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
   <title>${escapeXml(route.name)} ${escapeXml(text.topo)}</title>
-  <desc>${escapeXml(text.schematicDescription)} ${escapeXml(route.name)}.</desc>
+  <desc>${escapeXml(description)}</desc>
   <defs>
     <marker id="vrl-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="${svgPaint(theme.routeLine)}"/>
@@ -177,7 +179,7 @@ function renderRouteSegment(segment, theme, language) {
   if ((segment.element.attributes.shape ?? "ladder") === "ladder") {
     return renderDropLadderSegment(segment.start, segment.end, theme, segment.element, language, segment);
   }
-  return renderDirectTechnicalSegment(segment.start, segment.end, theme, segment.element, segment);
+  return renderDirectTechnicalSegment(segment.start, segment.end, theme, segment.element, segment, language);
 }
 
 function renderConnectionSegment(segment, theme) {
@@ -186,24 +188,28 @@ function renderConnectionSegment(segment, theme) {
 }
 
 export function renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null) {
-  const geometry = dropLadderGeometry(previous, node, element, layout);
-
-  return `<g class="vrl-drop-ladder">
-    <path class="vrl-route-segment vrl-drop-lead" d="M ${svgAttribute(geometry.startX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <path class="vrl-route-segment vrl-drop-slope" d="M ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
-    ${renderDropRungs(geometry, theme)}
-    ${renderRappelStageMarkers(geometry, element, theme)}
-    ${renderRedirectionMarkers(geometry, element, theme, language)}
-    <path class="vrl-route-segment vrl-drop-exit" d="M ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)} L ${svgAttribute(geometry.endX)} ${svgAttribute(geometry.endY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>`;
+  return renderTechnicalSegment(previous, node, theme, element, language, layout, "ladder");
 }
 
-export function renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null) {
-  const geometry = dropLadderGeometry(previous, node, element, layout);
+export function renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null, language = "en") {
+  return renderTechnicalSegment(previous, node, theme, element, language, layout, "direct");
+}
 
-  return `<g class="vrl-drop-direct">
+function renderTechnicalSegment(previous, node, theme, element, language, layout, shape) {
+  const geometry = dropLadderGeometry(previous, node, element, layout);
+  const decorations = [
+    shape === "ladder" ? renderDropRungs(geometry, theme) : "",
+    renderRappelStageMarkers(geometry, element, theme),
+    renderRedirectionMarkers(geometry, element, theme, language)
+  ].join("\n    ");
+  return renderTechnicalSegmentMarkup(geometry, theme, shape, decorations);
+}
+
+function renderTechnicalSegmentMarkup(geometry, theme, shape, decorations) {
+  return `<g class="vrl-drop-${svgAttribute(shape)}">
     <path class="vrl-route-segment vrl-drop-lead" d="M ${svgAttribute(geometry.startX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
     <path class="vrl-route-segment vrl-drop-slope" d="M ${svgAttribute(geometry.dropX)} ${svgAttribute(geometry.startY)} L ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
+    ${decorations}
     <path class="vrl-route-segment vrl-drop-exit" d="M ${svgAttribute(geometry.bottomX)} ${svgAttribute(geometry.bottomY)} L ${svgAttribute(geometry.endX)} ${svgAttribute(geometry.endY)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>`;
 }

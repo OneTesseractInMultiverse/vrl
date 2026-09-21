@@ -232,7 +232,16 @@ The SVG renderer labels ambiguous diagram detail fields, so `flow=medium` appear
 
 `shape=ladder` is the default visual behavior for rappels, downclimbs, and climbs. It renders stepped shelves, a sloped or vertical technical line with an arrow, and small rungs so the diagram reads like a classic canyon profile. `inclination=100%` is vertical; lower values slant the ladder in the direction of travel and shorten the vertical contribution relative to the element height. Climbs use the same field but render upward.
 
-Use `redirection` or `redirections` when a single rappel has intermediate redirection anchors along the same rope line. The distance is measured from the rappel head and must be greater than `0m` and shorter than the rappel `height`; the side must be `left`, `right`, `center`, or `unknown`. Use `stages` when that single rappel should show multiple rope-length sections, for example before and after a redirection. Use two separate `rappel` elements when the canyon has two actual rappel stations.
+`shape=direct` and `shape=slab` currently share the same technical line geometry as the ladder style, without rungs. All three shapes retain stage lengths, stage boundary marks, and redirection anchors, including their distances, sides, and localized accessible names. These details belong to the technical feature; changing its shape does not remove them or change their placement. Canvas fitting includes these labels for every shape. The top-level SVG description also includes a localized summary of stage lengths and redirections with their owning feature ID, making those facts available when assistive technology treats the diagram as one image.
+
+Use `redirection` or `redirections` when a single rappel has intermediate redirection anchors along the same rope line. The distance is measured from the rappel head and must be greater than `0m` and shorter than the rappel `height`; the side must be `left`, `right`, `center`, or `unknown`. Use `stages` when that single rappel should show multiple rope-length sections, for example before and after a redirection. Use two separate `rappel` elements when the canyon has two actual rappel stations. Stage lengths are shown as SVG text and their boundaries are positioned in proportion to the declared stage total. A stage total that differs from `height` retains the existing warning and displays the declared lengths unchanged. Redirection positions use distance divided by height, along the measured technical slope rather than any extra connector introduced for readable spacing. For endpoint clearance, the existing schematic placement clamps stage/anchor positions to the interior 5–95% of that slope; the displayed measurement remains exact.
+
+```vrl
+route "Technical survey"
+rappel height=30m rope=60m stages=10m+20m redirection=5m:left shape=direct
+```
+
+This renders stage labels `10m`, `20m`, and a `5m L` redirection in English. Replacing `direct` with `ladder` or `slab` preserves those details. Invalid shapes, malformed stage/redirection values, nonpositive lengths, and redirections at or beyond the feature height produce blocking validation diagnostics before rendering. Low-level renderers expect validated normalized data.
 
 ## Diagnostics
 

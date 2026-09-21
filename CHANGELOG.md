@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Preserve stage lengths, stage boundaries, and redirection anchors for direct and slab technical lines through shared segment rendering. Keep localized text and accessible redirection labels for every supported shape, and include stage/redirection summaries with their feature IDs in the top-level SVG description.
+- Include annotation extents in scene fitting independently of line shape. Preserve measured-slope placement, endpoint clearance, and the existing ladder appearance; append an optional language argument to the direct-segment helper without changing its existing argument order.
+- Document shape-independent annotation behavior and add single-assert value, position, ownership, canvas-fitting, localization, and failure regressions without new dependencies.
+
 - Reserve all explicit element IDs before generation and allocate unique IDs across every element type in a route. Preserve existing numbering where it does not collide, with deterministic skipping of forward and cross-type reservations.
 - Reject duplicate, blank, and non-string explicit IDs through a shared domain policy. Source failures include both declaration locations for duplicates and stop all derived output; direct normalization rejects invalid identifiers with `RangeError`.
 - Document route-wide identity scope, per-type sequencing, standalone helper limitations, cache migration, and the distinction between deterministic generation and persistence across edits. Add single-assert allocation and failure regressions without new dependencies.
