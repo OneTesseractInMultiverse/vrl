@@ -251,6 +251,21 @@ Renderer options:
 
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 
+### Technical annotations across line shapes
+
+`renderTopoSvg` and `renderRouteSegments` retain stage labels, stage boundaries, and redirection markers for `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs; annotation ownership, coordinates, values, and language remain the same. Stage lengths remain SVG text, and redirection groups retain localized `aria-label` values (for example, `Redirection anchor 5m L` or `Anclaje de desvio 5m izq`). `computeTopoScene` includes their text extents for every shape, so labels can expand the viewport. The top-level SVG `<desc>` also includes localized stage/redirection summaries in feature order with each owning feature ID; assistive technology can expose these facts through the image description without traversing internal SVG groups.
+
+Annotations follow the technical portion of the positioned segment, excluding extra connector spacing. Stages are proportioned by their declared total; a mismatch with height remains a compiler warning and does not rewrite the lengths. Redirections use distance/height. Existing endpoint clearance places markers and labels between 5% and 95% of the schematic slope while retaining the exact displayed values. See the [language example](language-reference.md#expressive-descent-attributes) for shape and validation rules.
+
+The helper signatures remain compatible:
+
+```js
+renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null);
+renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null, language = "en");
+```
+
+The direct helper's optional language argument is appended after its existing layout argument. Both helpers render complete technical segments with annotations through shared orchestration. No public exports or core model fields change. Custom callers remain responsible for valid normalized attributes and geometry; use `compileRoute` for located source diagnostics. Unsupported source shapes and malformed/out-of-range annotations block compilation rather than producing partial diagrams.
+
 ### Complete diagram bounds
 
 `renderTopoSvg` prepares the complete presentation before serializing SVG. Requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.

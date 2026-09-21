@@ -155,6 +155,21 @@ export function rappelStagesForElement(element) {
   return Array.isArray(element.attributes.stages) ? element.attributes.stages : [];
 }
 
+export function technicalAnnotationDescription(layout, language) {
+  return layout.segments.filter((segment) => segment.element !== null)
+    .map(({ element }) => elementAnnotationDescription(element, language)).filter(Boolean).join(" ");
+}
+
+function elementAnnotationDescription(element, language) {
+  const text = diagramText(language);
+  const stages = rappelStagesForElement(element);
+  const details = [
+    ...(stages.length === 0 ? [] : [`${text.ropeStages}: ${stages.map(formatMeters).join(" + ")}`]),
+    ...redirectionsForElement(element).map((redirection) => `${text.redirectionAnchor} ${redirectionLabel(redirection, language)}`)
+  ];
+  return details.length === 0 ? "" : `${formatTopoLabel(element, language)}: ${details.join("; ")}.`;
+}
+
 export function rappelHeightMeters(element) {
   const height = element?.attributes?.height;
   if (typeof height === "object" && height !== null && typeof height.meters === "number") {

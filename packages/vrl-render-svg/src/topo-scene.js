@@ -93,8 +93,7 @@ function segmentBounds(layout, language) {
       Math.max(geometry.startX, geometry.dropX, geometry.bottomX, geometry.endX),
       Math.max(geometry.startY, geometry.bottomY, geometry.endY), 24
     );
-    const annotations = (segment.element.attributes.shape ?? "ladder") === "ladder"
-      ? [...stagePlacements(geometry, segment.element), ...redirectionPlacements(geometry, segment.element, language)] : [];
+    const annotations = [...stagePlacements(geometry, segment.element), ...redirectionPlacements(geometry, segment.element, language)];
     return [shapeBounds, ...annotations.map((item) => textBounds(item.text, item.x, item.y, item.fontSize, item.anchor))];
   });
 }
