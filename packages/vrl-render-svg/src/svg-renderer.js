@@ -1,3 +1,4 @@
+import { anchorMarkPlacements, anchorSummary, anchorCountDescription } from "./anchor-presentation.js";
 import { computeTopoScene, prepareNodes, prepareInfoBox, prepareLegend, stagePlacements, redirectionPlacements } from "./topo-scene.js";
 import {
   DETAIL_FONT_SIZE,
@@ -15,7 +16,6 @@ import {
   segmentLabelPosition,
   stationTickLine,
   nodeLabelPlacement,
-  anchorMarkCount,
   formatTopoLabel,
   formatTopoDetail,
   detailLineRows,
@@ -27,8 +27,7 @@ import {
   resolveBadgeValue,
   detailBadgeStyle,
   estimatedTextWidth,
-  levelBadgeWidth,
-  anchorLabel
+  levelBadgeWidth
 } from "./presentation.js";
 export {
   resolveRenderLanguage,
@@ -71,7 +70,7 @@ export function renderTopoSvg(route, layout, options = {}) {
   const scene = computeTopoScene(route, layout, options);
   const { language, viewBox } = scene;
   const text = diagramText(language);
-  const description = [`${text.schematicDescription} ${route.name}.`, technicalAnnotationDescription(layout, language)].filter(Boolean).join(" ");
+  const description = [`${text.schematicDescription} ${route.name}.`, anchorCountDescription(layout, language), technicalAnnotationDescription(layout, language)].filter(Boolean).join(" ");
   const nodes = renderNodes(layout, theme, options.symbology, language, scene.nodes);
   const terrainProfile = renderTerrainProfile(layout, theme);
   const waterSegments = renderWaterSegments(layout, theme);
@@ -325,20 +324,19 @@ export function renderLabelLeader(node, placement, theme) {
 }
 
 export function renderAnchorMarks(node, element, theme, side = "left", language = "en") {
-  const count = anchorMarkCount(element);
-  if (count === 0) {
-    return "";
-  }
+  const placement = anchorMarkPlacements(node, element, side);
+  if (placement.count === 0) return "";
+  return renderAnchorMarkGroup(placement, anchorSummary(element, language), theme);
+}
 
-  const direction = side === "left" ? -1 : 1;
-
-  return `<g class="vrl-anchor-marks" aria-label="${svgAttribute(count)} ${svgAttribute(anchorLabel(count, language))}">
-    ${Array.from({ length: count }, (_, index) => {
-      const x = node.x + (direction * (14 + (index * 8)));
-      const y = node.y - 24;
-      return `<circle cx="${svgAttribute(x)}" cy="${svgAttribute(y)}" r="3" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.4"/>`;
-    }).join("")}
+function renderAnchorMarkGroup({ marks, overflow }, label, theme) {
+  return `<g class="vrl-anchor-marks" aria-label="${svgAttribute(label)}">
+    ${marks.map(({ x, y }) => `<circle cx="${svgAttribute(x)}" cy="${svgAttribute(y)}" r="3" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1.4"/>`).join("")}${overflow === null ? "" : renderAnchorOverflow(overflow, theme)}
   </g>`;
+}
+
+function renderAnchorOverflow({ text, x, y, fontSize, anchor }, theme) {
+  return `<text class="vrl-anchor-overflow" aria-hidden="true" x="${svgAttribute(x)}" y="${svgAttribute(y)}" text-anchor="${svgAttribute(anchor)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(fontSize)}" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(text)}</text>`;
 }
 
 export function renderSymbolMarker(node, element, color, symbology = "federation", panelColor = "#f6f8fa", language = "en") {

@@ -1,3 +1,4 @@
+import { anchorMarkPlacements } from "./anchor-presentation.js";
 import { diagramText } from "./locale.js";
 import { symbolCode } from "./symbol-registry.js";
 import { validateRenderLayout, validateRenderOptions } from "./render-options.js";
@@ -46,8 +47,14 @@ function nodeBounds(nodes, symbology, language) {
     bounds(node.x - 44, node.y - 32, node.x + 40, node.y + 32),
     textBounds(symbolCode(node.element, symbology), node.x, node.y - 15, 9, "middle"),
     textBounds(title, placement.labelX, placement.titleY, 11),
+    ...anchorOverflowBounds(node),
     ...detailRows.map((row, index) => detailRowBounds(row, placement.labelX, placement.detailY + index * 14, language))
   ]);
+}
+
+function anchorOverflowBounds(node) {
+  const overflow = anchorMarkPlacements(node, node.element).overflow;
+  return overflow === null ? [] : [textBounds(overflow.text, overflow.x, overflow.y, overflow.fontSize, overflow.anchor)];
 }
 
 function detailRowBounds(parts, x, y, language) {

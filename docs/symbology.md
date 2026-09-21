@@ -24,6 +24,12 @@ The Spanish profile uses `P` for pool/poza and `A` for walking/on-foot travel. T
 
 The renderer does not copy federation artwork. It renders these as text symbols on the route profile and explains the active profile in the SVG legend so public documentation stays portable and easy to diff. Ladder-style technical slopes, inclination, rungs, segment labels, station ticks, anchor-count marks, rappel stage labels, and mid-rappel redirection anchors are diagram structure and route detail, not a new general symbol family.
 
+## Anchor Count Shorthand
+
+Anchor-count circles are bounded visual shorthand for the declared quantity. Up to four circles are drawn; additional anchors use `+N` beside the row. For example, four circles and `+1` mean five declared anchors, and detail/accessibility text says `5 anchors`. Omitting `anchor_count` leaves the count unknown. Circle positions do not describe the physical arrangement of a station.
+
+This overflow notation is a VRL presentation convention, not a federation-standard symbol. Full counts remain in the model, JSON, localized text, and accessible diagram description. See the [anchor-count contract](language-reference.md#anchor-counts).
+
 ## Federation Context
 
 The profiles are grounded in federation canyoning/barranquismo terminology, not copied artwork. FFME describes canyon progression through walking, swimming, jumps, slides, downclimbing, rappels, and rope techniques. FEDME describes barranquismo as progression through canyons or ravines on foot and/or swimming, with differentiated technical materials, and its safety/equipment discussion includes rappel heads, handlines, intermediate points, deviations, and technical signage.

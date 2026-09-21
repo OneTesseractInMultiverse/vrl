@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Preserve full declared anchor counts in rappel details, anchor accessibility labels, and the top-level SVG description. Keep the existing mark-count helper limited to drawing decisions.
+- Draw at most four anchor circles with explicit `+N` overflow, using shared placement records for rendering and canvas fitting. Separate quantity reading, display limits, placement, and formatting without changing core quantities or adding dependencies.
+- Document missing/invalid count behavior, localization, helper compatibility, and the overflow convention; add single-assert value, boundary, fitting, accessibility, and failure regressions.
+
 - Preserve stage lengths, stage boundaries, and redirection anchors for direct and slab technical lines through shared segment rendering. Keep localized text and accessible redirection labels for every supported shape, and include stage/redirection summaries with their feature IDs in the top-level SVG description.
 - Include annotation extents in scene fitting independently of line shape. Preserve measured-slope placement, endpoint clearance, and the existing ladder appearance; append an optional language argument to the direct-segment helper without changing its existing argument order.
 - Document shape-independent annotation behavior and add single-assert value, position, ownership, canvas-fitting, localization, and failure regressions without new dependencies.

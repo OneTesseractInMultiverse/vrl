@@ -55,6 +55,12 @@ Stage lengths, stage boundary marks, and redirection anchors render for all thre
 
 `renderDirectTechnicalSegment(previous, node, theme, element, layout, language)` adds an optional final language argument, defaulting to English, without moving the existing layout argument. The ladder helper retains its existing argument order. Both use shared annotation rendering. Source validation remains in core; custom helper callers must supply valid normalized attributes and geometry. See the [annotation contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#technical-annotations-across-line-shapes).
 
+## Anchor Counts
+
+Rappel details, anchor accessibility labels, and the top-level SVG description preserve the full declared `anchor_count`. The visual shorthand draws at most four circles, then shows `+N` for the remainder: `anchor_count=5` displays `5 anchors` (or `5 anclajes`) with four marks and `+1`. Counts are never inferred from anchor type. Missing counts produce no count display; invalid source counts, including zero, are rejected by core validation.
+
+The existing `anchorMarkCount` export reports only the capped drawing count. `renderAnchorMarks` retains its argument order and supports left/right placement; complete diagrams use the left side and include overflow text in canvas fitting. The cap does not alter the model or JSON, and the maximum supported count still draws only four circles. See the [quantity and display contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#anchor-quantities-and-display-limits).
+
 ## Canvas Fitting
 
 The final SVG grows to contain the complete route, symbols, labels, technical details, summary, and optional legend. Core layout width/height are minimum framing dimensions. The final `viewBox` can have a negative origin; physical coordinates and elevations are preserved. The summary appears above route content, and the legend follows its lowest label. Long unbroken text expands the canvas, while detail rows wrap once at the requested width.

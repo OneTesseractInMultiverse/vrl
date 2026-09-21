@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="-12 -175 1486 1830" width="1486" height="1830" style="max-width: 100%; height: auto;">
   <title>Quebrada Gata topo</title>
-  <desc>Esquema VRL para Quebrada Gata.</desc>
+  <desc>Esquema VRL para Quebrada Gata. Rapel R1: 2 anclajes. Rapel R2: 1 anclaje. Rapel R4: 2 anclajes. Rapel R5: 2 anclajes.</desc>
   <defs>
     <marker id="vrl-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="#111111"/>
