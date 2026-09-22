@@ -72,6 +72,12 @@ Layouts retain one `nodes` entry per route element in source order. Annotation n
 
 Layout dimensions are provisional framing values. Complete canvas fitting belongs to the renderer, which accounts for its own fonts, labels, decorations, and legend without changing core coordinates. For SVG output, use `computeTopoScene` from `@subvertic/render-svg` or the rendered SVG dimensions when sizing an embedding surface.
 
+## Known Fields
+
+Validation and normalization share a domain-owned field specification. Numeric fields follow the same units and ranges in metadata and every element; categorical fields follow explicit contexts, including exposure on both downclimbs and climbs. Unknown extensions remain text. Empty applicable enums and empty entries in stage/redirection lists are errors. Inclination accepts values greater than 0% through 100%, with at most six fractional digits.
+
+Stage totals use exact comparison at source precision: `0.1m+0.2m` matches `0.3m`, while a difference of `0.000001m` warns. Public model/JSON types and floating-point geometry remain unchanged. Low-level normalization helpers preserve invalid raw values and do not replace semantic validation. See the [field and list contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#known-fields-and-extensions).
+
 ## Diagnostics
 
 Diagnostics are plain objects:

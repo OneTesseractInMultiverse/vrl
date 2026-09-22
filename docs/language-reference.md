@@ -162,6 +162,45 @@ Source range and precision failures are structured validation diagnostics and bl
 
 Normalized values and calculations use standard binary floating-point arithmetic, not exact decimal arithmetic. For example, `0.1m + 0.2m` may produce `0.30000000000000004m`; JSON retains that same value. Derived quantities may have more than six fractional digits, and pixel coordinates retain the layout's existing rounding rules. The six-digit limit applies to source spellings, not to calculated results.
 
+## Known Fields and Extensions
+
+Core has one domain-owned field specification for applicability, required fields, token parsers, units, ranges, list cardinality, and enum vocabularies. All numeric names in the table above are reserved numeric fields in metadata and on every element. `height` is required on rappels and climbs; `rope` is required on rappels. Other fields are optional unless a later geometry check needs them, such as downclimb height for a measured endpoint profile.
+
+Categorical fields apply in the following contexts:
+
+| Field | Validated on | Accepted values |
+| --- | --- | --- |
+| `anchor` | Rappel | `bolts`, `natural`, `tree`, `thread`, `removable`, `fixed`, `unknown`, `mixed` |
+| `shape` | Rappel, downclimb, climb | `ladder`, `direct`, `slab` |
+| `station` | Rappel, downclimb, climb | `left`, `right`, `center`, `floor`, `tree`, `natural`, `unknown` |
+| `landing` | Rappel, downclimb, climb | `pool`, `ledge`, `dry`, `chaos`, `gallery`, `trail`, `unknown` |
+| `exposure` | Downclimb, climb | `low`, `medium`, `high` |
+| `flow` | Every element | `dry`, `low`, `medium`, `high` |
+| `type` | Pool | `deep`, `shallow`, `swimmer`, `dry`, `unknown` |
+| `severity` | Hazard | `low`, `medium`, `high`, `critical` |
+
+These enums are case-sensitive. A present empty value is invalid in its defined context; omit optional fields when unknown. Outside the listed contexts, these names remain extension text: for example, `hazard type=swift_water` does not use the pool vocabulary, and metadata `flow` remains descriptive text. Unknown names such as `survey_team` are preserved without a vocabulary check. Known-field validation does not promise that every accepted attribute has a visual representation.
+
+Source `note` statements consume free-form text, so `note exposure=banana` is literal note content. Programmatic note attributes supplied through a parser port follow the same numeric and element-field rules as other elements.
+
+Successful compilation normalizes metric values to `{ value, unit: "m", meters }`, inclination to `{ value, unit: "%", percent }`, stages to arrays of measurements, and redirections to arrays of `{ distance, side }`. Enums, anchor counts, and extension attributes retain their declared text. Invalid known values block compilation before normalization; the low-level normalization helpers alone do not establish semantic validity.
+
+### Stage and redirection lists
+
+`stages` requires at least two positive metric lengths separated by `+`. Both `redirection` and `redirections` accept one or more positive metric distances separated by commas, each with an optional `:side`. A missing side becomes `unknown`; an explicitly empty side is invalid. Redirection sides accept `left`, `right`, `center`, or `unknown`, with surrounding side whitespace trimmed and letters lowercased. Both aliases are validated independently when present together; the renderer continues to prefer `redirections` for display, so use one alias per feature.
+
+Leading, trailing, consecutive, and whitespace-only empty list entries are errors. For example, `10m++20m`, `10m+20m+`, and `,5m:left,,` are rejected instead of being repaired. Whitespace around complete entries is allowed; quote a list containing spaces, such as `stages="10m + 20m"`.
+
+Stage totals are compared with height **exactly on the source's six-decimal grid**, with no tolerance. The comparison uses temporary integer millionths of a meter, including an exact sum when the total exceeds the safe integer range in those units. Thus `0.1m+0.2m` matches `0.3m`; `0.1m+0.200001m` differs by one millionth and produces a warning. Trailing zeros and stage order do not change the result. This check does not rewrite source values or alter the floating-point model, geometry, or JSON contract described above.
+
+```vrl
+route "Decimal survey"
+rappel height=0.3m rope=1m stages=0.1m+0.2m inclination=0.5%
+climb height=2m exposure=medium
+```
+
+Compatibility: invalid climb exposure, empty applicable enums, and malformed list separators that previously slipped through now block compilation. Correct decimal totals no longer produce false mismatch warnings. The inclination range remains greater than zero through 100%, including `0.5%`; the earlier 1% lower bound in the expressive-field description was incorrect.
+
 ## Elevation Profile
 
 When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining signed elevation change is distributed across non-technical connections between progression elements. Annotations never create such connections or receive a share of that residual. Entrance metadata binds to the explicit `start`, and exit metadata binds to the explicit `exit`; if a marker is omitted, its outer physical traversal boundary is used. The default layout also enforces readable visual spacing between progression points; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
@@ -218,7 +257,7 @@ station       left, right, center, floor, tree, natural, or unknown
 landing       pool, ledge, dry, chaos, gallery, trail, or unknown
 flow          dry, low, medium, or high
 shape         ladder, direct, or slab
-inclination   percentage from 1% to 100%, accepted as 75 or 75%
+inclination   percentage greater than 0% through 100%, accepted as 75 or 75%
 redirection   one mid-rappel redirection anchor, such as 12m:left
 redirections  comma-separated mid-rappel redirection anchors, such as 12m:left,27m:right
 stages        plus-separated rappel stage lengths, such as 20m+15m

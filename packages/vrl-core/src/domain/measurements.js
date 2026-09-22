@@ -1,22 +1,10 @@
 import { boundedDecimal, MAX_DECIMAL_PLACES, MAX_SOURCE_MAGNITUDE } from "./numeric-policy.js";
-
-const MEASUREMENT_FIELDS = new Set([
-  "distance",
-  "height",
-  "rope",
-  "traverse",
-  "total_distance",
-  "total_descent",
-  "entrance_elevation",
-  "exit_elevation",
-  "vertical_gain",
-  "descent"
-]);
+import { fieldSpecification } from "./field-specifications.js";
 
 const MEASUREMENT_PATTERN = /^(-?\d+(?:\.\d+)?)m$/;
 
 export function isMeasurementField(fieldName) {
-  return MEASUREMENT_FIELDS.has(fieldName);
+  return fieldSpecification(fieldName)?.parser === "measurement";
 }
 
 export function parseMeasurementToken(token) {

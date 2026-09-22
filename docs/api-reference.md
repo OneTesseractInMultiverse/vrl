@@ -158,6 +158,18 @@ Configuration errors throw exceptions: `TypeError` for incorrect types or unsupp
 
 This tightens the previous API: invalid horizontal scales no longer silently fall back to `1`, and numeric strings, negative spacing, unknown layout keys, and explicit `null` values must be corrected by the caller.
 
+### Known-field validation and normalization
+
+`validateRoute(ast)` and `validateElement(element)` use the same domain field specification as normalization. It defines numeric fields in metadata and every element, required rappel/climb fields, and the contextual enum vocabularies in the [known-field contract](language-reference.md#known-fields-and-extensions). Climb and downclimb exposure use the same vocabulary. Present empty enums are invalid where applicable; optional unknown values should be omitted. Unknown attributes and categorical names outside their documented contexts remain extension text, including hazard `type` and descriptive metadata.
+
+Validation returns structured errors at the element statement location (metadata uses `1:1`); it does not mutate the AST. Errors stop the default compiler before normalization, geometry validation, layout, or JSON export. Custom parser ports supplying attributes on notes receive the same semantic checks, while source note statements continue to consume free-form text.
+
+Normalized field shapes are unchanged: measurement and inclination objects, arrays for stages/redirections, and strings for enums, anchor counts, and extensions. `normalizeAttributes` and the existing token normalization helpers remain permissive lower-level utilities: they preserve unparseable raw values and do not enforce semantic ranges or required fields. Use validation or `compileRoute` to establish the complete contract. The field specification is internal; no public registry or runtime extension-registration API is introduced.
+
+`parseRappelStagesToken` and `parseRedirectionsToken` return `{ ok: false, reason }` for leading, trailing, consecutive, or whitespace-only empty entries. Whitespace around complete entries remains allowed. Stages require two entries; either redirection alias accepts one or more. Token parsers enforce representation and list structure; semantic validation additionally checks positive lengths, allowed redirection sides, and positions within height.
+
+Stage/height validation compares exact integer millionths derived from validated source tokens. `0.1m+0.2m` matches `0.3m`; a difference of `0.000001m` still produces a warning. No tolerance, rounding, or integer representation enters the public model/JSON, and ordinary geometry calculations keep their existing binary floating-point behavior. Both redirection aliases retain their existing validation and normalization behavior; the renderer prefers the plural attribute when both are supplied.
+
 ### Numeric integrity
 
 `parseMeasurementToken` rejects nonfinite conversions, magnitudes above `1000000000m`, and more than six fractional digits. It preserves valid zero/negative values for elevation fields and canonicalizes negative zero to zero. `parseInclinationToken` applies the same decimal representation bounds before semantic validation limits inclination to greater than zero and at most 100%. Both return `{ ok: false, reason }` for unsupported spellings; neither silently rounds a source value. See the [numeric field contract](language-reference.md#numeric-limits-and-precision).

@@ -1,9 +1,10 @@
 import { boundedDecimal, MAX_DECIMAL_PLACES, MAX_SOURCE_MAGNITUDE } from "./numeric-policy.js";
+import { fieldSpecification } from "./field-specifications.js";
 
 const INCLINATION_PATTERN = /^(-?\d+(?:\.\d+)?)%?$/;
 
 export function isInclinationField(fieldName) {
-  return fieldName === "inclination";
+  return fieldSpecification(fieldName)?.parser === "inclination";
 }
 
 export function parseInclinationToken(token) {

@@ -1,14 +1,12 @@
 import { parseMeasurementToken } from "./measurements.js";
-
-const REDIRECTION_FIELDS = new Set(["redirection", "redirections"]);
-const STAGE_FIELD = "stages";
+import { fieldSpecification } from "./field-specifications.js";
 
 export function isRedirectionField(fieldName) {
-  return REDIRECTION_FIELDS.has(fieldName);
+  return fieldSpecification(fieldName)?.parser === "redirections";
 }
 
 export function isRappelStagesField(fieldName) {
-  return fieldName === STAGE_FIELD;
+  return fieldSpecification(fieldName)?.parser === "stages";
 }
 
 export function parseRedirectionToken(token) {
@@ -41,11 +39,11 @@ export function parseRedirectionToken(token) {
 }
 
 export function parseRedirectionsToken(token) {
-  const tokens = splitList(token, ",");
+  const tokens = splitList(token, fieldSpecification("redirections").separator);
   const parsed = tokens.map(parseRedirectionToken);
   const failed = parsed.find((entry) => entry.ok === false);
 
-  if (tokens.length === 0 || failed !== undefined) {
+  if (tokens.length < fieldSpecification("redirections").minimumEntries || failed !== undefined) {
     return {
       ok: false,
       reason: "expected redirections such as 12m:left,27m:right"
@@ -59,11 +57,11 @@ export function parseRedirectionsToken(token) {
 }
 
 export function parseRappelStagesToken(token) {
-  const tokens = splitList(token, "+");
+  const tokens = splitList(token, fieldSpecification("stages").separator);
   const parsed = tokens.map(parseMeasurementToken);
   const failed = parsed.find((entry) => entry.ok === false);
 
-  if (tokens.length < 2 || failed !== undefined) {
+  if (tokens.length < fieldSpecification("stages").minimumEntries || failed !== undefined) {
     return {
       ok: false,
       reason: "expected at least two stage lengths such as 20m+15m"
@@ -95,5 +93,5 @@ function splitList(value, separator) {
     return [];
   }
 
-  return value.split(separator).map((entry) => entry.trim()).filter(Boolean);
+  return value.split(separator).map((entry) => entry.trim());
 }
