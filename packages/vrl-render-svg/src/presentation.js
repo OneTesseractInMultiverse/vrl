@@ -1,3 +1,5 @@
+import { anchorSummary } from "./anchor-presentation.js";
+export { anchorMarkCount, anchorSummary, anchorLabel } from "./anchor-presentation.js";
 import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/core";
 import { formatElementDetail, formatElementTitle, formatMeasurement } from "./element-formatters.js";
 import { diagramText, localizeDetailValue, resolveDiagramLanguage } from "./locale.js";
@@ -220,15 +222,6 @@ export function nextLabelTitleY(placement, detailRowCount) {
   return placement.titleY + 18 + (rows * DETAIL_LINE_HEIGHT) + 2;
 }
 
-export function anchorMarkCount(element) {
-  const count = Number(element.attributes.anchor_count ?? 0);
-  if (Number.isInteger(count) === false || count <= 0) {
-    return 0;
-  }
-
-  return Math.min(count, 4);
-}
-
 export function formatTopoLabel(element, language = "en") {
   if (element.type === "start" || element.type === "exit") {
     return element.label ?? formatElementTitle(element, language);
@@ -359,11 +352,6 @@ export function elevationSummary(elevation, language = "en") {
   }
 
   return `${elevation.totalChangeMeters}m (${elevation.entranceMeters}m-${elevation.exitMeters}m)`;
-}
-
-export function anchorSummary(element, language = "en") {
-  const count = anchorMarkCount(element);
-  return count === 0 ? "" : `${count} ${anchorLabel(count, language)}`;
 }
 
 export function landingSummary(element, language = "en") {
@@ -529,9 +517,4 @@ export function levelBadgeWidth(label) {
 
 export function labeledSummary(label, value) {
   return value === "" ? "" : `${label}: ${value}`;
-}
-
-export function anchorLabel(count, language = "en") {
-  const text = diagramText(language);
-  return count === 1 ? text.anchor : text.anchors;
 }

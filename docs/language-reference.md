@@ -213,7 +213,7 @@ height        metric descent height, required for rappel
 rope          metric rope length, required for rappel
 traverse      metric horizontal or approach distance shown on the segment
 anchor        bolts, natural, tree, thread, removable, fixed, unknown, or mixed
-anchor_count  positive integer, rendered as station anchor marks
+anchor_count  positive safe integer; full count in text, up to four marks plus overflow
 station       left, right, center, floor, tree, natural, or unknown
 landing       pool, ledge, dry, chaos, gallery, trail, or unknown
 flow          dry, low, medium, or high
@@ -242,6 +242,27 @@ rappel height=30m rope=60m stages=10m+20m redirection=5m:left shape=direct
 ```
 
 This renders stage labels `10m`, `20m`, and a `5m L` redirection in English. Replacing `direct` with `ladder` or `slab` preserves those details. Invalid shapes, malformed stage/redirection values, nonpositive lengths, and redirections at or beyond the feature height produce blocking validation diagnostics before rendering. Low-level renderers expect validated normalized data.
+
+## Anchor Counts
+
+`anchor_count` records the declared number of anchors, independently of how many marks fit beside the station. It accepts decimal integers from `1` to `9007199254740991`, without leading zeros. Zero, negatives, fractions, exponent notation, and larger values are validation errors that block compilation. Omit the field when the count is unknown; the renderer does not infer a count from `anchor=bolts`, `anchor=tree`, or another anchor type.
+
+Rappel detail text and anchor accessibility labels report the full count, with localized singular/plural wording. The top-level SVG description also names each element and its declared count, including counts on annotations. The visual shorthand draws at most four circles and adds `+N` for the remaining anchors. This is a VRL display convention, not a statement about station arrangement or a federation symbol.
+
+| Declaration | Individual marks | Overflow label | English count text |
+| --- | --- | --- | --- |
+| Omitted | 0 | None | None |
+| `anchor_count=1` | 1 | None | `1 anchor` |
+| `anchor_count=4` | 4 | None | `4 anchors` |
+| `anchor_count=5` | 4 | `+1` | `5 anchors` |
+| `anchor_count=9` | 4 | `+5` | `9 anchors` |
+
+```vrl
+route "Anchor survey"
+rappel height=30m rope=60m anchor_count=5
+```
+
+This produces `60m / 5 anchors` in English or `60m / 5 anclajes` in Spanish, alongside four marks and `+1`. Even the maximum supported count uses only four circles, with `+9007199254740987` for the remainder. Overflow text participates in canvas fitting; it may expand the viewport without changing route coordinates. Model and JSON quantities remain unchanged.
 
 ## Diagnostics
 

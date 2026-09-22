@@ -266,6 +266,16 @@ renderDirectTechnicalSegment(previous, node, theme, element = previous.element, 
 
 The direct helper's optional language argument is appended after its existing layout argument. Both helpers render complete technical segments with annotations through shared orchestration. No public exports or core model fields change. Custom callers remain responsible for valid normalized attributes and geometry; use `compileRoute` for located source diagnostics. Unsupported source shapes and malformed/out-of-range annotations block compilation rather than producing partial diagrams.
 
+### Anchor quantities and display limits
+
+`anchorMarkCount(element)` remains a drawing helper: it returns at most four marks and must not be used as the factual count. `formatTopoDetail` uses the full declared count in rappel details. `renderAnchorMarks(node, element, theme, side = "left", language = "en")` retains its signature and draws at most four circles, followed outward by `+N` when anchors remain. Its group `aria-label` reports the full localized count. The overflow text is hidden from accessibility to avoid presenting the remainder as a second count.
+
+`renderTopoSvg` also includes per-element anchor counts and owner names in its top-level description, in source order, so they remain accessible when the diagram is treated as one image. `computeTopoScene` fits the overflow label using the same placement record as serialization. Left-side placement is used by the complete renderer; the low-level helper also supports right-side placement. Custom compositions using that helper own their canvas fitting.
+
+Source validation remains in core: only positive decimal safe integers up to `9007199254740991` are accepted. Omitted counts remain unknown; explicit zero or invalid source values block compilation and produce no diagram. No count is inferred from anchor type. Low-level display helpers expect validated normalized attributes and accept numeric quantities for existing programmatic callers. They return no marks or count text for missing values, unsupported types, nonpositive/fractional numbers, or unsafe numbers. This defensive fallback does not replace the compiler's stricter source-spelling validation.
+
+The normalized `anchor_count` value and JSON representation are unchanged. The full-count reader, display cap, overflow placement, and formatting are renderer-internal computations; no public exports or model fields are added. See the [language examples](language-reference.md#anchor-counts) for visual shorthand and count semantics.
+
 ### Complete diagram bounds
 
 `renderTopoSvg` prepares the complete presentation before serializing SVG. Requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.
