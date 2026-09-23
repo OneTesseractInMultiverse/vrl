@@ -22,3 +22,13 @@ export function formatDiagnostic(diagnostic) {
 function formatRelatedLocations(locations) {
   return locations.map(({ message, location }) => ` Related: ${message} at ${location.line}:${location.column}.`).join("");
 }
+
+/** Append arbitrary diagnostic counts without expanding function arguments. */
+export function appendDiagnostics(target, diagnostics) {
+  for (const diagnostic of diagnostics) target.push(diagnostic);
+}
+
+export function limitDiagnostic(problem) {
+  return createDiagnostic("limit", "error", `Document exceeds ${problem.name} limit of ${problem.maximum}.`, problem.location,
+    `Reduce the document or explicitly increase options.limits.${problem.name} for a trusted workload.`);
+}
