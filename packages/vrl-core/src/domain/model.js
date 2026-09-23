@@ -1,6 +1,5 @@
-import { normalizeInclinationValue } from "./inclinations.js";
-import { normalizeAttributeValue } from "./measurements.js";
-import { normalizeRappelDetailValue } from "./rappel-details.js";
+import { fieldSpecification } from "./field-specifications.js";
+import { parseFieldValue } from "./field-values.js";
 import { createTraversal } from "./traversal.js";
 import { requireNumericData } from "./numeric-policy.js";
 import { allocateElementIdentifiers } from "./element-identifiers.js";
@@ -61,7 +60,10 @@ export function normalizeAttributes(attributes) {
 }
 
 function normalizeKnownAttributeValue(fieldName, value) {
-  return normalizeRappelDetailValue(fieldName, normalizeInclinationValue(fieldName, normalizeAttributeValue(fieldName, value)));
+  const specification = fieldSpecification(fieldName);
+  if (specification === null) return value;
+  const parsed = parseFieldValue(specification, value);
+  return parsed.ok ? parsed.value : value;
 }
 
 export function summarizeRoute(elements, metadata = {}) {

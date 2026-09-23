@@ -4,6 +4,11 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Share a domain-owned field specification across classification, validation, and normalization, with explicit applicability, required fields, parsers, units, ranges, list grammar, and enum vocabularies. Preserve extension attributes and existing normalized field types.
+- Validate climb exposure and reject empty applicable enums. Reject empty stage/redirection entries instead of silently discarding them. Document contextual vocabularies and the existing inclination range greater than 0% through 100%.
+- Compare stage totals and height exactly on the six-decimal source grid, eliminating false warnings for `0.1m+0.2m` versus `0.3m` while retaining warnings for a one-millionth mismatch. Keep floating-point model, geometry, and JSON behavior unchanged.
+- Separate field diagnostics and cross-field relationships from route validation orchestration. Add correctness, boundary, extension-preservation, and compilation-failure tests with one assertion per test and no new dependencies.
+
 - Preserve full declared anchor counts in rappel details, anchor accessibility labels, and the top-level SVG description. Keep the existing mark-count helper limited to drawing decisions.
 - Draw at most four anchor circles with explicit `+N` overflow, using shared placement records for rendering and canvas fitting. Separate quantity reading, display limits, placement, and formatting without changing core quantities or adding dependencies.
 - Document missing/invalid count behavior, localization, helper compatibility, and the overflow convention; add single-assert value, boundary, fitting, accessibility, and failure regressions.
