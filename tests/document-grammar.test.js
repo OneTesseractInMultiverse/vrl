@@ -66,9 +66,10 @@ test("repeated metadata lines retain every distinct value in normalized JSON", (
 test("duplicate routes report both original source positions", () => {
   const result = parseVrl('# comment\r\n\troute "First"\r\n  route "Second"');
   assert.deepEqual(result.diagnostics[0], {
+    code: "VRL_SYNTAX_DUPLICATE_ROUTE", span: span(3, 3, 8),
     kind: "syntax", severity: "error", message: "Only one route declaration is allowed.", location: { line: 3, column: 3 },
     suggestion: "Keep one route declaration at the start of the document.",
-    relatedLocations: [{ message: "First route declaration", location: { line: 2, column: 2 } }]
+    relatedLocations: [{ message: "First route declaration", location: { line: 2, column: 2 }, span: span(2, 2, 7) }]
   });
 });
 
@@ -76,25 +77,27 @@ test("late route diagnostics identify the statement that preceded the declaratio
   const diagnostics = parseVrl('  metadata country=CR\n\troute "Late"').diagnostics;
   assert.deepEqual(diagnostics.map(({ location, relatedLocations = [] }) => ({ location, relatedLocations })), [
     { location: { line: 1, column: 3 }, relatedLocations: [] },
-    { location: { line: 2, column: 2 }, relatedLocations: [{ message: "First statement", location: { line: 1, column: 3 } }] }
+    { location: { line: 2, column: 2 }, relatedLocations: [{ message: "First statement", location: { line: 1, column: 3 }, span: span(1, 3, 11) }] }
   ]);
 });
 
 test("late metadata diagnostics identify the first element, including annotations", () => {
   const result = parseVrl('route "A"\n  note "Boundary notice"\nexit\n\tmetadata country=CR');
   assert.deepEqual(result.diagnostics[0], {
+    code: "VRL_SYNTAX_METADATA_ORDER", span: span(4, 2, 10),
     kind: "syntax", severity: "error", message: "Metadata must precede all route elements.", location: { line: 4, column: 2 },
     suggestion: "Move metadata lines between the route declaration and the first element.",
-    relatedLocations: [{ message: "First route element", location: { line: 2, column: 3 } }]
+    relatedLocations: [{ message: "First route element", location: { line: 2, column: 3 }, span: span(2, 3, 7) }]
   });
 });
 
 test("duplicate keys report exact UTF-16 columns after an astral identifier", () => {
   const result = parseVrl('route "A"\n  rappel "R🧗" height=30m height=5m rope=10m');
   assert.deepEqual(result.diagnostics[0], {
+    code: "VRL_SYNTAX_DUPLICATE_ATTRIBUTE", span: span(2, 27, 33),
     kind: "syntax", severity: "error", message: 'Attribute "height" is declared more than once.', location: { line: 2, column: 27 },
     suggestion: "Keep a single value for this key; repeated keys are errors even when their values match.",
-    relatedLocations: [{ message: "First declaration of this key", location: { line: 2, column: 16 } }]
+    relatedLocations: [{ message: "First declaration of this key", location: { line: 2, column: 16 }, span: span(2, 16, 22) }]
   });
 });
 
@@ -110,9 +113,9 @@ test("raw attribute helper keeps its return shape and original value at a suppli
   const result = parseAttributeTokens(['height=30m', 'height=5m', 'rope=10m'], { line: 7, column: 4 });
   assert.deepEqual(result, {
     attributes: { height: "30m", rope: "10m" },
-    diagnostics: [{ kind: "syntax", severity: "error", message: 'Attribute "height" is declared more than once.', location: { line: 7, column: 15 },
+    diagnostics: [{ code: "VRL_SYNTAX_DUPLICATE_ATTRIBUTE", span: span(7, 15, 21), kind: "syntax", severity: "error", message: 'Attribute "height" is declared more than once.', location: { line: 7, column: 15 },
       suggestion: "Keep a single value for this key; repeated keys are errors even when their values match.",
-      relatedLocations: [{ message: "First declaration of this key", location: { line: 7, column: 4 } }] }]
+      relatedLocations: [{ message: "First declaration of this key", location: { line: 7, column: 4 }, span: span(7, 4, 10) }] }]
   });
 });
 
@@ -221,7 +224,7 @@ test("readable diagnostics retain all related locations in their supplied order"
 for (const [name, create] of [["React", createVrlReactDiagramState], ["Svelte", createVrlSvelteDiagramState], ["SvelteKit", createVrlSvelteKitData]]) {
   test(`${name} returns both conflict locations and no diagram`, () => {
     const state = create('route "A"\nrappel height=30m height=5m rope=10m');
-    assert.deepEqual([state.ok, state.svg, state.model, state.diagnostics[0].relatedLocations, state.diagnosticsText.includes("First declaration of this key at 2:8")], [false, "", null, [{ message: "First declaration of this key", location: { line: 2, column: 8 } }], true]);
+    assert.deepEqual([state.ok, state.svg, state.model, state.diagnostics[0].relatedLocations, state.diagnosticsText.includes("First declaration of this key at 2:8")], [false, "", null, [{ message: "First declaration of this key", location: { line: 2, column: 8 }, span: span(2, 8, 14) }], true]);
   });
 }
 
@@ -240,4 +243,8 @@ for (const source of ["", "# no route\n{\n}\n"]) {
     const result = compileRoute(source);
     assert.deepEqual([result.ok, result.diagnostics.map((item) => item.message), result.model], [false, ["A route name is required."], null]);
   });
+}
+
+function span(line, start, end) {
+  return { start: { line, column: start }, end: { line, column: end } };
 }

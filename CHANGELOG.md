@@ -4,6 +4,11 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Retain declaration, identity, and attribute key/value spans in an AST source map, including repeated metadata lines. Semantic errors/warnings now highlight original values; missing fields and duplicate declarations retain precise primary and related ranges.
+- Add stable codes to every built-in diagnostic and optional end-exclusive spans without changing readable messages/suggestions. Extend diagnostic construction with optional code/range metadata and document the complete catalog and compatibility rules.
+- Pass syntax provenance separately to element and geometry validation. Preserve legacy point-location fallbacks and unchanged normalized model/layout/JSON shapes; no dependencies added.
+- Add single-assert regressions for metadata on line four, Unicode/CRLF/indentation, quoted escapes, duplicate recovery, independent errors, adapters, stable codes, legacy callers, immutability, and successful input.
+
 - Bound compiler and standalone parser workloads with configurable UTF-8 source/line bytes, physical lines, elements, and stage/redirection list entries. Check source before parser calls and AST budgets before semantic validation; stop incremental parsing at element/list overflow.
 - Report exceeded budgets as structured `limit` errors with null compiled outputs. Keep invalid configuration and unrelated programming exceptions distinct, and preserve caller options through immutable per-call limits.
 - Replace variadic diagnostic collection with iterative appends, eliminating stack overflows for large error/warning batches. Preserve the existing iterative layout extrema computations and verify weighted/elevation layouts and minimum-gap adjustment with 150,000 elements/points.

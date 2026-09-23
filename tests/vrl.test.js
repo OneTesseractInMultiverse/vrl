@@ -211,7 +211,7 @@ test("normalizeRappelDetailValue leaves ordinary fields unchanged", () => {
 });
 
 test("createEmptyRoute defaults to empty source", () => {
-  assert.deepEqual(core.createEmptyRoute(), { name: null, metadata: {}, elements: [], source: "" });
+  assert.deepEqual(core.createEmptyRoute(), { name: null, metadata: {}, elements: [], source: "", sourceMap: { route: null, metadata: [], elements: [] } });
 });
 
 test("createRouteElement stores defaults", () => {

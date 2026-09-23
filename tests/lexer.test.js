@@ -136,14 +136,14 @@ for (const [line, column, message] of INVALID_LINES) {
 
 test("diagnostics identify the invalid token at an explicit origin", () => {
   assert.deepEqual(core.lexVrlLine('"bad\\t"', { line: 9, column: 4 }).diagnostics[0], {
-    kind: "syntax", severity: "error", message: "Unsupported escape sequence.",
+    code: "VRL_LEX_UNSUPPORTED_ESCAPE", kind: "syntax", severity: "error", message: "Unsupported escape sequence.",
     location: { line: 9, column: 8 }, suggestion: 'Only \\" and \\\\ are supported inside quoted text.'
   });
 });
 
 test("an unfinished escape identifies the backslash and suggests supported escapes", () => {
   assert.deepEqual(core.lexVrlLine('"\\').diagnostics[0], {
-    kind: "syntax", severity: "error", message: "Unfinished escape sequence.",
+    code: "VRL_LEX_UNFINISHED_ESCAPE", kind: "syntax", severity: "error", message: "Unfinished escape sequence.",
     location: { line: 1, column: 2 }, suggestion: 'Use \\" or \\\\ and close the quoted text on the same line.'
   });
 });
@@ -165,6 +165,7 @@ test("an opening quote cannot consume text from later physical lines", () => {
 test("a quoted attribute-looking token after attributes is reported at its own span", () => {
   const result = core.parseVrl('route "A"\n  walk distance=1m "A=B"');
   assert.deepEqual(result.diagnostics[0], {
+    code: "VRL_SYNTAX_EXPECTED_ATTRIBUTE", span: { start: { line: 2, column: 20 }, end: { line: 2, column: 25 } },
     kind: "syntax", severity: "error", message: 'Expected key=value attribute but found ""A=B""',
     location: { line: 2, column: 20 }, suggestion: 'Write attributes such as height=35m or note="Main line".'
   });
@@ -219,7 +220,7 @@ for (const helper of [core.tokenize, core.stripComment]) {
     assert.throws(() => helper('route "Open'), {
       name: "SyntaxError", message: "Unterminated quoted text.",
       diagnostics: [{
-        kind: "syntax", severity: "error", message: "Unterminated quoted text.",
+        code: "VRL_LEX_UNTERMINATED_STRING", kind: "syntax", severity: "error", message: "Unterminated quoted text.",
         location: { line: 1, column: 7 }, suggestion: "Add a closing double quote on the same line."
       }]
     });
