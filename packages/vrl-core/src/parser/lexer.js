@@ -1,4 +1,4 @@
-import { createDiagnostic } from "../domain/diagnostics.js";
+import { codedDiagnostic } from "../domain/diagnostics.js";
 
 /** Scan one physical line; spans are one-based UTF-16 columns, end-exclusive. */
 export function lexVrlLine(line, location = { line: 1, column: 1 }) {
@@ -29,11 +29,11 @@ function scanToken(line, start, location) {
 
 function scanAttribute(line, start, key, location) {
   if (key.value === "") {
-    return lexicalError(location, start, "Attribute key is missing.", "Write an unquoted key before =.");
+    return lexicalError("VRL_LEX_MISSING_KEY", location, start, "Attribute key is missing.", "Write an unquoted key before =.");
   }
   const valueStart = key.end + 1;
   if (isBoundary(line, valueStart)) {
-    return lexicalError(location, valueStart, "Attribute value is missing.", 'Write a value immediately after =, or use "" for empty text.');
+    return lexicalError("VRL_LEX_MISSING_VALUE", location, valueStart, "Attribute value is missing.", 'Write a value immediately after =, or use "" for empty text.');
   }
   const value = scanValue(line, valueStart, location, false);
   if (value.diagnostic) return value;
@@ -67,10 +67,10 @@ function scanQuoted(line, start, location) {
     if (character === "\\") {
       const escaped = line[index + 1];
       if (escaped === undefined) {
-        return lexicalError(location, index, "Unfinished escape sequence.", 'Use \\" or \\\\ and close the quoted text on the same line.');
+        return lexicalError("VRL_LEX_UNFINISHED_ESCAPE", location, index, "Unfinished escape sequence.", 'Use \\" or \\\\ and close the quoted text on the same line.');
       }
       if (escaped !== '"' && escaped !== "\\") {
-        return lexicalError(location, index, "Unsupported escape sequence.", 'Only \\" and \\\\ are supported inside quoted text.');
+        return lexicalError("VRL_LEX_UNSUPPORTED_ESCAPE", location, index, "Unsupported escape sequence.", 'Only \\" and \\\\ are supported inside quoted text.');
       }
       value += escaped;
       index += 1;
@@ -78,12 +78,12 @@ function scanQuoted(line, start, location) {
       value += character;
     }
   }
-  return lexicalError(location, start, "Unterminated quoted text.", "Add a closing double quote on the same line.");
+  return lexicalError("VRL_LEX_UNTERMINATED_STRING", location, start, "Unterminated quoted text.", "Add a closing double quote on the same line.");
 }
 
 function finishToken(line, start, end, location, fields) {
   if (!isBoundary(line, end)) {
-    return lexicalError(location, end, "Expected whitespace between tokens.", "Separate tokens with whitespace; quotes may start a token or an attribute value.");
+    return lexicalError("VRL_LEX_TOKEN_ADJACENCY", location, end, "Expected whitespace between tokens.", "Separate tokens with whitespace; quotes may start a token or an attribute value.");
   }
   return { token: { ...fields, raw: line.slice(start, end), span: sourceSpan(location, start, end) }, end };
 }
@@ -99,8 +99,8 @@ function sourceSpan(location, start, end) {
   };
 }
 
-function lexicalError(location, index, message, suggestion) {
-  return { diagnostic: createDiagnostic("syntax", "error", message, { line: location.line, column: location.column + index }, suggestion) };
+function lexicalError(code, location, index, message, suggestion) {
+  return { diagnostic: codedDiagnostic(code, "syntax", "error", message, { location: { line: location.line, column: location.column + index } }, suggestion) };
 }
 
 /** Compatibility helpers retain raw strings for valid lines and fail explicitly otherwise. */

@@ -76,13 +76,14 @@ for (const [name, body] of INVALID_IDS) {
   });
 }
 
-test("duplicate diagnostics report both statement locations", () => {
+test("duplicate diagnostics report both identifier spans", () => {
   const result = compileRoute('route "Survey"\r\n  walk shared\r\n\thazard shared');
   assert.deepEqual(result.diagnostics, [{
+    code: "VRL_IDENTIFIER_DUPLICATE", span: span(3, 9, 15),
     kind: "validation", severity: "error", message: 'Duplicate element identifier "shared".',
-    location: { line: 3, column: 2 },
+    location: { line: 3, column: 9 },
     suggestion: "Choose a non-blank identifier unique within this route, or omit it for automatic numbering.",
-    relatedLocations: [{ message: "First declaration of this identifier", location: { line: 2, column: 3 } }]
+    relatedLocations: [{ message: "First declaration of this identifier", location: { line: 2, column: 8 }, span: span(2, 8, 14) }]
   }]);
 });
 
@@ -93,7 +94,7 @@ test("every repeated identifier points back to its first declaration", () => {
 
 test("readable duplicate diagnostics include both locations", () => {
   const [diagnostic] = compileRoute(route("walk shared\npool shared")).diagnostics;
-  assert.equal(formatDiagnostic(diagnostic), 'ERROR validation at 3:1: Duplicate element identifier "shared". Suggestion: Choose a non-blank identifier unique within this route, or omit it for automatic numbering. Related: First declaration of this identifier at 2:1.');
+  assert.equal(formatDiagnostic(diagnostic), 'ERROR validation at 3:6: Duplicate element identifier "shared". Suggestion: Choose a non-blank identifier unique within this route, or omit it for automatic numbering. Related: First declaration of this identifier at 2:6.');
 });
 
 test("blank identifiers have one error each without a false duplicate location", () => {
@@ -221,7 +222,7 @@ for (const body of ['walk ""', "walk same\npool same"]) {
 for (const [name, create] of [["React", createVrlReactDiagramState], ["Svelte", createVrlSvelteDiagramState], ["SvelteKit", createVrlSvelteKitData]]) {
   test(`${name} exposes identifier conflicts and produces no diagram`, () => {
     const state = create(route("walk shared\nhazard shared"));
-    assert.deepEqual([state.ok, state.svg, state.model, state.diagnostics[0].relatedLocations, state.diagnosticsText.includes("First declaration of this identifier at 2:1")], [false, "", null, [{ message: "First declaration of this identifier", location: { line: 2, column: 1 } }], true]);
+    assert.deepEqual([state.ok, state.svg, state.model, state.diagnostics[0].relatedLocations, state.diagnosticsText.includes("First declaration of this identifier at 2:6")], [false, "", null, [{ message: "First declaration of this identifier", location: { line: 2, column: 6 }, span: span(2, 6, 12) }], true]);
   });
 }
 
@@ -231,3 +232,7 @@ test("dense forward reservations produce unique IDs without mutating explicit ID
   const model = normalizeRoute({ name: "Dense survey", metadata: {}, elements: [...unnamed, ...reserved] });
   assert.deepEqual(ids(model), [...Array.from({ length: 2000 }, (_, index) => `W${index + 2001}`), ...reserved.map((item) => item.id)]);
 });
+
+function span(line, start, end) {
+  return { start: { line, column: start }, end: { line, column: end } };
+}

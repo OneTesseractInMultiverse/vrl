@@ -87,7 +87,7 @@ for (const [name, scopes, values] of ENUM_CASES) {
     for (const value of ["banana", "", values[0].toUpperCase()]) {
       test(`${scope} diagnoses unsupported ${name}=${JSON.stringify(value)}`, () => {
         assert.deepEqual(core.validateRoute(core.parseVrl(document(scope, { [name]: value })).ast).map(({ kind, severity, message, location }) => ({ kind, severity, message, location })), [
-          { kind: "validation", severity: "error", message: `Field "${name}" has unsupported value "${value}".`, location: { line: 2, column: 1 } }
+          { kind: "validation", severity: "error", message: `Field "${name}" has unsupported value "${value}".`, location: { line: 2, column: document(scope, { [name]: value }).split("\n")[1].indexOf(`${name}=`) + name.length + 2 } }
         ]);
       });
       test(`${scope} blocks unsupported enum ${name}=${JSON.stringify(value)}`, () => {

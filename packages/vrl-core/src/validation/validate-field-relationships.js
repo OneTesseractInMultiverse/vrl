@@ -1,4 +1,5 @@
-import { appendDiagnostics, createDiagnostic } from "../domain/diagnostics.js";
+import { fieldReference } from "../domain/source-references.js";
+import { appendDiagnostics, codedDiagnostic } from "../domain/diagnostics.js";
 import { parseMeasurementToken } from "../domain/measurements.js";
 import { parseRappelStagesToken, parseRedirectionsToken } from "../domain/rappel-details.js";
 import { stageTotalMatchesHeight } from "../domain/stage-totals.js";
@@ -13,7 +14,7 @@ export function validateFieldRelationships(element) {
   for (const name of ["redirection", "redirections"]) {
     if (!hasFieldValue(element, name)) continue;
     const parsed = parseRedirectionsToken(element.attributes[name]);
-    if (parsed.ok) appendDiagnostics(diagnostics, validateRedirectionDistances(element, parsed.value));
+    if (parsed.ok) appendDiagnostics(diagnostics, validateRedirectionDistances(element, parsed.value, name));
   }
   if (hasFieldValue(element, "stages") && parseRappelStagesToken(element.attributes.stages).ok) {
     appendDiagnostics(diagnostics, validateStageSum(element));
@@ -27,11 +28,11 @@ function validateRopeLength(element) {
 
   if (height.ok && rope.ok && rope.value.meters < height.value.meters) {
     return [
-      createDiagnostic(
-        "validation",
+      codedDiagnostic(
+        "VRL_ROPE_SHORTER_THAN_HEIGHT", "validation",
         "warning",
         "Rope length is shorter than rappel height.",
-        element.sourceLocation,
+        fieldReference(element.source, "rope", element.sourceLocation),
         "Check route rigging assumptions before publishing."
       )
     ];
@@ -40,7 +41,7 @@ function validateRopeLength(element) {
   return [];
 }
 
-function validateRedirectionDistances(element, redirections) {
+function validateRedirectionDistances(element, redirections, name) {
   const height = parseMeasurementToken(element.attributes.height);
 
   if (height.ok === false) {
@@ -49,11 +50,11 @@ function validateRedirectionDistances(element, redirections) {
 
   return redirections
     .filter((redirection) => redirection.distance.meters >= height.value.meters)
-    .map(() => createDiagnostic(
-      "validation",
+    .map(() => codedDiagnostic(
+      "VRL_REDIRECTION_OUTSIDE_HEIGHT", "validation",
       "error",
       'Field "redirections" must be inside the rappel height.',
-      element.sourceLocation,
+      fieldReference(element.source, name, element.sourceLocation),
       "Use distances greater than 0m and shorter than the rappel height."
     ));
 }
@@ -70,11 +71,11 @@ function validateStageSum(element) {
   }
 
   return [
-    createDiagnostic(
-      "validation",
+    codedDiagnostic(
+      "VRL_STAGE_TOTAL_MISMATCH", "validation",
       "warning",
       'Field "stages" total does not match rappel height.',
-      element.sourceLocation,
+      fieldReference(element.source, "stages", element.sourceLocation),
       "Adjust stages or height if these are meant to describe the same rappel."
     )
   ];

@@ -1,12 +1,18 @@
-export function createDiagnostic(kind, severity, message, location, suggestion = "", relatedLocations = []) {
+export function createDiagnostic(kind, severity, message, location, suggestion = "", relatedLocations = [], { code, span } = {}) {
   return {
     kind,
     severity,
     message,
     location,
     suggestion,
-    ...(relatedLocations.length === 0 ? {} : { relatedLocations })
+    ...(relatedLocations.length === 0 ? {} : { relatedLocations }),
+    ...(code === undefined ? {} : { code }),
+    ...(span === undefined ? {} : { span })
   };
+}
+
+export function codedDiagnostic(code, kind, severity, message, source, suggestion = "", relatedLocations = []) {
+  return createDiagnostic(kind, severity, message, source.location, suggestion, relatedLocations, { code, span: source.span });
 }
 
 export function hasBlockingDiagnostics(diagnostics) {
@@ -29,6 +35,6 @@ export function appendDiagnostics(target, diagnostics) {
 }
 
 export function limitDiagnostic(problem) {
-  return createDiagnostic("limit", "error", `Document exceeds ${problem.name} limit of ${problem.maximum}.`, problem.location,
+  return codedDiagnostic(`VRL_LIMIT_${problem.name.replace(/[A-Z]/g, (letter) => "_" + letter).toUpperCase()}`, "limit", "error", `Document exceeds ${problem.name} limit of ${problem.maximum}.`, { location: problem.location },
     `Reduce the document or explicitly increase options.limits.${problem.name} for a trusted workload.`);
 }

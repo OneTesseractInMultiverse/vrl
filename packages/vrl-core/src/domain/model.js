@@ -9,7 +9,8 @@ export function createEmptyRoute(source = "") {
     name: null,
     metadata: {},
     elements: [],
-    source
+    source,
+    sourceMap: { route: null, metadata: [], elements: [] }
   };
 }
 

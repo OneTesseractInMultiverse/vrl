@@ -43,7 +43,7 @@ export function compileRouteWithDependencies(source, options = {}, dependencies)
   }
 
   const model = dependencies.normalize(parsed.ast);
-  appendDiagnostics(diagnostics, (dependencies.validateGeometry ?? validateGeometry)(model));
+  appendDiagnostics(diagnostics, (dependencies.validateGeometry ?? validateGeometry)(model, parsed.ast.sourceMap));
   if (hasBlockingDiagnostics(diagnostics)) {
     return failedCompilation(parsed.ast, diagnostics);
   }

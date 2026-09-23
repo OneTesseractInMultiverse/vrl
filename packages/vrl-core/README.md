@@ -98,7 +98,9 @@ Diagnostics are plain objects:
 }
 ```
 
-Use `formatDiagnostic(diagnostic)` for readable CLI, build, or editor output. Conflicts add optional `relatedLocations: [{ message, location }]` alongside the primary location; the formatter includes every related coordinate. `createDiagnostic` accepts these as an optional sixth argument and preserves the original record shape when the list is empty.
+Use `formatDiagnostic(diagnostic)` for readable CLI, build, or editor output. Conflicts add optional `relatedLocations: [{ message, location, span? }]` alongside the primary location; the formatter includes every related coordinate. `createDiagnostic` accepts these as an optional sixth argument; its seventh argument accepts optional `{ code, span }`. Existing calls retain their original shape when those fields are omitted.
+
+Built-in diagnostics have stable codes and precise source ranges when available. `ast.sourceMap` retains route, metadata, and element declarations plus attribute key/value spans. Field errors select the original value; missing fields select their declaration. `validateElement(element, sourceRecord)` and `validateGeometry(model, sourceMap)` accept optional provenance separately from domain data; compilation supplies it automatically. Legacy ASTs retain point-location fallbacks. Normalized model/layout/JSON shapes remain unchanged. See the [source-map contract and code catalog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagnostics.md).
 
 ## Document Order and Repeated Keys
 

@@ -1,6 +1,7 @@
-import { appendDiagnostics, limitDiagnostic, createDiagnostic } from "../domain/diagnostics.js";
+import { appendDiagnostics, limitDiagnostic, codedDiagnostic } from "../domain/diagnostics.js";
 import { createEmptyRoute, createRouteElement } from "../domain/model.js";
 import { lexVrlLine } from "./lexer.js";
+import { declarationSpans, tokenRange } from "./source-spans.js";
 import { parseAttributes } from "./attribute-parser.js";
 import { advanceDocumentOrder, initialDocumentOrder } from "./document-order.js";
 import { limitProblem, listLimitProblem, resolveProcessingLimits, sourceLimitProblem } from "../domain/processing-limits.js";
@@ -52,11 +53,11 @@ function parseDocumentLine(context, rawLine, line) {
   const keyword = tokens[0].raw;
   const location = tokens[0].span.start;
   if (keyword !== "route" && keyword !== "metadata" && !ELEMENT_KEYWORDS.has(keyword)) {
-    context.diagnostics.push(createDiagnostic("syntax", "error", `Unknown VRL statement "${keyword}"`, location,
+    context.diagnostics.push(codedDiagnostic("VRL_SYNTAX_UNKNOWN_STATEMENT", "syntax", "error", `Unknown VRL statement "${keyword}"`, { location, span: tokens[0].span },
       "Use route, metadata, start, exit, walk, rappel, downclimb, climb, pool, hazard, or note."));
     return;
   }
-  const ordered = advanceDocumentOrder(context.order, keyword, location);
+  const ordered = advanceDocumentOrder(context.order, keyword, location, tokens[0].span);
   context.order = ordered.state;
   appendDiagnostics(context.diagnostics, ordered.diagnostics);
   if (ordered.diagnostics.length > 0) return;
@@ -86,7 +87,9 @@ function parseStatement({ ast, diagnostics, metadataKeys }, keyword, tokens, loc
   } else if (keyword === "metadata") {
     parseMetadataLine(ast, tokens, diagnostics, metadataKeys);
   } else {
-    ast.elements.push(parseElementLine(keyword, tokens, diagnostics, location));
+    const parsed = parseElementLine(keyword, tokens, diagnostics, location);
+    ast.elements.push(parsed.element);
+    ast.sourceMap.elements.push(parsed.source);
   }
 }
 
@@ -98,9 +101,10 @@ function statementTokens(tokens) {
 }
 
 function parseRouteLine(ast, tokens, diagnostics, location) {
+  ast.sourceMap.route = { ...declarationSpans(tokens), nameSpan: tokenRange(tokens.slice(1)) };
   if (tokens.length < 2) {
     diagnostics.push(
-      createDiagnostic("syntax", "error", "Route statement requires a route name.", location, "Use route \"Route Name\".")
+      codedDiagnostic("VRL_SYNTAX_MISSING_ROUTE_NAME", "syntax", "error", "Route statement requires a route name.", { location, span: tokenRange(tokens) }, "Use route \"Route Name\".")
     );
     return;
   }
@@ -110,6 +114,7 @@ function parseRouteLine(ast, tokens, diagnostics, location) {
 
 function parseMetadataLine(ast, tokens, diagnostics, metadataKeys) {
   const parsed = parseAttributes(tokens.slice(1), metadataKeys);
+  ast.sourceMap.metadata.push(declarationSpans(tokens, parsed.attributeSpans));
   // Define own properties so keys such as __proto__ remain ordinary source data.
   Object.defineProperties(ast.metadata, Object.getOwnPropertyDescriptors(parsed.attributes));
   parsed.keyLocations.forEach((location, key) => metadataKeys.set(key, location));
@@ -118,7 +123,7 @@ function parseMetadataLine(ast, tokens, diagnostics, metadataKeys) {
 
 function parseElementLine(keyword, tokens, diagnostics, location) {
   if (keyword === "note") {
-    return createRouteElement("note", { text: textOf(tokens.slice(1)) }, location);
+    return { element: createRouteElement("note", { text: textOf(tokens.slice(1)) }, location), source: { ...declarationSpans(tokens), textSpan: tokenRange(tokens.slice(1)) } };
   }
 
   const payload = tokens.slice(1);
@@ -128,13 +133,14 @@ function parseElementLine(keyword, tokens, diagnostics, location) {
   const parsed = parseAttributes(attributeTokens);
   appendDiagnostics(diagnostics, parsed.diagnostics);
 
-  return createRouteElement(
+  const element = createRouteElement(
     keyword,
     parsed.attributes,
     location,
     elementIdFor(keyword, labelTokens),
     elementLabelFor(keyword, labelTokens)
   );
+  return { element, source: { ...declarationSpans(tokens, parsed.attributeSpans), idSpan: element.id === null ? null : tokenRange(labelTokens), labelSpan: element.label === null ? null : tokenRange(labelTokens) } };
 }
 
 function elementIdFor(keyword, labelTokens) {

@@ -114,7 +114,7 @@ Normalized element IDs are unique across **all element types in one route**, inc
 
 Text before the first attribute on `walk`, `rappel`, `downclimb`, `climb`, `pool`, or `hazard` declares its ID. For example, `rappel "survey-drop" height=5m rope=10m` uses `survey-drop`. Omit that text to request generation. Text on `start`/`exit` is a label, and `note` text is content; neither reserves an ID. An `id=...` attribute is ordinary extension data and does not set the element ID. Programmatic AST consumers can set explicit `element.id` on any element type under the same uniqueness rule.
 
-All explicit IDs are reserved before any generated ID is allocated, even when the declaration occurs later or uses another type’s prefix. Repeated explicit IDs are semantic errors, including repetitions across types or differently quoted spellings that decode to the same text. Compilation returns no model, layout, or JSON; diagnostics point to the offending statement and the first declaration. An explicit blank ID is an error, not a request for numbering.
+All explicit IDs are reserved before any generated ID is allocated, even when the declaration occurs later or uses another type’s prefix. Repeated explicit IDs are semantic errors, including repetitions across types or differently quoted spellings that decode to the same text. Compilation returns no model, layout, or JSON; diagnostics highlight the offending explicit identifier and the first declaration. An explicit blank ID is an error, not a request for numbering.
 
 Generated IDs use these prefixes:
 
@@ -305,7 +305,7 @@ This produces `60m / 5 anchors` in English or `60m / 5 anclajes` in Spanish, alo
 
 ## Diagnostics
 
-Diagnostics are structured objects with `kind`, `severity`, `message`, `location`, and `suggestion`. Syntax diagnostics come from parsing. Validation diagnostics come from semantic route checks. Rope length shorter than rappel height is currently a warning so teams can encode routes that require interpretation while still surfacing the issue.
+Diagnostics are structured objects with `kind`, `severity`, `message`, `location`, and `suggestion`. Built-in diagnostics also expose stable `code` strings and an optional end-exclusive `span`; conflicts may include related spans. Field errors highlight the original value, including quotes, and metadata retains its actual line across repeated declarations. Positions use one-based UTF-16 columns. See the [source-map contract and code catalog](diagnostics.md) for editor integration and legacy fallbacks. Syntax diagnostics come from parsing. Validation diagnostics come from semantic route checks. Rope length shorter than rappel height is currently a warning so teams can encode routes that require interpretation while still surfacing the issue.
 
 ## Processing Budgets
 

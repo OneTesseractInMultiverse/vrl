@@ -57,6 +57,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [API reference](docs/api-reference.md)
 - [Language reference](docs/language-reference.md)
 - [Architecture](docs/architecture.md)
+- [Source provenance and diagnostic codes](docs/diagnostics.md)
 - [Symbology](docs/symbology.md)
 - [React usage](docs/react.md)
 - [Svelte usage](docs/svelte.md)
