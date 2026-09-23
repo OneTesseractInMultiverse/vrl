@@ -1,4 +1,4 @@
-import { createDiagnostic } from "../domain/diagnostics.js";
+import { appendDiagnostics, createDiagnostic } from "../domain/diagnostics.js";
 import { validateFields } from "./validate-fields.js";
 import { validateFieldRelationships } from "./validate-field-relationships.js";
 import { validateElementIdentifiers } from "./validate-identifiers.js";
@@ -9,10 +9,10 @@ export function validateRoute(ast) {
     diagnostics.push(createDiagnostic("validation", "error", "A route name is required.", { line: 1, column: 1 }, 'Start with route "Name".'));
   }
   const metadata = { attributes: ast.metadata, sourceLocation: { line: 1, column: 1 } };
-  diagnostics.push(...validateFields(metadata, "metadata", "Metadata field"));
-  diagnostics.push(...validateFieldRelationships(metadata));
-  diagnostics.push(...validateElementIdentifiers(ast.elements));
-  ast.elements.forEach((element) => diagnostics.push(...validateElementAttributes(element)));
+  appendDiagnostics(diagnostics, validateFields(metadata, "metadata", "Metadata field"));
+  appendDiagnostics(diagnostics, validateFieldRelationships(metadata));
+  appendDiagnostics(diagnostics, validateElementIdentifiers(ast.elements));
+  ast.elements.forEach((element) => appendDiagnostics(diagnostics, validateElementAttributes(element)));
   return diagnostics;
 }
 

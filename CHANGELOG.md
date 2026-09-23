@@ -4,6 +4,11 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Bound compiler and standalone parser workloads with configurable UTF-8 source/line bytes, physical lines, elements, and stage/redirection list entries. Check source before parser calls and AST budgets before semantic validation; stop incremental parsing at element/list overflow.
+- Report exceeded budgets as structured `limit` errors with null compiled outputs. Keep invalid configuration and unrelated programming exceptions distinct, and preserve caller options through immutable per-call limits.
+- Replace variadic diagnostic collection with iterative appends, eliminating stack overflows for large error/warning batches. Preserve the existing iterative layout extrema computations and verify weighted/elevation layouts and minimum-gap adjustment with 150,000 elements/points.
+- Document budget defaults, exact boundaries, UTF-8 counting, recovery ASTs, the optional parser-port argument, and low-level helper responsibilities. Add single-assert correctness/failure regressions without dependencies.
+
 - Share a domain-owned field specification across classification, validation, and normalization, with explicit applicability, required fields, parsers, units, ranges, list grammar, and enum vocabularies. Preserve extension attributes and existing normalized field types.
 - Validate climb exposure and reject empty applicable enums. Reject empty stage/redirection entries instead of silently discarding them. Document contextual vocabularies and the existing inclination range greater than 0% through 100%.
 - Compare stage totals and height exactly on the six-decimal source grid, eliminating false warnings for `0.1m+0.2m` versus `0.3m` while retaining warnings for a one-millionth mismatch. Keep floating-point model, geometry, and JSON behavior unchanged.

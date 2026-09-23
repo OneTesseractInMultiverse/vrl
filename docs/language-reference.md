@@ -307,6 +307,12 @@ This produces `60m / 5 anchors` in English or `60m / 5 anclajes` in Spanish, alo
 
 Diagnostics are structured objects with `kind`, `severity`, `message`, `location`, and `suggestion`. Syntax diagnostics come from parsing. Validation diagnostics come from semantic route checks. Rope length shorter than rappel height is currently a warning so teams can encode routes that require interpretation while still surfacing the issue.
 
+## Processing Budgets
+
+The parser and compiler reject documents beyond configured budgets with an error diagnostic whose `kind` is `limit`. Defaults are 1 MiB of UTF-8 source, 20,000 physical lines, 16 KiB per line, 10,000 elements (including annotations), and 1,024 entries per stage/redirection attribute. Exact limits are accepted. Blank lines, comments, and a trailing empty line count; LF/CRLF delimiters count toward source bytes but not line bytes.
+
+Pass `{ limits: { maxSourceBytes, maxLines, maxLineBytes, maxElements, maxListEntries } }` as the second argument to `compileRoute` or `parseVrl` to override selected defaults with positive safe integers. List budgets include empty positions in malformed lists, while arbitrary extension text and source note text remain text. Parsing stops when an element/list budget is exceeded; any returned prefix AST is for diagnostics only. Compilation produces no model, layout, or JSON on a limit failure. See the [processing API](api-reference.md#document-processing-limits) for UTF-8 counting, diagnostic locations, configuration errors, and custom parser responsibilities.
+
 ## Future Block Syntax
 
 The target language also includes richer block syntax for routes, sections, access, rescue notes, and organization-specific custom attributes. The first parser tolerates only the cosmetic tokens specified in [provisional brace handling](#provisional-brace-handling); nested section semantics are a future milestone.

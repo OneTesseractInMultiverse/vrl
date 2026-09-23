@@ -1,4 +1,4 @@
-import { createDiagnostic } from "../domain/diagnostics.js";
+import { appendDiagnostics, createDiagnostic } from "../domain/diagnostics.js";
 import { parseMeasurementToken } from "../domain/measurements.js";
 import { parseRappelStagesToken, parseRedirectionsToken } from "../domain/rappel-details.js";
 import { stageTotalMatchesHeight } from "../domain/stage-totals.js";
@@ -7,16 +7,16 @@ import { hasFieldValue } from "./validate-fields.js";
 export function validateFieldRelationships(element) {
   const diagnostics = [];
   if (element.type === "rappel" && hasFieldValue(element, "height") && hasFieldValue(element, "rope")) {
-    diagnostics.push(...validateRopeLength(element));
+    appendDiagnostics(diagnostics, validateRopeLength(element));
   }
   if (!hasFieldValue(element, "height")) return diagnostics;
   for (const name of ["redirection", "redirections"]) {
     if (!hasFieldValue(element, name)) continue;
     const parsed = parseRedirectionsToken(element.attributes[name]);
-    if (parsed.ok) diagnostics.push(...validateRedirectionDistances(element, parsed.value));
+    if (parsed.ok) appendDiagnostics(diagnostics, validateRedirectionDistances(element, parsed.value));
   }
   if (hasFieldValue(element, "stages") && parseRappelStagesToken(element.attributes.stages).ok) {
-    diagnostics.push(...validateStageSum(element));
+    appendDiagnostics(diagnostics, validateStageSum(element));
   }
   return diagnostics;
 }

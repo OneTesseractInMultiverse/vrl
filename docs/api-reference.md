@@ -23,7 +23,7 @@ import {
 } from "@subvertic/core";
 ```
 
-`compileRoute(source, options)` is the main use case. It parses source, validates it, normalizes the route model, computes layout, and exports JSON.
+`compileRoute(source, options)` is the main use case. It checks document budgets, parses source, validates it, normalizes the route model, computes layout, and exports JSON.
 
 ```js
 const result = compileRoute(source, {
@@ -63,7 +63,7 @@ Returned shape:
 }
 ```
 
-When syntax or validation blocks compilation, `ok` is `false`; `diagnostics` contains structured diagnostic objects with `kind`, `severity`, `message`, `location`, and `suggestion`. Declaration conflicts additionally include optional `relatedLocations`, as described below.
+When a limit, syntax, validation, or geometry error blocks compilation, `ok` is `false`; `diagnostics` contains structured diagnostic objects with `kind`, `severity`, `message`, `location`, and `suggestion`. Declaration conflicts additionally include optional `relatedLocations`, as described below.
 
 Lower-level functions are available for tooling:
 
@@ -157,6 +157,44 @@ All values must be finite JavaScript numbers no greater than `Number.MAX_SAFE_IN
 Configuration errors throw exceptions: `TypeError` for incorrect types or unsupported keys/values, and `RangeError` for nonfinite or out-of-range numeric values. They are caller configuration errors, not source diagnostics, and framework state factories propagate them. A source error can stop compilation before the layout configuration is inspected. Custom compiler ports own their configuration contracts.
 
 This tightens the previous API: invalid horizontal scales no longer silently fall back to `1`, and numeric strings, negative spacing, unknown layout keys, and explicit `null` values must be corrected by the caller.
+
+### Document processing limits
+
+`compileRoute(source, { limits })`, compilers created by `createRouteCompiler`, and `parseVrl(source, { limits })` enforce the same configurable processing budgets. React, Svelte, and SvelteKit pass these options through to the compiler. Unspecified fields use these defaults:
+
+| Limit | Default | Counts |
+| --- | --- | --- |
+| `maxSourceBytes` | `1048576` (1 MiB) | UTF-8 bytes of the complete source, including comments and line delimiters |
+| `maxLines` | `20000` | Physical lines, including blank/comment lines and a final empty line after a newline |
+| `maxLineBytes` | `16384` (16 KiB) | UTF-8 bytes in each physical line, excluding its LF or CRLF delimiter |
+| `maxElements` | `10000` | Accepted route elements, including start, exit, notes, and hazards; excludes route/metadata declarations |
+| `maxListEntries` | `1024` | Entries in each `stages`, `redirection`, or `redirections` attribute, independently |
+
+A document exactly at a limit is allowed. Every configured value must be a positive safe integer; there is no unlimited sentinel. Unknown keys, nonnumeric values, and non-plain limits objects throw `TypeError`; zero, negative, fractional, nonfinite, or unsafe numbers throw `RangeError`. A field set to `undefined` retains its default. Null-prototype records are accepted. Each call resolves an immutable snapshot without changing caller options or later calls.
+
+```js
+const result = compileRoute(source, {
+  limits: {
+    maxSourceBytes: 2 * 1024 * 1024,
+    maxLines: 30000,
+    maxLineBytes: 32768,
+    maxElements: 15000,
+    maxListEntries: 2048
+  }
+});
+```
+
+Limits concern the supplied JavaScript string's UTF-8 representation, not UTF-16 length or compressed/network bytes. An astral code point counts as four bytes; an unpaired surrogate counts as three, following UTF-8 replacement-byte counting without changing the original string. Locations remain one-based UTF-16 columns. LF and CRLF delimit lines; a lone CR belongs to its line. A nonempty list counts one entry plus its separators, including malformed empty positions. Empty values still undergo ordinary field validation. Both redirection aliases have separate budgets. Extension text, route names, and free-form note text do not become lists merely because they contain commas or plus signs.
+
+Source preflight scans until the first byte/line violation before lexing, line-array allocation, or any injected parser call. It checks total bytes before line count/line bytes at each position. The parser then processes lines incrementally and stops at the first element/list violation, before adding the offending statement or parsing list entries into measurements. Source preflight failures return an empty recovery AST retaining the original source reference; statement-limit failures retain only the accepted prefix and earlier diagnostics. Limits are processing policy, not truncation into a successful route.
+
+Failures use the existing diagnostic shape with `kind: "limit"`, `severity: "error"`, the limit name and maximum in `message`, a source `location`, and a corrective `suggestion`. Compilation returns `ok: false` and null model/layout/JSON. It skips semantic validation and every later port after a limit failure; framework states expose the diagnostics and an empty SVG. Syntax and semantic failures within the budget retain their existing behavior. Invalid configuration and unrelated internal/port exceptions still propagate; the compiler does not catch them as limit failures.
+
+The parser port now receives `parse(source, { limits })`, with the immutable resolved limits record. Existing one-argument parsers remain compatible. A custom parser owns its internal allocations and should honor those budgets; the application also checks its returned AST element count and known list attributes before semantic validation. Those AST checks use statement locations (metadata `1:1`), while the default parser reports a list value's source column. Custom normalizer/layout/exporter ports remain responsible for the size of the outputs they generate.
+
+Lower-level token parsers, direct semantic validation, normalization, and layout helpers do not impose document budgets. Their callers control input size; use `parseVrl` or `compileRoute` for bounded source processing. Weighted/elevation layouts and minimum-gap adjustment use iterative extrema reductions, and diagnostic collection avoids array-to-argument expansion. Raising limits permits larger workloads but does not establish a fixed memory/time guarantee or limit rendered output size.
+
+Compatibility: documents that previously exceeded these defaults now return limit diagnostics. Raise the relevant budgets explicitly for larger workloads. Accepted documents keep their existing model, layout, JSON, and diagnostic formats apart from the new diagnostic kind.
 
 ### Known-field validation and normalization
 
