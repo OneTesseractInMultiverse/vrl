@@ -15,6 +15,8 @@ for (const [file, source] of [
   ["application/use-case.js", 'import { exportJson } from "../adapters/json/export-route-json.js";'],
   ["application/use-case.js", 'import { parse } from "../index.js";'],
   ["domain/model.js", 'export * from "../application/compiler-ports.js";'],
+  ["domain/model.js", 'import { createEmptyRoute } from "../application/route-ast.js";'],
+  ["parser/parser.js", 'import { compileRouteWithPorts } from "../application/compile-route.js";'],
   ["domain/model.js", 'import "react";'],
   ["domain/model.js", 'import fs from "node:fs";'],
   ["domain/model.js", 'import browser from "../../../../vrl-react/src/index.js";'],
@@ -34,4 +36,8 @@ test("dependency check accepts multiline inward imports and re-exports", () => {
 
 test("default composition may depend on concrete implementations", () => {
   assert.deepEqual(dependencyViolations("composition/route-compiler.js", 'import { parseVrl } from "../parser/line-parser.js";\nimport { exportRouteJson } from "../adapters/json/export-route-json.js";'), []);
+});
+
+test("parser adapters may construct the application-owned syntax records", () => {
+  assert.deepEqual(dependencyViolations("parser/parser.js", 'import { createEmptyRoute } from "../application/route-ast.js";'), []);
 });

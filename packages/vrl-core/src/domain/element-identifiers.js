@@ -1,14 +1,4 @@
-const ID_PREFIXES = {
-  start: "S",
-  exit: "E",
-  walk: "W",
-  rappel: "R",
-  downclimb: "D",
-  climb: "C",
-  pool: "P",
-  hazard: "H",
-  note: "N"
-};
+import { ID_PREFIXES } from "./element-types.js";
 
 /** Identifiers share one case-sensitive namespace across all route elements. */
 export function elementIdentifierProblems(elements) {

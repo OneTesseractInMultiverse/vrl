@@ -42,7 +42,7 @@ function document(scope, attributes) {
 }
 
 function attributesOf(model, scope) {
-  return scope === "metadata" ? model.metadata : model.elements[0].attributes;
+  return scope === "metadata" ? { ...model.extensions, ...model.metadata } : { ...model.elements[0].extensions, ...model.elements[0].attributes };
 }
 
 function compiledField(source, scope, name) {
@@ -233,11 +233,11 @@ for (const [name, valid, normalized, invalid] of [...NUMERIC_CASES, ["flow", "lo
 }
 
 test("source note text remains text even when it resembles a known field", () => {
-  assert.equal(core.compileRoute('route "Field survey"\nnote exposure=banana').model.elements[0].attributes.text, "exposure=banana");
+  assert.equal(core.compileRoute('route "Field survey"\nnote exposure=banana').model.elements[0].extensions.text, "exposure=banana");
 });
 
 test("programmatic notes preserve extension attributes", () => {
   const attrs = { survey_team: "A", exposure: "custom vocabulary" };
   const compile = core.createRouteCompiler({ parse: () => ({ ast: noteAst(attrs), diagnostics: [] }) });
-  assert.deepEqual(compile("").model.elements[0].attributes, attrs);
+  assert.deepEqual(compile("").model.elements[0].extensions, attrs);
 });

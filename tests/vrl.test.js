@@ -244,11 +244,11 @@ test("normalizeElement generates identifiers", () => {
 });
 
 test("normalizeElement preserves explicit identifiers", () => {
-  assert.equal(core.normalizeElement(core.createRouteElement("rappel", {}, { line: 1, column: 1 }, "R9"), {}).id, "R9");
+  assert.equal(core.normalizeElement(core.createRouteElement("rappel", { height: "1m", rope: "2m" }, { line: 1, column: 1 }, "R9"), {}).id, "R9");
 });
 
 test("normalizeElement generates climb identifiers", () => {
-  assert.equal(core.normalizeElement(core.createRouteElement("climb", {}, { line: 1, column: 1 }), {}).id, "C1");
+  assert.equal(core.normalizeElement(core.createRouteElement("climb", { height: "1m" }, { line: 1, column: 1 }), {}).id, "C1");
 });
 
 test("normalizeElement increments existing counters", () => {

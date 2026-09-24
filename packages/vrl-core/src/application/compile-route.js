@@ -1,5 +1,5 @@
 import { appendDiagnostics, limitDiagnostic, hasBlockingDiagnostics } from "../domain/diagnostics.js";
-import { createEmptyRoute } from "../domain/model.js";
+import { createEmptyRoute } from "./route-ast.js";
 import { requireNumericData } from "../domain/numeric-policy.js";
 import { astLimitProblem, resolveProcessingLimits, sourceLimitProblem } from "../domain/processing-limits.js";
 import { requireDiagnostics, requireExportText, requireParsedRoute, requirePortRecord } from "./compiler-ports.js";

@@ -6,7 +6,7 @@ Recompute older node-only layouts with `computeVerticalLayout` before rendering.
 
 SVG renderer adapter for Vertical Route Language.
 
-This package renders normalized VRL route models and layout data as accessible SVG topo diagrams. It also provides federation-oriented symbology profiles and the VRL tropical snake hazard extension.
+This package renders normalized VRL route models and layout data as accessible SVG topo diagrams. Descriptive values now come from route/element `extensions` maps; known measurements and enums stay in `metadata`/`attributes`. Older supplied models with descriptions in the original bags remain readable. See the [model migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/domain-model.md). It also provides federation-oriented symbology profiles and the VRL tropical snake hazard extension.
 
 ## Install
 

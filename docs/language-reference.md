@@ -183,7 +183,7 @@ These enums are case-sensitive. A present empty value is invalid in its defined 
 
 Source `note` statements consume free-form text, so `note exposure=banana` is literal note content. Programmatic note attributes supplied through a parser port follow the same numeric and element-field rules as other elements.
 
-Successful compilation normalizes metric values to `{ value, unit: "m", meters }`, inclination to `{ value, unit: "%", percent }`, stages to arrays of measurements, and redirections to arrays of `{ distance, side }`. Enums, anchor counts, and extension attributes retain their declared text. Invalid known values block compilation before normalization; the low-level normalization helpers alone do not establish semantic validity.
+Successful compilation normalizes metric values to `{ value, unit: "m", meters }`, inclination to `{ value, unit: "%", percent }`, stages to arrays of measurements, and redirections to arrays of `{ distance, side }`. Enums, anchor counts, and extension attributes retain their declared text. Invalid known values block compilation before normalization; permissive token-only helpers do not establish semantic validity. Direct route/element normalization also rejects invalid known fields.
 
 ### Stage and redirection lists
 
@@ -302,6 +302,10 @@ rappel height=30m rope=60m anchor_count=5
 ```
 
 This produces `60m / 5 anchors` in English or `60m / 5 anclajes` in Spanish, alongside four marks and `+1`. Even the maximum supported count uses only four circles, with `+9007199254740987` for the remainder. Overflow text participates in canvas fitting; it may expand the viewport without changing route coordinates. Model and JSON quantities remain unchanged.
+
+## Normalized Data
+
+The AST preserves decoded string attributes. Normalization converts applicable known fields and places descriptive/unknown values in separate `extensions` maps at route and element level. Out-of-scope enum names remain extension text. Invalid known fields cannot be accepted as extensions. Note content is `element.extensions.text`; descriptive hazard kind is `element.extensions.type`. This changes model/JSON access paths, not DSL spelling or technical traversal. See the [domain contracts and migration](domain-model.md).
 
 ## Diagnostics
 

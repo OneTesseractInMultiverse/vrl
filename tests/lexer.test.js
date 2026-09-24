@@ -246,7 +246,7 @@ test("empty route names still fail domain validation", () => {
 
 test("quoted text survives normalization and JSON export without being decoded twice", () => {
   const result = core.compileRoute('route "Cañón"\nstart "A=B"\nnote "A\\\\nB \\"C\\""');
-  assert.equal(JSON.parse(result.json).elements[1].attributes.text, 'A\\nB "C"');
+  assert.equal(JSON.parse(result.json).elements[1].extensions.text, 'A\\nB "C"');
 });
 
 test("repeated parses have identical text and locations", () => {

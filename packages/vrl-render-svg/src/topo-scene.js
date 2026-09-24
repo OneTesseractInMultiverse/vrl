@@ -136,7 +136,7 @@ export function redirectionPlacements(geometry, element, language) {
 
 export function prepareInfoBox(route, layout, language, y = 26) {
   const text = diagramText(language);
-  const metadata = route.metadata ?? {};
+  const metadata = { ...route.extensions, ...route.metadata };
   const lines = [String(route.name).toUpperCase(), `${text.difficulty}: ${metadata.difficulty ?? text.noData}`,
     `${text.elevationChange}: ${elevationSummary(layout.elevation, language)}`,
     `${text.region}: ${metadata.region ?? text.noData}`, `${text.country}: ${metadata.country ?? text.noData}`];
