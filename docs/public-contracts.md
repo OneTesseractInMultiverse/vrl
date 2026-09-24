@@ -119,11 +119,32 @@ Custom port records must be synchronous plain objects. Types reject Promise-retu
 
 Explicit element IDs are case-sensitive and unique across the route; preserve them for references that must survive editing. Generated IDs are repeatable for unchanged ordered input, but insertion, removal, reordering or explicit reservations can renumber them. Array indexes, layout positions and object identity are not persistent identifiers. Equal compilations have equal data, not shared object references.
 
-Normalized models detach maps, values, lists and source points from the AST. Layout elements refer to the input model's elements; positioned segments share their endpoint records with layout points. Diagram state reuses its compilation's records. Outputs are mutable; editing a model does not recompute a previously created layout or SVG. Recompute downstream stages after changing data. `normalizeElement(element, counters)` intentionally updates caller-owned counters and cannot enforce route-wide uniqueness. Treat exported theme/symbol/localization tables and scene records as read-only by convention; the legacy runtime objects are not frozen.
+Normalized models detach maps, values, lists and source points from the AST. Layout elements refer to the input model's elements; positioned segments share their endpoint records with layout points. Diagram state reuses its compilation's records. These compilation outputs are mutable; editing a model does not recompute a previously created layout or SVG. Recompute downstream stages after changing data. `normalizeElement(element, counters)` intentionally updates caller-owned counters and cannot enforce route-wide uniqueness. Shared theme/symbol/localization definitions are frozen as described below. Scene records remain read-only by convention, without runtime freezing.
 
 AST source text and source maps are excluded from model JSON. An element's `sourceLocation` is retained when present, and omitted from JSON when undefined. Adding a comment or whitespace can therefore change serialized JSON without changing route facts or explicit IDs. Consumers hashing semantic content must deliberately project out provenance; do not treat byte equality as route identity. JSON export preserves native property insertion order and array order; it does not promise canonical key sorting across independently constructed equivalent records.
 
-## Verification and migration for this release
+## Rendering definition ownership
+
+Exported `LIGHT_THEME`/`DARK_THEME`, resolved symbol profiles, and localization records are shared and frozen, including nested `elements` and `values` dictionaries. Their declarations are read-only. Strict-mode mutation attempts throw `TypeError`; reflective writes return false. In non-strict code, assignments/deletions may fail silently but cannot change a shared definition. Dictionary lookups consider own keys only: inherited names fall back or remain literal text instead of exposing prototype objects.
+
+Use per-call `themeTokens`, `theme`, `language`/`locale`, and registered `symbology` selections. `resolveTheme` deliberately returns an owned, mutable copy. There is currently no custom symbol/localization dictionary option; copying those dictionaries supports application-owned UI only. Shared definitions have no mutation-based customization hook.
+
+```js
+import { createDiagramState } from "@subvertic/diagram";
+import { DARK_THEME, resolveTheme } from "@subvertic/render-svg";
+
+const localTheme = resolveTheme("dark", { water: "#176f91" });
+localTheme.terrain = "#c8be9c";
+const diagram = createDiagramState('route Custom\nstart\nrappel pitch height=12m rope=24m\nexit', {
+  theme: "dark", themeTokens: localTheme, language: "es", symbology: "spanish"
+});
+console.log(diagram.ok); // true
+console.log(resolveTheme("dark").terrain === DARK_THEME.terrain); // true
+```
+
+Previously unsupported writes to shared definitions could affect subsequent consumers. They now fail; migrate any such writes to explicit options or owned copies. This enforces the earlier read-only convention without changing record fields, existing export names, valid SVG output, or revision 1 AST/model/layout/diagnostic serialization. Unknown prototype-property selectors now follow the documented unknown-name fallback. The stricter runtime and declaration behavior must be noted in the next package release.
+
+## Verification and migration for contract revision 1
 
 This release introduces declarations and a documented revision baseline; runtime export names, entry points, signatures and output shapes remain unchanged. No data migration is required. TypeScript consumers should handle the `ok` union and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 

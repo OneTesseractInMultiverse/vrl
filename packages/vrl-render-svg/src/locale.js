@@ -1,6 +1,6 @@
 const DEFAULT_LANGUAGE = "en";
 
-const LANGUAGE_ALIASES = {
+const LANGUAGE_ALIASES = Object.freeze({
   en: "en",
   "en-us": "en",
   "en-gb": "en",
@@ -10,10 +10,10 @@ const LANGUAGE_ALIASES = {
   "es-cr": "es",
   spanish: "es",
   espanol: "es"
-};
+});
 
-const DIAGRAM_TEXT = {
-  en: {
+const DIAGRAM_TEXT = Object.freeze({
+  en: Object.freeze({
     routeSummary: "Route summary",
     schematicDescription: "Vertical Route Language schematic for",
     topo: "topo",
@@ -39,7 +39,7 @@ const DIAGRAM_TEXT = {
     snakeHazard: "Snake hazard",
     sideLeft: "L",
     sideRight: "R",
-    elements: {
+    elements: Object.freeze({
       start: "Start",
       exit: "Exit",
       walk: "Walk",
@@ -49,10 +49,10 @@ const DIAGRAM_TEXT = {
       pool: "Pool",
       hazard: "Hazard",
       note: "Note"
-    },
-    values: {}
-  },
-  es: {
+    }),
+    values: Object.freeze({})
+  }),
+  es: Object.freeze({
     routeSummary: "Resumen de ruta",
     schematicDescription: "Esquema VRL para",
     topo: "topo",
@@ -78,7 +78,7 @@ const DIAGRAM_TEXT = {
     snakeHazard: "Peligro de serpientes",
     sideLeft: "izq",
     sideRight: "der",
-    elements: {
+    elements: Object.freeze({
       start: "Inicio",
       exit: "Salida",
       walk: "Aproximacion",
@@ -88,8 +88,8 @@ const DIAGRAM_TEXT = {
       pool: "Poza",
       hazard: "Peligro",
       note: "Nota"
-    },
-    values: {
+    }),
+    values: Object.freeze({
       bolts: "parabolts",
       chaos: "caos",
       critical: "critico",
@@ -116,16 +116,17 @@ const DIAGRAM_TEXT = {
       trail: "sendero",
       tree: "arbol",
       unknown: "desconocido"
-    }
-  }
-};
+    })
+  })
+});
 
 export function resolveDiagramLanguage(language = DEFAULT_LANGUAGE) {
   if (typeof language !== "string") {
     return DEFAULT_LANGUAGE;
   }
 
-  return LANGUAGE_ALIASES[language.toLowerCase()] ?? DEFAULT_LANGUAGE;
+  const alias = language.toLowerCase();
+  return Object.hasOwn(LANGUAGE_ALIASES, alias) ? LANGUAGE_ALIASES[alias] : DEFAULT_LANGUAGE;
 }
 
 export function diagramText(language = DEFAULT_LANGUAGE) {
@@ -134,7 +135,7 @@ export function diagramText(language = DEFAULT_LANGUAGE) {
 
 export function elementLabel(elementType, language = DEFAULT_LANGUAGE) {
   const text = diagramText(language);
-  return text.elements[elementType] ?? elementType;
+  return Object.hasOwn(text.elements, elementType) ? text.elements[elementType] : elementType;
 }
 
 export function localizeDetailValue(value, language = DEFAULT_LANGUAGE) {
@@ -143,5 +144,5 @@ export function localizeDetailValue(value, language = DEFAULT_LANGUAGE) {
   }
 
   const text = diagramText(language);
-  return text.values[value] ?? value;
+  return Object.hasOwn(text.values, value) ? text.values[value] : value;
 }

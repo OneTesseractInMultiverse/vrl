@@ -390,6 +390,16 @@ The renderer also checks supplied layout dimensions and positioned geometry. `wi
 
 Every dynamic SVG attribute is XML-encoded at serialization, including generated path strings, class names, accessibility labels, and paint values. Text and attributes share the XML character policy below; nonfinite numeric attribute values also throw. Lower-level SVG helpers also encode their attributes and validate paint, but callers remain responsible for their geometry and normalized-model contracts. These helpers are not a general SVG sanitizer.
 
+### Shared rendering definitions and customization
+
+`LIGHT_THEME`, `DARK_THEME`, and the records returned by `resolveSymbolProfile(name)` and `diagramText(language)` are shared, frozen definitions. Localization's nested `elements` and `values` dictionaries are frozen too. Assignment, deletion of an existing key, property redefinition, and prototype replacement throw `TypeError` in strict code (including ESM); `Reflect.set` returns `false`. Non-strict assignment/deletion cannot change the records either, but may fail silently. Types expose these definitions as read-only.
+
+Use `theme` and `themeTokens` for per-render color customization. `resolveTheme(theme, overrides)` returns a fresh, mutable, validated copy; editing it or the original override object cannot affect another call. Pass an owned copy as `themeTokens` to render with it. Language/locale and the registered `federation`, `french`, or `spanish` symbology profile are selected per call. There is no custom localization or symbol dictionary option; copies of those dictionaries are for an application's own presentation code.
+
+Unknown language/profile names use English/federation fallbacks, including names inherited from `Object.prototype` such as `constructor` and `__proto__`. Unknown element-label or translated-value strings remain literal text. These lookups never return inherited objects or methods as definitions.
+
+This enforces the documented read-only convention: code that previously wrote shared definitions must migrate to explicit options or an owned copy. Valid existing renders, export names, and model/layout/JSON contracts remain unchanged. See [ownership and migration examples](public-contracts.md#rendering-definition-ownership).
+
 ### XML text and route titles
 
 Presentation transforms run on raw text before XML encoding. The summary heading is uppercase, while the accessible SVG title/description and the normalized model retain the original route name. For example, `route "R&D <Canyon>"` renders the heading `R&D <CANYON>` and serializes it as `R&amp;D &lt;CANYON&gt;`. Entity-looking source such as `&amp;` is literal text, not pre-encoded markup. Do not pass already escaped text to a renderer.
