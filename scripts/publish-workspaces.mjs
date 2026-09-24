@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 const WORKSPACES = [
   { name: "@subvertic/core", path: "packages/vrl-core/package.json" },
   { name: "@subvertic/render-svg", path: "packages/vrl-render-svg/package.json" },
+  { name: "@subvertic/diagram", path: "packages/vrl-diagram/package.json" },
   { name: "@subvertic/react", path: "packages/vrl-react/package.json" },
   { name: "@subvertic/svelte", path: "packages/vrl-svelte/package.json" },
   { name: "@subvertic/sveltekit", path: "packages/vrl-sveltekit/package.json" }

@@ -1,37 +1,12 @@
-import { compileRoute, formatDiagnostic } from "@subvertic/core";
-import { escapeXml, renderTopoSvg } from "@subvertic/render-svg";
+import { createDiagramState } from "@subvertic/diagram";
+import { escapeXml } from "@subvertic/render-svg";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";
 const DEFAULT_ROLE = "img";
 
 export function createVrlSvelteDiagramState(source, options = {}) {
-  const result = compileRoute(source, options);
-  const diagnosticsText = result.diagnostics.map(formatDiagnostic).join("\n");
-
-  if (result.ok === false) {
-    return {
-      ok: false,
-      ast: result.ast,
-      diagnostics: result.diagnostics,
-      diagnosticsText,
-      model: null,
-      layout: null,
-      json: null,
-      svg: ""
-    };
-  }
-
-  return {
-    ok: true,
-    ast: result.ast,
-    diagnostics: result.diagnostics,
-    diagnosticsText,
-    model: result.model,
-    layout: result.layout,
-    json: result.json,
-    svg: renderTopoSvg(result.model, result.layout, options)
-  };
+  return createDiagramState(source, options);
 }
 
 export function renderVrlSvelteMarkup(source, options = {}, renderOptions = {}) {

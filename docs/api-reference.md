@@ -402,6 +402,24 @@ The rule belongs to the rendering adapter: core compilation and JSON export can 
 
 Caller-provided `diagram.svg` is **trusted markup**. React inserts it with `dangerouslySetInnerHTML`; the Svelte component uses `@html`, and `renderVrlSvelteMarkup` embeds it directly. Supplying `diagram` bypasses compilation, configuration validation, and SVG generation. Use state created by VRL's diagram factories within a trusted application pipeline. If an application accepts arbitrary SVG or precomputed states from another source, it must apply its own appropriate sanitization before passing them to these adapters. Escaping wrapper attributes or diagnostics does not sanitize `diagram.svg`. React's `containerProps` and `diagnosticsProps` are also application-owned component props.
 
+## @subvertic/diagram
+
+Install `@subvertic/diagram` to create state without framework peers:
+
+```js
+import { createDiagramState } from "@subvertic/diagram";
+
+const diagram = createDiagramState(source, {
+  language: "es",
+  theme: "dark",
+  layout: { width: 640 }
+});
+```
+
+The synchronous result is `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }`. The compiler runs once; successful results, including warnings, are rendered once. Blocking diagnostics retain AST/diagnostic information, set model/layout/JSON to `null`, and return an empty SVG without rendering. Exceptions from compiler or renderer boundaries propagate unchanged. No caching or I/O is performed.
+
+All three existing adapter factories delegate to this operation and preserve their signatures and complete state shape. Source/options changes take effect on the next call. Pass the result as a precomputed `diagram` when a parent/server owns state creation. See the [shared state contract](diagram-state.md) for ownership, failure ordering, compatibility, and packaging; the [precomputed-state trust boundary](#precomputed-diagram-trust-boundary) also applies.
+
 ## @subvertic/react
 
 Install:

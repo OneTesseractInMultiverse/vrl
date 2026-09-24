@@ -1,5 +1,7 @@
 # Svelte Example
 
+Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+
 The Svelte package exposes both a component and SSR-friendly helpers. The component compiles source internally unless a precomputed `diagram` state is provided.
 
 Invalid layout or renderer configuration throws `TypeError` or `RangeError`. See the [configuration contract](api-reference.md#configuration-validation) and [supported paint values](api-reference.md#renderer-configuration-and-svg-attributes).

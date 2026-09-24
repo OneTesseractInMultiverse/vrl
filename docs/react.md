@@ -1,5 +1,7 @@
 # React Example
 
+Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+
 Invalid layout or renderer configuration throws `TypeError` or `RangeError` from the state factory or component. See the [configuration contract](api-reference.md#configuration-validation) and [supported paint values](api-reference.md#renderer-configuration-and-svg-attributes).
 
 Treat a supplied `diagram.svg` as trusted markup: the component inserts it with `dangerouslySetInnerHTML`, bypassing compilation and renderer validation. Use a trusted VRL state factory result, or sanitize arbitrary external SVG within the application before supplying it. Component props such as `containerProps` are also application-owned. See the [trust boundary](api-reference.md#precomputed-diagram-trust-boundary).

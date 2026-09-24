@@ -54,6 +54,7 @@
     "svelte": ">=4.0.0"
   },
   "dependencies": {
+    "@subvertic/diagram": "0.1.0",
     "@subvertic/svelte": "0.1.0"
   }
 }

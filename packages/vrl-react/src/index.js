@@ -1,37 +1,11 @@
-import { compileRoute, formatDiagnostic } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { createDiagramState } from "@subvertic/diagram";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";
 const DEFAULT_ROLE = "img";
 
 export function createVrlReactDiagramState(source, options = {}) {
-  const result = compileRoute(source, options);
-  const diagnosticsText = result.diagnostics.map(formatDiagnostic).join("\n");
-
-  if (result.ok === false) {
-    return {
-      ok: false,
-      ast: result.ast,
-      diagnostics: result.diagnostics,
-      diagnosticsText,
-      model: null,
-      layout: null,
-      json: null,
-      svg: ""
-    };
-  }
-
-  return {
-    ok: true,
-    ast: result.ast,
-    diagnostics: result.diagnostics,
-    diagnosticsText,
-    model: result.model,
-    layout: result.layout,
-    json: result.json,
-    svg: renderTopoSvg(result.model, result.layout, options)
-  };
+  return createDiagramState(source, options);
 }
 
 export function createVrlDiagramComponent(React, defaults = {}) {
