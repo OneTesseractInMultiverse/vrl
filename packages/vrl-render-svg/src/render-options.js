@@ -15,7 +15,7 @@ export function validateRenderLayout(layout) {
   if (!Array.isArray(layout.nodes) || !Array.isArray(layout.segments)) {
     throw new TypeError("Renderer layout requires nodes and segments arrays.");
   }
-  layout.nodes.forEach(validatePoint);
+  layout.nodes.forEach(validateNode);
   if (layout.points !== undefined) {
     if (!Array.isArray(layout.points)) throw new TypeError("Layout points must be an array.");
     layout.points.forEach(validatePoint);
@@ -24,14 +24,27 @@ export function validateRenderLayout(layout) {
 }
 
 function validatePoint(point) {
+  assertOptionsRecord(point, "Layout point");
   validateCanvasNumber(point.x, "Point x");
   validateCanvasNumber(point.y, "Point y");
 }
 
 function validateSegment(segment) {
+  assertOptionsRecord(segment, "Layout segment");
   validatePoint(segment.start);
   validatePoint(segment.end);
+  if (segment.element !== null) validateElementRecord(segment.element);
   if (segment.kind === "technical") validateCanvasNumber(segment.technicalDeltaY, "Technical pixel delta");
+}
+
+function validateNode(node) {
+  validatePoint(node);
+  validateElementRecord(node.element);
+}
+
+function validateElementRecord(element) {
+  assertOptionsRecord(element, "Layout element");
+  assertOptionsRecord(element.attributes, "Layout element attributes");
 }
 
 function validateCanvasNumber(value, name) {

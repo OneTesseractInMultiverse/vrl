@@ -58,6 +58,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [AST and normalized domain contracts](docs/domain-model.md)
 - [Language reference](docs/language-reference.md)
 - [Architecture](docs/architecture.md)
+- [Rendering scenes and badge semantics](docs/rendering-scene.md)
 - [Source provenance and diagnostic codes](docs/diagnostics.md)
 - [Symbology](docs/symbology.md)
 - [React usage](docs/react.md)

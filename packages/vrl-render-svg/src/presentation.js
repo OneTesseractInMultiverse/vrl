@@ -1,7 +1,8 @@
-import { anchorSummary } from "./anchor-presentation.js";
+import { DETAIL_BADGE_TOKENS } from "./badge-style.js";
+import { detailRecordsForElement, detailRecordText } from "./detail-content.js";
 export { anchorMarkCount, anchorSummary, anchorLabel } from "./anchor-presentation.js";
 import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/core";
-import { formatElementDetail, formatElementTitle, formatMeasurement } from "./element-formatters.js";
+import { formatElementTitle, formatMeasurement } from "./element-formatters.js";
 import { diagramText, localizeDetailValue, resolveDiagramLanguage } from "./locale.js";
 import { resolveSymbolProfile } from "./symbol-registry.js";
 
@@ -13,13 +14,6 @@ export const LEGEND_FONT_SIZE = 9;
 export const STANDARD_SYMBOL_CODE_Y_OFFSET = 15;
 export const LEVEL_VALUES = ["dry", "low", "medium", "high", "critical"];
 export const SYMBOL_ONLY_LABEL_TYPES = new Set(["walk", "pool", "hazard", "note"]);
-export const DETAIL_BADGE_TOKENS = {
-  level: ["levelBadge", "levelBadgeText"],
-  flow: ["flowBadge", "flowBadgeText"],
-  exposure: ["exposureBadge", "exposureBadgeText"],
-  hazardSeverity: ["hazardSeverityBadge", "hazardSeverityBadgeText"],
-  inclination: ["inclinationBadge", "inclinationBadgeText"]
-};
 export const DETAIL_BADGE_LABELS = {
   exposure: "exposure",
   exposicion: "exposure",
@@ -239,23 +233,7 @@ export function formatTopoLabel(element, language = "en") {
 }
 
 export function formatTopoDetail(element, node = null, language = "en") {
-  if ((element.type === "start" || element.type === "exit") && typeof node?.elevationMeters === "number") {
-    return `${node.elevationMeters}m`;
-  }
-
-  if (element.type === "rappel") {
-    return [formatMeasurement(element.attributes.rope), anchorSummary(element, language), landingSummary(element, language), flowSummary(element, language), inclinationSummary(element)]
-      .filter(Boolean)
-      .join(" / ");
-  }
-
-  if (element.type === "downclimb" || element.type === "climb") {
-    return [formatElementDetail(element, language), landingSummary(element, language), inclinationSummary(element)]
-      .filter(Boolean)
-      .join(" / ");
-  }
-
-  return formatElementDetail(element, language);
+  return detailRecordsForElement(element, node, language).map(detailRecordText).join(" / ");
 }
 
 export function detailLineRows(detail, maxWidth = Number.POSITIVE_INFINITY, language = "en") {
@@ -329,10 +307,6 @@ export function inclinationPercent(element) {
   return 100;
 }
 
-export function themeSafeStroke(color) {
-  return color === "" ? "#111111" : color;
-}
-
 export function labelOffsetX(element) {
   if (needsSegmentArrow(element)) {
     return 74;
@@ -352,19 +326,6 @@ export function elevationSummary(elevation, language = "en") {
   }
 
   return `${elevation.totalChangeMeters}m (${elevation.entranceMeters}m-${elevation.exitMeters}m)`;
-}
-
-export function landingSummary(element, language = "en") {
-  return element.attributes.landing === undefined ? "" : labeledSummary(diagramText(language).landing, localizeDetailValue(element.attributes.landing, language));
-}
-
-export function flowSummary(element, language = "en") {
-  return element.attributes.flow === undefined ? "" : labeledSummary(diagramText(language).flow, localizeDetailValue(element.attributes.flow, language));
-}
-
-export function inclinationSummary(element) {
-  const inclination = element.attributes.inclination;
-  return typeof inclination === "object" && inclination !== null ? `${inclination.percent}%` : "";
 }
 
 export function formatMeters(measurement) {
@@ -502,19 +463,10 @@ export function normalizeDetailLabel(label) {
   return label.trim().toLowerCase();
 }
 
-export function detailBadgeStyle(category, theme) {
-  const tokens = DETAIL_BADGE_TOKENS[category];
-  return { fill: theme[tokens[0]], text: theme[tokens[1]] };
-}
-
 export function estimatedTextWidth(value, fontSize) {
   return Math.round(value.length * fontSize * 0.56);
 }
 
 export function levelBadgeWidth(label) {
   return Math.max(26, Math.round(label.length * 5.4) + 12);
-}
-
-export function labeledSummary(label, value) {
-  return value === "" ? "" : `${label}: ${value}`;
 }

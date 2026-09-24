@@ -355,15 +355,18 @@ The returned plain record contains:
 - `viewBox: { x, y, width, height }`: integer outer canvas coordinates with 12 pixels of padding.
 - `contentBounds` and `bounds`: `{ minX, minY, maxX, maxY }` envelopes, respectively before and after adding the summary and legend.
 - `language`: resolved presentation language.
-- `nodes`: visual-order records containing the original `node` reference, `placement`, `title`, `detail`, `maxDetailWidth`, and prepared `detailRows`.
-- `infoBox`: summary position, dimensions, display-text `lines` (including the uppercase route heading), and bounds. These strings are not XML-encoded.
-- `legend`: position, dimensions, title, placed rows, and bounds; `null` when disabled.
+- `nodes`: visual-order records retaining the original `node` reference, `placement`, `title`, `detail`, `maxDetailWidth`, and display-string `detailRows`; `drawing` adds structured detail records and their placed text/badges, symbols, anchors, and leader.
+- `title`, `description`, `terrainPath`, `waterPaths`, `segments`, `segmentLabels`, and `stationTicks`: prepared accessible text and geometry consumed by serialization.
+- `infoBox`: summary position, dimensions, display-text `lines` (including the uppercase route heading), placed `textLines`, and bounds. These strings are not XML-encoded.
+- `legend`: position, dimensions, title, existing rows, placed `drawingRows`, and bounds; `null` when disabled.
+
+See the [scene contract](rendering-scene.md) for detailed record shapes, examples, and compatibility behavior. Canonical badge categories come from fields, independently of language. Descriptive text such as a note containing `flow: high / 80%` remains text. The legacy `renderDetailLine` string helper and explicit `renderNode` detail overrides retain label recognition. Existing exports remain available.
 
 Treat these records as read-only snapshots and recompute them after model, layout, or option changes. Scene computation does not mutate its inputs. Core layout remains independent of SVG fonts and decoration sizes; its dimensions are provisional until the renderer prepares the presentation.
 
 Text uses a conservative envelope of 1.25 em per UTF-16 code unit, with vertical and stroke clearance. This intentionally reserves extra space for bold wide glyphs, Unicode, and fallback fonts without browser measurements, DOM access, or third-party runtime dependencies. External CSS that changes fonts, letter spacing, strokes, or transforms can invalidate the envelope and requires independent fitting by the embedding application. Canvas fitting addresses clipping; it does not redesign label spacing within individual detail rows.
 
-Both scene preparation and full rendering validate incoming layout/options. Nonfinite derived bounds, unsafe magnitudes, or a fitted span exceeding `Number.MAX_SAFE_INTEGER` throw `RangeError`, including combinations of individually valid dimensions that leave no room for padding. Invalid types follow the existing `TypeError` contract. Low-level fragment renderers do not fit a complete canvas. The compatibility helper `topoLegendHeight` still returns `156` or `0`; do not add it to core layout height to predict final SVG dimensions.
+Both scene preparation and full rendering validate incoming layout/options, including plain node/element/attribute records and segment records/endpoints. Supply normalized inputs from core; these structural checks do not repeat DSL semantic validation. Nonfinite derived bounds, unsafe magnitudes, or a fitted span exceeding `Number.MAX_SAFE_INTEGER` throw `RangeError`, including combinations of individually valid dimensions that leave no room for padding. Invalid types follow the existing `TypeError` contract. Low-level fragment renderers do not fit a complete canvas. The compatibility helper `topoLegendHeight` still returns `156` or `0`; do not add it to core layout height to predict final SVG dimensions.
 
 ### Renderer configuration and SVG attributes
 
