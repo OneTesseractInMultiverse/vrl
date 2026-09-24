@@ -3,6 +3,7 @@ import test from "node:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { dependencyViolations } from "./helpers/dependency-boundaries.js";
 import { rendererDependencyViolations } from "./helpers/renderer-boundaries.js";
+import { diagramDependencyViolations } from "./helpers/diagram-boundaries.js";
 
 test("core imports obey inward boundaries including re-exports and composition", () => {
   const root = new URL("../packages/vrl-core/src/", import.meta.url);
@@ -48,6 +49,30 @@ test("renderer computations and serialization remain separated without new depen
   const files = readdirSync(root).filter((file) => file.endsWith(".js"));
   assert.deepEqual(files.flatMap((file) => rendererDependencyViolations(file, readFileSync(new URL(file, root), "utf8"))), []);
 });
+
+test("shared diagram application and framework adapters obey their dependency boundaries", () => {
+  const root = new URL("../packages/", import.meta.url);
+  const packages = ["vrl-diagram", "vrl-react", "vrl-svelte", "vrl-sveltekit"];
+  const files = packages.flatMap((name) => readdirSync(new URL(`${name}/src/`, root), { recursive: true }).filter((file) => /\.(js|svelte)$/.test(file)).map((file) => `${name}/src/${file}`));
+  assert.deepEqual(files.flatMap((file) => diagramDependencyViolations(file, readFileSync(new URL(file, root), "utf8"))), []);
+});
+
+for (const [file, source] of [
+  ["vrl-diagram/src/application/create-diagram-state.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
+  ["vrl-diagram/src/application/create-diagram-state.js", 'import { createDiagramState } from "../composition/diagram-state.js";'],
+  ["vrl-diagram/src/application/diagram-state.js", 'import { compileRoute } from "@subvertic/core";'],
+  ["vrl-diagram/src/composition/diagram-state.js", 'import React from "react";'],
+  ["vrl-diagram/src/composition/diagram-state.js", 'import { createVrlSvelteDiagramState } from "@subvertic/svelte";'],
+  ["vrl-diagram/src/application/diagram-state.js", 'import { formatDiagnostic } from "../../../vrl-core/src/domain/diagnostics.js";'],
+  ["vrl-react/src/index.js", 'import { compileRoute } from "@subvertic/core";'],
+  ["vrl-svelte/src/index.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
+  ["vrl-sveltekit/src/index.js", 'import { createVrlSvelteDiagramState } from "@subvertic/svelte";'],
+  ["vrl-diagram/src/application/diagram-state.js", 'const module = import(name);']
+]) {
+  test(`diagram boundary rejects ${file}: ${source}`, () => {
+    assert.equal(diagramDependencyViolations(file, source).length, 1);
+  });
+}
 
 for (const [file, source] of [
   ["node-scene.js", 'import { serializeNode } from "./svg-serializer.js";'],

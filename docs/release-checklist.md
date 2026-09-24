@@ -31,3 +31,5 @@ make publish-plan
 ```
 
 `OTP` is forwarded to each `npm publish` command as `--otp`. If a local publish attempt fails before any package is published, rerun the same target with a fresh OTP. If a later package fails after earlier packages were published, run `make publish-plan` before retrying so the next target version is explicit.
+
+The publish order is `@subvertic/core`, `@subvertic/render-svg`, `@subvertic/diagram`, `@subvertic/react`, `@subvertic/svelte`, then `@subvertic/sveltekit`. The shared diagram package must be available before the updated adapters. Include its package/version pin and npm trusted-publisher setup when preparing the next release. Use `node scripts/publish-workspaces.mjs --plan --skip-registry --release current` to inspect local ordering without registry access or file changes.

@@ -1,8 +1,8 @@
 {
-  "name": "@subvertic/react",
+  "name": "@subvertic/diagram",
   "version": "0.1.0",
   "type": "module",
-  "description": "React adapter for rendering VRL diagrams.",
+  "description": "Framework-neutral diagram state coordination for Vertical Route Language.",
   "license": "MIT",
   "author": {
     "name": "Pedro Guzmán"
@@ -12,22 +12,22 @@
       "name": "Pedro Guzmán"
     }
   ],
-  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-react#readme",
+  "homepage": "https://github.com/OneTesseractInMultiverse/vrl/tree/main/packages/vrl-diagram#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vertical-route-language/vrl.git",
-    "directory": "packages/vrl-react"
+    "url": "git+https://github.com/OneTesseractInMultiverse/vrl.git",
+    "directory": "packages/vrl-diagram"
   },
   "bugs": {
-    "url": "https://github.com/vertical-route-language/vrl/issues"
+    "url": "https://github.com/OneTesseractInMultiverse/vrl/issues"
   },
   "keywords": [
     "vrl",
-    "react",
     "canyoning",
     "canyoneering",
     "barranquismo",
     "svg",
+    "topo",
     "route-documentation"
   ],
   "main": "./src/index.js",
@@ -40,17 +40,15 @@
     "LICENSE"
   ],
   "sideEffects": false,
+  "dependencies": {
+    "@subvertic/core": "0.1.0",
+    "@subvertic/render-svg": "0.1.0"
+  },
   "engines": {
     "node": ">=20.0.0"
   },
   "publishConfig": {
     "access": "public",
     "provenance": true
-  },
-  "peerDependencies": {
-    "react": ">=18.0.0"
-  },
-  "dependencies": {
-    "@subvertic/diagram": "0.1.0"
   }
 }

@@ -1,5 +1,7 @@
 # SvelteKit Example
 
+Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+
 The SvelteKit package exposes reusable load helpers and a component that reads precomputed diagram state from `data.vrl` by default.
 
 ```svelte

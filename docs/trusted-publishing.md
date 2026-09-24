@@ -26,6 +26,7 @@ Configure a trusted publisher for each package:
 
 - `@subvertic/core`
 - `@subvertic/render-svg`
+- `@subvertic/diagram`
 - `@subvertic/react`
 - `@subvertic/svelte`
 - `@subvertic/sveltekit`

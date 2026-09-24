@@ -59,6 +59,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [Language reference](docs/language-reference.md)
 - [Architecture](docs/architecture.md)
 - [Rendering scenes and badge semantics](docs/rendering-scene.md)
+- [Shared diagram-state contract](docs/diagram-state.md)
 - [Source provenance and diagnostic codes](docs/diagnostics.md)
 - [Symbology](docs/symbology.md)
 - [React usage](docs/react.md)
@@ -81,12 +82,13 @@ packages/
     src/composition/   Default wiring and public compiler factories.
     src/adapters/json/ JSON serialization with domain numeric guards.
   vrl-render-svg/      SVG rendering adapter.
+  vrl-diagram/         Framework-neutral compiler/render state coordination.
   vrl-react/           React component factory adapter.
   vrl-svelte/          Svelte markup helper and component adapter.
   vrl-sveltekit/       SvelteKit load/data helper and component adapter.
 ```
 
-Dependencies point inward. Domain and application code do not import React, Svelte, the DOM, file systems, network services, or package tooling. Framework packages depend on the core and renderer packages.
+Dependencies point inward. Domain and application code do not import React, Svelte, the DOM, file systems, network services, or package tooling. Framework state factories delegate to `@subvertic/diagram`, whose composition wires the core compiler and SVG renderer. Core and rendering remain independent of frameworks.
 
 The application coordinator imports only its own contracts and domain policies; composition supplies parser, validator, normalization, layout, and export implementations. See the [compiler ports](docs/compiler-ports.md) for synchronous result and failure contracts. A focused dependency-boundary test protects this separation.
 
@@ -144,6 +146,10 @@ Element identifiers are case-sensitive and unique across all element types in on
 - `computeTopoScene(model, layout, options)` for prepared presentation records and complete canvas bounds.
 - `resolveTheme(theme, overrides)` plus light and dark theme tokens.
 - `symbolCode(element, profile)` and `resolveSymbolProfile(profile)` for federation-oriented canyon topo abbreviations.
+
+`@subvertic/diagram` exports:
+
+- `createDiagramState(source, options)` for the shared `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` state without framework peers. Warning-only results render SVG; blocking diagnostics skip rendering. Existing adapter factories delegate to this operation. See the [state contract](docs/diagram-state.md).
 
 `@subvertic/react` exports:
 
