@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { dependencyViolations } from "./helpers/dependency-boundaries.js";
+import { rendererDependencyViolations } from "./helpers/renderer-boundaries.js";
 
 test("core imports obey inward boundaries including re-exports and composition", () => {
   const root = new URL("../packages/vrl-core/src/", import.meta.url);
@@ -41,3 +42,26 @@ test("default composition may depend on concrete implementations", () => {
 test("parser adapters may construct the application-owned syntax records", () => {
   assert.deepEqual(dependencyViolations("parser/parser.js", 'import { createEmptyRoute } from "../application/route-ast.js";'), []);
 });
+
+test("renderer computations and serialization remain separated without new dependencies", () => {
+  const root = new URL("../packages/vrl-render-svg/src/", import.meta.url);
+  const files = readdirSync(root).filter((file) => file.endsWith(".js"));
+  assert.deepEqual(files.flatMap((file) => rendererDependencyViolations(file, readFileSync(new URL(file, root), "utf8"))), []);
+});
+
+for (const [file, source] of [
+  ["node-scene.js", 'import { serializeNode } from "./svg-serializer.js";'],
+  ["detail-content.js", 'import { escapeXml } from "./xml.js";'],
+  ["topo-scene.js", 'export * from "./svg-renderer.js";'],
+  ["svg-serializer.js", 'import { diagramText } from "./locale.js";'],
+  ["svg-serializer.js", 'import { detailBadgePart } from "./presentation.js";'],
+  ["svg-serializer.js", 'import { technicalVerticalMeters } from "@subvertic/core";'],
+  ["segment-scene.js", 'import { model } from "../../vrl-core/src/domain/model.js";'],
+  ["svg-renderer.js", 'import library from "external-package";'],
+  ["panel-scene.js", 'import fs from "node:fs";'],
+  ["node-scene.js", 'const module = import(name);']
+]) {
+  test(`renderer boundary rejects ${file}: ${source}`, () => {
+    assert.equal(rendererDependencyViolations(file, source).length, 1);
+  });
+}

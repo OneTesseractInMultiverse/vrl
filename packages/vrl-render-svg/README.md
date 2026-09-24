@@ -49,6 +49,14 @@ renderTopoSvg(model, layout, {
 
 `language` controls diagram labels, the built-in legend, and common detail values. `symbology` controls canyon topo abbreviations and the symbol key shown in the legend. Generic progression nodes use the compact symbol marker only, avoiding redundant visible labels such as `Pool P1` or `Poza P1`. When the layout includes elevation metadata, the renderer scales the technical part of each rappel, downclimb, or climb from `height * inclination * pixelsPerMeter`; connector lines absorb any extra spacing needed to keep symbols readable. The renderer labels ambiguous values such as `flow: medium` and `exposure: medium`; flow, exposure, hazard severity, and inclination values render as category-colored badges. Values such as `dry`, `low`, `medium`, and `high` share the color of their field category. The renderer uses federation-oriented text abbreviations rather than copied artwork. When `language` is not set, `symbology: "spanish"` selects Spanish text by default.
 
+## Structured Presentation
+
+The complete renderer computes a scene once, then serializes prepared geometry and labels. Flow, exposure, hazard severity, and inclination badges come from normalized fields; translating their labels cannot change their category. Notes such as `flow: high` or `80%` remain literal text, including literal ` / ` separators inside a descriptive field.
+
+`computeTopoScene(...).nodes[].drawing.detailRecords` exposes typed text/badge rows; `drawing.details` contains the placed text and badge rectangles shared by fitting and serialization. The scene also carries technical annotations, paths, station ticks, symbol geometry, and placed summary/legend entries. Existing scene fields and package exports remain available. Treat records as read-only inspection snapshots and recompute after input changes.
+
+`formatTopoDetail` remains a display-string helper. The historical `renderDetailLine` string API and explicit `renderNode` detail overrides retain formatted-label recognition for compatibility; default node and complete rendering use structured records. See the [scene contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/rendering-scene.md) for examples, record shapes, boundary failures, and migration guidance.
+
 ## Technical Annotations
 
 Stage lengths, stage boundary marks, and redirection anchors render for all three supported shapes: `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs but preserve the same annotation values, positions, language, and accessible redirection names. Canvas fitting includes these labels for every shape. The top-level accessible SVG description includes the declared stage/redirection values with the owning feature ID in the selected language. Annotations follow the measured technical slope, excluding extra connector spacing; existing schematic endpoint clearance and stage-total warnings are preserved.
