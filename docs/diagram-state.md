@@ -1,5 +1,7 @@
 # Shared diagram state
 
+See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
+
 `@subvertic/diagram` owns framework-neutral diagram coordination. React, Svelte, and SvelteKit delegate their state factories to `createDiagramState(source, options = {})`. Consumers can also use it directly without installing a framework.
 
 ```js

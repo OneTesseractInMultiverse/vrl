@@ -54,6 +54,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 
 ## Documentation
 
+- [Public API stability, types, and contract revisions](docs/public-contracts.md)
 - [API reference](docs/api-reference.md)
 - [AST and normalized domain contracts](docs/domain-model.md)
 - [Language reference](docs/language-reference.md)

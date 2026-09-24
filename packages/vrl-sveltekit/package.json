@@ -33,8 +33,14 @@
   ],
   "main": "./src/index.js",
   "exports": {
-    ".": "./src/index.js",
-    "./VrlDiagram.svelte": "./src/VrlDiagram.svelte"
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./VrlDiagram.svelte": {
+      "types": "./src/VrlDiagram.svelte.d.ts",
+      "default": "./src/VrlDiagram.svelte"
+    }
   },
   "files": [
     "src",
@@ -56,5 +62,6 @@
   "dependencies": {
     "@subvertic/diagram": "0.1.0",
     "@subvertic/svelte": "0.1.0"
-  }
+  },
+  "types": "./src/index.d.ts"
 }

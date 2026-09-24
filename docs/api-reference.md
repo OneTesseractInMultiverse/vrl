@@ -1,5 +1,7 @@
 # API Reference
 
+See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
+
 VRL is split into small packages so consumers can choose the layer they need. The core package is framework-free. Renderers and framework adapters depend inward on the core.
 
 ## @subvertic/core
