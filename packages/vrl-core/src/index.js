@@ -6,14 +6,10 @@ export {
 export { exportRouteJson } from "./adapters/json/export-route-json.js";
 export { createDiagnostic, formatDiagnostic, hasBlockingDiagnostics } from "./domain/diagnostics.js";
 export { isInclinationField, normalizeInclinationValue, parseInclinationToken } from "./domain/inclinations.js";
-export {
-  createEmptyRoute,
-  createRouteElement,
-  normalizeAttributes,
-  normalizeElement,
-  normalizeRoute,
-  summarizeRoute
-} from "./domain/model.js";
+export { createEmptyRoute, createRouteElement } from "./application/route-ast.js";
+export { normalizeElement, normalizeRoute } from "./domain/model.js";
+export { normalizeAttributes } from "./domain/normalize-attributes.js";
+export { summarizeRoute } from "./domain/route-summary.js";
 export { isMeasurementField, normalizeAttributeValue, parseMeasurementToken } from "./domain/measurements.js";
 export {
   isRappelStagesField,

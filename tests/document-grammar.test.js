@@ -60,7 +60,7 @@ for (const [name, source] of VALID_DOCUMENTS) {
 
 test("repeated metadata lines retain every distinct value in normalized JSON", () => {
   const result = compileRoute('route "A"\nmetadata country=CR\nmetadata region="Bajos del Toro" entrance_elevation=100m\nmetadata exit_elevation=100m\nstart\nexit');
-  assert.deepEqual(JSON.parse(result.json).metadata, { country: "CR", region: "Bajos del Toro", entrance_elevation: { value: 100, unit: "m", meters: 100 }, exit_elevation: { value: 100, unit: "m", meters: 100 } });
+  assert.deepEqual([JSON.parse(result.json).metadata, JSON.parse(result.json).extensions], [{ entrance_elevation: { value: 100, unit: "m", meters: 100 }, exit_elevation: { value: 100, unit: "m", meters: 100 } }, { country: "CR", region: "Bajos del Toro" }]);
 });
 
 test("duplicate routes report both original source positions", () => {
@@ -175,7 +175,7 @@ const BRACED_DOCUMENTS = [
 for (const [name, source] of BRACED_DOCUMENTS) {
   test(`${name} retain the documented flat semantics`, () => {
     const result = compileRoute(source);
-    assert.deepEqual([result.ok, result.model.name, result.model.metadata, result.model.elements.map((element) => element.type)], [true, "A", { country: "CR" }, ["start", "exit"]]);
+    assert.deepEqual([result.ok, result.model.name, result.model.extensions, result.model.elements.map((element) => element.type)], [true, "A", { country: "CR" }, ["start", "exit"]]);
   });
 }
 
@@ -193,7 +193,7 @@ for (const source of ['route "A"{', 'route "A"\n{ {', 'route "A"\n} }', 'route "
 
 test("quoted braces and assignment-looking note text retain their literal meaning", () => {
   const result = compileRoute('route "A"\nmetadata description="{ country=CR }"\nnote "}" {');
-  assert.deepEqual([result.model.metadata.description, result.model.elements[0].attributes.text], ["{ country=CR }", "}"]);
+  assert.deepEqual([result.model.extensions.description, result.model.elements[0].extensions.text], ["{ country=CR }", "}"]);
 });
 
 for (const [name, source] of INVALID_DOCUMENTS.slice(0, 17)) {

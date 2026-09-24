@@ -1,21 +1,14 @@
 import { declarationReference, fieldReference } from "../domain/source-references.js";
 import { codedDiagnostic } from "../domain/diagnostics.js";
-import { applicableFieldSpecification, requiredFields } from "../domain/field-specifications.js";
-import { fieldValueProblems, parseFieldValue } from "../domain/field-values.js";
+import { inspectAttributes } from "../domain/attribute-contract.js";
 
 export function validateFields(element, scope, subject = "Field") {
-  return [
-    ...Object.entries(element.attributes).flatMap(([name, raw]) => validateField(element, scope, subject, name, raw)),
-    ...requiredFields(scope).filter((name) => !hasFieldValue(element, name)).map((name) => missingFieldDiagnostic(element, name))
-  ];
+  return inspectAttributes(element.attributes, scope).problems.map((problem) => fieldDiagnostic(element, subject, problem));
 }
 
-function validateField(element, scope, subject, name, raw) {
-  const specification = applicableFieldSpecification(name, scope);
-  if (specification === null) return [];
-  const parsed = parseFieldValue(specification, raw);
-  if (!parsed.ok) return [syntaxDiagnostic(element, subject, name, specification, parsed.reason)];
-  return fieldValueProblems(specification, parsed.value).map((problem) => valueDiagnostic(element, subject, name, specification, problem));
+function fieldDiagnostic(element, subject, { kind, name, specification, reason, problem }) {
+  if (kind === "required") return missingFieldDiagnostic(element, name);
+  return kind === "syntax" ? syntaxDiagnostic(element, subject, name, specification, reason) : valueDiagnostic(element, subject, name, specification, problem);
 }
 
 function syntaxDiagnostic(element, subject, name, specification, reason) {
@@ -68,8 +61,4 @@ function missingFieldDiagnostic(element, name) {
 
 function diagnostic(element, name, code, message, suggestion) {
   return codedDiagnostic(code, "validation", "error", message, fieldReference(element.source, name, element.sourceLocation), suggestion);
-}
-
-export function hasFieldValue(element, name) {
-  return Object.hasOwn(element.attributes, name) && element.attributes[name] !== "";
 }

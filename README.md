@@ -55,6 +55,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 ## Documentation
 
 - [API reference](docs/api-reference.md)
+- [AST and normalized domain contracts](docs/domain-model.md)
 - [Language reference](docs/language-reference.md)
 - [Architecture](docs/architecture.md)
 - [Source provenance and diagnostic codes](docs/diagnostics.md)
@@ -75,7 +76,7 @@ packages/
     src/parser/        Compact line-oriented parser.
     src/validation/    Semantic validation rules.
     src/layout/        Pure vertical topo layout computation.
-    src/application/   Synchronous compiler contracts and use-case coordination.
+    src/application/   Syntax-record factories, compiler contracts, and coordination.
     src/composition/   Default wiring and public compiler factories.
     src/adapters/json/ JSON serialization with domain numeric guards.
   vrl-render-svg/      SVG rendering adapter.

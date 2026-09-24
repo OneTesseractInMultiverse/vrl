@@ -1,3 +1,4 @@
+import { elementAttribute } from "./route-data.js";
 import { diagramText, elementLabel, localizeDetailValue } from "./locale.js";
 
 const ELEMENT_COLOR_TOKENS = {
@@ -40,19 +41,19 @@ export function formatElementDetail(element, language = "en") {
   }
 
   if (element.type === "note") {
-    return element.attributes.text ?? "";
+    return elementAttribute(element, "text") ?? "";
   }
 
   if (element.type === "hazard") {
     return [
       labeledDetail(diagramText(language).severity, localizeDetailValue(element.attributes.severity, language)),
-      element.attributes.note ?? localizeDetailValue(element.attributes.type, language)
+      elementAttribute(element, "note") ?? localizeDetailValue(elementAttribute(element, "type"), language)
     ]
       .filter(Boolean)
       .join(" / ");
   }
 
-  return element.attributes.note ?? localizeDetailValue(element.attributes.type, language) ?? "";
+  return elementAttribute(element, "note") ?? localizeDetailValue(elementAttribute(element, "type"), language) ?? "";
 }
 
 export function formatMeasurement(measurement) {

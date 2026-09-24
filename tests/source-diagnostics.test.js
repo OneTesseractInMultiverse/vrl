@@ -189,7 +189,7 @@ test("programmatic numeric geometry failures have stable codes and a route span 
 
 test("valid source gains no diagnostics or normalized syntax fields", () => {
   const result = core.compileRoute('route X\nmetadata country=CR\nwalk distance=1m');
-  assert.deepEqual([result.diagnostics, Object.keys(result.model), Object.keys(JSON.parse(result.json).elements[0])], [[], ["name", "metadata", "elements", "traversal", "summary"], ["type", "id", "label", "attributes", "sourceLocation"]]);
+  assert.deepEqual([result.diagnostics, Object.keys(result.model), Object.keys(JSON.parse(result.json).elements[0])], [[], ["name", "metadata", "extensions", "elements", "traversal", "summary"], ["type", "id", "label", "attributes", "extensions", "sourceLocation"]]);
 });
 
 test("validation and normalization do not mutate retained provenance", () => {

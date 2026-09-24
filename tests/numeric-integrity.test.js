@@ -95,7 +95,7 @@ for (const percent of ["0.000001", "80.123456", "100"]) {
 
 test("unrecognized free-text metadata remains text", () => {
   const result = core.compileRoute('route "Numeric"\nmetadata rope_inventory="1x60m" description="Infinity NaN"');
-  assert.deepEqual(result.model.metadata, { rope_inventory: "1x60m", description: "Infinity NaN" });
+  assert.deepEqual(result.model.extensions, { rope_inventory: "1x60m", description: "Infinity NaN" });
 });
 
 test("invalid numeric source never invokes downstream compiler ports", () => {

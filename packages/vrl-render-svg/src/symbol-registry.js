@@ -1,3 +1,4 @@
+import { elementAttribute } from "./route-data.js";
 const DEFAULT_PROFILE = "federation";
 
 const SYMBOL_PROFILES = {
@@ -61,7 +62,7 @@ export function symbolCode(element, profileName = DEFAULT_PROFILE) {
 }
 
 export function isSnakeHazard(element) {
-  return element.type === "hazard" && SNAKE_HAZARD_TYPES.has(element.attributes.type);
+  return element.type === "hazard" && SNAKE_HAZARD_TYPES.has(elementAttribute(element, "type"));
 }
 
 export function symbolKind(element) {

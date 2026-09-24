@@ -74,6 +74,12 @@ Layouts retain one `nodes` entry per route element in source order. Annotation n
 
 Layout dimensions are provisional framing values. Complete canvas fitting belongs to the renderer, which accounts for its own fonts, labels, decorations, and legend without changing core coordinates. For SVG output, use `computeTopoScene` from `@subvertic/render-svg` or the rendered SVG dimensions when sizing an embedding surface.
 
+## AST and Normalized Records
+
+AST metadata/attributes contain decoded strings. Normalized `metadata` and element `attributes` contain only applicable, validated known fields; descriptive text lives in separate route/element `extensions` maps. Note text is `element.extensions.text`; descriptive hazard kind is `element.extensions.type`. `normalizeRoute` and `normalizeElement` reject malformed records and invalid known fields. The legacy `normalizeAttributes` utility remains permissive token conversion, not a domain validity guarantee.
+
+This changes the model/JSON paths for extensions; known metric and enum paths remain unchanged. See the [contracts, invariant ownership, and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/domain-model.md). Traversal and summaries retain their physical meaning and the renderer accepts both current and older supplied models.
+
 ## Processing Limits
 
 `compileRoute` and standalone `parseVrl` accept `options.limits`: `maxSourceBytes` (1 MiB), `maxLines` (20,000), `maxLineBytes` (16 KiB), `maxElements` (10,000), and `maxListEntries` (1,024 per stage/redirection attribute). Overrides must be positive safe integers; omitted fields use defaults. Source and line sizes count UTF-8 bytes, with LF/CRLF excluded from per-line size. Exact boundaries are accepted.
@@ -84,7 +90,7 @@ Over-budget input produces a structured `limit` error; compilation returns no mo
 
 Validation and normalization share a domain-owned field specification. Numeric fields follow the same units and ranges in metadata and every element; categorical fields follow explicit contexts, including exposure on both downclimbs and climbs. Unknown extensions remain text. Empty applicable enums and empty entries in stage/redirection lists are errors. Inclination accepts values greater than 0% through 100%, with at most six fractional digits.
 
-Stage totals use exact comparison at source precision: `0.1m+0.2m` matches `0.3m`, while a difference of `0.000001m` warns. Public model/JSON types and floating-point geometry remain unchanged. Low-level normalization helpers preserve invalid raw values and do not replace semantic validation. See the [field and list contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#known-fields-and-extensions).
+Stage totals use exact comparison at source precision: `0.1m+0.2m` matches `0.3m`, while a difference of `0.000001m` warns. Known value representations and floating-point geometry are preserved. Token-only conversion helpers preserve invalid raw values; strict route/element normalization rejects invalid known fields. See the [field and list contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/language-reference.md#known-fields-and-extensions).
 
 ## Diagnostics
 
@@ -102,7 +108,7 @@ Diagnostics are plain objects:
 
 Use `formatDiagnostic(diagnostic)` for readable CLI, build, or editor output. Conflicts add optional `relatedLocations: [{ message, location, span? }]` alongside the primary location; the formatter includes every related coordinate. `createDiagnostic` accepts these as an optional sixth argument; its seventh argument accepts optional `{ code, span }`. Existing calls retain their original shape when those fields are omitted.
 
-Built-in diagnostics have stable codes and precise source ranges when available. `ast.sourceMap` retains route, metadata, and element declarations plus attribute key/value spans. Field errors select the original value; missing fields select their declaration. `validateElement(element, sourceRecord)` and `validateGeometry(model, sourceMap)` accept optional provenance separately from domain data; compilation supplies it automatically. Legacy ASTs retain point-location fallbacks. Normalized model/layout/JSON shapes remain unchanged. See the [source-map contract and code catalog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagnostics.md).
+Built-in diagnostics have stable codes and precise source ranges when available. `ast.sourceMap` retains route, metadata, and element declarations plus attribute key/value spans. Field errors select the original value; missing fields select their declaration. `validateElement(element, sourceRecord)` and `validateGeometry(model, sourceMap)` accept optional provenance separately from domain data; compilation supplies it automatically. Legacy ASTs retain point-location fallbacks. Source-map data stays outside normalized route facts. See the [source-map contract and code catalog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagnostics.md).
 
 ## Document Order and Repeated Keys
 

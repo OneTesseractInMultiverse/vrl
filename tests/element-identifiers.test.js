@@ -173,9 +173,9 @@ test("frozen source data can be normalized without mutation", () => {
   assert.deepEqual(ids(normalizeRoute(ast)), ["W2", "W1"]);
 });
 
-test("identifier allocation adds no public model fields", () => {
+test("identifier allocation exposes only the documented normalized fields", () => {
   const model = compileRoute(route("walk\npool W1")).model;
-  assert.deepEqual([Object.keys(model), Object.keys(model.elements[0])], [["name", "metadata", "elements", "traversal", "summary"], ["type", "id", "label", "attributes", "sourceLocation"]]);
+  assert.deepEqual([Object.keys(model), Object.keys(model.elements[0])], [["name", "metadata", "extensions", "elements", "traversal", "summary"], ["type", "id", "label", "attributes", "extensions", "sourceLocation"]]);
 });
 
 test("recompiling identical source produces identical complete output", () => {

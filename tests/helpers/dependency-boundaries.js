@@ -19,7 +19,7 @@ export function dependencyViolations(file, source) {
   const imports = source.matchAll(/\b(?:import|export)\s+(?:[^;]*?\sfrom\s*)?["']([^"']+)["']/g);
   for (const [, specifier] of imports) {
     const target = posix.normalize(posix.join(posix.dirname(file), specifier));
-    if (!specifier.startsWith(".") || !allowed.includes(target.split("/")[0])) violations.push(`${file} -> ${specifier}`);
+    if (!specifier.startsWith(".") || !(allowed.includes(target.split("/")[0]) || (file.startsWith("parser/") && target === "application/route-ast.js"))) violations.push(`${file} -> ${specifier}`);
   }
   return violations;
 }

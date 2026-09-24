@@ -1,5 +1,6 @@
+import { isElementType } from "../domain/element-types.js";
 import { appendDiagnostics, limitDiagnostic, codedDiagnostic } from "../domain/diagnostics.js";
-import { createEmptyRoute, createRouteElement } from "../domain/model.js";
+import { createEmptyRoute, createRouteElement } from "../application/route-ast.js";
 import { lexVrlLine } from "./lexer.js";
 import { declarationSpans, tokenRange } from "./source-spans.js";
 import { parseAttributes } from "./attribute-parser.js";
@@ -8,18 +9,6 @@ import { limitProblem, listLimitProblem, resolveProcessingLimits, sourceLimitPro
 
 export { lexVrlLine, stripComment, tokenize } from "./lexer.js";
 export { parseAttributeTokens } from "./attribute-parser.js";
-
-const ELEMENT_KEYWORDS = new Set([
-  "start",
-  "exit",
-  "walk",
-  "rappel",
-  "downclimb",
-  "climb",
-  "pool",
-  "hazard",
-  "note"
-]);
 
 export function parseVrl(source, options = {}) {
   const limits = resolveProcessingLimits(options.limits);
@@ -52,7 +41,7 @@ function parseDocumentLine(context, rawLine, line) {
   if (tokens.length === 0) return;
   const keyword = tokens[0].raw;
   const location = tokens[0].span.start;
-  if (keyword !== "route" && keyword !== "metadata" && !ELEMENT_KEYWORDS.has(keyword)) {
+  if (keyword !== "route" && keyword !== "metadata" && !isElementType(keyword)) {
     context.diagnostics.push(codedDiagnostic("VRL_SYNTAX_UNKNOWN_STATEMENT", "syntax", "error", `Unknown VRL statement "${keyword}"`, { location, span: tokens[0].span },
       "Use route, metadata, start, exit, walk, rappel, downclimb, climb, pool, hazard, or note."));
     return;
@@ -71,7 +60,7 @@ function parseDocumentLine(context, rawLine, line) {
 }
 
 function statementLimitProblem({ ast, limits }, keyword, tokens, location) {
-  if (ELEMENT_KEYWORDS.has(keyword) && ast.elements.length >= limits.maxElements) return limitProblem("maxElements", limits, location);
+  if (isElementType(keyword) && ast.elements.length >= limits.maxElements) return limitProblem("maxElements", limits, location);
   if (keyword === "route" || keyword === "note") return null;
   for (const token of tokens) {
     if (token.kind !== "attribute") continue;
