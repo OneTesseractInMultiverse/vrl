@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Separate default compiler wiring into composition and JSON serialization into an output adapter. Keep the application as a coordinator over application-owned synchronous contracts and domain policies, preserving public entry points and the optional geometry default.
+- Check compiler wiring and adapter result envelopes, reject asynchronous/malformed results with port-specific errors, and preserve source diagnostics, failure ordering, numeric guards, and unchanged adapter exceptions.
+- Add alternate-adapter substitution/failure tests and a focused inward-import boundary check. Document compiler contracts and compatibility; no runtime dependencies or public exports added.
+
 - Retain declaration, identity, and attribute key/value spans in an AST source map, including repeated metadata lines. Semantic errors/warnings now highlight original values; missing fields and duplicate declarations retain precise primary and related ranges.
 - Add stable codes to every built-in diagnostic and optional end-exclusive spans without changing readable messages/suggestions. Extend diagnostic construction with optional code/range metadata and document the complete catalog and compatibility rules.
 - Pass syntax provenance separately to element and geometry validation. Preserve legacy point-location fallbacks and unchanged normalized model/layout/JSON shapes; no dependencies added.

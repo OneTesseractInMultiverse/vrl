@@ -75,7 +75,9 @@ packages/
     src/parser/        Compact line-oriented parser.
     src/validation/    Semantic validation rules.
     src/layout/        Pure vertical topo layout computation.
-    src/application/   Use cases that coordinate parse, validate, normalize, and layout.
+    src/application/   Synchronous compiler contracts and use-case coordination.
+    src/composition/   Default wiring and public compiler factories.
+    src/adapters/json/ JSON serialization with domain numeric guards.
   vrl-render-svg/      SVG rendering adapter.
   vrl-react/           React component factory adapter.
   vrl-svelte/          Svelte markup helper and component adapter.
@@ -83,6 +85,8 @@ packages/
 ```
 
 Dependencies point inward. Domain and application code do not import React, Svelte, the DOM, file systems, network services, or package tooling. Framework packages depend on the core and renderer packages.
+
+The application coordinator imports only its own contracts and domain policies; composition supplies parser, validator, normalization, layout, and export implementations. See the [compiler ports](docs/compiler-ports.md) for synchronous result and failure contracts. A focused dependency-boundary test protects this separation.
 
 ## Development
 

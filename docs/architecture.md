@@ -4,14 +4,15 @@ VRL follows strict hexagonal architecture. The core package owns pure domain con
 
 ```mermaid
 flowchart LR
-  React[React Adapter] --> App[Application Use Cases]
-  Svelte[Svelte Adapter] --> App
+  React[React Adapter] --> Composition[Default Composition]
+  Svelte[Svelte Adapter] --> Composition
   SvelteKit[SvelteKit Load Adapter] --> Svelte
   SVG[SVG Renderer Adapter] --> Domain[Domain Model]
-  App --> Parser[Parser]
-  App --> Validator[Validator]
+  Composition --> App[Application Coordinator]
+  Composition --> Implementations[Parser, Validation, Layout, JSON Adapter]
+  App --> Ports[Application-owned Contracts]
   App --> Domain
-  App --> Layout[Layout Computation]
+  Implementations --> Domain
 ```
 
 The domain layer has no dependency on framework code, browser APIs, file systems, HTTP clients, storage, or renderer implementations. It receives source text and plain JavaScript values, then returns structured data. Application services coordinate the pure computations without owning parsing rules, validation logic, or drawing logic.
@@ -62,9 +63,11 @@ The application checks source budgets before any parser port, passes resolved li
 
 Layout positions the canonical traversal points and segments. `layout.nodes` still contains one node per source element in source order; `layout.points` excludes annotations and includes implicit boundaries, and `layout.segments` carries positioned endpoints, the owning element, and the technical pixel delta. Annotation symbols are positioned separately beside their attachment boundaries, and their rows contribute only to the content extent. Physical elevation values and the route spine remain independent of annotation placement and minimum visual spacing. Validated entrance/exit metadata anchors the physical boundaries, with the final elevation pinned after consistency checks to avoid cumulative roundoff. The SVG adapter orders labels by visual y position, placing progression labels before annotations at equal y to keep boundary text readable. It sorts a copy and preserves the source-order node contract. The renderer consumes these positioned segments and does not choose an owner by inspecting neighboring nodes. Terrain uses all traversal points so intermediate and terminal technical features remain visible.
 
-`application/compile-route.js` coordinates processing-budget checks, parse, validation, normalization, layout, and JSON export. It also exposes `createRouteCompiler(overrides)` so alternate parser, validator, layout, normalization, or export ports can be injected without changing the use-case coordinator.
+`application/compile-route.js` coordinates processing-budget checks, parse, validation, normalization, geometry validation, layout, and export over six complete synchronous ports. It imports only application contracts and domain policies. `application/compiler-ports.js` owns structural result checks and the port contract; malformed results fail with a port-specific `TypeError` before a later stage runs. Domain invariants remain with their existing domain/validation owners, and adapter exceptions propagate unchanged.
 
-The optional `validateGeometry` port validates the normalized contract. The renderer depends inward on the first-party core package for its compatibility helpers; neither package adds third-party runtime dependencies. The SVG adapter owns complete presentation bounds: core layout dimensions do not account for adapter-specific fonts or decorations.
+`composition/route-compiler.js` wires concrete defaults and exposes the existing public compiler entry points through the package root. It captures wiring without mutating caller configuration, and owns the public helper's legacy optional geometry default. `adapters/json/export-route-json.js` owns JSON serialization, including the domain numeric guard. The coordinator neither constructs implementations nor serializes output. The [compiler contract](compiler-ports.md) documents arguments, synchrony, result shapes, warning/error order, and compatibility. No interface is introduced for unrelated domain calculations.
+
+The `validateGeometry` port validates the normalized contract; public composition supplies its default when omitted. The renderer depends inward on the first-party core package for its compatibility helpers; neither package adds third-party runtime dependencies. The SVG adapter owns complete presentation bounds: core layout dimensions do not account for adapter-specific fonts or decorations.
 
 `vrl-render-svg/src/presentation.js` contains pure geometry, formatting, label placement, and wrapping calculations extracted from serialization. `topo-scene.js` coordinates presentation preparation and computes envelopes for route decorations, shared detail rows, the summary, and the legend. Its stage/redirection placement records are shared by fitting and serialization for every supported line shape. Shape-specific public segment helpers delegate to a shared technical-segment coordinator, which prepares geometry and annotations before a separate markup serializer emits the group. Only rungs depend on line style; annotation values, ownership, positions, language, and bounds do not. Pure presentation formatting supplies a localized annotation summary for the top-level SVG description so these facts remain accessible when the diagram is exposed as one image. Source validation stays in core, while these presentation choices stay in the SVG adapter. `scene-bounds.js` provides pure numeric envelope union, text estimation, and canvas fitting with explicit range failures. `svg-renderer.js` coordinates scene preparation and SVG serialization, retaining the existing public helper exports.
 
@@ -83,3 +86,5 @@ flowchart TD
 ```
 
 No dependency should point from core to a framework or infrastructure package.
+
+The focused dependency-boundary test enforces inward static imports and re-exports across core source layers, rejects public-barrel detours from inner layers, and prohibits runtime module loading. Application may depend only on application/domain, and domain only on domain. Composition wires concrete implementations; serialization adapters depend inward. Existing standalone layout validation is explicitly allowed. This check and alternate-adapter correctness/failure tests run in the standard test suite.
