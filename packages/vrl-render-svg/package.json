@@ -32,7 +32,10 @@
   ],
   "main": "./src/index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
   },
   "files": [
     "src",
@@ -49,5 +52,6 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
-  }
+  },
+  "types": "./src/index.d.ts"
 }

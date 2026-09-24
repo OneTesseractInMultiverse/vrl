@@ -1,5 +1,7 @@
 # Source Provenance and Diagnostic Codes
 
+See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
+
 Built-in diagnostics expose stable `code` strings for tooling, readable `message` and `suggestion` text, a `kind`, `severity`, and a primary `location`. A diagnostic includes `span` when a complete source range is available. Conflict diagnostics retain `relatedLocations`, whose entries can also include a `span`. Only error severity blocks compilation; warnings remain nonblocking.
 
 A span has `{ start: { line, column }, end: { line, column } }`. Lines and columns are one-based; columns count UTF-16 code units, and the end is exclusive. Tabs count as one column and astral characters as two. CRLF and LF produce identical line/column coordinates for the same line contents. Ranges refer to original spelling, including quote delimiters and escape sequences, before text decoding. A diagnostic's `location` is its span's start when a span is present.

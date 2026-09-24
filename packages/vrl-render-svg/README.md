@@ -1,5 +1,7 @@
 # @subvertic/render-svg
 
+Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
+
 Technical routes are rendered from the core layout's explicit `segments`, including separate endpoints for adjacent descents and climbs and for first/last technical elements. The core owns direction, physical deltas, and annotation ownership; SVG consumes positioned endpoints and pixel deltas. This package depends on the first-party `@subvertic/core` package and has no third-party runtime dependencies.
 
 Recompute older node-only layouts with `computeVerticalLayout` before rendering. For custom renderers, iterate `layout.segments` and pass each positioned segment to the technical geometry helpers. The legacy single-owner helper rejects ambiguous descent/climb pairs rather than choosing one event. See `docs/api-reference.md` for the traversal contract and compatibility details.

@@ -1,0 +1,180 @@
+{
+  "revision": 1,
+  "contracts": {
+    "ast": 1,
+    "model": 1,
+    "traversal": 1,
+    "layout": 1,
+    "diagnostic": 1,
+    "compiler": 1,
+    "diagram": 1
+  },
+  "packages": {
+    "@subvertic/core": {
+      "stable": [
+        "compileRoute",
+        "computeVerticalLayout",
+        "createDiagnostic",
+        "exportRouteJson",
+        "formatDiagnostic",
+        "hasBlockingDiagnostics",
+        "normalizeRoute",
+        "parseVrl",
+        "validateRoute"
+      ],
+      "advanced": [
+        "applyMinimumNodeGap",
+        "assertFiniteNumber",
+        "assertOptionsRecord",
+        "compileRouteWithDependencies",
+        "computeElevationLayout",
+        "createEmptyRoute",
+        "createRouteCompiler",
+        "createRouteElement",
+        "createTraversal",
+        "elementVisualWeight",
+        "elevationSegmentDeltas",
+        "hasElevationProfile",
+        "horizontalProgress",
+        "isInclinationField",
+        "isMeasurementField",
+        "isRappelStagesField",
+        "isRedirectionField",
+        "lexVrlLine",
+        "normalizeAttributeValue",
+        "normalizeAttributes",
+        "normalizeElement",
+        "normalizeInclinationValue",
+        "normalizeRappelDetailValue",
+        "parseAttributeTokens",
+        "parseInclinationToken",
+        "parseMeasurementToken",
+        "parseRappelStagesToken",
+        "parseRedirectionToken",
+        "parseRedirectionsToken",
+        "residualDistributionWeights",
+        "resolveHorizontalScale",
+        "routeElevationProfile",
+        "stripComment",
+        "summarizeRoute",
+        "technicalElementIndexesBetween",
+        "technicalSegmentDelta",
+        "technicalVerticalMeters",
+        "tokenize",
+        "validateElement",
+        "validateGeometry",
+        "validateLayoutOptions",
+        "verticalDirection"
+      ],
+      "subpaths": []
+    },
+    "@subvertic/render-svg": {
+      "stable": [
+        "DARK_THEME",
+        "LIGHT_THEME",
+        "escapeXml",
+        "renderTopoSvg",
+        "resolveTheme"
+      ],
+      "advanced": [
+        "anchorMarkCount",
+        "computeTopoScene",
+        "detailLineMaxWidth",
+        "detailLineRows",
+        "diagramText",
+        "dropLadderGeometry",
+        "elementColorToken",
+        "elementLabel",
+        "formatElementDetail",
+        "formatElementTitle",
+        "formatMeasurement",
+        "formatTopoDetail",
+        "formatTopoLabel",
+        "inclinationPercent",
+        "isSnakeHazard",
+        "legendSymbolRows",
+        "localizeDetailValue",
+        "needsSegmentArrow",
+        "nextLabelTitleY",
+        "nodeLabelPlacement",
+        "rappelHeightMeters",
+        "rappelStagesForElement",
+        "redirectionRatio",
+        "redirectionsForElement",
+        "renderAnchorMarks",
+        "renderDetailLine",
+        "renderDirectTechnicalSegment",
+        "renderDropLadderSegment",
+        "renderDropRungs",
+        "renderInfoBox",
+        "renderLabelLeader",
+        "renderLegend",
+        "renderLegendRow",
+        "renderLegendSymbolRow",
+        "renderLevelBadge",
+        "renderNode",
+        "renderNodes",
+        "renderRappelStageMarkers",
+        "renderRedirectionMarkers",
+        "renderRouteSegments",
+        "renderSegmentLabels",
+        "renderStageBoundary",
+        "renderStationTick",
+        "renderStationTicks",
+        "renderSymbolMarker",
+        "renderTerrainProfile",
+        "renderWaterSegments",
+        "resolveDiagramLanguage",
+        "resolveLevelValue",
+        "resolveRenderLanguage",
+        "resolveSymbolProfile",
+        "routeSegmentPath",
+        "segmentLabel",
+        "segmentLabelPosition",
+        "segmentTechnicalElement",
+        "symbolCode",
+        "symbolKind",
+        "technicalLinePoint",
+        "technicalLineVerticalDelta",
+        "terrainProfilePath",
+        "topoLegendHeight"
+      ],
+      "subpaths": []
+    },
+    "@subvertic/diagram": {
+      "stable": [
+        "createDiagramState"
+      ],
+      "advanced": [],
+      "subpaths": []
+    },
+    "@subvertic/react": {
+      "stable": [
+        "createVrlDiagramComponent",
+        "createVrlReactDiagramState"
+      ],
+      "advanced": [],
+      "subpaths": []
+    },
+    "@subvertic/svelte": {
+      "stable": [
+        "createVrlSvelteDiagramState",
+        "renderVrlSvelteMarkup"
+      ],
+      "advanced": [],
+      "subpaths": [
+        "./VrlDiagram.svelte"
+      ]
+    },
+    "@subvertic/sveltekit": {
+      "stable": [
+        "createVrlSvelteKitData",
+        "createVrlSvelteKitLoad"
+      ],
+      "advanced": [],
+      "subpaths": [
+        "./VrlDiagram.svelte"
+      ]
+    }
+  }
+}

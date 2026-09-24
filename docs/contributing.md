@@ -9,3 +9,7 @@ Tests must be self-contained. They should not require network access, databases,
 Documentation examples should stay executable or parseable. When adding a VRL snippet, add a test fixture or parser test so docs cannot drift away from implementation.
 
 Renderer changes must preserve the separation between scene computations and SVG encoding. Add or update pure scene records for geometry and labels, and let serializers consume them without reconstructing domain facts from display text. Test scene coordinates and category/value invariants independently of XML, then verify complete output and failure behavior through public boundaries. See [rendering scenes](rendering-scene.md).
+
+## Public contract checks
+
+Run `npm run check:types` for consumer success/failure examples and `npm run check:packed` to test the actual packages in an isolated offline consumer after `npm ci`. Both are included in `make check`. Maintain the export inventory and contract revisions described in [public contracts](public-contracts.md). Treat new declarations, nullability, units, source provenance, and override preconditions as API behavior; retain saved compatibility fixtures and explain migrations.

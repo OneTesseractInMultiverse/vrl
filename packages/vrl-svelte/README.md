@@ -1,5 +1,7 @@
 # @subvertic/svelte
 
+Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
+
 Svelte adapter for Vertical Route Language.
 
 This package exposes an SSR-friendly markup helper, a diagram state helper, and a Svelte component for rendering VRL diagrams through the core and SVG renderer packages.

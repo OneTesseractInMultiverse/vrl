@@ -1,5 +1,7 @@
 # Compiler Ports and Composition
 
+See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
+
 The compiler is synchronous. `compileRoute(source, options)` remains the convenient default entry point. `createRouteCompiler(overrides)` substitutes selected implementations and captures a shallow, immutable wiring snapshot without freezing the caller's object. All six ports are functions; extra configuration properties are preserved but do not create additional stages. A missing, `undefined`, or `null` geometry validator uses the existing default. Explicit nonfunctions for other ports, or nonfunction non-null geometry overrides, throw `TypeError` when configuring the compiler.
 
 `compileRouteWithDependencies(source, options, dependencies)` remains available for callers supplying their own wiring. It requires `parse`, `validate`, `normalize`, `layout`, and `exportJson`, and retains its legacy default for an omitted/nullish `validateGeometry`. This compatibility default lives in composition. The internal application coordinator always receives six complete ports and has no concrete fallback.

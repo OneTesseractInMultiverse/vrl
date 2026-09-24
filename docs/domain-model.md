@@ -1,5 +1,7 @@
 # Syntax Inputs and Normalized Routes
 
+See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
+
 Parsing and normalization produce different records. The AST retains decoded text, source coordinates, and recovery data. Normalization establishes known-field and identity invariants, classifies extension text separately, and computes domain traversal and summaries. These operations remain synchronous and have no runtime dependencies.
 
 ## Raw AST Contract

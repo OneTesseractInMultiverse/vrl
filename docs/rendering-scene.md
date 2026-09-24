@@ -1,5 +1,7 @@
 # Rendering scenes
 
+See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
+
 The SVG adapter prepares a complete presentation scene before generating XML. `computeTopoScene(model, layout, options)` exposes that computation; `renderTopoSvg(model, layout, options)` prepares the same scene and serializes it with the resolved theme. Neither operation changes the model or layout.
 
 ## Responsibilities and dependency direction

@@ -1,5 +1,7 @@
 # @subvertic/diagram
 
+Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
+
 Framework-neutral diagram state for Vertical Route Language. This package coordinates the core compiler and SVG renderer, then projects their results into the state used by React, Svelte, and SvelteKit. It has only first-party dependencies on `@subvertic/core` and `@subvertic/render-svg`, with no framework peers or third-party runtime dependencies.
 
 ## Install

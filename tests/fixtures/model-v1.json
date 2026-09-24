@@ -1,0 +1,117 @@
+{
+  "source": "route Contract\nmetadata region=\"Sample region\"\nstart Entrance\nrappel pitch height=12m rope=24m anchor=bolts\nnote \"Check conditions\"\nexit Finish",
+  "model": {
+    "name": "Contract",
+    "metadata": {},
+    "extensions": {
+      "region": "Sample region"
+    },
+    "elements": [
+      {
+        "type": "start",
+        "id": "S1",
+        "label": "Entrance",
+        "attributes": {},
+        "extensions": {},
+        "sourceLocation": {
+          "line": 3,
+          "column": 1
+        }
+      },
+      {
+        "type": "rappel",
+        "id": "pitch",
+        "label": null,
+        "attributes": {
+          "height": {
+            "value": 12,
+            "unit": "m",
+            "meters": 12
+          },
+          "rope": {
+            "value": 24,
+            "unit": "m",
+            "meters": 24
+          },
+          "anchor": "bolts"
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 4,
+          "column": 1
+        }
+      },
+      {
+        "type": "note",
+        "id": "N1",
+        "label": null,
+        "attributes": {},
+        "extensions": {
+          "text": "Check conditions"
+        },
+        "sourceLocation": {
+          "line": 5,
+          "column": 1
+        }
+      },
+      {
+        "type": "exit",
+        "id": "E1",
+        "label": "Finish",
+        "attributes": {},
+        "extensions": {},
+        "sourceLocation": {
+          "line": 6,
+          "column": 1
+        }
+      }
+    ],
+    "traversal": {
+      "points": [
+        {
+          "elementIndex": 0
+        },
+        {
+          "elementIndex": 1
+        },
+        {
+          "elementIndex": 3
+        }
+      ],
+      "segments": [
+        {
+          "from": 0,
+          "to": 1,
+          "elementIndex": null,
+          "kind": "connection",
+          "direction": null,
+          "verticalDeltaMeters": 0
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "elementIndex": 1,
+          "kind": "technical",
+          "direction": "down",
+          "verticalDeltaMeters": -12
+        }
+      ],
+      "annotations": [
+        {
+          "elementIndex": 2,
+          "pointIndex": 2
+        }
+      ]
+    },
+    "summary": {
+      "numberOfRappels": 1,
+      "numberOfHazards": 0,
+      "highestRappelMeters": 12,
+      "requiredRopeMeters": 24,
+      "totalDistanceMeters": 0,
+      "entranceElevationMeters": null,
+      "exitElevationMeters": null,
+      "totalElevationChangeMeters": 0
+    }
+  }
+}
