@@ -1,8 +1,8 @@
 import { elementAttribute } from "./route-data.js";
 const DEFAULT_PROFILE = "federation";
 
-const SYMBOL_PROFILES = {
-  federation: {
+const SYMBOL_PROFILES = Object.freeze({
+  federation: Object.freeze({
     start: "IN",
     exit: "OUT",
     walk: "M",
@@ -12,8 +12,8 @@ const SYMBOL_PROFILES = {
     pool: "V",
     hazard: "!",
     note: "i"
-  },
-  french: {
+  }),
+  french: Object.freeze({
     start: "DEP",
     exit: "SORT",
     walk: "M",
@@ -23,8 +23,8 @@ const SYMBOL_PROFILES = {
     pool: "V",
     hazard: "!",
     note: "i"
-  },
-  spanish: {
+  }),
+  spanish: Object.freeze({
     start: "INI",
     exit: "FIN",
     walk: "A",
@@ -34,8 +34,8 @@ const SYMBOL_PROFILES = {
     pool: "P",
     hazard: "!",
     note: "i"
-  }
-};
+  })
+});
 
 const SNAKE_HAZARD_TYPES = new Set([
   "snake",
@@ -49,7 +49,7 @@ const SNAKE_HAZARD_TYPES = new Set([
 ]);
 
 export function resolveSymbolProfile(profileName = DEFAULT_PROFILE) {
-  return SYMBOL_PROFILES[profileName] ?? SYMBOL_PROFILES[DEFAULT_PROFILE];
+  return Object.hasOwn(SYMBOL_PROFILES, profileName) ? SYMBOL_PROFILES[profileName] : SYMBOL_PROFILES[DEFAULT_PROFILE];
 }
 
 export function symbolCode(element, profileName = DEFAULT_PROFILE) {
@@ -58,7 +58,7 @@ export function symbolCode(element, profileName = DEFAULT_PROFILE) {
   }
 
   const profile = resolveSymbolProfile(profileName);
-  return profile[element.type] ?? fallbackSymbolCode(element);
+  return Object.hasOwn(profile, element.type) ? profile[element.type] : fallbackSymbolCode(element);
 }
 
 export function isSnakeHazard(element) {

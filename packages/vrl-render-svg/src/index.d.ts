@@ -17,8 +17,9 @@ export interface RenderOptions {
 }
 /** Caller-built layouts may omit points and use nodes as the terrain path. */
 export type RenderLayout = Omit<RouteLayout, "points" | "spine"> & { points?: LayoutPoint[]; spine?: RouteLayout["spine"] };
-export const LIGHT_THEME: Theme;
-export const DARK_THEME: Theme;
+/** Shared frozen defaults; use resolveTheme/themeTokens for per-call customization. */
+export const LIGHT_THEME: Readonly<Theme>;
+export const DARK_THEME: Readonly<Theme>;
 export function resolveTheme(theme?: "light" | "dark", overrides?: Partial<Theme>): Theme;
 /** Stable SVG facade. Throws for invalid layouts, options, paint or XML characters. */
 export function renderTopoSvg(route: RouteView, layout: RenderLayout, options?: RenderOptions): string;
@@ -31,20 +32,22 @@ export function formatElementTitle(element: ElementView, language?: string): str
 /** null is not a supported measurement argument. */
 export function formatMeasurement(measurement: Measurement | string | number | undefined): string;
 export interface DiagramText {
-  routeSummary: string; schematicDescription: string; topo: string; noData: string; difficulty: string;
-  elevationChange: string; region: string; country: string; anchor: string; anchors: string;
-  exposure: string; flow: string; hazardSeverity: string; inclination: string; inclinationDescription: string;
-  landing: string; severity: string; legendTitle: string; legendRappel: string; legendTechnical: string;
-  redirectionAnchor: string; ropeStages: string; snakeHazard: string; sideLeft: string; sideRight: string;
-  elements: Record<ElementType, string>; values: Record<string, string>;
+  readonly routeSummary: string; readonly schematicDescription: string; readonly topo: string; readonly noData: string; readonly difficulty: string;
+  readonly elevationChange: string; readonly region: string; readonly country: string; readonly anchor: string; readonly anchors: string;
+  readonly exposure: string; readonly flow: string; readonly hazardSeverity: string; readonly inclination: string; readonly inclinationDescription: string;
+  readonly landing: string; readonly severity: string; readonly legendTitle: string; readonly legendRappel: string; readonly legendTechnical: string;
+  readonly redirectionAnchor: string; readonly ropeStages: string; readonly snakeHazard: string; readonly sideLeft: string; readonly sideRight: string;
+  readonly elements: Readonly<Record<ElementType, string>>; readonly values: Readonly<Record<string, string>>;
 }
+/** Returns shared frozen text, including nested elements and values dictionaries. */
 export function diagramText(language?: string): DiagramText;
 export function elementLabel(elementType: string, language?: string): string;
 export function localizeDetailValue<T>(value: T, language?: string): T extends string ? string : T;
 export function resolveDiagramLanguage(language?: unknown): "en" | "es";
 export type SymbolKind = "standard" | "snake" | "hazard";
 export function isSnakeHazard(element: ElementView): boolean;
-export function resolveSymbolProfile(profileName?: string): Record<ElementType, string>;
+/** Returns a shared frozen profile; unknown names use federation. */
+export function resolveSymbolProfile(profileName?: string): Readonly<Record<ElementType, string>>;
 export function symbolCode(element: ElementView, profileName?: string): string;
 export function symbolKind(element: ElementView): SymbolKind;
 export function anchorMarkCount(element: ElementView): number;

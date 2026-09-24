@@ -1,7 +1,7 @@
 import { assertOptionsRecord } from "@subvertic/core";
 import { validatePaint } from "./paint.js";
 
-export const LIGHT_THEME = {
+export const LIGHT_THEME = Object.freeze({
   background: "#e8f2f2",
   terrain: "#d8d1bb",
   text: "#111111",
@@ -24,9 +24,9 @@ export const LIGHT_THEME = {
   inclinationBadgeText: "#111111",
   levelBadge: "#4b5563",
   levelBadgeText: "#ffffff"
-};
+});
 
-export const DARK_THEME = {
+export const DARK_THEME = Object.freeze({
   background: "#14171a",
   terrain: "#2e3129",
   text: "#eef2f5",
@@ -49,7 +49,7 @@ export const DARK_THEME = {
   inclinationBadgeText: "#111111",
   levelBadge: "#d7dde3",
   levelBadgeText: "#111111"
-};
+});
 
 export function resolveTheme(theme = "light", overrides = {}) {
   if (theme !== "light" && theme !== "dark") throw new TypeError("Theme must be light or dark.");
