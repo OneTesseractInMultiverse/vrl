@@ -75,7 +75,7 @@ const layout = computeVerticalLayout(model);
 const json = exportRouteJson(model);
 ```
 
-Use `createRouteCompiler(overrides)` when an application needs to inject custom parser, validator, layout, normalization, or JSON export ports for tests or integration.
+Use `createRouteCompiler(overrides)` when an application needs to inject custom parser, validator, layout, normalization, or JSON export ports for tests or integration. Ports are synchronous functions; wiring is captured when the compiler is created. Malformed adapter results throw a port-specific `TypeError` before subsequent stages; adapter exceptions propagate unchanged. `compileRouteWithDependencies(source, options, dependencies)` requires explicit ports except for its legacy default geometry validator. See the [compiler contracts](compiler-ports.md) for result shapes, failure ordering, compatibility, and examples.
 
 ### Lexical tokens and syntax failures
 

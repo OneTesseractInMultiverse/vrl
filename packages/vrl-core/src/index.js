@@ -1,9 +1,9 @@
 export {
   compileRoute,
   compileRouteWithDependencies,
-  createRouteCompiler,
-  exportRouteJson
-} from "./application/compile-route.js";
+  createRouteCompiler
+} from "./composition/route-compiler.js";
+export { exportRouteJson } from "./adapters/json/export-route-json.js";
 export { createDiagnostic, formatDiagnostic, hasBlockingDiagnostics } from "./domain/diagnostics.js";
 export { isInclinationField, normalizeInclinationValue, parseInclinationToken } from "./domain/inclinations.js";
 export {
