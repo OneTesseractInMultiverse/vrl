@@ -25,7 +25,7 @@ export function inspectTestPolicy(source, filename) {
     else if (!isDirectAssertion(contained[0], callback, parents)) violations.push(`${line}: assertion must be a direct test-body expression, not conditional, looped, or delegated`);
   }
   for (const call of assertionCalls) if (!owned.has(call)) violations.push(`${filename}:${call.loc.start.line}: assertion outside a test callback`);
-  if (filename.endsWith(".test.js") && registrations.length === 0) violations.push(`${filename}: no supported node:test registrations`);
+  if (/\.test\.m?js$/.test(filename) && registrations.length === 0) violations.push(`${filename}: no supported node:test registrations`);
   return { tests: registrations.length, violations };
 }
 

@@ -17,6 +17,10 @@ Run `npm run check:types` for consumer success/failure examples and `npm run che
 
 ## Behavioral verification
 
-Register every new test file in `scripts/testing/test-suites.mjs` under its primary domain, parsing, compilation, layout, serialization, adapter, or tooling responsibility. `npm run check:tests` verifies the inventory and parses test callbacks to enforce one direct strict assertion per test; helpers return observations instead of asserting. Keep the regression with each defect fix and state the expected result or precise failure, including suppressed downstream effects where relevant.
+Register every new workspace test file in `scripts/testing/test-suites.mjs` under its primary domain, parsing, compilation, layout, serialization, adapter, or tooling responsibility. `npm run check:tests` verifies the inventory and parses test callbacks to enforce one direct strict assertion per test; helpers return observations instead of asserting. Keep the regression with each defect fix and state the expected result or precise failure, including suppressed downstream effects where relevant.
 
 Use `npm test -- --suite layout` for focused work and `make check` before opening a PR. The full gate retains 100% configured JavaScript coverage and separately runs selected mutation probes. Generated failures carry replay seeds, case indexes, and source; preserve a reduced named regression when one exposes a defect. See [the testing guide](testing.md) for the invariant matrix, seed controls, mutation workflow, and verification limits.
+
+## Framework consumers
+
+Keep framework test dependencies and HTTP/browser effects in the isolated consuming applications, outside domain and application packages. Add adapter success, update and precise failure cases under `integration/consumer`; its `.test.mjs` files follow the same single-assert convention but run through the [separate compatibility matrix](framework-compatibility.md). Update locked profiles and documentation together, and verify strict peer installation plus production build/SSR/hydration whenever a framework or package export changes.

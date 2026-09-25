@@ -4,3 +4,4 @@ coverage/
 .npm-cache/
 npm-debug.log*
 .idea/
+.consumers/

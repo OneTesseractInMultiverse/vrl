@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Add locked, isolated framework consumers of all six packed packages. Verify React 18/19 and Svelte 4/5 with SvelteKit production builds, SSR, browser hydration, updates, asynchronous loads and precise failure output.
+- Exercise the declared Node 20.0.0 package floor and current LTS/current runtimes with strict peers and engines. Reject unsupported framework peers and invalid package entries; retain the separate workspace quality gate and JavaScript coverage target.
+- Document the exact compatibility matrix, setup versus offline execution, verification limits and fixture maintenance. Keep browser/build tooling outside published runtime packages.
+
 - Separate raw syntax factories, strict normalization, token conversion, field assessments, relationship policies, type/identity allocation, and route summaries. Domain normalization depends only on domain computations; syntax factories remain at the application boundary.
 - Normalize only valid applicable known fields into `metadata`/`attributes`; preserve other strings in separate route/element `extensions` maps. This is a model/JSON path change for descriptive data, with documented migration and renderer compatibility for older supplied models.
 - Reject malformed raw normalization inputs and invalid/missing known fields instead of retaining invalid tokens. Share invariant policies with source validation, preserve warning-only cases and physical traversal, and detach normalized values/source points from input records.

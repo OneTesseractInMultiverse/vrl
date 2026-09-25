@@ -46,7 +46,9 @@
     "check:types": "tsc -p tests/types/tsconfig.json",
     "check:packed": "node scripts/check-packed-types.mjs",
     "check:tests": "node scripts/check-tests.mjs",
-    "check:mutations": "node scripts/check-mutations.mjs"
+    "check:mutations": "node scripts/check-mutations.mjs",
+    "prepare:consumers": "node scripts/prepare-consumers.mjs",
+    "check:consumers": "node scripts/check-consumers.mjs"
   },
   "engines": {
     "node": ">=25.0.0"
