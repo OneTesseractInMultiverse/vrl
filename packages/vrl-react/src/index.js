@@ -1,4 +1,4 @@
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";
@@ -20,10 +20,14 @@ export function createVrlDiagramComponent(React, defaults = {}) {
     className = defaults.className ?? DEFAULT_CLASS_NAME,
     diagnosticsClassName = defaults.diagnosticsClassName ?? DEFAULT_DIAGNOSTICS_CLASS_NAME,
     role = defaults.role ?? DEFAULT_ROLE,
+    showWarnings = defaults.showWarnings,
+    warningsClassName = defaults.warningsClassName ?? "vrl-diagram__warnings",
+    warningsLabel = defaults.warningsLabel ?? "Route warnings",
     containerProps = {},
     diagnosticsProps = {}
   } = {}) {
     const state = diagram ?? createVrlReactDiagramState(source, options);
+    const warnings = diagramWarningText(state, showWarnings);
 
     if (state.ok === false) {
       return React.createElement(
@@ -36,7 +40,7 @@ export function createVrlDiagramComponent(React, defaults = {}) {
       );
     }
 
-    return React.createElement(
+    const image = React.createElement(
       "div",
       {
         ...containerProps,
@@ -46,6 +50,17 @@ export function createVrlDiagramComponent(React, defaults = {}) {
           __html: state.svg
         }
       }
+    );
+    if (warnings === "") return image;
+    return React.createElement("div", {}, image,
+      React.createElement("pre", {
+        className: warningsClassName,
+        role: "status",
+        "aria-live": "polite",
+        "aria-atomic": "true",
+        "aria-label": warningsLabel,
+        style: { whiteSpace: "pre-wrap", overflowWrap: "anywhere" }
+      }, warnings)
     );
   };
 }

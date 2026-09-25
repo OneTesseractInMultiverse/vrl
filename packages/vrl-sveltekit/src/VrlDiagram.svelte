@@ -9,8 +9,11 @@
   export let className = "vrl-diagram";
   export let diagnosticsClassName = "vrl-diagram__diagnostics";
   export let role = "img";
+  export let showWarnings = true;
+  export let warningsClassName = "vrl-diagram__warnings";
+  export let warningsLabel = "Route warnings";
 
   $: resolvedDiagram = diagram ?? data[diagramKey] ?? null;
 </script>
 
-<VrlDiagram {source} {options} diagram={resolvedDiagram} {className} {diagnosticsClassName} {role} />
+<VrlDiagram {source} {options} diagram={resolvedDiagram} {className} {diagnosticsClassName} {role} {showWarnings} {warningsClassName} {warningsLabel} />

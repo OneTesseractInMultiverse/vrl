@@ -432,6 +432,12 @@ The synchronous result is `{ ok, ast, diagnostics, diagnosticsText, model, layou
 
 All three existing adapter factories delegate to this operation and preserve their signatures and complete state shape. Source/options changes take effect on the next call. Pass the result as a precomputed `diagram` when a parent/server owns state creation. See the [shared state contract](diagram-state.md) for ownership, failure ordering, compatibility, and packaging; the [precomputed-state trust boundary](#precomputed-diagram-trust-boundary) also applies.
 
+### Successful-state warnings
+
+`diagramWarningText(diagram, showWarnings = true)` returns core-formatted warning text in diagnostic order for successful state. Failed state, intentional suppression, or no warnings returns `""`. The function is pure and does not invoke compilation/rendering. Invalid nonboolean flags throw `TypeError`. It accepts legacy supplied states with absent/null diagnostics.
+
+React, Svelte, SvelteKit, and `renderVrlSvelteMarkup` display an accompanying warning panel by default. Adapter props `showWarnings`, `warningsClassName`, and `warningsLabel` control its visibility, CSS class, and accessible name. For markup, use the third `renderOptions` argument. These settings do not belong in compiler/renderer `options`. State remains complete when the panel is hidden. See the [warning presentation policy](warning-presentation.md) for defaults, escaping, accessibility, and the added wrapper on warning-only success.
+
 ## @subvertic/react
 
 Install:
@@ -471,6 +477,9 @@ Component props:
   diagram,
   className,
   diagnosticsClassName,
+  showWarnings,
+  warningsClassName,
+  warningsLabel,
   role,
   containerProps,
   diagnosticsProps
@@ -525,6 +534,9 @@ Component props:
   diagram,
   className,
   diagnosticsClassName,
+  showWarnings,
+  warningsClassName,
+  warningsLabel,
   role
 }
 ```

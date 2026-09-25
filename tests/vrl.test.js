@@ -1527,17 +1527,17 @@ test("React adapter renders diagnostics", () => {
 
 test("React adapter applies container props", () => {
   const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
-  assert.equal(Component({ source: VALID_SOURCE, containerProps: { id: "route" } }).props.id, "route");
+  assert.equal(Component({ source: VALID_SOURCE, containerProps: { id: "route" } }).child.props.id, "route");
 });
 
 test("React adapter applies custom class names", () => {
   const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
-  assert.equal(Component({ source: VALID_SOURCE, className: "custom-route" }).props.className, "custom-route");
+  assert.equal(Component({ source: VALID_SOURCE, className: "custom-route" }).child.props.className, "custom-route");
 });
 
 test("React adapter applies custom roles", () => {
   const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
-  assert.equal(Component({ source: VALID_SOURCE, role: "presentation" }).props.role, "presentation");
+  assert.equal(Component({ source: VALID_SOURCE, role: "presentation" }).child.props.role, "presentation");
 });
 
 test("React adapter applies diagnostics props", () => {
@@ -1558,7 +1558,7 @@ test("React adapter supports default source", () => {
 test("React adapter supports injected diagram state", () => {
   const Component = createVrlDiagramComponent({ createElement: (type, props, child) => ({ type, props, child }) });
   const state = createVrlReactDiagramState(VALID_SOURCE);
-  assert.equal(Component({ diagram: state }).props.dangerouslySetInnerHTML.__html, state.svg);
+  assert.equal(Component({ diagram: state }).child.props.dangerouslySetInnerHTML.__html, state.svg);
 });
 
 test("createVrlSvelteDiagramState renders valid SVG", () => {

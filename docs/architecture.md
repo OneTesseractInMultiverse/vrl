@@ -32,7 +32,7 @@ Framework state factories propagate configuration exceptions. Precomputed `diagr
 
 Tests parse generated SVG with a strict independent XML parser to check structure and injection resistance, alongside accepted-value and failure tests. That parser is a root development dependency only. The published core and renderer retain zero third-party runtime dependencies.
 
-Framework adapters are intentionally thin. They accept framework-specific inputs, delegate state creation to the shared diagram application, and render either diagnostics or SVG markup. This makes React, Svelte, SvelteKit, Angular, CLI tools, static site generators, and future applications replaceable adapters.
+Framework adapters are intentionally thin. They accept framework-specific inputs, delegate state creation to the shared diagram application, and render blocking diagnostics or successful SVG with optional accompanying warnings. This makes React, Svelte, SvelteKit, Angular, CLI tools, static site generators, and future applications replaceable adapters.
 
 ## Main Modules
 
@@ -103,7 +103,7 @@ Renderer dependency tests also enforce the scene/serialization boundary: computa
 
 `vrl-diagram/src/application/create-diagram-state.js` coordinates supplied synchronous compiler/render ports; `application/diagram-state.js` projects their result and formats diagnostic text using core's domain formatter. `composition/diagram-state.js` wires the concrete compiler and SVG renderer. Framework packages keep their existing named state factories as delegators. React retains element/prop creation, Svelte retains markup/reactivity/encoding, and SvelteKit retains asynchronous input resolution and data-key/component behavior. Source errors skip rendering, warnings preserve successful output, and exceptions propagate. No framework dependency enters core, renderer, or the new package. See the [shared state contract](diagram-state.md).
 
-Dependency tests prevent diagram application code from importing concrete compiler/renderer or framework implementations and prevent adapters from rebuilding the compiler/render pipeline. Only composition wires the implementations. Svelte's markup helper may still import the renderer's XML encoder for its wrapper and diagnostics.
+Dependency tests prevent diagram application code from importing concrete compiler/renderer or framework implementations and prevent adapters from rebuilding the compiler/render pipeline. Only composition wires the implementations. The separate pure `application/diagram-warnings.js` computation selects warning text using core's formatter; it cannot import compilation or rendering functions. All HTML structure, attributes, escaping, and framework calls stay in adapters. Display suppression never alters compiler diagnostics. See the [warning policy](warning-presentation.md). Svelte's markup helper may still import the renderer's XML encoder for its wrapper and diagnostics.
 
 Public type declarations describe the package boundary without adding runtime imports or moving invariant ownership. Domain and application contracts remain in core; presentation types depend inward on core, shared diagram types combine core/render options, and framework props depend on the shared diagram contract. TypeScript, framework peer types, and packed-consumer tooling are development checks only. See [public contract revisions and stability classes](public-contracts.md).
 
