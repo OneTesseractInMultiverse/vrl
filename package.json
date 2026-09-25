@@ -35,16 +35,18 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "node --test tests/*.test.js",
-    "coverage": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100 --test-coverage-include='packages/**/*.js' tests/*.test.js",
-    "check": "npm run check:types && npm run coverage && npm run pack:dry-run && npm run check:packed",
+    "test": "node scripts/run-tests.mjs",
+    "coverage": "node scripts/run-tests.mjs --coverage",
+    "check": "npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
     "example": "node scripts/render-example.mjs",
     "example:svg": "node scripts/render-example.mjs docs/assets/quebrada-gata.svg",
     "pack:dry-run": "npm pack --workspaces --dry-run",
     "publish:dry-run": "npm run pack:dry-run",
     "release:publish": "node scripts/publish-workspaces.mjs",
     "check:types": "tsc -p tests/types/tsconfig.json",
-    "check:packed": "node scripts/check-packed-types.mjs"
+    "check:packed": "node scripts/check-packed-types.mjs",
+    "check:tests": "node scripts/check-tests.mjs",
+    "check:mutations": "node scripts/check-mutations.mjs"
   },
   "engines": {
     "node": ">=25.0.0"
@@ -53,6 +55,7 @@
   "devDependencies": {
     "@types/react": "18.3.28",
     "@xmldom/xmldom": "0.9.12",
+    "acorn": "8.18.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "svelte": "4.2.20",

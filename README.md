@@ -60,6 +60,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [Language reference](docs/language-reference.md)
 - [Architecture](docs/architecture.md)
 - [Rendering scenes and badge semantics](docs/rendering-scene.md)
+- [Behavioral verification and test replay](docs/testing.md)
 - [Shared diagram-state contract](docs/diagram-state.md)
 - [Warning presentation and display settings](docs/warning-presentation.md)
 - [Source provenance and diagnostic codes](docs/diagnostics.md)
@@ -108,7 +109,7 @@ make release-prepare
 make publish
 ```
 
-`make check` runs the 100 percent coverage gate and npm package dry-run checks. `make run` renders the example VRL document locally.
+`make check` runs test-policy and type checks, behavioral suites with 100 percent configured JavaScript coverage, selected mutation probes, package dry runs, and an isolated packed consumer. `make run` renders the example VRL document locally.
 
 `make release-prepare` updates workspace versions and internal dependency pins before a GitHub release. The publish workflow runs `make publish-ci`, which publishes the committed version through npm Trusted Publishers without an `NPM_TOKEN` secret. `make publish` remains available for local manual publishing in dependency order. Use `make publish VERSION=0.2.0`, `make publish RELEASE=minor`, or `make publish OTP=123456` when needed. If npm returns `E403` saying two-factor authentication is required during a local publish, generate a fresh npm one-time password and rerun `make publish OTP=123456`.
 
@@ -222,7 +223,7 @@ Pipeline: VRL source -> parser -> AST plus diagnostics -> validator -> normalize
 
 ## Testing Strategy
 
-Tests use Node's built-in test runner and coverage thresholds. Test cases are self-contained and do not require network access, browsers, databases, secrets, or local configuration. Each test function contains exactly one assertion. Documentation route snippets are validated through the same parser and compiler path used by library consumers.
+Tests use Node's built-in test runner and coverage thresholds, organized into executable domain, parsing, compilation, layout, serialization, adapter, and tooling suites. Seeded cases check observable invariants and precise failures; selected mutations verify that those assertions detect broken behavior. See [behavioral verification](docs/testing.md) for suite selection, replay commands, oracles, and limits. Test cases are self-contained and do not require network access, browsers, databases, secrets, or local configuration. Each test function contains exactly one assertion. Documentation route snippets are validated through the same parser and compiler path used by library consumers.
 
 Run:
 

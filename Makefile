@@ -10,7 +10,7 @@ help:
 	@printf '  %-18s %s\n' 'make ci' 'Install from package-lock.json'
 	@printf '  %-18s %s\n' 'make test' 'Run unit tests'
 	@printf '  %-18s %s\n' 'make coverage' 'Run tests with 100% coverage thresholds'
-	@printf '  %-18s %s\n' 'make check' 'Run type, coverage, package, and isolated consumer checks'
+	@printf '  %-18s %s\n' 'make check' 'Run behavioral, mutation, type, coverage, and package checks'
 	@printf '  %-18s %s\n' 'make run' 'Run local example renderer'
 	@printf '  %-18s %s\n' 'make render-assets' 'Regenerate checked-in documentation SVG assets'
 	@printf '  %-18s %s\n' 'make pack-dry-run' 'Inspect npm package contents without writing tarballs'
