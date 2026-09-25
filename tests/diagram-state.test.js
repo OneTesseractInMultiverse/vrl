@@ -158,17 +158,17 @@ test("state projection retains diagnostic order, codes, and source ranges", () =
 });
 
 for (const [name, source] of CASES.slice(0, 3)) {
-  test(`React renders the complete ${name} state through its own container`, () => {
+  test(`React renders the complete ${name} state with the warning panel disabled`, () => {
     const Component = createVrlDiagramComponent(React);
     const state = expectedState(source);
-    assert.deepEqual(Component({ source }), state.ok
+    assert.deepEqual(Component({ source, showWarnings: false }), state.ok
       ? { type: "div", props: { className: "vrl-diagram", role: "img", dangerouslySetInnerHTML: { __html: state.svg } }, child: undefined }
       : { type: "pre", props: { className: "vrl-diagram__diagnostics" }, child: state.diagnosticsText });
   });
 
-  test(`Svelte markup preserves the complete ${name} diagram content`, () => {
+  test(`Svelte markup preserves the complete ${name} diagram with the warning panel disabled`, () => {
     const state = expectedState(source);
-    const document = documentFor(renderVrlSvelteMarkup(source));
+    const document = documentFor(renderVrlSvelteMarkup(source, {}, { showWarnings: false }));
     const root = document.documentElement;
     assert.deepEqual([root.tagName, root.getAttribute("class"), root.getAttribute("role"), state.ok ? root.getElementsByTagName("svg")[0].toString() : root.textContent],
       state.ok ? ["div", "vrl-diagram", "img", documentFor(state.svg).documentElement.toString()] : ["pre", "vrl-diagram__diagnostics", null, state.diagnosticsText]);
@@ -176,7 +176,7 @@ for (const [name, source] of CASES.slice(0, 3)) {
 }
 
 test("React recomputes when source/options change and uses defaults when omitted", () => {
-  const Component = createVrlDiagramComponent(React, { source: VALID, options: { language: "es" } });
+  const Component = createVrlDiagramComponent(React, { source: VALID, options: { language: "es" }, showWarnings: false });
   assert.deepEqual([Component().props.dangerouslySetInnerHTML.__html, Component({ source: WARNING, options: { language: "en" } }).props.dangerouslySetInnerHTML.__html], [expectedState(VALID, { language: "es" }).svg, expectedState(WARNING).svg]);
 });
 

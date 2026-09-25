@@ -53,6 +53,8 @@
   "devDependencies": {
     "@types/react": "18.3.28",
     "@xmldom/xmldom": "0.9.12",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "svelte": "4.2.20",
     "typescript": "7.0.2"
   }

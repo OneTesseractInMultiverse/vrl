@@ -42,6 +42,8 @@ For API-backed routes, load the source string in the parent component and pass i
   options={{ language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
   className="route-diagram"
   diagnosticsClassName="route-diagram-diagnostics"
+  showWarnings={true}
+  warningsLabel="Avisos de la ruta"
   role="img"
   containerProps={{ "data-route": "quebrada-gata" }}
   diagnosticsProps={{ "aria-live": "polite" }}
@@ -49,3 +51,7 @@ For API-backed routes, load the source string in the parent component and pass i
 ```
 
 `options` are passed to both the compiler/layout and SVG renderer. Compiler layout options live under `options.layout` and include `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`; renderer options include top-level `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens`. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+
+## Successful-state warnings
+
+Successful diagrams show a warning panel by default. `showWarnings` defaults to `true`; set it to `false` when the application supplies its own warning presentation. `warningsClassName` defaults to `"vrl-diagram__warnings"` and `warningsLabel` to `"Route warnings"`. These are display props, not compiler/renderer options. Diagnostics remain in state, and errors still suppress SVG. The warning panel is a sibling of the image, adding an outer wrapper only when warnings are visible. See the [warning presentation policy](warning-presentation.md) for accessibility, localization, and CSS migration details.

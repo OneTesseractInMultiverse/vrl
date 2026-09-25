@@ -61,6 +61,8 @@ for (const [file, source] of [
   ["vrl-diagram/src/application/create-diagram-state.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
   ["vrl-diagram/src/application/create-diagram-state.js", 'import { createDiagramState } from "../composition/diagram-state.js";'],
   ["vrl-diagram/src/application/diagram-state.js", 'import { compileRoute } from "@subvertic/core";'],
+  ["vrl-diagram/src/application/diagram-warnings.js", 'import { compileRoute } from "@subvertic/core";'],
+  ["vrl-diagram/src/application/diagram-warnings.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
   ["vrl-diagram/src/composition/diagram-state.js", 'import React from "react";'],
   ["vrl-diagram/src/composition/diagram-state.js", 'import { createVrlSvelteDiagramState } from "@subvertic/svelte";'],
   ["vrl-diagram/src/application/diagram-state.js", 'import { formatDiagnostic } from "../../../vrl-core/src/domain/diagnostics.js";'],

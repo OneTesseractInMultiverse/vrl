@@ -1,6 +1,6 @@
 # @subvertic/svelte
 
-Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
+Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Existing runtime entry points and serialized diagram state are unchanged; successful components now show warnings by default.
 
 Svelte adapter for Vertical Route Language.
 
@@ -49,6 +49,9 @@ const html = renderVrlSvelteMarkup("", {}, { diagram });
   diagram: object | null,
   className: string,
   diagnosticsClassName: string,
+  showWarnings: boolean,
+  warningsClassName: string,
+  warningsLabel: string,
   role: string
 }
 ```
@@ -74,6 +77,10 @@ const html = renderVrlSvelteMarkup(
 ```
 
 Invalid source renders escaped diagnostics in a `<pre>` block. Valid source renders the SVG inside an escaped wrapper `<div>`.
+
+## Successful-state warnings
+
+Successful diagrams show a warning panel by default. `showWarnings` defaults to `true`; set it to `false` when the application supplies its own warning presentation. `warningsClassName` defaults to `"vrl-diagram__warnings"` and `warningsLabel` to `"Route warnings"`. These are display props, not compiler/renderer options. Diagnostics remain in state, and errors still suppress SVG. The warning panel is a sibling of the image, adding an outer wrapper only when warnings are visible. See the [warning presentation policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/warning-presentation.md) for accessibility, localization, and CSS migration details.
 
 ## License
 

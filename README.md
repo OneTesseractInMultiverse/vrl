@@ -61,6 +61,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [Architecture](docs/architecture.md)
 - [Rendering scenes and badge semantics](docs/rendering-scene.md)
 - [Shared diagram-state contract](docs/diagram-state.md)
+- [Warning presentation and display settings](docs/warning-presentation.md)
 - [Source provenance and diagnostic codes](docs/diagnostics.md)
 - [Symbology](docs/symbology.md)
 - [React usage](docs/react.md)
@@ -150,6 +151,7 @@ Element identifiers are case-sensitive and unique across all element types in on
 
 `@subvertic/diagram` exports:
 
+- `diagramWarningText(diagram, showWarnings)` for ordered, nonblocking warning text without changing state. Framework adapters show a warning panel by default; see the [display policy](docs/warning-presentation.md).
 - `createDiagramState(source, options)` for the shared `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` state without framework peers. Warning-only results render SVG; blocking diagnostics skip rendering. Existing adapter factories delegate to this operation. See the [state contract](docs/diagram-state.md).
 
 `@subvertic/react` exports:

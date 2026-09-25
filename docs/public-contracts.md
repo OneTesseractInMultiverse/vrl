@@ -10,12 +10,12 @@ VRL publishes ESM JavaScript with bundled TypeScript declarations for all six pa
 | --- | --- | --- |
 | Core | `compileRoute`, `parseVrl`, `validateRoute`, `normalizeRoute`, `computeVerticalLayout`, `exportRouteJson`, diagnostic construction/formatting/blocking checks | Compiler composition/overrides, individual element/token helpers, traversal and geometry helpers, numerical guards |
 | SVG | `renderTopoSvg`, `resolveTheme`, `LIGHT_THEME`, `DARK_THEME`, `escapeXml` | `computeTopoScene`, presentation calculations, localization/symbol tables, individual SVG fragments and prepared drawing overrides |
-| Diagram | `createDiagramState` | None |
+| Diagram | `createDiagramState`, `diagramWarningText` | None |
 | React | Both state and component factories | None |
 | Svelte | State/markup factories and `VrlDiagram.svelte` | None |
 | SvelteKit | State/load factories and `VrlDiagram.svelte` | None |
 
-Use the facade for ordinary integrations. Advanced exports remain supported for the current package release, are typed, and have the preconditions described below; their finer details may change as the implementation evolves. Pin package versions when depending on them. Internal files under `src/` that are not package exports are not supported import paths. Runtime namespace values are unchanged; type-only imports do not create JavaScript exports.
+Use the facade for ordinary integrations. Advanced exports remain supported for the current package release, are typed, and have the preconditions described below; their finer details may change as the implementation evolves. Pin package versions when depending on them. Internal files under `src/` that are not package exports are not supported import paths. Type-only imports do not create JavaScript exports.
 
 ## Contract revisions and releases
 
@@ -57,7 +57,7 @@ Import types from the owning package root using `import type`. The declarations 
 | Core | `Diagnostic`, `BuiltinDiagnostic`, `RelatedLocation` | Error/warning severity, kind, message and positive source point; optional code/span/related locations. Built-in diagnostics include suggestion text. Custom ports may omit it and use their own kind/code strings. Use codes, not messages, for programmatic matching. |
 | Core | `CompileResult`, `CompileOptions`, `CompilerPorts`, `CompilerOverrides`, `RouteCompiler` | Discriminated success/failure, synchronous ports, finite numeric output, processing budgets. [Port contracts](compiler-ports.md) specify stage order, override defaults, errors, and ownership. |
 | SVG | `RenderOptions`, `Theme`, `RenderLayout`, `TopoScene` | Validated paint/layout inputs and advanced prepared presentation records. Optional points support historical caller-built layouts. [Scene records](rendering-scene.md) are inspection data, not persisted domain facts. |
-| Diagram | `DiagramOptions`, `DiagramState` | Combined compiler/renderer settings; a failed state has null derived values and an empty SVG. [State contracts](diagram-state.md) define precedence, escaping and caching responsibilities. |
+| Diagram | `DiagramOptions`, `DiagramState`, `WarningDisplayOptions` | Combined compiler/renderer settings; a failed state has null derived values and an empty SVG. [State contracts](diagram-state.md) define precedence, escaping and caching responsibilities; [warning display settings](warning-presentation.md) belong to adapters, not compiler/render options. |
 | Adapters | `VrlDiagramProps`, `VrlMarkupOptions`, `VrlLoadOptions`, `ReactFactory` | Framework-owned props, wrapper settings, async loader providers and the component factory port. Svelte subpaths export their typed default component. |
 
 `ElementView` and `RouteView` describe the broader inputs of low-level helpers, including historical manually supplied records. They are not evidence that a value passed domain validation. Individual token parsers return `{ ok: true, value }` or `{ ok: false, reason }`; a successfully converted token can still violate a field's semantic range. Parsed redirection side text, for example, is unrestricted until normalization.
@@ -144,9 +144,32 @@ console.log(resolveTheme("dark").terrain === DARK_THEME.terrain); // true
 
 Previously unsupported writes to shared definitions could affect subsequent consumers. They now fail; migrate any such writes to explicit options or owned copies. This enforces the earlier read-only convention without changing record fields, existing export names, valid SVG output, or revision 1 AST/model/layout/diagnostic serialization. Unknown prototype-property selectors now follow the documented unknown-name fallback. The stricter runtime and declaration behavior must be noted in the next package release.
 
+## Warning presentation and wrapper migration
+
+Successful React, Svelte, SvelteKit, and string-markup diagrams now display warning diagnostics alongside their SVG by default. `showWarnings: false` suppresses only the panel. The added optional `warningsClassName` and `warningsLabel` props control CSS and the accessible name. These UI props do not belong in compiler/renderer options or change the state/diagnostic contract.
+
+`diagramWarningText` is an additive stable export for the same pure warning selection. Custom presentations can use it or consume diagnostic records directly:
+
+```js
+import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
+import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+
+const diagram = createDiagramState('route "Short rope"\nrappel height=10m rope=5m');
+const text = diagramWarningText(diagram);
+const html = renderVrlSvelteMarkup("", {}, { diagram, warningsLabel: "Route warnings" });
+if (!diagram.ok || !text.includes("Rope length is shorter") || !html.includes('role="status"')) {
+  throw new Error("Expected nonblocking warnings beside a successful diagram");
+}
+if (diagramWarningText(diagram, false) !== "" || diagram.diagnostics.length !== 1) {
+  throw new Error("Hiding warnings must retain diagnostic data");
+}
+```
+
+Warning-only output gains an outer wrapper around the existing image and new warning panel. Image props stay on the image container. Review CSS/root-element assumptions, or disable the panel when supplying your own warning UI. Custom implementations of the structural `ReactFactory` port must accept element children as well as text for the nested panel; React itself already supports both. Clean success, failure markup, and all revision 1 state/AST/model/layout/diagnostic records remain unchanged. Schedule this display change and additive API for the next minor package release; no persisted-data migration is needed. See the [full policy and verification limits](warning-presentation.md).
+
 ## Verification and migration for contract revision 1
 
-This release introduces declarations and a documented revision baseline; runtime export names, entry points, signatures and output shapes remain unchanged. No data migration is required. TypeScript consumers should handle the `ok` union and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
+The revision baseline introduces declarations without changing persisted data shapes. Additions and display migrations are recorded above; existing entry points and state factory signatures remain available. No data migration is required. TypeScript consumers should handle the `ok` union and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 
 `make check` runs positive/negative consumer type checks, behavioral tests with coverage thresholds, package dry runs, and an isolated consumer check using actual tarballs. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 

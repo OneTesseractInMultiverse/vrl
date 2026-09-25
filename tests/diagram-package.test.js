@@ -4,8 +4,8 @@ import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import * as diagram from "@subvertic/diagram";
 
-test("the neutral diagram package exposes only its composed state factory", () => {
-  assert.deepEqual(Object.keys(diagram), ["createDiagramState"]);
+test("the neutral diagram package exposes its state factory and warning projection", () => {
+  assert.deepEqual(Object.keys(diagram), ["createDiagramState", "diagramWarningText"]);
 });
 
 test("the neutral package depends on core and SVG without framework dependencies", () => {
