@@ -13,3 +13,10 @@ Renderer changes must preserve the separation between scene computations and SVG
 ## Public contract checks
 
 Run `npm run check:types` for consumer success/failure examples and `npm run check:packed` to test the actual packages in an isolated offline consumer after `npm ci`. Both are included in `make check`. Maintain the export inventory and contract revisions described in [public contracts](public-contracts.md). Treat new declarations, nullability, units, source provenance, and override preconditions as API behavior; retain saved compatibility fixtures and explain migrations.
+
+
+## Behavioral verification
+
+Register every new test file in `scripts/testing/test-suites.mjs` under its primary domain, parsing, compilation, layout, serialization, adapter, or tooling responsibility. `npm run check:tests` verifies the inventory and parses test callbacks to enforce one direct strict assertion per test; helpers return observations instead of asserting. Keep the regression with each defect fix and state the expected result or precise failure, including suppressed downstream effects where relevant.
+
+Use `npm test -- --suite layout` for focused work and `make check` before opening a PR. The full gate retains 100% configured JavaScript coverage and separately runs selected mutation probes. Generated failures carry replay seeds, case indexes, and source; preserve a reduced named regression when one exposes a defect. See [the testing guide](testing.md) for the invariant matrix, seed controls, mutation workflow, and verification limits.
