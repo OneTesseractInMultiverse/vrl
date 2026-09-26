@@ -107,9 +107,25 @@ export interface Traversal {
 }
 export interface RouteSummary {
   numberOfRappels: number; numberOfHazards: number; highestRappelMeters: number;
-  requiredRopeMeters: number; totalDistanceMeters: number;
+  /** @deprecated Maximum declared rappel rope, or 0 when absent; not an equipment requirement. Use summarizeRouteMeasurements. */
+  requiredRopeMeters: number;
+  /** @deprecated Sum of recorded walk distances only, or 0 when absent. Use summarizeRouteMeasurements. */
+  totalDistanceMeters: number;
   entranceElevationMeters: number | null; exitElevationMeters: number | null;
   totalElevationChangeMeters: number;
+}
+/** Explicit observations from normalized records; null means no measurement supplied. */
+export interface RouteMeasurementSummary {
+  maximumDeclaredRopeMeters: number | null;
+  declaredRopeCount: number;
+  rappelCount: number;
+  summedWalkDistanceMeters: number | null;
+  measuredWalkCount: number;
+  walkCount: number;
+  declaredTotalDistanceMeters: number | null;
+  declaredTotalDescentMeters: number | null;
+  /** Entrance minus exit; positive for net descent, distinct from total descent. */
+  endpointElevationChangeMeters: number | null;
 }
 export interface RouteModel {
   name: string; metadata: CommonFields; extensions: Record<string, string>;
@@ -181,6 +197,7 @@ export function normalizeRoute(ast: RouteAst): RouteModel;
 /** Mutates supplied identifier counters; route-wide uniqueness requires normalizeRoute. */
 export function normalizeElement(element: RouteElementAst, counters?: Partial<Record<ElementType, number>>): RouteElement;
 export function summarizeRoute(elements: ElementView[], metadata?: CommonFields): RouteSummary;
+export function summarizeRouteMeasurements(elements: readonly ElementView[], metadata?: CommonFields): RouteMeasurementSummary;
 export function createTraversal(elements: ElementView[]): Traversal;
 export function validateGeometry(route: RouteView, sourceMap?: SourceMap): Diagnostic[];
 export function computeVerticalLayout(route: RouteView, options?: LayoutOptions): RouteLayout;

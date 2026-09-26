@@ -3,7 +3,7 @@ import type { ComponentProps } from "svelte";
 import {
   compileRoute, compileRouteWithDependencies, computeElevationLayout, computeVerticalLayout,
   createDiagnostic, createEmptyRoute, createRouteCompiler, createRouteElement, exportRouteJson,
-  formatDiagnostic, normalizeRoute, parseMeasurementToken, parseVrl, validateGeometry, validateRoute
+  formatDiagnostic, summarizeRouteMeasurements, normalizeRoute, parseMeasurementToken, parseVrl, validateGeometry, validateRoute
 } from "@subvertic/core";
 import type { CompilerPorts, CompileResult, RouteAst, RouteModel, RouteLayout, RouteElement, ProcessingLimits } from "@subvertic/core";
 import { computeTopoScene, dropLadderGeometry, renderTopoSvg, resolveTheme, renderNode } from "@subvertic/render-svg";
@@ -151,3 +151,16 @@ data.vrl;
 // @ts-expect-error Svelte component options retain the shared type contract.
 const badProps: ComponentProps<SvelteDiagram> = { options: { theme: "sepia" } };
 void [wrongUnit, missingRope, failedState, badProps, narrowerValidator];
+
+const observed = summarizeRouteMeasurements(model.elements as readonly RouteElement[], model.metadata);
+const ropeObservation: number | null = observed.maximumDeclaredRopeMeters;
+const walkObservation: number | null = observed.summedWalkDistanceMeters;
+const declaredDistance: number | null = observed.declaredTotalDistanceMeters;
+const measuredWalkCount: number = observed.measuredWalkCount;
+// @ts-expect-error Unknown rope observations cannot be used as a definite measurement.
+const assumedEquipment: number = observed.maximumDeclaredRopeMeters;
+// @ts-expect-error The explicit observation is not added to revision 1 model JSON.
+model.summary.maximumDeclaredRopeMeters;
+// @ts-expect-error The helper consumes normalized metric records, not raw source tokens.
+summarizeRouteMeasurements(model.elements, { total_distance: "100m" });
+void [ropeObservation, walkObservation, declaredDistance, measuredWalkCount, assumedEquipment];

@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Add `summarizeRouteMeasurements` with explicit declared rope maximum, recorded-walk sum, observation counts, declared totals and nullable unknowns. Deprecate ambiguous legacy rope/distance names while preserving all revision 1 model-summary fields and JSON.
+- Warn when a declared total distance is below recorded walk distances, using exact source-decimal comparison. Preserve both quantities; invalid fields suppress the comparison, and missing/equal/larger totals do not trigger false warnings.
+- Document aggregate provenance, partial information, net elevation versus total descent, and the next-minor compatibility policy. Add correctness/failure, packed typing, saved JSON and executable documentation checks without runtime dependencies.
+
 - Extract all tagged VRL fences in repository documentation and verify complete documents, explicit fragments and deliberate failures against reviewed model, diagnostic and physical-geometry expectations. Source fingerprints and inventory checks reject stale or missing examples.
 - Make normative budget, numeric-range, enum-context and ID-prefix tables executable checks against domain policies. Document failure examples, trust/compatibility boundaries and the explicit progression needed by the measured metadata fragment.
 - Add focused documentation checks and contributor/release guidance while preserving runtime APIs, package dependencies and the configured coverage target.

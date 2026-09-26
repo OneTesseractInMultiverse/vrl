@@ -174,3 +174,23 @@ The revision baseline introduces declarations without changing persisted data sh
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 
 Each behavioral test uses one assertion. Coverage remains a 100% target, supplemented by explicit expected facts, deliberate failures, export/declaration inventory checks, and a saved revision 1 model fixture. Changes to that fixture require a compatibility explanation, not automatic snapshot regeneration.
+
+## Explicit route measurements
+
+`summarizeRouteMeasurements(elements, metadata?)` is an additive advanced core export. `RouteMeasurementSummary` separates declared totals, observed rope/walk measurements, counts and null unknowns. Existing `RouteSummary`, model JSON and contract revision 1 remain unchanged. The new total-distance warning preserves successful compilation and both source quantities; it adds a diagnostic code without changing failure envelopes. See [summary meaning and provenance](route-summary.md) for migration from the ambiguous legacy names and the partial-total comparison policy.
+
+```ts
+import { compileRoute, summarizeRouteMeasurements } from "@subvertic/core";
+import type { RouteMeasurementSummary } from "@subvertic/core";
+
+const result = compileRoute('route Survey\nmetadata total_distance=20m\nwalk distance=25m\nwalk');
+if (!result.ok) throw new Error("Expected a nonblocking summary conflict");
+const observations: RouteMeasurementSummary = summarizeRouteMeasurements(result.model.elements, result.model.metadata);
+if (observations.declaredTotalDistanceMeters !== 20 || observations.summedWalkDistanceMeters !== 25
+    || observations.measuredWalkCount !== 1 || observations.walkCount !== 2
+    || observations.maximumDeclaredRopeMeters !== null
+    || result.diagnostics[0]?.code !== "VRL_TOTAL_DISTANCE_BELOW_WALK_SUM") {
+  throw new Error("Declared and observed quantities must remain separate");
+}
+console.log(observations);
+```

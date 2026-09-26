@@ -1,6 +1,6 @@
 /** Every test file has one primary home; cross-layer regressions stay together. */
 export const TEST_SUITES = {
-  domain: ["domain-model", "element-identifiers", "known-fields", "numeric-integrity", "invariants-domain"],
+  domain: ["domain-model", "element-identifiers", "known-fields", "numeric-integrity", "invariants-domain", "summary-semantics"],
   parsing: ["lexer", "document-grammar", "source-diagnostics", "invariants-parsing"],
   compilation: ["compiler-ports", "processing-limits", "public-contracts", "documentation-contracts", "vrl"],
   layout: ["technical-segments", "route-boundaries", "invariants-layout"],

@@ -81,6 +81,7 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_ROPE_SHORTER_THAN_HEIGHT` | Declared rope is shorter than height (warning) |
 | `VRL_REDIRECTION_OUTSIDE_HEIGHT` | Redirection at or beyond declared height |
 | `VRL_STAGE_TOTAL_MISMATCH` | Stage total differs from height (warning) |
+| `VRL_TOTAL_DISTANCE_BELOW_WALK_SUM` | Declared metadata total distance is below recorded walk distances (warning; both values preserved) |
 | `VRL_IDENTIFIER_INVALID` | Explicit identifier is not a nonblank string |
 | `VRL_IDENTIFIER_DUPLICATE` | Repeated explicit identifier |
 | `VRL_BOUNDARY_DUPLICATE` | Repeated start or exit |
@@ -100,3 +101,5 @@ The existing `createDiagnostic(kind, severity, message, location, suggestion, re
 `formatDiagnostic` preserves the existing readable format; it prints the now-accurate primary and related coordinates without requiring codes or ranges. React, Svelte, and SvelteKit expose the same structured diagnostics unchanged. Editors can read `code`/`span` directly without parsing that formatted text.
 
 This is an additive AST/diagnostic contract change. Consumers with exact property allowlists or serialized snapshots must allow `sourceMap`, `code`, diagnostic `span`, and related-location `span`. Field/identity columns are intentionally more precise than earlier statement-level locations. Source-map data remains outside model/layout/JSON route facts; see the current [normalized model contract](domain-model.md) for known fields and extensions.
+
+Distance-summary conflicts are checked only after semantic fields are valid, using exact source millionths rather than floating-point sums. The warning points to the declared total value. A larger/equal total or missing observations produce no conflict warning; neither total nor walks are rewritten. See [aggregate provenance](route-summary.md).

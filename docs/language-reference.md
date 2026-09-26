@@ -146,6 +146,10 @@ The IDs above are `R2`, `R3`. If the first rappel is unnamed and the second expl
 
 Repeated compilation of identical input produces identical IDs without random values or shared state. This is separate from persistence across edits: insertion, deletion, reordering, or new reservations can renumber generated IDs. Use explicit IDs for durable author-controlled references and preserve them when editing the same feature. VRL does not infer feature identity across documents or revisions. Previously accepted duplicate/blank IDs must be renamed or omitted, and consumers must rebuild cached models after this allocation change.
 
+## Declared Totals and Observed Measurements
+
+`metadata.total_distance` and `metadata.total_descent` remain declarations. Walk distances supply a partial sum, excluding other feature lengths. A total distance smaller than recorded walks produces `VRL_TOTAL_DISTANCE_BELOW_WALK_SUM`; neither quantity is replaced. Equality/larger totals do not establish completeness. Rappel `rope` fields remain declarations, not inferred equipment requirements. See [summary provenance, unknown states and executable examples](route-summary.md).
+
 ## Numeric Limits and Precision
 
 Source measurements use ordinary decimal notation with at most six fractional digits, including trailing zeros, and an absolute magnitude no greater than `1000000000m`. Scientific notation, nonfinite values, larger magnitudes, and extra fractional digits are rejected rather than rounded. The smallest positive source measurement is `0.000001m`. These representation limits keep the six-digit fractional grid distinguishable within JavaScript's numeric precision.

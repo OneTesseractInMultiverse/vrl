@@ -57,6 +57,7 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [Public API stability, types, and contract revisions](docs/public-contracts.md)
 - [API reference](docs/api-reference.md)
 - [AST and normalized domain contracts](docs/domain-model.md)
+- [Route summary meaning and measurement provenance](docs/route-summary.md)
 - [Language reference](docs/language-reference.md)
 - [Executable language examples](docs/language-examples.md)
 - [Documentation contract maintenance](docs/documentation-contracts.md)

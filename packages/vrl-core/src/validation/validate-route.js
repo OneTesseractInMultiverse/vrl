@@ -1,9 +1,10 @@
 import { metadataSource, sourceReference } from "../domain/source-references.js";
 import { hasRouteName } from "../domain/route-input.js";
-import { appendDiagnostics, codedDiagnostic } from "../domain/diagnostics.js";
+import { appendDiagnostics, codedDiagnostic, hasBlockingDiagnostics } from "../domain/diagnostics.js";
 import { validateFields } from "./validate-fields.js";
 import { validateFieldRelationships } from "./validate-field-relationships.js";
 import { validateElementIdentifiers } from "./validate-identifiers.js";
+import { validateRouteDistance } from "./validate-route-distance.js";
 
 export function validateRoute(ast) {
   const diagnostics = [];
@@ -15,6 +16,7 @@ export function validateRoute(ast) {
   appendDiagnostics(diagnostics, validateFieldRelationships(metadata));
   appendDiagnostics(diagnostics, validateElementIdentifiers(ast.elements, ast.sourceMap?.elements));
   ast.elements.forEach((element, index) => appendDiagnostics(diagnostics, validateElementAttributes(element, ast.sourceMap?.elements?.[index])));
+  if (!hasBlockingDiagnostics(diagnostics)) appendDiagnostics(diagnostics, validateRouteDistance(ast));
   return diagnostics;
 }
 

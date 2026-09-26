@@ -1382,5 +1382,101 @@
       }
     },
     "sha256": "0dc34f142659cf74b2c3bfd0972598dfeeaedf4244def5654dc2464f1b9e8c10"
+  },
+  "summary-distance-conflict": {
+    "kind": "document",
+    "sha256": "f2bb5ec61d86ec6085b8caf8250be09650ed6a6e87b070b6fd3ec10172493d39",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "validation",
+          "warning",
+          "VRL_TOTAL_DISTANCE_BELOW_WALK_SUM",
+          2,
+          25
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/metadata/total_distance": {
+          "value": 20,
+          "unit": "m",
+          "meters": 20
+        },
+        "/model/summary/totalDistanceMeters": 25,
+        "/model/summary/requiredRopeMeters": 10,
+        "/model/elements/2/attributes": {},
+        "/model/elements/3/attributes/traverse": {
+          "value": 8,
+          "unit": "m",
+          "meters": 8
+        }
+      },
+      "geometry": {
+        "points": [
+          "W1",
+          "W2",
+          "W3",
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -5
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
+  },
+  "summary-declared-only": {
+    "kind": "document",
+    "sha256": "d3ec9f90505042ef45c2d592613cbcd7bcde0f1d0b6706086a48084c93a2756f",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/metadata": {
+          "total_distance": {
+            "value": 900,
+            "unit": "m",
+            "meters": 900
+          },
+          "total_descent": {
+            "value": 200,
+            "unit": "m",
+            "meters": 200
+          }
+        },
+        "/model/summary/totalDistanceMeters": 0,
+        "/model/summary/requiredRopeMeters": 0,
+        "/model/elements": []
+      },
+      "geometry": {
+        "points": [],
+        "technical": [],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
   }
 }
