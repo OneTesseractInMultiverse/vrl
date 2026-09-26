@@ -34,6 +34,10 @@ Tests parse generated SVG with a strict independent XML parser to check structur
 
 Framework adapters are intentionally thin. They accept framework-specific inputs, delegate state creation to the shared diagram application, and render blocking diagnostics or successful SVG with optional accompanying warnings. This makes React, Svelte, SvelteKit, Angular, CLI tools, static site generators, and future applications replaceable adapters.
 
+## Function responsibilities
+
+Every implementation documents exactly one coordinator or computation responsibility, including private helpers and callbacks. [Internal function contracts](internal-documentation.md) describe required parameter, result, failure and ownership documentation. The structural gate stays in development tooling; it cannot prove semantic accuracy, purity or SRP. Computations own rules and transformations; coordinators sequence independently owned operations and preserve failure propagation.
+
 ## Main Modules
 
 `domain/field-specifications.js` owns immutable field applicability, requiredness, parser selection, units, ranges, list grammar, and enum vocabularies. It depends only on the shared numeric policy. `domain/field-values.js` dispatches pure token parsing and computes field-value problems; validation and normalization consume the same specification and parsers. Existing public classification/normalization helpers retain their signatures. Unknown or out-of-context categorical names remain extension text. No schema or renderer dependency enters the domain.

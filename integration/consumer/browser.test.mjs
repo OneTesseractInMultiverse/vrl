@@ -5,11 +5,32 @@ import { createDiagramState } from "@subvertic/vrl-diagram";
 import { SOURCES } from "./src/lib/cases.js";
 import { startApplication, openPage, snapshot } from "./browser-support.mjs";
 
-describe("production framework consumers", () => {
+describe("production framework consumers", /**
+ * Register isolated server/browser lifecycle hooks and cross-framework SSR, hydration, update and failure
+ * scenarios.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   let application, browser;
-  before(async () => { application = await startApplication(); browser = await chromium.launch(); });
-  after(async () => { await browser?.close(); await application?.stop(); });
+  before(/**
+   * Start the owned consumer application and browser before registering observable scenarios.
+   * @responsibility coordinator
+   * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+   */ async () => { application = await startApplication(); browser = await chromium.launch(); });
+  after(/**
+   * Close the owned browser and stop the application after the consumer suite, including partial setup
+   * failures.
+   * @responsibility coordinator
+   * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+   */ async () => { await browser?.close(); await application?.stop(); });
 
+  /**
+   * Compute the shared-state baseline for framework parity checks; independent compiler correctness is tested
+   * in the domain suites.
+   * @responsibility coordinator
+   * @param {unknown} name - Field, port, fixture or other named subject selected by the surrounding operation.
+   * @returns {Object} A record containing svg, title, warning, diagnostics.
+   */
   function expected(name) {
     const state = createDiagramState(SOURCES[name], { legend: false });
     return { svg: state.ok ? 1 : 0, title: state.ok ? `${state.model.name} topo` : null,
@@ -18,36 +39,92 @@ describe("production framework consumers", () => {
 
   for (const surface of ["react", "svelte", "sveltekit"]) {
     for (const hydrated of [false, true]) {
-      test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves soft terrain and route facts`, async (t) => {
+      test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves soft terrain and route facts`, /**
+       * Verify ${surface} ${hydrated ? "hydration" : "SSR"} preserves soft terrain and route facts; arrange the
+       * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+       * @responsibility coordinator
+       * @param {unknown} t - Test-runner context used to register fixture cleanup.
+       * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+       */ async (t) => {
         const context = await openPage(browser, application.origin, surface, "valid", hydrated, { style: "soft-terrain" });
-        t.after(() => context.close());
-        const retained = hydrated ? await context.page.evaluate(() => window.ssrImage === document.querySelector('[role="img"]')) : true;
+        t.after(/**
+         * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+         * @responsibility coordinator
+         * @returns {unknown} The result returned by context.close.
+         */ () => context.close());
+        const retained = hydrated ? await context.page.evaluate(/**
+         * Compute window.ssrImage === document.querySelector('[role="img"]').
+         * @responsibility computation
+         * @returns {boolean} The result of the documented comparison or calculation.
+         */ () => window.ssrImage === document.querySelector('[role="img"]')) : true;
         assert.deepEqual([await styleSnapshot(context.page), context.errors, retained], [
           ["Good route topo", 1, 1, 0, ["R1"], true, true], [], true
         ]);
       });
     }
-    test(`${surface} switches styles after hydration while retaining technical facts`, async (t) => {
+    test(`${surface} switches styles after hydration while retaining technical facts`, /**
+     * Verify ${surface} switches styles after hydration while retaining technical facts; arrange the scenario and
+     * make its single direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "valid", true, { style: "soft-terrain" });
-      t.after(() => context.close());
-      await context.page.evaluate(() => window.fixture.update({ options: { style: "classic", legend: false } }));
-      const classic = await context.page.evaluate(() => [
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ options: { style: "classic", legend: false } }));
+      const classic = await context.page.evaluate(/**
+       * Project the current entry into an ordered tuple for context.page.evaluate.
+       * @responsibility computation
+       * @returns {Array} The ordered records or values assembled above.
+       */ () => [
         document.querySelectorAll(".vrl-terrain-contour").length,
         document.querySelectorAll(".vrl-drop-rung").length > 0,
         document.querySelector("#diagram svg").textContent.includes("R1, 10m")
       ]);
-      await context.page.evaluate(() => window.fixture.update({ options: { style: "soft-terrain", legend: false } }));
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ options: { style: "soft-terrain", legend: false } }));
       assert.deepEqual([classic, await styleSnapshot(context.page), context.errors], [
         [0, true, true], ["Good route topo", 1, 1, 0, ["R1"], true, true], []
       ]);
     });
     for (const hydrated of [false, true]) {
-      test(`${surface} ${hydrated ? "hydration" : "SSR"} keeps same-route marker references local across themes`, async (t) => {
+      test(`${surface} ${hydrated ? "hydration" : "SSR"} keeps same-route marker references local across themes`, /**
+       * Verify ${surface} ${hydrated ? "hydration" : "SSR"} keeps same-route marker references local across themes;
+       * arrange the scenario and make its single direct assertion. Assertion and setup failures propagate to the
+       * test runner.
+       * @responsibility coordinator
+       * @param {unknown} t - Test-runner context used to register fixture cleanup.
+       * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+       */ async (t) => {
         const context = await openPage(browser, application.origin, surface, "valid", hydrated, { multiple: "true" });
-        t.after(() => context.close());
+        t.after(/**
+         * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+         * @responsibility coordinator
+         * @returns {unknown} The result returned by context.close.
+         */ () => context.close());
         const output = await markerSnapshot(context.page);
-        const retained = hydrated ? await context.page.evaluate(() =>
-          JSON.stringify(window.ssrMarkerIds) === JSON.stringify([...document.querySelectorAll("svg marker")].map(marker => marker.id)) &&
+        const retained = hydrated ? await context.page.evaluate(/**
+         * Compare marker identities and the image-wrapper DOM node with their pre-hydration observations.
+         * @responsibility computation
+         * @returns {unknown} The result of the documented comparison or calculation.
+         */ () =>
+          JSON.stringify(window.ssrMarkerIds) === JSON.stringify([...document.querySelectorAll("svg marker")].map(/**
+           * Project marker.id from the current record.
+           * @responsibility computation
+           * @param {unknown} marker - Prepared or parsed symbol/marker record.
+           * @returns {unknown} The marker.id value selected or validated above.
+           */ marker => marker.id)) &&
           window.ssrImage === document.querySelector('[role="img"]')) : true;
         assert.deepEqual([output, context.errors, retained], [[
           ["left-arrow", "#111111", "rgb(17, 17, 17)", 1, true],
@@ -55,20 +132,57 @@ describe("production framework consumers", () => {
         ], [], true]);
       });
     }
-    test(`${surface} changes one namespace after hydration without altering its neighbor`, async (t) => {
+    test(`${surface} changes one namespace after hydration without altering its neighbor`, /**
+     * Verify ${surface} changes one namespace after hydration without altering its neighbor; arrange the scenario
+     * and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "valid", true, { multiple: "true" });
-      t.after(() => context.close());
-      await context.page.evaluate(() => window.fixture.update({ options: { legend: false, idPrefix: "updated" } }));
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ options: { legend: false, idPrefix: "updated" } }));
       assert.deepEqual([await markerSnapshot(context.page), context.errors], [[
         ["updated-arrow", "#111111", "rgb(17, 17, 17)", 1, true],
         ["right-arrow", "#c3ccd4", "rgb(195, 204, 212)", 1, true]
       ], []]);
     });
-    test(`${surface} duplicate caller prefixes demonstrate the document-wide collision`, async (t) => {
+    test(`${surface} duplicate caller prefixes demonstrate the document-wide collision`, /**
+     * Verify ${surface} duplicate caller prefixes demonstrate the document-wide collision; arrange the scenario
+     * and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "valid", true, { multiple: "true" });
-      t.after(() => context.close());
-      await context.page.evaluate(() => window.fixture.update({ options: { legend: false, idPrefix: "right" } }));
-      const collisions = await context.page.evaluate(() => [...document.querySelectorAll("#diagram svg")].map(svg => {
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ options: { legend: false, idPrefix: "right" } }));
+      const collisions = await context.page.evaluate(/**
+       * Project a diagram's marker ID and whether its arrow resolves inside that same SVG.
+       * @responsibility computation
+       * @returns {Array} The projected records or text described above, retaining collection order and the documented empty-value behavior.
+       */ () => [...document.querySelectorAll("#diagram svg")].map(/**
+        * Project a diagram's marker ID and whether its arrow resolves inside that same SVG.
+        * @responsibility computation
+        * @param {unknown} svg - Renderer-produced SVG string; precomputed consumer markup is trusted.
+        * @returns {Array} The ordered records or values assembled above.
+        */ svg => {
         const marker = svg.querySelector("marker");
         const path = svg.querySelector("path[marker-end]");
         return [marker.id, svg.contains(document.getElementById(path.getAttribute("marker-end").slice(5, -1)))];
@@ -77,79 +191,224 @@ describe("production framework consumers", () => {
     });
     for (const name of Object.keys(SOURCES)) {
       for (const hydrated of [false, true]) {
-        test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves ${name} output`, async (t) => {
+        test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves ${name} output`, /**
+         * Verify ${surface} ${hydrated ? "hydration" : "SSR"} preserves ${name} output; arrange the scenario and make
+         * its single direct assertion. Assertion and setup failures propagate to the test runner.
+         * @responsibility coordinator
+         * @param {unknown} t - Test-runner context used to register fixture cleanup.
+         * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+         */ async (t) => {
           const context = await openPage(browser, application.origin, surface, name, hydrated);
-          t.after(() => context.close());
-          const retained = hydrated ? await context.page.evaluate(() => window.ssrImage === document.querySelector('[role="img"]')) : true;
+          t.after(/**
+           * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+           * @responsibility coordinator
+           * @returns {unknown} The result returned by context.close.
+           */ () => context.close());
+          const retained = hydrated ? await context.page.evaluate(/**
+           * Compute window.ssrImage === document.querySelector('[role="img"]').
+           * @responsibility computation
+           * @returns {boolean} The result of the documented comparison or calculation.
+           */ () => window.ssrImage === document.querySelector('[role="img"]')) : true;
           assert.deepEqual([await snapshot(context.page), context.errors, retained], [expected(name), [], true]);
         });
       }
     }
-    test(`${surface} responds to source changes through warning, error, and recovery states`, async (t) => {
+    test(`${surface} responds to source changes through warning, error, and recovery states`, /**
+     * Verify ${surface} responds to source changes through warning, error, and recovery states; arrange the
+     * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "valid", true);
-      t.after(() => context.close());
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
       const states = [];
       for (const name of ["warning", "invalid", "changed"]) {
-        await context.page.evaluate(source => window.fixture.update({ source }), SOURCES[name]);
+        await context.page.evaluate(/**
+         * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+         * @responsibility computation
+         * @param {unknown} source - Input source described above; no implicit global source or mutable singleton is read.
+         * @returns {unknown} The result returned by window.fixture.update.
+         */ source => window.fixture.update({ source }), SOURCES[name]);
         states.push(await snapshot(context.page));
       }
       assert.deepEqual([states, context.errors], [[expected("warning"), expected("invalid"), expected("changed")], []]);
     });
-    test(`${surface} responds to option changes after hydration`, async (t) => {
+    test(`${surface} responds to option changes after hydration`, /**
+     * Verify ${surface} responds to option changes after hydration; arrange the scenario and make its single
+     * direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "valid", true);
-      t.after(() => context.close());
-      await context.page.evaluate(() => window.fixture.update({ options: { language: "es", theme: "dark", legend: false } }));
-      const presentation = await context.page.evaluate(() => [document.querySelector("#diagram svg desc").textContent, document.querySelector("#diagram svg > rect").getAttribute("fill")]);
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ options: { language: "es", theme: "dark", legend: false } }));
+      const presentation = await context.page.evaluate(/**
+       * Project the current entry into an ordered tuple for context.page.evaluate.
+       * @responsibility computation
+       * @returns {Array} The ordered records or values assembled above.
+       */ () => [document.querySelector("#diagram svg desc").textContent, document.querySelector("#diagram svg > rect").getAttribute("fill")]);
       assert.deepEqual([presentation, context.errors], [["Esquema VRL para Good route.", "#14171a"], []]);
     });
-    test(`${surface} toggles warning presentation without losing the SVG`, async (t) => {
+    test(`${surface} toggles warning presentation without losing the SVG`, /**
+     * Verify ${surface} toggles warning presentation without losing the SVG; arrange the scenario and make its
+     * single direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "warning", true);
-      t.after(() => context.close());
-      await context.page.evaluate(() => window.fixture.update({ showWarnings: false }));
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ showWarnings: false }));
       const hidden = await snapshot(context.page);
-      await context.page.evaluate(() => window.fixture.update({ showWarnings: true }));
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ () => window.fixture.update({ showWarnings: true }));
       assert.deepEqual([hidden, await snapshot(context.page), context.errors], [{ ...expected("warning"), warning: "" }, expected("warning"), []]);
     });
-    test(`${surface} supplied state bypasses invalid source and preserves escaped diagnostics`, async (t) => {
+    test(`${surface} supplied state bypasses invalid source and preserves escaped diagnostics`, /**
+     * Verify ${surface} supplied state bypasses invalid source and preserves escaped diagnostics; arrange the
+     * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Test-runner context used to register fixture cleanup.
+     * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+     */ async (t) => {
       const context = await openPage(browser, application.origin, surface, "valid", true);
-      t.after(() => context.close());
+      t.after(/**
+       * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility coordinator
+       * @returns {unknown} The result returned by context.close.
+       */ () => context.close());
       const diagram = createDiagramState(SOURCES.warning);
       diagram.diagnostics[0].message = '<img src="invalid" onerror="window.injected=true"> & note';
-      await context.page.evaluate(diagram => window.fixture.update({ source: null, options: null, diagram }), diagram);
-      const state = await context.page.evaluate(() => [document.querySelectorAll("#diagram svg").length,
+      await context.page.evaluate(/**
+       * Apply window.fixture.update to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @param {unknown} diagram - Precomputed trusted diagram state, including renderer-produced SVG.
+       * @returns {unknown} The result returned by window.fixture.update.
+       */ diagram => window.fixture.update({ source: null, options: null, diagram }), diagram);
+      const state = await context.page.evaluate(/**
+       * Project the current entry into an ordered tuple for context.page.evaluate.
+       * @responsibility computation
+       * @returns {Array} The ordered records or values assembled above.
+       */ () => [document.querySelectorAll("#diagram svg").length,
         document.querySelector('[role="status"]').textContent.includes('<img src="invalid" onerror="window.injected=true"> & note'),
         document.querySelectorAll("#diagram img").length, window.injected ?? false]);
       assert.deepEqual([state, context.errors], [[1, true, 0, false], []]);
     });
   }
 
-  test("SvelteKit client navigation consumes new asynchronous load data without a full reload", async (t) => {
+  test("SvelteKit client navigation consumes new asynchronous load data without a full reload", /**
+   * Verify SvelteKit client navigation consumes new asynchronous load data without a full reload; arrange the
+   * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+   * @responsibility coordinator
+   * @param {unknown} t - Test-runner context used to register fixture cleanup.
+   * @returns {Promise<void>} Resolves when the documented asynchronous operation completes; awaited failures reject. Completes the documented operation; no return value is consumed.
+   */ async (t) => {
     const context = await openPage(browser, application.origin, "sveltekit", "valid", true);
-    t.after(() => context.close());
-    await context.page.evaluate(() => { window.navigationMarker = "retained"; });
+    t.after(/**
+     * Apply context.close to the supplied arguments; retain the callee's return and failure behavior.
+     * @responsibility coordinator
+     * @returns {unknown} The result returned by context.close.
+     */ () => context.close());
+    await context.page.evaluate(/**
+     * Set a browser-global navigation sentinel so the test can distinguish client navigation from a full reload.
+     * @responsibility coordinator
+     * @returns {void} Completes the documented operation; no return value is consumed.
+     */ () => { window.navigationMarker = "retained"; });
     await context.page.click("#warning-route");
-    await context.page.waitForFunction(() => document.querySelector('[role="status"]') !== null);
-    assert.deepEqual([await snapshot(context.page), await context.page.evaluate(() => window.navigationMarker), context.errors], [expected("warning"), "retained", []]);
+    await context.page.waitForFunction(/**
+     * Compute document.querySelector('[role="status"]') !== null.
+     * @responsibility computation
+     * @returns {boolean} The result of the documented comparison or calculation.
+     */ () => document.querySelector('[role="status"]') !== null);
+    assert.deepEqual([await snapshot(context.page), await context.page.evaluate(/**
+     * Project window.navigationMarker from the current record.
+     * @responsibility computation
+     * @returns {unknown} The window.navigationMarker value selected or validated above.
+     */ () => window.navigationMarker), context.errors], [expected("warning"), "retained", []]);
   });
 });
 
+/**
+ * Read rendered style primitives in the browser to verify the actual client output.
+ * @responsibility coordinator
+ * @param {unknown} page - Owned Playwright page.
+ * @returns {Promise<unknown>} Resolves with the result returned by page.evaluate. Rejects when the awaited operation fails.
+ */
 async function styleSnapshot(page) {
-  return page.evaluate(() => {
+  return page.evaluate(/**
+   * Observe emitted soft-style contour/curve/rung counts, ownership and retained height/rope text from the
+   * browser DOM.
+   * @responsibility computation
+   * @returns {Array} The ordered records or values assembled above.
+   */ () => {
     const svg = document.querySelector("#diagram svg");
     return [svg.querySelector("title").textContent, svg.querySelectorAll(".vrl-terrain-contour").length,
       svg.querySelectorAll(".vrl-drop-curve").length, svg.querySelectorAll(".vrl-drop-rung").length,
-      [...svg.querySelectorAll(".vrl-drop-curve")].map(group => group.getAttribute("data-owner-id")),
+      [...svg.querySelectorAll(".vrl-drop-curve")].map(/**
+       * Apply group.getAttribute to the supplied arguments; retain the callee's return and failure behavior.
+       * @responsibility computation
+       * @param {unknown} group - Parsed SVG group selected for the observation.
+       * @returns {unknown} The result returned by group.getAttribute.
+       */ group => group.getAttribute("data-owner-id")),
       svg.textContent.includes("R1, 10m"), svg.textContent.includes("declared rope: 20m")];
   });
 }
 
+/**
+ * Read SVG marker definitions and references from the browser to detect namespace collisions.
+ * @responsibility coordinator
+ * @param {unknown} page - Owned Playwright page.
+ * @returns {Promise<unknown>} Resolves with the result returned by page.evaluate. Rejects when the awaited operation fails.
+ */
 async function markerSnapshot(page) {
-  return page.evaluate(() => [...document.querySelectorAll("#diagram svg")].map(svg => {
+  return page.evaluate(/**
+   * Observe marker identity, attribute and computed paint, arrow counts and unique in-document ownership
+   * independently of serializer internals.
+   * @responsibility computation
+   * @returns {Array} The projected records or text described above, retaining collection order and the documented empty-value behavior.
+   */ () => [...document.querySelectorAll("#diagram svg")].map(/**
+    * Observe marker identity, attribute and computed paint, arrow counts and unique in-document ownership
+    * independently of serializer internals.
+    * @responsibility computation
+    * @param {unknown} svg - Renderer-produced SVG string; precomputed consumer markup is trusted.
+    * @returns {Array} The ordered records or values assembled above.
+    */ svg => {
     const marker = svg.querySelector("marker");
     const paint = marker.querySelector("path");
     const paths = [...svg.querySelectorAll("path[marker-end]")];
     return [marker.id, paint.getAttribute("fill"), getComputedStyle(paint).fill, paths.length,
-      document.querySelectorAll(`[id="${marker.id}"]`).length === 1 && paths.every(path =>
+      document.querySelectorAll(`[id="${marker.id}"]`).length === 1 && paths.every(/**
+       * Evaluate the selection condition document.getElementById(path.getAttribute("marker-end").slice(5, -1)) ===
+       * marker && path.getAttribute("stroke") === paint.getAttribute("fill").
+       * @responsibility computation
+       * @param {unknown} path - Filesystem path, JSON pointer or prepared SVG path as specified by this helper.
+       * @returns {unknown} The result of the documented comparison or calculation.
+       */ path =>
         document.getElementById(path.getAttribute("marker-end").slice(5, -1)) === marker &&
         path.getAttribute("stroke") === paint.getAttribute("fill"))];
   }));

@@ -9,4 +9,10 @@ const ES = Object.freeze({
   legend: Object.freeze(["Contorno y curvas: esquema; flechas: sentido de progresion.", "Poza: tamano simbolico; ondas: agua, no caudal ni profundidad."])
 });
 
+/**
+ * Return immutable Spanish or English soft-style explanations and explicit unknown-value wording.
+ * @responsibility computation
+ * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
+ * @returns {unknown} The selected result, including the documented absent-value fallback.
+ */
 export function softTerrainText(language) { return language === "es" ? ES : EN; }

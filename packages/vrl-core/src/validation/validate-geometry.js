@@ -4,6 +4,14 @@ import { hasElevationResidual, routeElevationProfile, routeTraversal } from "../
 import { invalidNumberPath } from "../domain/numeric-policy.js";
 import { validateBoundaries } from "./validate-boundaries.js";
 
+/**
+ * Check numeric leaves and boundaries, then classify missing technical heights and endpoint consistency before
+ * layout; return warnings or blocking geometry diagnostics.
+ * @responsibility coordinator
+ * @param {Object} route - Normalized route view containing elements and optional metadata/traversal required by this operation.
+ * @param {Object} sourceMap - Parser-owned source ranges; may be absent for programmatic input.
+ * @returns {Array} Ordered numeric/boundary/geometry diagnostics; absent heights may be warnings without endpoint constraints.
+ */
 export function validateGeometry(route, sourceMap) {
   const invalid = invalidNumberPath(route, "Route");
   if (invalid !== null) {
@@ -13,15 +21,30 @@ export function validateGeometry(route, sourceMap) {
   if (boundaryDiagnostics.length > 0) return boundaryDiagnostics;
   const traversal = routeTraversal(route);
   const profile = routeElevationProfile(route);
-  const missing = traversal.segments.filter((segment) => segment.kind === "technical" && segment.verticalDeltaMeters === null);
-  const diagnostics = missing.map((segment) => codedDiagnostic(
+  const missing = traversal.segments.filter(/**
+   * Evaluate the selection condition segment.kind === "technical" && segment.verticalDeltaMeters === null.
+   * @responsibility computation
+   * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
+   * @returns {unknown} The result of the documented comparison or calculation.
+   */ (segment) => segment.kind === "technical" && segment.verticalDeltaMeters === null);
+  const diagnostics = missing.map(/**
+   * Apply codedDiagnostic to the supplied arguments; retain the callee's return and failure behavior.
+   * @responsibility computation
+   * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
+   * @returns {unknown} The result returned by codedDiagnostic.
+   */ (segment) => codedDiagnostic(
     "VRL_GEOMETRY_HEIGHT_REQUIRED", "geometry", profile === null ? "warning" : "error",
     "Technical elevation is undetermined because height is missing.",
     declarationReference(sourceMap?.elements?.[segment.elementIndex], route.elements[segment.elementIndex].sourceLocation),
     "Supply a height; without an elevation profile this feature is drawn schematically."
   ));
   if (profile === null || missing.length > 0 || !hasElevationResidual(route)) return diagnostics;
-  const hasConnections = traversal.segments.some((segment) => segment.kind === "connection");
+  const hasConnections = traversal.segments.some(/**
+   * Evaluate the selection condition segment.kind === "connection".
+   * @responsibility computation
+   * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
+   * @returns {boolean} The result of the documented comparison or calculation.
+   */ (segment) => segment.kind === "connection");
   return [...diagnostics, codedDiagnostic(
     hasConnections ? "VRL_GEOMETRY_ELEVATIONS_ESTIMATED" : "VRL_GEOMETRY_ELEVATIONS_INCONSISTENT", "geometry", hasConnections ? "warning" : "error",
     hasConnections ? "Intermediate elevations are underdetermined; remaining elevation is distributed schematically across connections."

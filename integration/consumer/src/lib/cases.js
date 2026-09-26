@@ -5,6 +5,14 @@ export const SOURCES = {
   changed: 'route "Changed & <route>"\nstart\nwalk distance=5m\nexit'
 };
 
+/**
+ * Resolve an allowlisted route fixture and display/query settings, assigning distinct namespaces to companion
+ * diagrams.
+ * @responsibility computation
+ * @param {unknown} url - Request URL used to resolve the allowlisted consumer scenario.
+ * @returns {unknown} The props value selected or validated above.
+ * @throws {Error} The documented operation fails; the original failure is preserved unless explicitly wrapped above.
+ */
 export function requestProps(url) {
   const name = url.searchParams.get("case") ?? "valid";
   if (!Object.hasOwn(SOURCES, name)) throw new Error(`Unknown route case: ${name}`);

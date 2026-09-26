@@ -1,6 +1,6 @@
 # Maintaining executable documentation
 
-Documentation changes are part of implementation work. Update the language/API rule, its example and its expected behavior in the same change. Run `npm run check:docs` for focused feedback and `make check` before a PR. Both documentation suites are in the executable test inventory and run under coverage in CI; each test has one direct assertion.
+Documentation changes are part of implementation work. Update the language/API rule, its example and its expected behavior in the same change. Run `npm run check:docs` for focused feedback and `make check` before a PR. The documentation suites are in the executable test inventory and run under coverage in CI; each test has one direct assertion.
 
 ## Scope and evidence
 
@@ -70,3 +70,7 @@ The legacy render profile is explicit JSON. Its checked-in SVG must equal curren
 | Package identities, versions or release tooling | Install/import examples, package metadata, changelog, release and trusted-publisher guides | `make check`, tarball checks and the release verification gate; publication must be verified separately |
 
 Keep the [documentation index](README.md) and [example catalog](../examples/README.md) aligned with supported behavior. Do not present an open proposal, unmerged change or configured-but-unverified external service as released functionality. `make check` remains the complete workspace gate; the framework compatibility matrix is separate.
+
+## Internal function contracts
+
+Function JSDoc and explicit coordinator/computation responsibilities follow the [internal documentation convention](internal-documentation.md). Update parameter, return and failure descriptions alongside implementation and public declaration changes. `npm run check:docs` runs the structural function gate before the executable example suites; `make check` includes the same gate. Semantic accuracy and SRP classifications require review, backed by behavioral and failure tests.

@@ -44,18 +44,45 @@ const DEFINITIONS = {
   severity: { parser: "enum", applicability: ["hazard"], values: ["low", "medium", "high", "critical"] }
 };
 
-const SPECIFICATIONS = Object.fromEntries(Object.entries(DEFINITIONS).map(([name, definition]) => [name, freezeSpecification(definition)]));
+const SPECIFICATIONS = Object.fromEntries(Object.entries(DEFINITIONS).map(/**
+ * Pair a field name with its recursively frozen specification.
+ * @responsibility computation
+ * @param {Array} input1 - Ordered tuple destructured into the separately documented members below.
+ * @param {unknown} input1[0] - Tuple member bound as name: selected field or entry name.
+ * @param {unknown} input1[1] - Tuple member bound as definition: Field specification before its nested records are frozen.
+ * @returns {Array} The ordered records or values assembled above.
+ */ ([name, definition]) => [name, freezeSpecification(definition)]));
 
+/**
+ * Freeze a field specification and its nested rule collections so callers cannot mutate shared domain policy.
+ * @responsibility computation
+ * @param {unknown} definition - Field specification before its nested records are frozen.
+ * @returns {unknown} The result returned by Object.freeze.
+ */
 function freezeSpecification(definition) {
   const specification = { requiredOn: [], ...definition };
   Object.values(specification).forEach(Object.freeze);
   return Object.freeze(specification);
 }
 
+/**
+ * Look up a known field by its own name, returning null for names outside the domain specification.
+ * @responsibility computation
+ * @param {string} fieldName - Own field name selecting the applicable parsing or measurement rule.
+ * @returns {unknown} The selected result, including the documented absent-value fallback.
+ */
 export function fieldSpecification(fieldName) {
   return Object.hasOwn(SPECIFICATIONS, fieldName) ? SPECIFICATIONS[fieldName] : null;
 }
 
+/**
+ * Resolve a field's specification for its declared scope while retaining globally recognized numeric
+ * validation.
+ * @responsibility computation
+ * @param {string} fieldName - Own field name selecting the applicable parsing or measurement rule.
+ * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
+ * @returns {unknown} Null when no matching value or problem exists. The selected result, including the documented absent-value fallback.
+ */
 export function applicableFieldSpecification(fieldName, scope) {
   const specification = fieldSpecification(fieldName);
   if (specification === null) return null;
@@ -64,6 +91,24 @@ export function applicableFieldSpecification(fieldName, scope) {
   return applies ? specification : null;
 }
 
+/**
+ * Select the specification names required in the supplied metadata or element scope.
+ * @responsibility computation
+ * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
+ * @returns {Array} The projected records or text described above, retaining collection order and the documented empty-value behavior.
+ */
 export function requiredFields(scope) {
-  return Object.entries(SPECIFICATIONS).filter(([, specification]) => specification.requiredOn.includes(scope)).map(([name]) => name);
+  return Object.entries(SPECIFICATIONS).filter(/**
+   * Project the required field name from a specification entry.
+   * @responsibility computation
+   * @param {Array} input1 - Ordered tuple destructured into the separately documented members below.
+   * @param {unknown} input1[1] - Tuple member bound as specification: the ordered input consumed below.
+   * @returns {boolean} The result returned by specification.requiredOn.includes.
+   */ ([, specification]) => specification.requiredOn.includes(scope)).map(/**
+    * Project the required field name from a specification entry.
+    * @responsibility computation
+    * @param {Array} input1 - Ordered tuple destructured into the separately documented members below.
+    * @param {unknown} input1[0] - Tuple member bound as name: selected field or entry name.
+    * @returns {unknown} The name value selected or validated above.
+    */ ([name]) => name);
 }

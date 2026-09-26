@@ -10,30 +10,84 @@ import { contractTable } from "../scripts/documentation/contract-tables.mjs";
 
 const example = { id: "sample", kind: "document", source: "route Sample" };
 const contract = { kind: "document", sha256: sourceFingerprint(example.source), expected: { ok: true, diagnostics: [], facts: { "/model/name": "Sample" } } };
+/**
+ * Format fenced as the text required by the enclosing fixture, preserving supplied values.
+ * @responsibility computation
+ * @param {unknown} source - Input source described above; no implicit global source or mutable singleton is read.
+ * @returns {string} Formatted text retaining the supplied values and ordering.
+ */
 const fenced = source => `\`\`\`vrl example=sample kind=document\n${source}\n\`\`\``;
 
 for (const marker of ["```", "~~~~"]) {
-  test(`${marker} fences retain exact source text, deindent and report Markdown locations`, () => {
+  test(`${marker} fences retain exact source text, deindent and report Markdown locations`, /**
+   * Verify ${marker} fences retain exact source text, deindent and report Markdown locations; arrange the
+   * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+   * @responsibility coordinator
+   * @returns {void} Completes the documented operation; no return value is consumed.
+   */ () => {
     const source = ['route "A#B"', 'note "  \\"quoted\\" \\\\ path  "'].join("\n");
-    const markdown = `Intro\r\n\r\n  ${marker}vrl example=sample kind=document\r\n${source.split("\n").map(line => `  ${line}`).join("\r\n")}\r\n  ${marker}${marker[0]}\r\n`;
+    const markdown = `Intro\r\n\r\n  ${marker}vrl example=sample kind=document\r\n${source.split("\n").map(/**
+     * Format the current entry as the text required by source.split("\n").map, preserving supplied values.
+     * @responsibility computation
+     * @param {unknown} line - Physical source line or one-based line number, as used by the enclosing scanner.
+     * @returns {string} Formatted text retaining the supplied values and ordering.
+     */ line => `  ${line}`).join("\r\n")}\r\n  ${marker}${marker[0]}\r\n`;
     assert.deepEqual(extractVrlExamples(markdown, "guide.md"), [{ ...example, source, file: "guide.md", line: 4 }]);
   });
 }
-test("VRL-looking fences inside a longer documentation fence are not executed", () => {
-  assert.deepEqual(extractVrlExamples(`\`\`\`\`text\n${fenced("route Hidden")}\n\`\`\`\`\n${fenced("route Sample")}`, "guide.md").map(item => item.source), ["route Sample"]);
+test("VRL-looking fences inside a longer documentation fence are not executed", /**
+ * Verify VRL-looking fences inside a longer documentation fence are not executed; arrange the scenario and
+ * make its single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
+  assert.deepEqual(extractVrlExamples(`\`\`\`\`text\n${fenced("route Hidden")}\n\`\`\`\`\n${fenced("route Sample")}`, "guide.md").map(/**
+   * Project item.source from the current record.
+   * @responsibility computation
+   * @param {unknown} item - Current prepared record or test case.
+   * @returns {unknown} The item.source value selected or validated above.
+   */ item => item.source), ["route Sample"]);
 });
-test("shorter fences and a different marker do not terminate a VRL example", () => {
+test("shorter fences and a different marker do not terminate a VRL example", /**
+ * Verify shorter fences and a different marker do not terminate a VRL example; arrange the scenario and make
+ * its single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   assert.equal(extractVrlExamples("~~~~vrl example=sample kind=invalid\nroute A\n~~~\n```\n~~~~", "guide.md")[0].source, "route A\n~~~\n```");
 });
 for (const info of ["vrl", "vrl example=sample", "vrl example=Sample kind=document", "vrl example=sample kind=unknown", "vrl example=sample kind=document skip=true", "VRL example=sample kind=document"]) {
-  test(`untested or malformed VRL metadata fails clearly: ${info}`, () => {
-    assert.throws(() => extractVrlExamples(`\`\`\`${info}\nroute A\n\`\`\``, "guide.md"), /guide.md:1: VRL fence requires/);
+  test(`untested or malformed VRL metadata fails clearly: ${info}`, /**
+   * Verify untested or malformed VRL metadata fails clearly: ${info}; arrange the scenario and make its single
+   * direct assertion. Assertion and setup failures propagate to the test runner.
+   * @responsibility coordinator
+   * @returns {void} Completes the documented operation; no return value is consumed.
+   */ () => {
+    assert.throws(/**
+     * Exercise extractVrlExamples so the enclosing assertion can observe its return value or thrown error.
+     * @responsibility coordinator
+     * @returns {unknown} The result returned by extractVrlExamples.
+     */ () => extractVrlExamples(`\`\`\`${info}\nroute A\n\`\`\``, "guide.md"), /guide.md:1: VRL fence requires/);
   });
 }
-test("an unclosed tagged fence cannot silently swallow later documentation", () => {
-  assert.throws(() => extractVrlExamples("```vrl example=sample kind=document\nroute A", "guide.md"), /guide.md:2: unclosed VRL fence/);
+test("an unclosed tagged fence cannot silently swallow later documentation", /**
+ * Verify an unclosed tagged fence cannot silently swallow later documentation; arrange the scenario and make
+ * its single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
+  assert.throws(/**
+   * Exercise extractVrlExamples so the enclosing assertion can observe its return value or thrown error.
+   * @responsibility coordinator
+   * @returns {unknown} The result returned by extractVrlExamples.
+   */ () => extractVrlExamples("```vrl example=sample kind=document\nroute A", "guide.md"), /guide.md:2: unclosed VRL fence/);
 });
-test("one matching expectation satisfies the inventory", () => {
+test("one matching expectation satisfies the inventory", /**
+ * Verify one matching expectation satisfies the inventory; arrange the scenario and make its single direct
+ * assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   assert.deepEqual(exampleInventoryProblems([example], { sample: contract }), []);
 });
 for (const [name, examples, cases, problem] of [
@@ -54,31 +108,70 @@ for (const [name, examples, cases, problem] of [
   ["unwrapped fragment", [{ ...example, kind: "fragment" }], { sample: { ...contract, kind: "fragment" } }, "Invalid fragment context: sample"],
   ["warning-only failure", [{ ...example, kind: "invalid" }], { sample: { ...contract, kind: "invalid", expected: { ok: false, diagnostics: [["validation", "warning", "SHORT", 1, 1]], facts: {} } } }, "Missing blocking diagnostic: sample"]
 ]) {
-  test(`${name} inventory drift is rejected`, () => {
+  test(`${name} inventory drift is rejected`, /**
+   * Verify ${name} inventory drift is rejected; arrange the scenario and make its single direct assertion.
+   * Assertion and setup failures propagate to the test runner.
+   * @responsibility coordinator
+   * @returns {void} Completes the documented operation; no return value is consumed.
+   */ () => {
     assert.equal(exampleInventoryProblems(examples, cases).includes(problem), true);
   });
 }
-test("fragment context is explicit and preserves diagnostic line offsets", () => {
+test("fragment context is explicit and preserves diagnostic line offsets", /**
+ * Verify fragment context is explicit and preserves diagnostic line offsets; arrange the scenario and make its
+ * single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   assert.equal(exampleSource({ kind: "fragment", source: "metadata country=CR" }, { prefix: "route Context\n", suffix: "\nstart\nexit" }), "route Context\nmetadata country=CR\nstart\nexit");
 });
-test("source edits require renewed review even when the selected model facts would match", () => {
+test("source edits require renewed review even when the selected model facts would match", /**
+ * Verify source edits require renewed review even when the selected model facts would match; arrange the
+ * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   assert.notEqual(sourceFingerprint("route Sample\n# revised"), contract.sha256);
 });
-test("fact pointers preserve escaped keys and explicit null values", () => {
+test("fact pointers preserve escaped keys and explicit null values", /**
+ * Verify fact pointers preserve escaped keys and explicit null values; arrange the scenario and make its
+ * single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   assert.equal(pointerValue({ "a/b": { "~c": null } }, "/a~1b/~0c"), null);
 });
 for (const pointer of ["name", "/missing", "/constructor", "/name/missing"]) {
-  test(`absent or inherited facts fail instead of yielding an empty expectation: ${pointer}`, () => {
-    assert.throws(() => pointerValue({ name: "Sample" }, pointer), /Expected JSON pointer|Missing documented fact/);
+  test(`absent or inherited facts fail instead of yielding an empty expectation: ${pointer}`, /**
+   * Verify absent or inherited facts fail instead of yielding an empty expectation: ${pointer}; arrange the
+   * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+   * @responsibility coordinator
+   * @returns {void} Completes the documented operation; no return value is consumed.
+   */ () => {
+    assert.throws(/**
+     * Exercise pointerValue so the enclosing assertion can observe its return value or thrown error.
+     * @responsibility coordinator
+     * @returns {unknown} The result returned by pointerValue.
+     */ () => pointerValue({ name: "Sample" }, pointer), /Expected JSON pointer|Missing documented fact/);
   });
 }
-test("failure observations include exact diagnostics and absence of all derived outputs", () => {
+test("failure observations include exact diagnostics and absence of all derived outputs", /**
+ * Verify failure observations include exact diagnostics and absence of all derived outputs; arrange the
+ * scenario and make its single direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   const result = { ok: false, model: null, layout: null, json: null, diagnostics: [{ kind: "syntax", severity: "error", code: "VRL_LEX_UNSUPPORTED_ESCAPE", location: { line: 2, column: 10 } }] };
   assert.deepEqual(exampleFacts(result, []), { ok: false, diagnostics: [["syntax", "error", "VRL_LEX_UNSUPPORTED_ESCAPE", 2, 10]], outputs: [false, false, false], facts: {}, geometry: null });
 });
 
 const table = "<!-- vrl-table:limits -->\n| Option | Default |\n| --- | --- |\n| maxLines | 20000 |\n<!-- /vrl-table:limits -->";
-test("marked tables preserve all constraint cells in source order", () => {
+test("marked tables preserve all constraint cells in source order", /**
+ * Verify marked tables preserve all constraint cells in source order; arrange the scenario and make its single
+ * direct assertion. Assertion and setup failures propagate to the test runner.
+ * @responsibility coordinator
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ () => {
   assert.deepEqual(contractTable(table, "limits"), [["maxLines", "20000"]]);
 });
 for (const [name, markdown] of [
@@ -88,15 +181,40 @@ for (const [name, markdown] of [
   ["invalid separator", table.replace("--- | ---", "default | value")],
   ["missing row delimiters", table.replace("| maxLines | 20000 |", "maxLines | 20000")]
 ]) {
-  test(`${name} constraint table fails instead of skipping verification`, () => {
-    assert.throws(() => contractTable(markdown, "limits"), /contract table/);
+  test(`${name} constraint table fails instead of skipping verification`, /**
+   * Verify ${name} constraint table fails instead of skipping verification; arrange the scenario and make its
+   * single direct assertion. Assertion and setup failures propagate to the test runner.
+   * @responsibility coordinator
+   * @returns {void} Completes the documented operation; no return value is consumed.
+   */ () => {
+    assert.throws(/**
+     * Exercise contractTable so the enclosing assertion can observe its return value or thrown error.
+     * @responsibility coordinator
+     * @returns {unknown} The result returned by contractTable.
+     */ () => contractTable(markdown, "limits"), /contract table/);
   });
 }
-test("discovery covers root, nested docs, examples and package Markdown without dependency or generated files", t => {
+test("discovery covers root, nested docs, examples and package Markdown without dependency or generated files", /**
+ * Verify discovery covers root, nested docs, examples and package Markdown without dependency or generated
+ * files; arrange the scenario and make its single direct assertion. Assertion and setup failures propagate to
+ * the test runner.
+ * @responsibility coordinator
+ * @param {unknown} t - Test-runner context used to register fixture cleanup.
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ */ t => {
   const root = mkdtempSync(join(tmpdir(), "vrl-documents-"));
-  t.after(() => rmSync(root, { recursive: true, force: true }));
+  t.after(/**
+   * Apply rmSync to the supplied arguments; retain the callee's return and failure behavior.
+   * @responsibility coordinator
+   * @returns {unknown} The result returned by rmSync.
+   */ () => rmSync(root, { recursive: true, force: true }));
   for (const path of ["README.md", "CONTRIBUTING.md", "docs/nested/guide.md", "examples/README.md", "packages/adapter/README.md", "packages/adapter/node_modules/dependency/README.md", "node_modules/README.md", ".consumers/current/README.md", "docs/source.js"]) {
     const file = join(root, path); mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, "text");
   }
-  assert.deepEqual(readDocumentation(root).map(item => item.file), ["CONTRIBUTING.md", "README.md", "docs/nested/guide.md", "examples/README.md", "packages/adapter/README.md"]);
+  assert.deepEqual(readDocumentation(root).map(/**
+   * Project item.file from the current record.
+   * @responsibility computation
+   * @param {unknown} item - Current prepared record or test case.
+   * @returns {unknown} The item.file value selected or validated above.
+   */ item => item.file), ["CONTRIBUTING.md", "README.md", "docs/nested/guide.md", "examples/README.md", "packages/adapter/README.md"]);
 });

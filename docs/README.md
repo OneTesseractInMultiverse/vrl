@@ -36,3 +36,5 @@ Current aggregate names include historical terminology: `requiredRopeMeters` is 
 Update the owning guide, package README, working example and expected behavior with each implementation change. Use the [maintenance matrix](documentation-contracts.md#change-to-documentation-checklist) to find the affected surfaces. Run the [documentation checks](documentation-contracts.md), review regenerated SVGs, and complete `make check`; run the packed framework matrix when adapter behavior or its examples change.
 
 Contributor and project guidance: [contributing](contributing.md), [open source practices](open-source.md), [governance](../GOVERNANCE.md), [security](../SECURITY.md).
+
+Function-level contracts, responsibility tags and the structural enforcement command are documented in [internal documentation](internal-documentation.md).

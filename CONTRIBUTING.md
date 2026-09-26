@@ -20,7 +20,7 @@ make run
 
 Core domain and application code must remain framework-free. Domain code must not import React, Svelte, browser APIs, file systems, network services, storage, or package tooling. Application services may coordinate parser, validator, normalizer, layout, and export ports, but should not inline their rules.
 
-Each function should have one responsibility. Parser code parses. Validation code validates. Layout code computes positions. Renderers render already-normalized data. Framework adapters adapt.
+Each function must have one responsibility and adjacent JSDoc explaining its inputs, outputs, ownership and failures. Tag it explicitly with `@responsibility coordinator` or `@responsibility computation`, including private helpers, callbacks, test fixtures and tooling. Follow the [internal documentation convention](docs/internal-documentation.md) and run `npm run check:function-docs`; the full gate enforces it. Parser code parses. Validation code validates. Layout code computes positions. Renderers render already-normalized data. Framework adapters adapt.
 
 ## Tests
 

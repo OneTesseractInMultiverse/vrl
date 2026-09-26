@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Document function responsibilities, parameters, outputs and failure/ownership contracts across packages, declarations, callbacks, tooling and tests; enforce coordinator/computation tags and complete signatures in the documentation quality gate.
+
 - Refresh the documentation/example catalogs, align quick starts with the fictional canyon fixture, clarify current aggregate meanings and committed-version publication, and document style/namespace options across adapters. Verify standalone example facts, warnings, quick-start copies and regenerated SVG artifacts in the documentation gate.
 
 - Add optional `style: "soft-terrain"` canyon diagrams with neutral terrain, directed technical curves, restrained symbolic pools, explicit uncertainty and declared rope/anchor labels. Preserve classic defaults, canonical ownership, measurements, stages, redirections and notes.

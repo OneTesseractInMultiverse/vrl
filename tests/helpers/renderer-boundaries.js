@@ -7,7 +7,15 @@ const COMPUTATIONS = new Set([
 ]);
 const ENCODING = new Set(["attributes.js", "badge-style.js", "paint.js", "xml.js"]);
 
-/** Enforce the computation/encoding boundary, including re-exports. */
+/**
+ * Inspect renderer imports for forbidden reverse dependencies and serialization/geometry boundary violations.
+ * Enforce the computation/encoding boundary, including re-exports.
+ * @responsibility computation
+ * @param {string} file - Repository-relative source path used in discovery or diagnostics.
+ * @param {unknown} source - Input source described above; no implicit global source or mutable singleton is read.
+ * @returns {unknown} The violations value selected or validated above.
+ */
+
 export function rendererDependencyViolations(file, source) {
   const violations = [];
   if (/\b(?:import|require)\s*\(/.test(source)) violations.push(`${file}: runtime module loading`);
