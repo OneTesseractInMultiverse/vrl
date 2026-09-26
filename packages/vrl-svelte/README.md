@@ -1,4 +1,4 @@
-# @subvertic/svelte
+# @subvertic/vrl-svelte
 
 See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
 
@@ -8,31 +8,34 @@ Svelte adapter for Vertical Route Language.
 
 This package exposes an SSR-friendly markup helper, a diagram state helper, and a Svelte component for rendering VRL diagrams through the core and SVG renderer packages.
 
-State creation delegates to the first-party `@subvertic/diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+
+This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version.
 
 ## Install
 
 ```sh
-npm install @subvertic/svelte @subvertic/core @subvertic/render-svg svelte
+npm install @subvertic/vrl-svelte @subvertic/vrl-core @subvertic/vrl-render-svg svelte
 ```
 
 ## Usage
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
   export let source = "";
+  export let idPrefix;
 </script>
 
 <VrlDiagram
   {source}
-  options={{ language: "es", symbology: "federation", layout: { pixelsPerMeter: 6 } }}
+  options={{ style: "soft-terrain", idPrefix, language: "es", symbology: "federation", layout: { pixelsPerMeter: 6 } }}
 />
 ```
 
 ```js
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const diagram = createVrlSvelteDiagramState(source, {
   symbology: "spanish",
@@ -41,6 +44,8 @@ const diagram = createVrlSvelteDiagramState(source, {
 });
 const html = renderVrlSvelteMarkup("", {}, { diagram });
 ```
+
+The optional `style: "soft-terrain"` is forwarded to the renderer; classic remains the default. Give each inline occurrence a distinct stable `idPrefix`, including precomputed previews. See the [style guide](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/soft-terrain.md).
 
 ## Component Props
 
@@ -64,12 +69,12 @@ Caller-supplied `diagram.svg` is trusted markup: the component uses `@html` and 
 
 Invalid layout or renderer configuration throws `TypeError` or `RangeError`; these exceptions are separate from source diagnostics. See the [configuration and paint contracts](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#configuration-validation).
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## SSR Helper
 
 ```js
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const html = renderVrlSvelteMarkup(
   source,
@@ -87,3 +92,5 @@ Successful diagrams show a warning panel by default. `showWarnings` defaults to 
 ## License
 
 MIT. Copyright (c) 2026 Pedro Guzmán.
+
+For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).

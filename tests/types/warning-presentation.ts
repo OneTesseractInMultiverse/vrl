@@ -1,12 +1,12 @@
 import * as React from "react";
 import type { ComponentProps } from "svelte";
-import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
-import type { WarningDisplayOptions } from "@subvertic/diagram";
-import { createVrlDiagramComponent } from "@subvertic/react";
-import type { VrlDiagramProps as ReactProps } from "@subvertic/react";
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
-import SvelteDiagram from "@subvertic/svelte/VrlDiagram.svelte";
-import KitDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
+import type { WarningDisplayOptions } from "@subvertic/vrl-diagram";
+import { createVrlDiagramComponent } from "@subvertic/vrl-react";
+import type { VrlDiagramProps as ReactProps } from "@subvertic/vrl-react";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
+import SvelteDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
+import KitDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
 
 const source = 'route Warning\nrappel height=10m rope=5m';
 const diagram = createDiagramState(source);

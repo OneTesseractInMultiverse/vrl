@@ -11,12 +11,12 @@
     "test": "node --test contracts.test.mjs browser.test.mjs"
   },
   "dependencies": {
-    "@subvertic/core": "file:tarballs/core.tgz",
-    "@subvertic/render-svg": "file:tarballs/render-svg.tgz",
-    "@subvertic/diagram": "file:tarballs/diagram.tgz",
-    "@subvertic/react": "file:tarballs/react.tgz",
-    "@subvertic/svelte": "file:tarballs/svelte.tgz",
-    "@subvertic/sveltekit": "file:tarballs/sveltekit.tgz",
+    "@subvertic/vrl-core": "file:tarballs/vrl-core.tgz",
+    "@subvertic/vrl-render-svg": "file:tarballs/vrl-render-svg.tgz",
+    "@subvertic/vrl-diagram": "file:tarballs/vrl-diagram.tgz",
+    "@subvertic/vrl-react": "file:tarballs/vrl-react.tgz",
+    "@subvertic/vrl-svelte": "file:tarballs/vrl-svelte.tgz",
+    "@subvertic/vrl-sveltekit": "file:tarballs/vrl-sveltekit.tgz",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "svelte": "4.0.0",

@@ -23,8 +23,13 @@ if (refresh) {
   run(["install", "--package-lock-only", "--ignore-scripts"], directory);
 } else {
   const template = JSON.parse(readFileSync(join(fixture, "package-lock.json"), "utf8"));
-  const packed = packages.map(item => ({ ...item,
-    manifest: JSON.parse(readFileSync(join(root, "packages", `vrl-${item.name.split("/")[1]}`, "package.json"), "utf8"))
+  const packed = packages.map(/**
+   * Project existing fields, manifest into the record required by packages.map.
+   * @responsibility computation
+   * @param {unknown} item - Current prepared record or test case.
+   * @returns {Object} A record containing the supplied fields, manifest.
+   */ item => ({ ...item,
+    manifest: JSON.parse(readFileSync(join(root, "packages", item.name.split("/")[1], "package.json"), "utf8"))
   }));
   const lock = refreshPackedEntries(template, packed);
   writeFileSync(join(directory, "package-lock.json"), JSON.stringify(lock, null, 2) + "\n");
@@ -33,6 +38,15 @@ run(["ci", "--strict-peer-deps", "--legacy-peer-deps=false", "--engine-strict"],
 if (refresh) cpSync(join(directory, "package-lock.json"), join(fixture, "package-lock.json"));
 console.log(`Prepared ${profile} consuming application from six current tarballs with strict peers and locked dependencies.`);
 
+/**
+ * Execute the requested verification command in its working directory and propagate process or nonzero-exit
+ * failures.
+ * @responsibility coordinator
+ * @param {unknown} args - Ordered command-line arguments; no shell interpolation is performed by process adapters.
+ * @param {string} cwd - Working directory for the child process.
+ * @returns {unknown} The result.stdout value selected or validated above.
+ * @throws {Error} The documented operation fails; the original failure is preserved unless explicitly wrapped above.
+ */
 function run(args, cwd) {
   const result = spawnSync("npm", args, { cwd, encoding: "utf8", maxBuffer: 8 * 1024 * 1024 });
   if (result.error) throw result.error;

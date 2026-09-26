@@ -1,6 +1,16 @@
-export const LONG_ROUTE = ['route "Long route"', 'start "Entry"', ...Array.from({ length: 12 }, () => 'walk distance=1m'), 'exit "Finish"'].join("\n");
+export const LONG_ROUTE = ['route "Long route"', 'start "Entry"', ...Array.from({ length: 12 }, /**
+ * Supply the fixed "walk distance=1m" value.
+ * @responsibility computation
+ * @returns {string} The literal "walk distance=1m" for this branch.
+ */ () => 'walk distance=1m'), 'exit "Finish"'].join("\n");
 export const DETAILS = 'rappel height=30m rope=60m anchor=bolts anchor_count=4 station=left stages=10m+20m redirection=15m:left traverse=1000m';
-export const DENSE = ['route "Dense"', 'start', 'rappel height=30m rope=60m', ...Array.from({ length: 30 }, (_, index) => `note "${index} Check the weather and current conditions before descending"`), 'hazard type=snake severity=critical', 'exit'].join("\n");
+export const DENSE = ['route "Dense"', 'start', 'rappel height=30m rope=60m', ...Array.from({ length: 30 }, /**
+ * Format the current entry as the text required by Array.from, preserving supplied values.
+ * @responsibility computation
+ * @param {unknown} _ - Required callback placeholder; intentionally unused.
+ * @param {number} index - Zero-based position in the current ordered collection.
+ * @returns {string} Formatted text retaining the supplied values and ordering.
+ */ (_, index) => `note "${index} Check the weather and current conditions before descending"`), 'hazard type=snake severity=critical', 'exit'].join("\n");
 
 export const CASES = [
   ["twelve walks and exit", LONG_ROUTE, {}, {}],
@@ -26,5 +36,10 @@ export const CASES = [
   ["empty route", 'route "Empty"', { marginY: 0, marginBottom: 0, width: 1 }, {}],
   ["annotation-only route", 'route "Notes"\nnote "A note"\nhazard type=swift_water severity=high', { width: 1, spineX: 0 }, {}],
   ["unknown technical height", 'route "Unknown"\ndownclimb\nexit', {}, {}],
-  ...["direct", "slab"].map((shape) => [shape, `route "Shapes"\nstart\n${DETAILS} shape=${shape}\nexit`, { width: 80 }, {}])
+  ...["direct", "slab"].map(/**
+   * Project the current entry into an ordered tuple for ["direct", "slab"].map.
+   * @responsibility computation
+   * @param {unknown} shape - Technical drawing shape: ladder, direct or curve.
+   * @returns {Array} The ordered records or values assembled above.
+   */ (shape) => [shape, `route "Shapes"\nstart\n${DETAILS} shape=${shape}\nexit`, { width: 80 }, {}])
 ];

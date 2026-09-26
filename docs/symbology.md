@@ -1,6 +1,6 @@
 # Symbology
 
-VRL uses canyon topo abbreviations rather than decorative invented markers. The first renderer supports three profiles:
+VRL uses canyon topo abbreviations rather than decorative invented markers. The renderer supports three profiles:
 
 ```text
 federation  shared default profile
@@ -22,7 +22,7 @@ i    note
 
 The Spanish profile uses `P` for pool/poza and `A` for walking/on-foot travel. The French profile uses `DEP` and `SORT` for start and exit labels, while the Spanish profile uses `INI` and `FIN`.
 
-The renderer does not copy federation artwork. It renders these as text symbols on the route profile and explains the active profile in the SVG legend so public documentation stays portable and easy to diff. Ladder-style technical slopes, inclination, rungs, segment labels, station ticks, anchor-count marks, rappel stage labels, and mid-rappel redirection anchors are diagram structure and route detail, not a new general symbol family.
+The renderer does not copy federation artwork. It renders these as text symbols on the route profile and explains the active profile in the SVG legend so public documentation stays portable and easy to diff. Classic ladder-style technical slopes, inclination, rungs, segment labels, station ticks, anchor-count marks, rappel stage labels, and mid-rappel redirection anchors are diagram structure and route detail, not a new general symbol family.
 
 ## Anchor Count Shorthand
 
@@ -52,3 +52,7 @@ hazard type=snake_dense_area severity=high note="Dense snake area"
 ```
 
 These render as `SN` with a simple snake mark. This is intentionally marked as a VRL extension, not a French or Spanish federation standard.
+
+## Optional canyon style
+
+Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.

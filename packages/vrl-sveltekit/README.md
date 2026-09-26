@@ -1,4 +1,4 @@
-# @subvertic/sveltekit
+# @subvertic/vrl-sveltekit
 
 See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
 
@@ -8,31 +8,34 @@ SvelteKit load helpers for Vertical Route Language.
 
 This package compiles VRL source into serializable diagram data that can be returned from SvelteKit `load` functions and rendered with a Svelte component.
 
-State creation delegates to the first-party `@subvertic/diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+
+This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version.
 
 ## Install
 
 ```sh
-npm install @subvertic/sveltekit @subvertic/svelte @subvertic/core @subvertic/render-svg @sveltejs/kit svelte
+npm install @subvertic/vrl-sveltekit @subvertic/vrl-svelte @subvertic/vrl-core @subvertic/vrl-render-svg @sveltejs/kit svelte
 ```
 
 ## Usage
 
 ```js
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/quebrada-gata.vrl");
+    const response = await fetch("/routes/soft-terrain-canyon.vrl");
+    if (!response.ok) throw new Error(`Route source request failed: ${response.status}`);
     return response.text();
   },
-  options: { language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
+  options: { style: "soft-terrain", idPrefix: "canyon-overview", language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
 });
 ```
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
 
   export let data;
 </script>
@@ -49,7 +52,7 @@ If your load function uses a custom key, pass the same key to the component:
 ## Load Helpers
 
 ```js
-import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 import { loadRouteSource } from "$lib/routes";
 ```
 
@@ -74,6 +77,8 @@ export const load = createVrlSvelteKitLoad({
 <VrlDiagram {data} diagramKey="routeDiagram" />
 ```
 
+The optional `style: "soft-terrain"` is forwarded to the renderer; classic remains the default. Give each inline occurrence a distinct stable `idPrefix`, including precomputed previews. See the [style guide](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/soft-terrain.md).
+
 ## Component Props
 
 ```js
@@ -94,7 +99,7 @@ export const load = createVrlSvelteKitLoad({
 
 The component reads `data.vrl` by default. Passing `diagram` overrides `data[diagramKey]`.
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Successful-state warnings
 
@@ -103,3 +108,5 @@ Successful diagrams show a warning panel by default. `showWarnings` defaults to 
 ## License
 
 MIT. Copyright (c) 2026 Pedro Guzmán.
+
+For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).

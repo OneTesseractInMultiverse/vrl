@@ -102,7 +102,7 @@ The legacy `normalizeAttributes` and individual token helpers remain permissive 
 The SVG adapter reads separated extensions while still accepting older supplied models with descriptive values in their original bags. When both are supplied by a low-level caller, the original attribute/metadata value takes precedence. Recompile source to migrate stored models; the adapter fallback does not certify old domain values. Default rendered output is preserved.
 
 ```js
-import { compileRoute } from "@subvertic/core";
+import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route "Survey"\nmetadata region=CR\nwalk distance=3m note="Approach"');
 // result.model.metadata is {}
@@ -110,3 +110,20 @@ const result = compileRoute('route "Survey"\nmetadata region=CR\nwalk distance=3
 // result.model.elements[0].attributes.distance.meters === 3
 // result.model.elements[0].extensions.note === "Approach"
 ```
+
+## Current summary fields
+
+These are the implemented aggregate names in the current model revision. Descriptive metadata and element extensions do not override them.
+
+| Field | Computation and interpretation |
+| --- | --- |
+| `numberOfRappels`, `numberOfHazards` | Counts of those element types. |
+| `highestRappelMeters` | Maximum declared rappel `height`, or zero without rappels; inclination is not applied to this aggregate. |
+| `requiredRopeMeters` | Historical name for the maximum declared rappel `rope`, or zero without rappels. It does not calculate equipment requirements, rigging, retrieval or rope inventory. |
+| `totalDistanceMeters` | Sum of explicitly supplied `distance` on `walk` elements. Other elements and `metadata.total_distance` do not enter this sum. Missing walk distances contribute zero, so this does not establish full route distance or completeness. |
+| `entranceElevationMeters`, `exitElevationMeters` | Corresponding known metadata values, or `null` when absent. |
+| `totalElevationChangeMeters` | Entrance minus exit when both are supplied; otherwise zero. Zero here does not establish a surveyed level route when elevations are missing. |
+
+For the shared fictional canyon, the two rappel heights are 18 m and 12 m, declared ropes are 40 m and 30 m, and the only walk distance is 120 m. Its summaries are therefore `highestRappelMeters: 18`, `requiredRopeMeters: 40` and `totalDistanceMeters: 120`. It has no declared endpoint elevations.
+
+The additive `summarizeRouteMeasurements` helper exposes explicit measurement names, observation counts and null unknowns without replacing these legacy fields. See [summary meaning and provenance](route-summary.md) for its full contract and distance-conflict warning. Consumers must use the contract shipped in their installed version; this addition is scheduled for the next minor release.

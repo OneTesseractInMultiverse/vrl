@@ -1,4 +1,4 @@
-import { assertOptionsRecord } from "@subvertic/core";
+import { assertOptionsRecord } from "@subvertic/vrl-core";
 import { validatePaint } from "./paint.js";
 
 export const LIGHT_THEME = Object.freeze({
@@ -51,6 +51,15 @@ export const DARK_THEME = Object.freeze({
   levelBadgeText: "#111111"
 });
 
+/**
+ * Validate light/dark selection and overrides, then produce an owned resolved token record without mutating
+ * frozen defaults.
+ * @responsibility coordinator
+ * @param {string} theme - Supported theme name, light or dark; defaults to "light".
+ * @param {unknown} overrides - Caller-supplied values replacing the corresponding defaults; defaults to {}.
+ * @returns {Object} Owned validated theme-token record; frozen shared defaults remain unchanged.
+ * @throws {TypeError} An input does not satisfy the required type or shape.
+ */
 export function resolveTheme(theme = "light", overrides = {}) {
   if (theme !== "light" && theme !== "dark") throw new TypeError("Theme must be light or dark.");
   assertOptionsRecord(overrides, "Theme tokens");
@@ -62,8 +71,22 @@ export function resolveTheme(theme = "light", overrides = {}) {
   });
 }
 
+/**
+ * Require known theme-token names and supported paint values while returning a new record.
+ * @responsibility computation
+ * @param {Object} tokens - Own-key theme override record; unknown names and unsupported paint values are rejected.
+ * @returns {Object} New own-key record of validated paint values.
+ */
 function validateThemeTokens(tokens) {
-  return Object.fromEntries(Object.entries(tokens).map(([name, value]) => {
+  return Object.fromEntries(Object.entries(tokens).map(/**
+   * Validate one known theme token and return its name with a supported paint value.
+   * @responsibility computation
+   * @param {Array} input1 - Ordered tuple destructured into the separately documented members below.
+   * @param {unknown} input1[0] - Tuple member bound as name: selected field or entry name.
+   * @param {unknown} input1[1] - Tuple member bound as value: value paired with its own key.
+   * @returns {Array} The ordered records or values assembled above.
+   * @throws {TypeError} An input does not satisfy the required type or shape.
+   */ ([name, value]) => {
     if (!Object.hasOwn(LIGHT_THEME, name)) throw new TypeError(`Unknown theme token "${name}".`);
     return [name, validatePaint(value)];
   }));

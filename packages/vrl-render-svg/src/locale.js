@@ -120,6 +120,12 @@ const DIAGRAM_TEXT = Object.freeze({
   })
 });
 
+/**
+ * Resolve supported language names and aliases with the documented English fallback.
+ * @responsibility computation
+ * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to DEFAULT_LANGUAGE.
+ * @returns {string} Supported en or es dictionary key after alias/fallback resolution.
+ */
 export function resolveDiagramLanguage(language = DEFAULT_LANGUAGE) {
   if (typeof language !== "string") {
     return DEFAULT_LANGUAGE;
@@ -129,15 +135,35 @@ export function resolveDiagramLanguage(language = DEFAULT_LANGUAGE) {
   return Object.hasOwn(LANGUAGE_ALIASES, alias) ? LANGUAGE_ALIASES[alias] : DEFAULT_LANGUAGE;
 }
 
+/**
+ * Return the immutable dictionary for the resolved diagram language.
+ * @responsibility computation
+ * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to DEFAULT_LANGUAGE.
+ * @returns {Object} Shared frozen localization dictionary; callers must not mutate it.
+ */
 export function diagramText(language = DEFAULT_LANGUAGE) {
   return DIAGRAM_TEXT[resolveDiagramLanguage(language)];
 }
 
+/**
+ * Look up the localized element label with the vocabulary's fallback behavior.
+ * @responsibility computation
+ * @param {unknown} elementType - Declared domain element type used for vocabulary lookup.
+ * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to DEFAULT_LANGUAGE.
+ * @returns {unknown} The selected result, including the documented absent-value fallback.
+ */
 export function elementLabel(elementType, language = DEFAULT_LANGUAGE) {
   const text = diagramText(language);
   return Object.hasOwn(text.elements, elementType) ? text.elements[elementType] : elementType;
 }
 
+/**
+ * Translate a known categorical value and preserve unrecognized text.
+ * @responsibility computation
+ * @param {unknown} value - Candidate value; accepted shape, missing-value behavior and rejection rules are described above.
+ * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to DEFAULT_LANGUAGE.
+ * @returns {unknown} The value value selected or validated above. The selected result, including the documented absent-value fallback.
+ */
 export function localizeDetailValue(value, language = DEFAULT_LANGUAGE) {
   if (typeof value !== "string") {
     return value;

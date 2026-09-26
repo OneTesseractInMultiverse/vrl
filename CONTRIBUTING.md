@@ -20,7 +20,7 @@ make run
 
 Core domain and application code must remain framework-free. Domain code must not import React, Svelte, browser APIs, file systems, network services, storage, or package tooling. Application services may coordinate parser, validator, normalizer, layout, and export ports, but should not inline their rules.
 
-Each function should have one responsibility. Parser code parses. Validation code validates. Layout code computes positions. Renderers render already-normalized data. Framework adapters adapt.
+Each function must have one responsibility and adjacent JSDoc explaining its inputs, outputs, ownership and failures. Tag it explicitly with `@responsibility coordinator` or `@responsibility computation`, including private helpers, callbacks, test fixtures and tooling. Follow the [internal documentation convention](docs/internal-documentation.md) and run `npm run check:function-docs`; the full gate enforces it. Parser code parses. Validation code validates. Layout code computes positions. Renderers render already-normalized data. Framework adapters adapt.
 
 ## Tests
 
@@ -30,7 +30,7 @@ Each test function should contain exactly one assertion. Split behavior checks i
 
 ## Pull Requests
 
-Pull requests should include a clear description, a rationale, tests for behavior changes, and any documentation updates needed by users or contributors. Keep unrelated refactors out of feature and bug-fix pull requests. Every behavior change must update the relevant language/API rule, example and expected results together; follow the [executable documentation workflow](docs/documentation-contracts.md) and run `npm run check:docs` alongside the full quality gate.
+Pull requests should include a clear description, a rationale, tests for behavior changes, and any documentation updates needed by users or contributors. Keep unrelated refactors out of feature and bug-fix pull requests. Every behavior change must update the relevant language/API rule, example and expected results together; follow the [executable documentation workflow](docs/documentation-contracts.md) and the [change-to-documentation checklist](docs/documentation-contracts.md#change-to-documentation-checklist). Run `npm run check:docs` alongside the full quality gate and regenerate/review affected previews with `make render-assets`.
 
 ## Safety and Domain Accuracy
 

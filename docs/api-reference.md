@@ -6,12 +6,12 @@ See the [public API classifications, typed contracts, and revision policy](publi
 
 VRL is split into small packages so consumers can choose the layer they need. The core package is framework-free. Renderers and framework adapters depend inward on the core.
 
-## @subvertic/core
+## @subvertic/vrl-core
 
 Install:
 
 ```sh
-npm install @subvertic/core
+npm install @subvertic/vrl-core
 ```
 
 Common imports:
@@ -19,13 +19,14 @@ Common imports:
 ```js
 import {
   compileRoute,
+  formatDiagnostic,
   parseVrl,
   validateRoute,
   normalizeRoute,
   computeVerticalLayout,
   exportRouteJson,
   summarizeRouteMeasurements
-} from "@subvertic/core";
+} from "@subvertic/vrl-core";
 ```
 
 `compileRoute(source, options)` is the main use case. It checks document budgets, parses source, validates it, normalizes the route model, computes layout, and exports JSON.
@@ -43,11 +44,8 @@ const result = compileRoute(source, {
   }
 });
 
-if (result.ok === false) {
-  for (const diagnostic of result.diagnostics) {
-    console.error(diagnostic.message);
-  }
-} else {
+for (const diagnostic of result.diagnostics) console.error(formatDiagnostic(diagnostic));
+if (result.ok) {
   const observations = summarizeRouteMeasurements(result.model.elements, result.model.metadata);
   console.log(observations.maximumDeclaredRopeMeters); // null if no rope is recorded
   console.log(result.json);
@@ -56,7 +54,9 @@ if (result.ok === false) {
 
 `summarizeRouteMeasurements(elements, metadata?)` returns explicit declared/observed quantities and null unknowns without modifying `model.summary` or JSON. Legacy `requiredRopeMeters` is a maximum declaration, not an equipment requirement; `totalDistanceMeters` is only a recorded-walk sum. See [summary provenance and conflicts](route-summary.md) for all fields, observation counts and the nonblocking total-distance warning.
 
-Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
+Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
+
+See the [current summary meanings](domain-model.md#current-summary-fields) before interpreting aggregate names as route totals or equipment requirements.
 
 Returned shape:
 
@@ -90,7 +90,7 @@ Use `createRouteCompiler(overrides)` when an application needs to inject custom 
 `lexVrlLine(line, location = { line: 1, column: 1 })` scans one physical line without dependencies or I/O. It returns `{ tokens, diagnostics, commentStart }`. A token has `kind: "bare" | "quoted" | "attribute"`, its original `raw` spelling, its decoded `value`, and a `span: { start, end }`. Attribute tokens also have `key`, `valueForm: "bare" | "quoted"`, `keySpan`, and `valueSpan`. Their key/value spans exclude the `=` separator; quoted token/value spans include the delimiters. All spans are end-exclusive, with one-based source lines and UTF-16 columns relative to the supplied origin. Tabs count as one code unit. `commentStart` is the zero-based UTF-16 offset of an outside `#` in the supplied line, or `null`.
 
 ```js
-import { lexVrlLine } from "@subvertic/core";
+import { lexVrlLine } from "@subvertic/vrl-core";
 
 const result = lexVrlLine('start "A=B"', { line: 4, column: 1 });
 // result.tokens[1]:
@@ -267,19 +267,19 @@ Use `layout.segments` to iterate technical events, `segment.element` for feature
 
 For custom geometry, pass a positioned segment as the final argument to `dropLadderGeometry`, `technicalLineVerticalDelta`, or the technical segment render helpers. They consume its `technicalDeltaY` directly. The older elevation-layout overload remains available for callers with an already unambiguous pair, but compiled rendering uses only the positioned segment contract.
 
-## @subvertic/render-svg
+## @subvertic/vrl-render-svg
 
 Install:
 
 ```sh
-npm install @subvertic/core @subvertic/render-svg
+npm install @subvertic/vrl-core @subvertic/vrl-render-svg
 ```
 
 Render a compiled route:
 
 ```js
-import { compileRoute } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute(source);
 
@@ -300,6 +300,8 @@ Renderer options:
   locale: "en-US" | "es-CR",
   symbology: "federation" | "french" | "spanish",
   legend: true | false,
+  idPrefix: "route-overview",
+  style: "classic" | "soft-terrain",
   theme: "light" | "dark",
   themeTokens: {
     background: "#eef6f8",
@@ -311,19 +313,23 @@ Renderer options:
 
 `language` controls diagram text such as element names, route-summary labels, accessibility labels, the legend, and common detail values. `locale` is accepted as an alias. If neither is set, `symbology: "spanish"` selects Spanish text; otherwise English text is used. `legend` defaults to `true`; set it to `false` only when the embedding surface already explains topo abbreviations and detail fields such as flow, exposure, severity, and inclination. Flow, exposure, hazard severity, and inclination values render as category-colored SVG badges and use matching colors in the legend. Lower-level helpers such as `dropLadderGeometry` and `technicalLineVerticalDelta` expose the same scaled technical-line geometry for custom renderers.
 
+`style` defaults to `classic`. The optional `soft-terrain` style adds a neutral contour/wash, directed curves without rungs, symbolic pools, explicit uncertainty, and declared rope/anchor labels. It applies to complete diagrams, preserves model/layout facts, and rejects other values with `TypeError`. See the [style contract and visual examples](soft-terrain.md) for compatibility, failure and schematic limits.
+
+`idPrefix` gives each diagram occurrence a document-unique namespace for SVG definitions and references. It defaults to `vrl`; accepted strings are 1–64 ASCII letters/digits/underscores/hyphens starting with a letter. Non-strings throw `TypeError`; malformed strings throw `RangeError`. Every inline diagram on a page must use a distinct prefix, stable across SSR and hydration. Supplied diagram states preserve their existing SVG IDs. See [multiple inline diagrams](svg-identifiers.md) for ownership, duplicate-prefix behavior, fragments and migration.
+
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 
 ### Technical annotations across line shapes
 
-`renderTopoSvg` and `renderRouteSegments` retain stage labels, stage boundaries, and redirection markers for `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs; annotation ownership, coordinates, values, and language remain the same. Stage lengths remain SVG text, and redirection groups retain localized `aria-label` values (for example, `Redirection anchor 5m L` or `Anclaje de desvio 5m izq`). `computeTopoScene` includes their text extents for every shape, so labels can expand the viewport. The top-level SVG `<desc>` also includes localized stage/redirection summaries in feature order with each owning feature ID; assistive technology can expose these facts through the image description without traversing internal SVG groups.
+In classic rendering, `renderTopoSvg` and `renderRouteSegments` retain stage labels, stage boundaries, and redirection markers for `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs; annotation ownership, coordinates, values, and language remain the same. Stage lengths remain SVG text, and redirection groups retain localized `aria-label` values (for example, `Redirection anchor 5m L` or `Anclaje de desvio 5m izq`). `computeTopoScene` includes their text extents for every shape, so labels can expand the viewport. The top-level SVG `<desc>` also includes localized stage/redirection summaries in feature order with each owning feature ID; assistive technology can expose these facts through the image description without traversing internal SVG groups.
 
 Annotations follow the technical portion of the positioned segment, excluding extra connector spacing. Stages are proportioned by their declared total; a mismatch with height remains a compiler warning and does not rewrite the lengths. Redirections use distance/height. Existing endpoint clearance places markers and labels between 5% and 95% of the schematic slope while retaining the exact displayed values. See the [language example](language-reference.md#expressive-descent-attributes) for shape and validation rules.
 
 The helper signatures remain compatible:
 
 ```js
-renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null);
-renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null, language = "en");
+renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null, idPrefix);
+renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null, language = "en", idPrefix);
 ```
 
 The direct helper's optional language argument is appended after its existing layout argument. Both helpers render complete technical segments with annotations through shared orchestration. No public exports or core model fields change. Custom callers remain responsible for valid normalized attributes and geometry; use `compileRoute` for located source diagnostics. Unsupported source shapes and malformed/out-of-range annotations block compilation rather than producing partial diagrams.
@@ -342,13 +348,13 @@ The normalized `anchor_count` value and JSON representation are unchanged. The f
 
 `renderTopoSvg` prepares the complete presentation before serializing SVG. Requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.
 
-The route summary occupies a separate row above the route content. The legend follows the lowest route or annotation label, and its columns expand for localized text. Detail rows wrap once using the requested width; fitting does not feed the expanded width back into wrapping. Unbroken labels expand the canvas. This is deterministic growth, not pagination or a guarantee that all symbols remain separated when spacing is deliberately reduced.
+The route summary occupies a separate row above the route content. The legend follows the lowest route or annotation label, and its columns expand for localized text. Classic detail rows wrap once using the requested width; soft-terrain rows may rewrap while moving right to clear symbols. In both styles, fitting does not feed the expanded width back into wrapping. Unbroken labels expand the canvas. This is deterministic growth, not pagination or a guarantee that all symbols remain separated when spacing is deliberately reduced.
 
 Use the additive `computeTopoScene(route, layout, options = {})` export to inspect the same presentation without producing markup:
 
 ```js
-import { compileRoute } from "@subvertic/core";
-import { computeTopoScene } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute(source, { layout: { width: 320 } });
 if (result.ok) {
@@ -361,9 +367,11 @@ if (result.ok) {
 The returned plain record contains:
 
 - `viewBox: { x, y, width, height }`: integer outer canvas coordinates with 12 pixels of padding.
+- `identifiers`: resolved document-scoped SVG definition IDs, currently `{ arrow: string }`.
 - `contentBounds` and `bounds`: `{ minX, minY, maxX, maxY }` envelopes, respectively before and after adding the summary and legend.
 - `language`: resolved presentation language.
 - `nodes`: visual-order records retaining the original `node` reference, `placement`, `title`, `detail`, `maxDetailWidth`, and display-string `detailRows`; `drawing` adds structured detail records and their placed text/badges, symbols, anchors, and leader.
+- `style`, `terrain`, `pools`: selected style and optional prepared soft-terrain/pool geometry; classic has null terrain and an empty pool array.
 - `title`, `description`, `terrainPath`, `waterPaths`, `segments`, `segmentLabels`, and `stationTicks`: prepared accessible text and geometry consumed by serialization.
 - `infoBox`: summary position, dimensions, display-text `lines` (including the uppercase route heading), placed `textLines`, and bounds. These strings are not XML-encoded.
 - `legend`: position, dimensions, title, existing rows, placed `drawingRows`, and bounds; `null` when disabled.
@@ -420,12 +428,12 @@ The rule belongs to the rendering adapter: core compilation and JSON export can 
 
 Caller-provided `diagram.svg` is **trusted markup**. React inserts it with `dangerouslySetInnerHTML`; the Svelte component uses `@html`, and `renderVrlSvelteMarkup` embeds it directly. Supplying `diagram` bypasses compilation, configuration validation, and SVG generation. Use state created by VRL's diagram factories within a trusted application pipeline. If an application accepts arbitrary SVG or precomputed states from another source, it must apply its own appropriate sanitization before passing them to these adapters. Escaping wrapper attributes or diagnostics does not sanitize `diagram.svg`. React's `containerProps` and `diagnosticsProps` are also application-owned component props.
 
-## @subvertic/diagram
+## @subvertic/vrl-diagram
 
-Install `@subvertic/diagram` to create state without framework peers:
+Install `@subvertic/vrl-diagram` to create state without framework peers:
 
 ```js
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 
 const diagram = createDiagramState(source, {
   language: "es",
@@ -444,19 +452,19 @@ All three existing adapter factories delegate to this operation and preserve the
 
 React, Svelte, SvelteKit, and `renderVrlSvelteMarkup` display an accompanying warning panel by default. Adapter props `showWarnings`, `warningsClassName`, and `warningsLabel` control its visibility, CSS class, and accessible name. For markup, use the third `renderOptions` argument. These settings do not belong in compiler/renderer `options`. State remains complete when the panel is hidden. See the [warning presentation policy](warning-presentation.md) for defaults, escaping, accessibility, and the added wrapper on warning-only success.
 
-## @subvertic/react
+## @subvertic/vrl-react
 
 Install:
 
 ```sh
-npm install @subvertic/react react
+npm install @subvertic/vrl-react react
 ```
 
 Create a component with dependency-injected React:
 
 ```jsx
 import React, { useMemo } from "react";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 
@@ -496,21 +504,21 @@ Pass `source` and `options` for simple use. Pass `diagram` from `createVrlReactD
 
 See the [precomputed diagram trust boundary](#precomputed-diagram-trust-boundary) before accepting cached or externally supplied diagram states.
 
-Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
-## @subvertic/svelte
+## @subvertic/vrl-svelte
 
 Install:
 
 ```sh
-npm install @subvertic/svelte svelte
+npm install @subvertic/vrl-svelte svelte
 ```
 
 Component usage:
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
   export let source = "";
 </script>
@@ -521,7 +529,7 @@ Component usage:
 Server-side markup helper:
 
 ```js
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const diagram = createVrlSvelteDiagramState(source, {
   language: "es",
@@ -547,24 +555,25 @@ Component props:
 }
 ```
 
-Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
-## @subvertic/sveltekit
+## @subvertic/vrl-sveltekit
 
 Install:
 
 ```sh
-npm install @subvertic/sveltekit @subvertic/svelte @sveltejs/kit svelte
+npm install @subvertic/vrl-sveltekit @subvertic/vrl-svelte @sveltejs/kit svelte
 ```
 
 Create a reusable load function:
 
 ```js
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/quebrada-gata.vrl");
+    const response = await fetch("/routes/soft-terrain-canyon.vrl");
+    if (!response.ok) throw new Error(`Route source request failed: ${response.status}`);
     return response.text();
   },
   options: { language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
@@ -575,7 +584,7 @@ Render the loaded data:
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
   export let data;
 </script>
 
@@ -602,12 +611,12 @@ export const load = createVrlSvelteKitLoad({
 Local publishing is centralized through the Makefile:
 
 ```sh
-make publish-plan
-make release-prepare RELEASE=patch
+make publish-plan RELEASE=minor
+make release-prepare RELEASE=minor
+# Review, test, commit and merge the prepared release before publication.
 make publish
-make publish VERSION=0.2.0
-make publish RELEASE=minor
+# When npm requests a fresh one-time code:
 make publish OTP=123456
 ```
 
-`make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks, updates versions, then publishes locally in dependency order. If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.
+`make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks and publishes the current committed version in dependency order; it does not update versions. Version changes must be prepared, reviewed and committed first. Per-package npm bootstrap/trusted-publisher setup is a separate prerequisite; see the [release checklist](release-checklist.md). If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.

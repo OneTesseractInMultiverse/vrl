@@ -2,6 +2,21 @@
 
 VRL publishes ESM JavaScript with bundled TypeScript declarations for all six packages. No compilation step or third-party runtime dependency is added to core, SVG rendering, or the shared diagram package. React uses a structural `createElement` port; Svelte component declarations refer to the existing Svelte peer. Development checks use TypeScript 7, React 18 types, and Svelte 4 types.
 
+## Optional canyon presentation
+
+`RenderOptions.style` accepts `"classic"` (default) or `"soft-terrain"`. This optional next-minor renderer setting leaves source/model/layout contracts unchanged. Advanced scenes add `style`, `terrain`, `pools`, optional legend notes and the `"curve"` technical-shape variant. Exhaustive shape consumers must add that case when upgrading. Existing fragment helpers remain classic. See the [style contract](soft-terrain.md) for symbolic geometry and failure behavior.
+
+```ts
+import { compileRoute } from "@subvertic/vrl-core";
+import { renderTopoSvg, type RenderOptions } from "@subvertic/vrl-render-svg";
+
+const result = compileRoute('route Canyon\nrappel R1 height=18m rope=40m anchor=bolts anchor_count=2\npool type=unknown\nexit');
+if (!result.ok) throw new Error("Invalid route");
+const options: RenderOptions = { style: "soft-terrain", theme: "light", idPrefix: "canyon-overview" };
+const svg = renderTopoSvg(result.model, result.layout, options);
+if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) throw new Error("Missing declared facts");
+```
+
 ## Stability classes
 
 [The revision 1 inventory](contracts/v1.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
@@ -34,7 +49,7 @@ Retain prior contract inventories and compatibility fixtures when introducing a 
 Applications that persist model JSON must store its contract revision themselves, for example:
 
 ```js
-import { compileRoute } from "@subvertic/core";
+import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
@@ -63,9 +78,9 @@ Import types from the owning package root using `import type`. The declarations 
 `ElementView` and `RouteView` describe the broader inputs of low-level helpers, including historical manually supplied records. They are not evidence that a value passed domain validation. Individual token parsers return `{ ok: true, value }` or `{ ok: false, reason }`; a successfully converted token can still violate a field's semantic range. Parsed redirection side text, for example, is unrestricted until normalization.
 
 ```ts
-import { compileRoute } from "@subvertic/core";
-import type { RouteModel } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import type { RouteModel } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute('route Typed\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (result.ok) {
@@ -82,8 +97,8 @@ if (result.ok) {
 Partial `createRouteCompiler` overrides must preserve the default AST/model/layout types because omitted stages still use built-in implementations. Custom shapes require a complete `CompilerPorts<A, M, L, O>` set: AST, model, layout, and layout-option types respectively. This prevents a custom normalizer from accidentally feeding unrelated records into the default layout/export pipeline. Both composition functions retain their legacy optional/default geometry port at runtime; use complete wiring for custom shapes.
 
 ```ts
-import { createRouteCompiler, parseVrl } from "@subvertic/core";
-import type { CompilerPorts, RouteAst } from "@subvertic/core";
+import { createRouteCompiler, parseVrl } from "@subvertic/vrl-core";
+import type { CompilerPorts, RouteAst } from "@subvertic/vrl-core";
 
 const ports: CompilerPorts<RouteAst, { title: string }, { title: string }, { prefix: string }> = {
   parse: parseVrl,
@@ -130,8 +145,8 @@ Exported `LIGHT_THEME`/`DARK_THEME`, resolved symbol profiles, and localization 
 Use per-call `themeTokens`, `theme`, `language`/`locale`, and registered `symbology` selections. `resolveTheme` deliberately returns an owned, mutable copy. There is currently no custom symbol/localization dictionary option; copying those dictionaries supports application-owned UI only. Shared definitions have no mutation-based customization hook.
 
 ```js
-import { createDiagramState } from "@subvertic/diagram";
-import { DARK_THEME, resolveTheme } from "@subvertic/render-svg";
+import { createDiagramState } from "@subvertic/vrl-diagram";
+import { DARK_THEME, resolveTheme } from "@subvertic/vrl-render-svg";
 
 const localTheme = resolveTheme("dark", { water: "#176f91" });
 localTheme.terrain = "#c8be9c";
@@ -151,8 +166,8 @@ Successful React, Svelte, SvelteKit, and string-markup diagrams now display warn
 `diagramWarningText` is an additive stable export for the same pure warning selection. Custom presentations can use it or consume diagnostic records directly:
 
 ```js
-import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const diagram = createDiagramState('route "Short rope"\nrappel height=10m rope=5m');
 const text = diagramWarningText(diagram);
@@ -180,8 +195,8 @@ Each behavioral test uses one assertion. Coverage remains a 100% target, supplem
 `summarizeRouteMeasurements(elements, metadata?)` is an additive advanced core export. `RouteMeasurementSummary` separates declared totals, observed rope/walk measurements, counts and null unknowns. Existing `RouteSummary`, model JSON and contract revision 1 remain unchanged. The new total-distance warning preserves successful compilation and both source quantities; it adds a diagnostic code without changing failure envelopes. See [summary meaning and provenance](route-summary.md) for migration from the ambiguous legacy names and the partial-total comparison policy.
 
 ```ts
-import { compileRoute, summarizeRouteMeasurements } from "@subvertic/core";
-import type { RouteMeasurementSummary } from "@subvertic/core";
+import { compileRoute, summarizeRouteMeasurements } from "@subvertic/vrl-core";
+import type { RouteMeasurementSummary } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Survey\nmetadata total_distance=20m\nwalk distance=25m\nwalk');
 if (!result.ok) throw new Error("Expected a nonblocking summary conflict");
@@ -193,4 +208,24 @@ if (observations.declaredTotalDistanceMeters !== 20 || observations.summedWalkDi
   throw new Error("Declared and observed quantities must remain separate");
 }
 console.log(observations);
+```
+
+## SVG instance namespaces
+
+`RenderOptions.idPrefix` and the final namespace argument on SVG fragment helpers are additive next-minor APIs. Existing defaults and model/layout/diagnostic revisions remain unchanged. `TopoScene.identifiers` exposes the resolved marker identity as inspection data. See [namespace validation, duplicate handling, and adapter ownership](svg-identifiers.md).
+
+This example is typechecked and executed against all six packed packages by `check:packed`:
+
+```ts
+import { createDiagramState } from "@subvertic/vrl-diagram";
+
+const source = "route Repeated\nrappel height=10m rope=20m\nexit";
+const overview = createDiagramState(source, { idPrefix: "overview", theme: "light" });
+const detail = createDiagramState(source, { idPrefix: "detail", theme: "dark" });
+if (!overview.ok || !detail.ok ||
+    !overview.svg.includes('id="overview-arrow"') || !overview.svg.includes('url(#overview-arrow)') ||
+    !detail.svg.includes('id="detail-arrow"') || !detail.svg.includes('url(#detail-arrow)') ||
+    overview.json !== detail.json) {
+  throw new Error("SVG instances must resolve distinct markers without changing route facts");
+}
 ```

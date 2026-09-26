@@ -1,7 +1,16 @@
 import { applicableFieldSpecification, requiredFields } from "./field-specifications.js";
 import { fieldValueProblems, parseFieldValue } from "./field-values.js";
 
-/** One assessment owns conversion, applicability, ranges, and required-field problems. */
+/**
+ * Assess field applicability, conversion, ranges and requiredness through shared domain policies; collect
+ * typed fields, string extensions and problems. One assessment owns conversion, applicability, ranges, and
+ * required-field problems.
+ * @responsibility coordinator
+ * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
+ * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
+ * @returns {Object} A record containing fields, extensions, problems.
+ */
+
 export function inspectAttributes(attributes, scope) {
   const fields = [];
   const extensions = [];
@@ -25,6 +34,13 @@ export function inspectAttributes(attributes, scope) {
   return { fields: Object.fromEntries(fields), extensions: Object.fromEntries(extensions), problems };
 }
 
+/**
+ * Recognize an own attribute whose text is not empty; inherited values never satisfy requiredness.
+ * @responsibility computation
+ * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
+ * @param {string} name - Own attribute name whose value or source range is selected.
+ * @returns {unknown} The result of the documented comparison or calculation.
+ */
 export function hasAttributeValue(attributes, name) {
   return Object.hasOwn(attributes, name) && attributes[name] !== "";
 }

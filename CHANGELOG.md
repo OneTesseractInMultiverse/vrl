@@ -2,7 +2,30 @@
 
 This project follows Semantic Versioning once public releases begin.
 
-## 0.1.0 - Unreleased
+## Unreleased
+
+- Document function responsibilities, parameters, outputs and failure/ownership contracts across packages, declarations, callbacks, tooling and tests; enforce coordinator/computation tags and complete signatures in the documentation quality gate.
+
+- Refresh the documentation/example catalogs, align quick starts with the fictional canyon fixture, clarify current aggregate meanings and committed-version publication, and document style/namespace options across adapters. Verify standalone example facts, warnings, quick-start copies and regenerated SVG artifacts in the documentation gate.
+
+- Add optional `style: "soft-terrain"` canyon diagrams with neutral terrain, directed technical curves, restrained symbolic pools, explicit uncertainty and declared rope/anchor labels. Preserve classic defaults, canonical ownership, measurements, stages, redirections and notes.
+- Extend advanced scene inspection with style/terrain/pool records and the `curve` technical-shape variant; exhaustive shape consumers must add that case in the next minor release. No model/DSL revision or runtime dependency change.
+- Add a reproducible fictional visual gallery, independent fact and failure tests, four semantic mutation probes, and packed SSR/hydration/style-update checks. Document schematic limits and pending practitioner evaluation.
+
+- Add caller-controlled `idPrefix` namespaces for SVG marker definitions/references and advanced fragment helpers. Validate bounded ASCII prefixes, preserve deterministic standalone defaults, and keep namespace ownership in the embedding application.
+- Document stable per-instance namespaces across framework SSR/hydration, duplicate-prefix behavior and precomputed states. Add correctness/failure, type, and packed browser regressions for neighboring same-route diagrams with different themes and namespace updates. No runtime dependency or route-model change.
+
+## 0.2.1 - Unreleased
+
+- Restore the `vrl-` project prefix in all six npm package names under the `@subvertic` organization. Update internal dependencies, imports, examples, public contracts, packed consumer fixtures, and release tooling together.
+- Preserve existing correctly named package history. Consumers of the incorrectly named 0.2.0 packages must switch dependencies and imports to `@subvertic/vrl-core`, `@subvertic/vrl-render-svg`, `@subvertic/vrl-diagram`, `@subvertic/vrl-react`, `@subvertic/vrl-svelte`, and `@subvertic/vrl-sveltekit` at 0.2.1. Runtime APIs and architecture are unchanged.
+
+## 0.2.0 - 2026-09-26
+
+- Published with incorrect package names lacking the `vrl-` prefix; the correction is prepared in 0.2.1.
+
+- Configure npm publication through verified release tags, complete workspace and framework-consumer gates, isolated OIDC publishing, and manual validation/resume operations. Correct package repository metadata for provenance.
+- Separate release planning/preparation from publication. Add rollback for caught preparation failures and integrity-checked recovery from partial publication, with explicit correctness/failure tests and bootstrap guidance.
 
 - Add `summarizeRouteMeasurements` with explicit declared rope maximum, recorded-walk sum, observation counts, declared totals and nullable unknowns. Deprecate ambiguous legacy rope/distance names while preserving all revision 1 model-summary fields and JSON.
 - Warn when a declared total distance is below recorded walk distances, using exact source-decimal comparison. Preserve both quantities; invalid fields suppress the comparison, and missing/equal/larger totals do not trigger false warnings.

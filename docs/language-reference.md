@@ -1,6 +1,6 @@
 # VRL Language Reference
 
-VRL documents are text files. The implemented vertical slice supports a compact line-oriented style where every non-empty line starts with a statement keyword. Comments start with `#` outside quoted strings.
+VRL documents are text files. The implemented grammar supports a compact line-oriented style where every non-empty line starts with a statement keyword. Comments start with `#` outside quoted strings.
 
 Each tagged VRL fence is checked as a complete document or explicitly wrapped fragment. The [success/failure examples](language-examples.md) and [documentation contract guide](documentation-contracts.md) explain expected outcomes and maintenance. Normative rules below describe the implemented compact language; future block syntax is identified separately.
 
@@ -93,7 +93,7 @@ The metadata example above is a header fragment following a route declaration. I
 
 ## Elements
 
-The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
+VRL supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
 
 ```vrl example=element-catalog kind=fragment
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
@@ -275,15 +275,15 @@ redirections  comma-separated mid-rappel redirection anchors, such as 12m:left,2
 stages        plus-separated rappel stage lengths, such as 20m+15m
 ```
 
-The SVG canvas expands to contain the full presentation, including labels, technical details, annotations, the route summary, and the legend. Requested layout width/height are minimum framing dimensions. The summary has its own row above the route, and the legend follows the lowest label. Detail rows wrap once using the requested width; unbroken text grows the canvas. Fitting can produce a negative `viewBox` origin and does not change physical measurements or route coordinates. It does not paginate long routes. See the [complete bounds API](api-reference.md#complete-diagram-bounds) for deterministic text estimates, dimension failures, and custom embedding rules.
+The SVG canvas expands to contain the full presentation, including labels, technical details, annotations, the route summary, and the legend. Requested layout width/height are minimum framing dimensions. The summary has its own row above the route, and the legend follows the lowest label. Classic detail rows wrap once using the requested width; soft-terrain rows may rewrap while moving right to clear symbols. In both styles, unbroken text grows the canvas. Fitting can produce a negative `viewBox` origin and does not change physical measurements or route coordinates. It does not paginate long routes. See the [complete bounds API](api-reference.md#complete-diagram-bounds) for deterministic text estimates, dimension failures, and custom embedding rules.
 
 The route name remains original text in the model and accessible SVG title/description; the visible summary heading is uppercase. Formatting happens before XML encoding, so ampersands, brackets, quotes, and Unicode remain text. XML-invalid characters in rendered values cause a `TypeError` at the rendering boundary, not a core source diagnostic; original detail text is validated even when wrapping has prepared display rows. See the [XML text contract](api-reference.md#xml-text-and-route-titles) for exact character ranges and examples.
 
 The SVG renderer labels ambiguous diagram detail fields, so `flow=medium` appears as `flow: medium` and `exposure=medium` appears as `exposure: medium`. Flow, exposure, hazard severity, and inclination values render as category-colored badges. Values such as `dry`, `low`, `medium`, `high`, and `critical` share the color of their field category instead of using separate intensity colors. The default diagram legend explains the active topo abbreviation profile and uses the same category colors to explain supported flow, exposure, severity, and inclination values in the selected diagram language.
 
-`shape=ladder` is the default visual behavior for rappels, downclimbs, and climbs. It renders stepped shelves, a sloped or vertical technical line with an arrow, and small rungs so the diagram reads like a classic canyon profile. `inclination=100%` is vertical; lower values slant the ladder in the direction of travel and shorten the vertical contribution relative to the element height. Climbs use the same field but render upward.
+In the default classic renderer, `shape=ladder` is the default visual behavior for rappels, downclimbs, and climbs. It renders stepped shelves, a sloped or vertical technical line with an arrow, and small rungs so the diagram reads like a classic canyon profile. `inclination=100%` is vertical; lower values slant the ladder in the direction of travel and shorten the vertical contribution relative to the element height. Climbs use the same field but render upward.
 
-`shape=direct` and `shape=slab` currently share the same technical line geometry as the ladder style, without rungs. All three shapes retain stage lengths, stage boundary marks, and redirection anchors, including their distances, sides, and localized accessible names. These details belong to the technical feature; changing its shape does not remove them or change their placement. Canvas fitting includes these labels for every shape. The top-level SVG description also includes a localized summary of stage lengths and redirections with their owning feature ID, making those facts available when assistive technology treats the diagram as one image.
+In classic rendering, `shape=direct` and `shape=slab` share the same technical line geometry as the ladder style, without rungs. All three shapes retain stage lengths, stage boundary marks, and redirection anchors, including their distances, sides, and localized accessible names. These details belong to the technical feature; changing its shape does not remove them or change their placement. Canvas fitting includes these labels for every shape. The top-level SVG description also includes a localized summary of stage lengths and redirections with their owning feature ID, making those facts available when assistive technology treats the diagram as one image.
 
 Use `redirection` or `redirections` when a single rappel has intermediate redirection anchors along the same rope line. The distance is measured from the rappel head and must be greater than `0m` and shorter than the rappel `height`; the side must be `left`, `right`, `center`, or `unknown`. Use `stages` when that single rappel should show multiple rope-length sections, for example before and after a redirection. Use two separate `rappel` elements when the canyon has two actual rappel stations. Stage lengths are shown as SVG text and their boundaries are positioned in proportion to the declared stage total. A stage total that differs from `height` retains the existing warning and displays the declared lengths unchanged. Redirection positions use distance divided by height, along the measured technical slope rather than any extra connector introduced for readable spacing. For endpoint clearance, the existing schematic placement clamps stage/anchor positions to the interior 5–95% of that slope; the displayed measurement remains exact.
 
@@ -294,6 +294,8 @@ rappel height=30m rope=60m stages=10m+20m redirection=5m:left shape=direct
 
 This renders stage labels `10m`, `20m`, and a `5m L` redirection in English. Replacing `direct` with `ladder` or `slab` preserves those details. Invalid shapes, malformed stage/redirection values, nonpositive lengths, and redirections at or beyond the feature height produce blocking validation diagnostics before rendering. Low-level renderers expect validated normalized data.
 
+The optional renderer setting `style: "soft-terrain"` presents all three source shapes as directed curves without rungs. Declared measurements, stages, redirections and source shape hints remain in the model. It is not a new DSL attribute or evidence of physical ladder/overhang geometry. See the [style contract](soft-terrain.md).
+
 ## Anchor Counts
 
 `anchor_count` records the declared number of anchors, independently of how many marks fit beside the station. It accepts decimal integers from `1` to `9007199254740991`, without leading zeros. Zero, negatives, fractions, exponent notation, and larger values are validation errors that block compilation. Omit the field when the count is unknown; the renderer does not infer a count from `anchor=bolts`, `anchor=tree`, or another anchor type.
@@ -302,7 +304,7 @@ Rappel detail text and anchor accessibility labels report the full count, with l
 
 | Declaration | Individual marks | Overflow label | English count text |
 | --- | --- | --- | --- |
-| Omitted | 0 | None | None |
+| Omitted | 0 | None | None in classic; `anchor count unknown` in soft terrain |
 | `anchor_count=1` | 1 | None | `1 anchor` |
 | `anchor_count=4` | 4 | None | `4 anchors` |
 | `anchor_count=5` | 4 | `+1` | `5 anchors` |
@@ -313,7 +315,7 @@ route "Anchor survey"
 rappel height=30m rope=60m anchor_count=5
 ```
 
-This produces `60m / 5 anchors` in English or `60m / 5 anclajes` in Spanish, alongside four marks and `+1`. Even the maximum supported count uses only four circles, with `+9007199254740987` for the remainder. Overflow text participates in canvas fitting; it may expand the viewport without changing route coordinates. Model and JSON quantities remain unchanged.
+Classic rendering produces `60m / 5 anchors` in English or `60m / 5 anclajes` in Spanish, alongside four marks and `+1`. Even the maximum supported count uses only four circles, with `+9007199254740987` for the remainder. Overflow text participates in canvas fitting; it may expand the viewport without changing route coordinates. Model and JSON quantities remain unchanged.
 
 ## Normalized Data
 

@@ -1,4 +1,4 @@
-# @subvertic/react
+# @subvertic/vrl-react
 
 See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
 
@@ -8,33 +8,37 @@ React adapter for Vertical Route Language.
 
 This package exposes a dependency-injected React component factory and a framework-neutral diagram state helper. It keeps React as a peer dependency and delegates parsing, validation, layout, and SVG rendering to the core and renderer packages.
 
-State creation delegates to the first-party `@subvertic/diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+
+This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version.
 
 ## Install
 
 ```sh
-npm install @subvertic/react @subvertic/core @subvertic/render-svg react
+npm install @subvertic/vrl-react @subvertic/vrl-core @subvertic/vrl-render-svg react
 ```
 
 ## Usage
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 
-export function RouteDiagram({ source }) {
+export function RouteDiagram({ source, idPrefix }) {
   return (
     <VrlDiagram
       source={source}
-      options={{ language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
+      options={{ style: "soft-terrain", idPrefix, language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }}
     />
   );
 }
 
-export function RoutePreview({ source }) {
+export function RoutePreview({ source, idPrefix }) {
   const diagram = createVrlReactDiagramState(source, {
+    style: "soft-terrain",
+    idPrefix,
     symbology: "spanish",
     language: "es",
     layout: { pixelsPerMeter: 6 }
@@ -42,6 +46,8 @@ export function RoutePreview({ source }) {
   return <VrlDiagram diagram={diagram} className="route-preview" />;
 }
 ```
+
+The optional `style: "soft-terrain"` is forwarded to the renderer; classic remains the default. Give each inline occurrence a distinct stable `idPrefix`, including precomputed previews. See the [style guide](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/soft-terrain.md).
 
 ## Component Props
 
@@ -67,7 +73,7 @@ Caller-supplied `diagram.svg` is trusted markup: the component inserts it with `
 
 Invalid layout or renderer configuration throws `TypeError` or `RangeError`; these exceptions are separate from source diagnostics. See the [configuration and paint contracts](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#configuration-validation).
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ```jsx
 const VrlDiagram = createVrlDiagramComponent(React, {
@@ -91,3 +97,5 @@ Successful diagrams show a warning panel by default. `showWarnings` defaults to 
 ## License
 
 MIT. Copyright (c) 2026 Pedro Guzmán.
+
+For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).

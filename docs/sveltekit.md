@@ -1,14 +1,16 @@
 # SvelteKit Example
 
+When embedding multiple diagrams, pass a stable, unique `options.idPrefix` per occurrence and reuse it for SSR and hydration. Precomputed states keep their original IDs. See [SVG namespace ownership and validation](svg-identifiers.md).
+
 See the [tested framework/runtime combinations and packed consumer checks](framework-compatibility.md) for SSR, hydration, updates and compatibility limits.
 
-Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+Diagram-state creation delegates to `@subvertic/vrl-diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
 
 The SvelteKit package exposes reusable load helpers and a component that reads precomputed diagram state from `data.vrl` by default.
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
 
   export let data;
 </script>
@@ -21,22 +23,23 @@ When `createVrlSvelteKitLoad` uses a custom `key`, pass the same value as `diagr
 Server-side loading can read VRL source from a local file, CMS, database, or API endpoint before passing compiled diagram state into the page component.
 
 ```js
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/quebrada-gata.vrl");
+    const response = await fetch("/routes/soft-terrain-canyon.vrl");
+    if (!response.ok) throw new Error(`Route source request failed: ${response.status}`);
     return response.text();
   },
-  options: { theme: "light" }
+  options: { theme: "light", style: "soft-terrain", idPrefix: "canyon-overview" }
 });
 ```
 
 For server-only rendering, use the markup helper:
 
 ```js
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 export function renderRoute(source) {
   const diagram = createVrlSvelteKitData(source, { theme: "dark" });
@@ -46,7 +49,7 @@ export function renderRoute(source) {
 
 Diagnostics are rendered as text when the route is invalid, which keeps validation failures visible during development and content review.
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Custom Keys and Direct State
 
@@ -75,3 +78,7 @@ The component props are `data`, `source`, `options`, `diagram`, `diagramKey`, `c
 ## Successful-state warnings
 
 Successful diagrams show a warning panel by default. `showWarnings` defaults to `true`; set it to `false` when the application supplies its own warning presentation. `warningsClassName` defaults to `"vrl-diagram__warnings"` and `warningsLabel` to `"Route warnings"`. These are display props, not compiler/renderer options. Diagnostics remain in state, and errors still suppress SVG. The warning panel is a sibling of the image, adding an outer wrapper only when warnings are visible. See the [warning presentation policy](warning-presentation.md) for accessibility, localization, and CSS migration details.
+
+## Optional canyon style
+
+Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.

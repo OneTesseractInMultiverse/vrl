@@ -1,3 +1,10 @@
+/**
+ * Format a stable test-case name containing replay seed and case identity.
+ * @responsibility computation
+ * @param {string} name - Reviewed mutation or exact test name used for diagnostic/probe matching.
+ * @param {number} index - Zero-based position in the current ordered collection; defaults to 0.
+ * @returns {string} Formatted text retaining the supplied values and ordering.
+ */
 const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
@@ -6,7 +13,7 @@ export const MUTATIONS = [
     before: "return Number.isFinite(value) && Math.abs(value) <= Number.MAX_SAFE_INTEGER;", after: "return true;",
     testFile: "tests/invariants-domain.test.js", testName: "nonfinite custom layout blocks export: NaN" },
   { name: "future explicit identifier reservation", file: "packages/vrl-core/src/domain/element-identifiers.js",
-    before: "const reservedIds = new Set(elements.map((element) => element.id));", after: "const reservedIds = new Set();",
+    before: "(element) => element.id", after: "(element) => undefined",
     testFile: "tests/invariants-domain.test.js", testName: caseName("unique identifiers") },
   { name: "climb direction", file: "packages/vrl-core/src/domain/traversal.js",
     before: 'direction: elementIndex === null ? null : element.type === "climb" ? "up" : "down",', after: 'direction: elementIndex === null ? null : "down",',
@@ -24,23 +31,65 @@ export const MUTATIONS = [
     before: "const right = Math.ceil(Math.max(minimumWidth, content.maxX + 12));", after: "const right = minimumWidth;",
     testFile: "tests/invariants-serialization.test.js", testName: caseName("scene bounds enclose content and panels") },
   { name: "rope stage preservation", file: "packages/vrl-render-svg/src/segment-scene.js",
-    before: "stages: stagePlacements(geometry, element),", after: "stages: [],",
+    before: "stages: stagePlacements(geometry, element, pointAt),", after: "stages: [],",
     testFile: "tests/invariants-serialization.test.js", testName: caseName("scene contains all supplied stage and redirection facts") },
   { name: "duplicate field rejection", file: "packages/vrl-core/src/parser/attribute-parser.js",
     before: "if (firstLocation !== undefined) {", after: "if (false && firstLocation !== undefined) {",
-    testFile: "tests/invariants-parsing.test.js", testName: caseName("malformed input blocks downstream") + " duplicate-field" }
+    testFile: "tests/invariants-parsing.test.js", testName: caseName("malformed input blocks downstream") + " duplicate-field" },
+  { name: "soft curve traversal direction", file: "packages/vrl-render-svg/src/soft-terrain-geometry.js",
+    before: 'return scenePath`M ${geometry.dropX} ${geometry.startY} C ${first.x} ${first.y} ${second.x} ${second.y} ${geometry.bottomX} ${geometry.bottomY}`;',
+    after: 'return scenePath`M ${geometry.bottomX} ${geometry.bottomY} C ${second.x} ${second.y} ${first.x} ${first.y} ${geometry.dropX} ${geometry.startY}`;',
+    testFile: "tests/soft-terrain.test.js", testName: "emitted curve arrows follow descent, ascent and descent in source order" },
+  { name: "soft curve stage preservation", file: "packages/vrl-render-svg/src/segment-scene.js",
+    before: "stages: stagePlacements(geometry, element, pointAt),", after: 'stages: shape === "curve" ? [] : stagePlacements(geometry, element, pointAt),',
+    testFile: "tests/soft-terrain.test.js", testName: "stages and redirections lie on the curve, preserving labels and counts" },
+  { name: "soft style anchor quantity", file: "packages/vrl-render-svg/src/detail-content.js",
+    before: "const count = anchorSummary(element, language);", after: 'const count = anchorSummary({ ...element, attributes: { ...element.attributes, anchor_count: "1" } }, language);',
+    testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" },
+  { name: "soft pool uncertainty", file: "packages/vrl-render-svg/src/soft-terrain-text.js",
+    before: 'poolUnknown: "pool depth unknown"', after: 'poolUnknown: "pool depth 2m"',
+    testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" }
 ];
 
+/**
+ * Replace exactly one reviewed source target with a deliberate fault; reject absent or ambiguous targets.
+ * @responsibility computation
+ * @param {string} source - Exact source text inspected or transformed without execution.
+ * @param {Object} input2 - Input record destructured into the separately documented members below.
+ * @param {string} input2.name - Reviewed mutation or exact test name used for diagnostic/probe matching.
+ * @param {string} input2.before - Unique exact source substring identifying the mutation target.
+ * @param {string} input2.after - Replacement source text for the deliberate fault.
+ * @returns {string} The result returned by source.replace.
+ * @throws {Error} The documented operation fails; the original failure is preserved unless explicitly wrapped above.
+ */
 export function applyMutation(source, { name, before, after }) {
   if (source.split(before).length !== 2) throw new Error(`Mutation target must occur exactly once: ${name}`);
-  return source.replace(before, () => after);
+  return source.replace(before, /**
+   * Return the selected after binding unchanged.
+   * @responsibility computation
+   * @returns {unknown} The after value selected or validated above.
+   */ () => after);
 }
 
+/**
+ * Escape regular-expression metacharacters so a test name is matched literally.
+ * @responsibility computation
+ * @param {unknown} text - Unescaped text owned by the caller; encoding occurs at the serialization boundary.
+ * @returns {string} The result returned by text.replace.
+ */
 export function escapePattern(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** A crash, timeout, missing test, or unrelated error does not demonstrate detection. */
+/**
+ * Classify exactly one named TAP test as passed, assertion-detected or invalid; crashes and unrelated failures
+ * never count as detection. A crash, timeout, missing test, or unrelated error does not demonstrate detection.
+ * @responsibility computation
+ * @param {Object} result - Captured process status, streams and optional error/signal.
+ * @param {string} name - Reviewed mutation or exact test name used for diagnostic/probe matching.
+ * @returns {string} The literal "invalid" for this branch. The literal "passed" for this branch. The literal "detected" for this branch.
+ */
+
 export function probeOutcome(result, name) {
   if (result.error || result.signal || !/^# tests 1$/m.test(result.stdout)) return "invalid";
   const test = escapePattern(name);

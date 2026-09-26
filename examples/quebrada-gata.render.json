@@ -1,0 +1,14 @@
+{
+  "layout": {
+    "width": 1200,
+    "horizontalScale": 1.15,
+    "pixelsPerMeter": 5.3,
+    "marginY": 120,
+    "marginBottom": 96
+  },
+  "render": {
+    "language": "es",
+    "symbology": "federation",
+    "style": "classic"
+  }
+}

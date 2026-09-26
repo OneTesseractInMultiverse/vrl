@@ -1,6 +1,6 @@
 <script>
   import { createVrlSvelteDiagramState } from "./index.js";
-  import { diagramWarningText } from "@subvertic/diagram";
+  import { diagramWarningText } from "@subvertic/vrl-diagram";
 
   export let source = "";
   export let options = {};

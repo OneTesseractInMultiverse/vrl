@@ -1,25 +1,25 @@
 {
   "name": "vertical-route-language",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Vertical Route Language monorepo for parsing, validating, normalizing, and rendering technical route documents.",
   "license": "MIT",
   "author": {
-    "name": "Pedro Guzmán"
+    "name": "Pedro Guzm\u00e1n"
   },
   "maintainers": [
     {
-      "name": "Pedro Guzmán"
+      "name": "Pedro Guzm\u00e1n"
     }
   ],
-  "homepage": "https://github.com/vertical-route-language/vrl#readme",
+  "homepage": "https://github.com/OneTesseractInMultiverse/vrl#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vertical-route-language/vrl.git"
+    "url": "git+https://github.com/OneTesseractInMultiverse/vrl.git"
   },
   "bugs": {
-    "url": "https://github.com/vertical-route-language/vrl/issues"
+    "url": "https://github.com/OneTesseractInMultiverse/vrl/issues"
   },
   "keywords": [
     "vrl",
@@ -37,7 +37,7 @@
   "scripts": {
     "test": "node scripts/run-tests.mjs",
     "coverage": "node scripts/run-tests.mjs --coverage",
-    "check": "npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
+    "check": "npm run check:function-docs && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
     "example": "node scripts/render-example.mjs",
     "example:svg": "node scripts/render-example.mjs docs/assets/quebrada-gata.svg",
     "pack:dry-run": "npm pack --workspaces --dry-run",
@@ -49,7 +49,8 @@
     "check:mutations": "node scripts/check-mutations.mjs",
     "prepare:consumers": "node scripts/prepare-consumers.mjs",
     "check:consumers": "node scripts/check-consumers.mjs",
-    "check:docs": "node --test tests/documentation-contracts.test.js tests/documentation-tooling.test.js"
+    "check:docs": "npm run check:function-docs && node --test tests/documentation-contracts.test.js tests/documentation-tooling.test.js tests/documentation-assets.test.js tests/function-documentation.test.js",
+    "check:function-docs": "node scripts/check-function-docs.mjs"
   },
   "engines": {
     "node": ">=25.0.0"
