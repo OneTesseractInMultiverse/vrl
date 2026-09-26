@@ -11,6 +11,14 @@ const ALLOWED = {
   "vrl-sveltekit/src/VrlDiagram.svelte": ["@subvertic/vrl-svelte/VrlDiagram.svelte"]
 };
 
+/**
+ * Inspect imports for forbidden concrete compiler, renderer or framework coupling in diagram application
+ * modules.
+ * @responsibility computation
+ * @param {string} file - Repository-relative source path used in discovery or diagnostics.
+ * @param {unknown} source - Input source described above; no implicit global source or mutable singleton is read.
+ * @returns {unknown} The violations value selected or validated above.
+ */
 export function diagramDependencyViolations(file, source) {
   const violations = [];
   if (/\b(?:import|require)\s*\(/.test(source)) violations.push(`${file}: runtime module loading`);

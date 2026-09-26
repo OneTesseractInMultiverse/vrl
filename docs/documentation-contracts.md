@@ -1,10 +1,10 @@
 # Maintaining executable documentation
 
-Documentation changes are part of implementation work. Update the language/API rule, its example and its expected behavior in the same change. Run `npm run check:docs` for focused feedback and `make check` before a PR. Both documentation suites are in the executable test inventory and run under coverage in CI; each test has one direct assertion.
+Documentation changes are part of implementation work. Update the language/API rule, its example and its expected behavior in the same change. Run `npm run check:docs` for focused feedback and `make check` before a PR. The documentation suites are in the executable test inventory and run under coverage in CI; each test has one direct assertion.
 
 ## Scope and evidence
 
-Discovery reads all root Markdown files, all nested `docs/` Markdown, and Markdown in first-party `packages/`, excluding dependency directories. Every `vrl` fence in that scope must carry an example ID and kind. No manually maintained list of documentation filenames can silently omit a new guide. Generated consumers, caches, third-party files and this guide's illustrative code fences are outside the example corpus.
+Discovery reads all root Markdown files, all nested `docs/` and `examples/` Markdown, and Markdown in first-party `packages/`, excluding dependency directories. Every `vrl` fence in that scope must carry an example ID and kind. No manually maintained list of documentation filenames can silently omit a new guide. Generated consumers, caches, third-party files and this guide's illustrative code fences are outside the example corpus.
 
 The contracts in [`tests/fixtures/documentation-examples.json`](../tests/fixtures/documentation-examples.json) are reviewed expectations, not output regenerated from the compiler during a test. Tests extract the actual Markdown source, compile it through the public facade, and compare:
 
@@ -52,3 +52,25 @@ Test names include the Markdown path, the first source line, and the example ID.
 Missing JSON-pointer paths are errors, including inherited object properties. `~1` and `~0` escape `/` and `~` in pointer keys. Expectations are deliberately ordinary reviewed JSON and have no executable expressions. There is no automatic “accept all current output” command.
 
 The scanner, inventory checks, observation projection and marked-table parser are pure tooling computations. File discovery is a separate filesystem adapter; tests coordinate discovery, public compilation and comparisons. Published domain/application/renderer packages do not import documentation tooling or gain dependencies from it.
+
+## Standalone files and generated previews
+
+[`tests/documentation-assets.test.js`](../tests/documentation-assets.test.js) checks every current standalone `.vrl` file in `examples/` against the reviewed [`example-files.json`](../tests/fixtures/example-files.json) inventory. Source fingerprints, exact selected model facts, ordered IDs and complete warning conditions make an example edit require review. The root/core/React/Svelte quick starts are compiled against the same fictional canyon expectations. These checks do not replace the deeper independent soft-terrain fact inventory.
+
+The legacy render profile is explicit JSON. Its checked-in SVG must equal current output after blank-line indentation is removed, and the actual command must report its warning and write that SVG. The soft-terrain suite separately checks all four gallery profiles. `make render-assets` regenerates both sets; review visual meaning and the diff before committing. The checks never regenerate expected assets for you.
+
+## Change-to-documentation checklist
+
+| Change | Update together | Required evidence |
+| --- | --- | --- |
+| Grammar, fields, IDs or validation | Language reference, diagnostic catalog, executable success/failure examples, expected facts and migrations | `npm run check:docs` and relevant behavioral/failure tests |
+| Domain/model/summary semantics | Domain and API contracts, public types, package README and saved compatibility fixtures | Independent declared facts, failure boundaries and contract revision review |
+| Render options, geometry or labels | API/scene/style/symbology guides, renderer and adapter READMEs, render profiles and visual gallery | Regenerated SVG review, semantic and failure checks, bounds and determinism |
+| Shared state or framework behavior | State/warning guide, framework guides and READMEs, concrete usage snippets | Packed SSR/hydration/update and failure tests |
+| Package identities, versions or release tooling | Install/import examples, package metadata, changelog, release and trusted-publisher guides | `make check`, tarball checks and the release verification gate; publication must be verified separately |
+
+Keep the [documentation index](README.md) and [example catalog](../examples/README.md) aligned with supported behavior. Do not present an open proposal, unmerged change or configured-but-unverified external service as released functionality. `make check` remains the complete workspace gate; the framework compatibility matrix is separate.
+
+## Internal function contracts
+
+Function JSDoc and explicit coordinator/computation responsibilities follow the [internal documentation convention](internal-documentation.md). Update parameter, return and failure descriptions alongside implementation and public declaration changes. `npm run check:docs` runs the structural function gate before the executable example suites; `make check` includes the same gate. Semantic accuracy and SRP classifications require review, backed by behavioral and failure tests.

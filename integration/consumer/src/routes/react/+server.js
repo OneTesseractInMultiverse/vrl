@@ -4,6 +4,13 @@ import { View } from "../../../react-view.js";
 import { requestProps } from "$lib/cases.js";
 
 
+/**
+ * Resolve the React consumer case, render server HTML and serialize client props into the response.
+ * @responsibility coordinator
+ * @param {Object} input1 - Input record destructured into the separately documented members below.
+ * @param {unknown} input1.url - Request URL used to resolve the allowlisted consumer scenario.
+ * @returns {unknown} The selected result, including the documented absent-value fallback.
+ */
 export function GET({ url }) {
   const props = requestProps(url);
   const markup = renderToString(React.createElement(View, props));

@@ -1,6 +1,15 @@
 import { createPlan, prepareFiles, publicationActions, validateManifests } from "./planning.mjs";
 
-/** Ports own filesystem, registry and commands; this coordinator has no concrete I/O. */
+/**
+ * Coordinate planning, preparation or publication through injected filesystem, registry and command ports;
+ * publication never edits versions. Ports own filesystem, registry and commands; this coordinator has no
+ * concrete I/O.
+ * @responsibility coordinator
+ * @param {Object} options - Operation-specific option record; must be supplied by the calling coordinator. Contains validated release mode, version, registry and authentication flags.
+ * @param {Object<string, Function>} ports - Application-owned port implementations supplied by composition or a test harness.
+ * @returns {unknown} A record containing plan, published, skipped. The result returned by publishPrepared.
+ */
+
 export function runRelease(options, ports) {
   const files = ports.readFiles();
   const current = validateManifests(files);
@@ -19,6 +28,16 @@ export function runRelease(options, ports) {
   return publishPrepared(plan, options, ports);
 }
 
+/**
+ * Write changed preparation files through the port and restore attempted files on failure; report restoration
+ * failures alongside the original error.
+ * @responsibility coordinator
+ * @param {Object<string, string>} before - Original file text retained for rollback.
+ * @param {Object<string, string>} after - Prepared file text to compare and write.
+ * @param {Object<string, Function>} ports - Application-owned port implementations supplied by composition or a test harness.
+ * @returns {void} Completes the documented operation; no return value is consumed.
+ * @throws {Error} The documented operation fails; the original failure is preserved unless explicitly wrapped above.
+ */
 export function writePreparedFiles(before, after, ports) {
   const snapshot = { ...before };
   const attempted = [];
@@ -38,6 +57,16 @@ export function writePreparedFiles(before, after, ports) {
   }
 }
 
+/**
+ * Pack artifacts, verify registry integrity, publish pending packages in order and always clean temporary
+ * files; partial failures retain confirmed progress.
+ * @responsibility coordinator
+ * @param {Object} plan - Validated release plan containing the shared version and package publication status.
+ * @param {Object} options - Operation-specific option record; must be supplied by the calling coordinator. Contains validated release mode, version, registry and authentication flags.
+ * @param {Object<string, Function>} ports - Application-owned port implementations supplied by composition or a test harness.
+ * @returns {Object} A record containing plan, published, skipped.
+ * @throws {Error} The documented operation fails; the original failure is preserved unless explicitly wrapped above.
+ */
 function publishPrepared(plan, options, ports) {
   const published = [], skipped = [];
   try {

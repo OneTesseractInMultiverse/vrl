@@ -4,9 +4,9 @@
 
 1. Confirm the six current `@subvertic/vrl-*` package names, organization ownership, repository URLs and per-package trusted publisher settings. See [initial publication and npm configuration](trusted-publishing.md).
 2. Start from current `main` in an isolated checkout and run `npm ci`.
-3. Inspect the read-only plan: `make publish-plan RELEASE=minor` or `make publish-plan VERSION=0.2.1`.
-4. Prepare explicitly: `make release-prepare RELEASE=minor` or `make release-prepare VERSION=0.2.1`. Preparation updates only root/workspace manifests and the lockfile, including its top-level version and internal dependency pins. It does not publish or run the quality gate.
-5. Update `CHANGELOG.md` and documentation. Review [public contracts](public-contracts.md), [documentation expectations](documentation-contracts.md), migrations and saved compatibility fixtures.
+3. Inspect the read-only plan: `make publish-plan RELEASE=minor`.
+4. Prepare explicitly: `make release-prepare RELEASE=minor`. Preparation updates only root/workspace manifests and the lockfile, including its top-level version and internal dependency pins. It does not publish or run the quality gate.
+5. Update `CHANGELOG.md` and documentation, including release availability. Regenerate and review example assets with `make render-assets`. Review [public contracts](public-contracts.md), [documentation expectations](documentation-contracts.md), migrations and saved compatibility fixtures.
 6. Run `make check` and require the [packed framework consumer matrix](framework-compatibility.md) to pass for the release commit. `make publish-dry-run` reviews npm file lists without registry access, authentication or version changes.
 7. Review and commit all changes. Merge the release PR, then create and push the matching `vX.Y.Z` tag on that exact `main` commit. Never reuse or move a published version tag.
 

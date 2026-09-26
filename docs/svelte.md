@@ -18,26 +18,26 @@ Treat a supplied `diagram.svg` as trusted markup: the component uses `@html`, an
 <script>
   import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
-  const source = `
-route "Quebrada Gata"
-metadata country="Costa Rica" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
-start "Quebrada Pilas entrance"
-rappel "R1" height=28m rope=60m anchor=bolts inclination=90%
-pool type=shallow
-exit "Old metal ladder"
-`;
+  const source = `route "Synthetic two-rappel canyon"
+start "Entry"
+rappel R1 height=18m rope=40m anchor=bolts anchor_count=2 station=right
+pool P1 type=unknown
+walk W1 distance=120m
+rappel R2 height=12m rope=30m anchor=tree
+hazard H1 type=slippery note="Slippery landing"
+exit "Exit"`;
 </script>
 
 <VrlDiagram
   {source}
-  options={{ language: "es", symbology: "spanish", theme: "light" }}
+  options={{ style: "soft-terrain", idPrefix: "canyon-overview", language: "es", symbology: "spanish", theme: "light" }}
   className="route-diagram"
 />
 ```
 
 If the source is invalid, the component renders formatted diagnostics in a `<pre>` block. If it is valid, it renders the SVG inside a `div` with `role="img"` by default.
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Precomputed State
 
@@ -95,3 +95,7 @@ export function renderRouteHtml(source) {
 ## Successful-state warnings
 
 Successful diagrams show a warning panel by default. `showWarnings` defaults to `true`; set it to `false` when the application supplies its own warning presentation. `warningsClassName` defaults to `"vrl-diagram__warnings"` and `warningsLabel` to `"Route warnings"`. These are display props, not compiler/renderer options. Diagnostics remain in state, and errors still suppress SVG. The warning panel is a sibling of the image, adding an outer wrapper only when warnings are visible. See the [warning presentation policy](warning-presentation.md) for accessibility, localization, and CSS migration details.
+
+## Optional canyon style
+
+Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.

@@ -76,14 +76,43 @@ createRouteCompiler(defaultPorts)(source);
 createRouteCompiler({ validateGeometry: null })(source);
 compileRouteWithDependencies(source, undefined, defaultPorts);
 const customPorts: CompilerPorts<RouteAst, { name: string }, { count: number }, { spacing: number }> = {
-  parse: (text, options) => {
+  /**
+   * Delegate parsing and verify that resolved processing limits are readonly at the type boundary.
+   * @responsibility coordinator
+   * @param {unknown} text - VRL source forwarded unchanged.
+   * @param {unknown} options - Contextually typed processing budgets or custom spacing options.
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ parse: (text, options) => {
     const limits: Readonly<ProcessingLimits> = options.limits;
     // @ts-expect-error The resolved budget snapshot is immutable.
     limits.maxElements = 1;
     return parseVrl(text, options);
   },
-  validate: () => [], normalize: () => ({ name: "Custom" }), validateGeometry: () => [],
-  layout: (route, options) => ({ count: route.name.length * (options?.spacing ?? 1) }), exportJson: (route) => route.name
+  /**
+   * Supply a validation result to exercise synchronous and input-shape port constraints.
+   * @responsibility computation
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ validate: () => [], /**
+   * Supply the deliberately selected custom model shape to verify compiler substitutability.
+   * @responsibility computation
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ normalize: () => ({ name: "Custom" }), /**
+   * Supply a validation result to exercise synchronous and input-shape port constraints.
+   * @responsibility computation
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ validateGeometry: () => [],
+  /**
+   * Compute a custom layout count from the route name and supplied spacing.
+   * @responsibility computation
+   * @param {unknown} route - Custom model with its declared name.
+   * @param {unknown} options - Contextually typed processing budgets or custom spacing options.
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ layout: (route, options) => ({ count: route.name.length * (options?.spacing ?? 1) }), /**
+   * Project the custom model name into the required synchronous export text.
+   * @responsibility computation
+   * @param {unknown} route - Custom model with its declared name.
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ exportJson: (route) => route.name
 };
 const customResult = createRouteCompiler(customPorts)(source, { layout: { spacing: 7 } });
 if (customResult.ok) { const count: number = customResult.layout.count; void count; }
@@ -99,8 +128,18 @@ const element: React.ReactElement = React.createElement(Component, { diagram: st
 const svelteProps: ComponentProps<SvelteDiagram> = { source, diagram: state };
 const kitProps: ComponentProps<KitDiagram> = { data: { route: state }, diagramKey: "route" };
 const load = createVrlSvelteKitLoad({
-  source: async (event: { params: { id: string } }) => `route ${event.params.id}`,
-  options: event => ({ legend: event.params.id !== "brief" }), key: "route"
+  /**
+   * Supply a request-derived source resolver to exercise the loader return-type contract.
+   * @responsibility coordinator
+   * @param {unknown} event - Request event with the fixture's params.id field.
+   * @returns {Promise<unknown>} Asynchronous fixture output, accepted only by async loader contracts.
+   */ source: async (event: { params: { id: string } }) => `route ${event.params.id}`,
+  /**
+   * Compute request-dependent legend settings to verify event-type inference.
+   * @responsibility computation
+   * @param {unknown} event - Request event with the fixture's params.id field.
+   * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+   */ options: event => ({ legend: event.params.id !== "brief" }), key: "route"
 });
 const data = await load({ params: { id: "Contract" } });
 const loaded: DiagramState = data.route;
@@ -121,15 +160,40 @@ const missingRope: RouteElement = { type: "rappel", id: "R1", label: null, exten
 // @ts-expect-error Known attributes do not accept extension text.
 model.elements[0]!.attributes.custom = "text";
 // @ts-expect-error A partial replacement cannot change the default model shape.
-createRouteCompiler({ normalize: () => ({ name: "Incomplete" }) });
+createRouteCompiler({ /**
+ * Supply the deliberately selected custom model shape to verify compiler substitutability.
+ * @responsibility computation
+ * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+ */ normalize: () => ({ name: "Incomplete" }) });
+createRouteCompiler({ /**
+ * Supply a validation result to exercise synchronous and input-shape port constraints.
+ * @responsibility computation
+ * @returns {Promise<unknown>} Asynchronous fixture output, accepted only by async loader contracts.
+ */
 // @ts-expect-error Async validators violate synchronous port contracts.
-createRouteCompiler({ validate: async () => [] });
+validate: async () => [] });
+createRouteCompiler({ /**
+ * Supply the deliberately selected custom model shape to verify compiler substitutability.
+ * @responsibility computation
+ * @returns {Promise<unknown>} Asynchronous fixture output, accepted only by async loader contracts.
+ */
 // @ts-expect-error Async models cannot replace plain synchronous records.
-createRouteCompiler({ normalize: async () => model });
+normalize: async () => model });
+createRouteCompiler({ ...customPorts, /**
+ * Supply the deliberately selected custom model shape to verify compiler substitutability.
+ * @responsibility computation
+ * @returns {Promise<unknown>} Asynchronous fixture output, accepted only by async loader contracts.
+ */
 // @ts-expect-error Even complete custom wiring must return synchronous records.
-createRouteCompiler({ ...customPorts, normalize: async () => ({ name: "Async" }) });
+normalize: async () => ({ name: "Async" }) });
+const narrowerValidator: CompilerPorts = { ...defaultPorts, /**
+ * Supply a validation result to exercise synchronous and input-shape port constraints.
+ * @responsibility computation
+ * @param {unknown} ast - Deliberately narrowed AST requiring a field absent upstream.
+ * @returns {unknown} The fixture result used by the surrounding positive or expected-error type assertion.
+ */
 // @ts-expect-error A stage cannot require fields absent from its upstream AST contract.
-const narrowerValidator: CompilerPorts = { ...defaultPorts, validate: (ast: RouteAst & { requiredTag: string }) => [] };
+validate: (ast: RouteAst & { requiredTag: string }) => [] };
 // @ts-expect-error Complete dependency wiring is required.
 compileRouteWithDependencies(source, {}, { parse: parseVrl });
 // @ts-expect-error Diagnostic severities are error or warning.
@@ -144,8 +208,13 @@ const failedState: DiagramState = { ...state, ok: false, model: null, layout: nu
 renderVrlSvelteMarkup(source, { legend: "yes" });
 // @ts-expect-error The component requires a factory with createElement.
 createVrlDiagramComponent({});
+createVrlSvelteKitLoad({ /**
+ * Supply a request-derived source resolver to exercise the loader return-type contract.
+ * @responsibility coordinator
+ * @returns {Promise<unknown>} Asynchronous fixture output, accepted only by async loader contracts.
+ */
 // @ts-expect-error Loader source providers resolve to text.
-createVrlSvelteKitLoad({ source: async () => 123 });
+source: async () => 123 });
 // @ts-expect-error Custom keys do not also create a default vrl property.
 data.vrl;
 // @ts-expect-error Svelte component options retain the shared type contract.

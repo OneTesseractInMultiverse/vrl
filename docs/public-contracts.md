@@ -2,6 +2,21 @@
 
 VRL publishes ESM JavaScript with bundled TypeScript declarations for all six packages. No compilation step or third-party runtime dependency is added to core, SVG rendering, or the shared diagram package. React uses a structural `createElement` port; Svelte component declarations refer to the existing Svelte peer. Development checks use TypeScript 7, React 18 types, and Svelte 4 types.
 
+## Optional canyon presentation
+
+`RenderOptions.style` accepts `"classic"` (default) or `"soft-terrain"`. This optional next-minor renderer setting leaves source/model/layout contracts unchanged. Advanced scenes add `style`, `terrain`, `pools`, optional legend notes and the `"curve"` technical-shape variant. Exhaustive shape consumers must add that case when upgrading. Existing fragment helpers remain classic. See the [style contract](soft-terrain.md) for symbolic geometry and failure behavior.
+
+```ts
+import { compileRoute } from "@subvertic/vrl-core";
+import { renderTopoSvg, type RenderOptions } from "@subvertic/vrl-render-svg";
+
+const result = compileRoute('route Canyon\nrappel R1 height=18m rope=40m anchor=bolts anchor_count=2\npool type=unknown\nexit');
+if (!result.ok) throw new Error("Invalid route");
+const options: RenderOptions = { style: "soft-terrain", theme: "light", idPrefix: "canyon-overview" };
+const svg = renderTopoSvg(result.model, result.layout, options);
+if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) throw new Error("Missing declared facts");
+```
+
 ## Stability classes
 
 [The revision 1 inventory](contracts/v1.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.

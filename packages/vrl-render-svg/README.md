@@ -12,6 +12,8 @@ SVG renderer adapter for Vertical Route Language.
 
 This package renders normalized VRL route models and layout data as accessible SVG topo diagrams. Descriptive values now come from route/element `extensions` maps; known measurements and enums stay in `metadata`/`attributes`. Older supplied models with descriptions in the original bags remain readable. See the [model migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/domain-model.md). It also provides federation-oriented symbology profiles and the VRL tropical snake hazard extension.
 
+This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version.
+
 ## Install
 
 ```sh
@@ -41,6 +43,7 @@ if (result.ok) {
 renderTopoSvg(model, layout, {
   language: "es",           // en or es
   symbology: "federation", // federation, french, or spanish
+  style: "soft-terrain",   // optional; classic remains the default
   legend: true,            // default; set false when the container provides its own legend
   theme: "light",          // light or dark
   themeTokens: {
@@ -63,19 +66,19 @@ The complete renderer computes a scene once, then serializes prepared geometry a
 
 ## Technical Annotations
 
-Stage lengths, stage boundary marks, and redirection anchors render for all three supported shapes: `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs but preserve the same annotation values, positions, language, and accessible redirection names. Canvas fitting includes these labels for every shape. The top-level accessible SVG description includes the declared stage/redirection values with the owning feature ID in the selected language. Annotations follow the measured technical slope, excluding extra connector spacing; existing schematic endpoint clearance and stage-total warnings are preserved.
+In classic rendering, stage lengths, stage boundary marks, and redirection anchors render for all three supported shapes: `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs but preserve the same annotation values, positions, language, and accessible redirection names. Canvas fitting includes these labels for every shape. The top-level accessible SVG description includes the declared stage/redirection values with the owning feature ID in the selected language. Annotations follow the measured technical slope, excluding extra connector spacing; existing schematic endpoint clearance and stage-total warnings are preserved.
 
 `renderDirectTechnicalSegment(previous, node, theme, element, layout, language)` adds an optional final language argument, defaulting to English, without moving the existing layout argument. The ladder helper retains its existing argument order. Both use shared annotation rendering. Source validation remains in core; custom helper callers must supply valid normalized attributes and geometry. See the [annotation contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#technical-annotations-across-line-shapes).
 
 ## Anchor Counts
 
-Rappel details, anchor accessibility labels, and the top-level SVG description preserve the full declared `anchor_count`. The visual shorthand draws at most four circles, then shows `+N` for the remainder: `anchor_count=5` displays `5 anchors` (or `5 anclajes`) with four marks and `+1`. Counts are never inferred from anchor type. Missing counts produce no count display; invalid source counts, including zero, are rejected by core validation.
+Rappel details, anchor accessibility labels, and the top-level SVG description preserve the full declared `anchor_count`. The visual shorthand draws at most four circles, then shows `+N` for the remainder: `anchor_count=5` displays `5 anchors` (or `5 anclajes`) with four marks and `+1`. Counts are never inferred from anchor type. Missing counts produce no count display in classic rendering and explicit unknown-count text in soft terrain; invalid source counts, including zero, are rejected by core validation.
 
 The existing `anchorMarkCount` export reports only the capped drawing count. `renderAnchorMarks` retains its argument order and supports left/right placement; complete diagrams use the left side and include overflow text in canvas fitting. The cap does not alter the model or JSON, and the maximum supported count still draws only four circles. See the [quantity and display contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#anchor-quantities-and-display-limits).
 
 ## Canvas Fitting
 
-The final SVG grows to contain the complete route, symbols, labels, technical details, summary, and optional legend. Core layout width/height are minimum framing dimensions. The final `viewBox` can have a negative origin; physical coordinates and elevations are preserved. The summary appears above route content, and the legend follows its lowest label. Long unbroken text expands the canvas, while detail rows wrap once at the requested width.
+The final SVG grows to contain the complete route, symbols, labels, technical details, summary, and optional legend. Core layout width/height are minimum framing dimensions. The final `viewBox` can have a negative origin; physical coordinates and elevations are preserved. The summary appears above route content, and the legend follows its lowest label. Long unbroken text expands the canvas, while details wrap using the requested width. Soft-terrain labels may rewrap as they move right to clear symbols; fitted width never feeds back into wrapping.
 
 `computeTopoScene(model, layout, options)` returns the prepared presentation and final `viewBox: { x, y, width, height }` without producing SVG. Use this viewport or the rendered SVG dimensions when framing output. Treat scene records as read-only snapshots and recompute them after input changes. The legacy `topoLegendHeight` helper remains available but does not predict the full diagram height.
 
@@ -116,3 +119,9 @@ import {
 MIT. Copyright (c) 2026 Pedro Guzmán.
 
 For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).
+
+## Optional soft terrain
+
+`style: "soft-terrain"` adds a neutral contour/wash, directed technical curves without rungs, symbolic pool outlines/waves, explicit unknowns and declared rope/anchor labels. Missing anchor counts are stated as unknown in this style. Existing shapes, measurements and ownership remain in the model; stages, redirections and notes remain visible. Language, symbology, themes and marker namespaces retain their existing contracts. Invalid style values throw `TypeError`; contradictory supplied technical direction/delta throws `RangeError`.
+
+Use the complete renderer for this style; standalone fragment helpers retain their historical behavior. The advanced scene adds `style`, `terrain`, `pools` and the `curve` technical-shape variant. This is a next-minor addition; exhaustive shape consumers must handle `curve`. See the [style contract and reproducible gallery](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/soft-terrain.md) for symbolic geometry, uncertainty, compatibility and evaluation limits.

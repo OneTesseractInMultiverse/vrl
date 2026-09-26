@@ -1,0 +1,16 @@
+{
+  "revision": 1,
+  "source": "examples/soft-terrain-canyon.vrl",
+  "synthetic": true,
+  "facts": [
+    { "id": "S1", "type": "start", "label": "Entry" },
+    { "id": "R1", "type": "rappel", "height": 18, "rope": 40, "anchor": "bolts", "count": "2" },
+    { "id": "P1", "type": "pool", "poolType": "unknown" },
+    { "id": "W1", "type": "walk", "distance": 120 },
+    { "id": "R2", "type": "rappel", "height": 12, "rope": 30, "anchor": "tree" },
+    { "id": "H1", "type": "hazard", "note": "Slippery landing" },
+    { "id": "E1", "type": "exit", "label": "Exit" }
+  ],
+  "technical": [["R1", "down", -18], ["R2", "down", -12]],
+  "labels": [["R1", "R1, 18m", "declared rope: 40m / bolts / 2 anchors"], ["P1", "", "pool depth unknown"], ["W1", "", "120m"], ["R2", "R2, 12m", "declared rope: 30m / tree / anchor count unknown"], ["H1", "", "Slippery landing"]]
+}

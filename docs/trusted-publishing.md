@@ -1,12 +1,12 @@
 # npm Trusted Publishing
 
-VRL publishes six public packages from `OneTesseractInMultiverse/vrl` through `.github/workflows/publish.yml`. GitHub Actions supplies an OIDC identity; the workflow does not need an `NPM_TOKEN` secret. Every package's repository URL must match this exact repository, including case.
+The VRL release workflow is configured to publish six public packages from `OneTesseractInMultiverse/vrl` through `.github/workflows/publish.yml`. GitHub Actions supplies an OIDC identity; the workflow does not need an `NPM_TOKEN` secret. Every package's repository URL must match this exact repository, including case.
 
 ## Package identity and first publication
 
 The canonical names are `@subvertic/vrl-core`, `@subvertic/vrl-render-svg`, `@subvertic/vrl-diagram`, `@subvertic/vrl-react`, `@subvertic/vrl-svelte` and `@subvertic/vrl-sveltekit`. `subvertic` is the organization scope; `vrl-` identifies the project inside that organization.
 
-Version 0.2.0 used incorrect names without the `vrl-` prefix. Version 0.2.1 restores the canonical identities and internal dependency names. Existing `@subvertic/vrl-*` packages retain their earlier release history; `@subvertic/vrl-diagram` is a new package. Consumers of 0.2.0 must update all six dependency/import names together. npm cannot rename a published package, and trusted-publisher settings do not transfer between names. Configure only the canonical identities below.
+Version 0.2.0 used incorrect names without the `vrl-` prefix. The 0.2.1 naming correction prepares the canonical identities and internal dependency names. The changelog and actual registry state determine publication; this guide does not establish that bootstrap or trusted-publisher setup is complete. Existing `@subvertic/vrl-*` packages retain their earlier release history; `@subvertic/vrl-diagram` is a new package. Consumers of 0.2.0 must update all six dependency/import names together. npm cannot rename a published package, and trusted-publisher settings do not transfer between names. Configure only the canonical identities below.
 
 npm requires a package to exist before a trusted publisher can be configured. For unpublished names:
 
