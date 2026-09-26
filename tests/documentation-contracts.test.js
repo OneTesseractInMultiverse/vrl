@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { compileRoute } from "@subvertic/core";
+import { compileRoute } from "@subvertic/vrl-core";
 import { readDocumentation } from "../scripts/documentation/documentation-files.mjs";
 import { extractVrlExamples, exampleInventoryProblems } from "../scripts/documentation/markdown-examples.mjs";
 import { sourceFingerprint, exampleSource, exampleFacts } from "../scripts/documentation/example-facts.mjs";

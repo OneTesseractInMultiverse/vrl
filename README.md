@@ -11,14 +11,14 @@ VRL is MIT licensed. Pedro Guzmán is the initial author and maintainer, and the
 Install the core compiler and SVG renderer:
 
 ```sh
-npm install @subvertic/core @subvertic/render-svg
+npm install @subvertic/vrl-core @subvertic/vrl-render-svg
 ```
 
 Compile VRL source and render an SVG topo:
 
 ```js
-import { compileRoute, formatDiagnostic } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute, formatDiagnostic } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const source = `
 route "Quebrada Gata"
@@ -47,9 +47,9 @@ if (result.ok === false) {
 Framework packages are optional adapters over the same compiler and renderer:
 
 ```sh
-npm install @subvertic/react react
-npm install @subvertic/svelte svelte
-npm install @subvertic/sveltekit @sveltejs/kit svelte
+npm install @subvertic/vrl-react react
+npm install @subvertic/vrl-svelte svelte
+npm install @subvertic/vrl-sveltekit @sveltejs/kit svelte
 ```
 
 ## Documentation
@@ -94,7 +94,7 @@ packages/
   vrl-sveltekit/       SvelteKit load/data helper and component adapter.
 ```
 
-Dependencies point inward. Domain and application code do not import React, Svelte, the DOM, file systems, network services, or package tooling. Framework state factories delegate to `@subvertic/diagram`, whose composition wires the core compiler and SVG renderer. Core and rendering remain independent of frameworks.
+Dependencies point inward. Domain and application code do not import React, Svelte, the DOM, file systems, network services, or package tooling. Framework state factories delegate to `@subvertic/vrl-diagram`, whose composition wires the core compiler and SVG renderer. Core and rendering remain independent of frameworks.
 
 The application coordinator imports only its own contracts and domain policies; composition supplies parser, validator, normalization, layout, and export implementations. See the [compiler ports](docs/compiler-ports.md) for synchronous result and failure contracts. A focused dependency-boundary test protects this separation.
 
@@ -134,7 +134,7 @@ The npm package scope is `@subvertic`, the publishing scope for the VRL project 
 
 ## Public APIs
 
-`@subvertic/core` exports:
+`@subvertic/vrl-core` exports:
 
 - `parseVrl(source)` for parsing compact VRL source into an AST and syntax diagnostics.
 - `validateRoute(ast)` for semantic diagnostics.
@@ -146,30 +146,30 @@ The npm package scope is `@subvertic`, the publishing scope for the VRL project 
 
 Element identifiers are case-sensitive and unique across all element types in one route. Explicit IDs are reserved before automatic numbering; duplicate and blank IDs fail validation. Generated IDs may change when elements are inserted, removed, or reordered. Use explicit IDs for references that need to survive those edits. See the [identifier contract](docs/language-reference.md#element-identifiers).
 
-`@subvertic/render-svg` exports:
+`@subvertic/vrl-render-svg` exports:
 
 - `renderTopoSvg(model, layout, options)` for SVG topo output with an optional localized legend.
 - `computeTopoScene(model, layout, options)` for prepared presentation records and complete canvas bounds.
 - `resolveTheme(theme, overrides)` plus light and dark theme tokens.
 - `symbolCode(element, profile)` and `resolveSymbolProfile(profile)` for federation-oriented canyon topo abbreviations.
 
-`@subvertic/diagram` exports:
+`@subvertic/vrl-diagram` exports:
 
 - `diagramWarningText(diagram, showWarnings)` for ordered, nonblocking warning text without changing state. Framework adapters show a warning panel by default; see the [display policy](docs/warning-presentation.md).
 - `createDiagramState(source, options)` for the shared `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` state without framework peers. Warning-only results render SVG; blocking diagnostics skip rendering. Existing adapter factories delegate to this operation. See the [state contract](docs/diagram-state.md).
 
-`@subvertic/react` exports:
+`@subvertic/vrl-react` exports:
 
 - `createVrlDiagramComponent(React)`, a dependency-injected React component factory.
 - `createVrlReactDiagramState(source, options)` for framework-controlled rendering flows.
 
-`@subvertic/svelte` exports:
+`@subvertic/vrl-svelte` exports:
 
 - `createVrlSvelteDiagramState(source, options)` for component and SSR state.
 - `renderVrlSvelteMarkup(source, options)` for SSR-friendly markup.
 - `VrlDiagram.svelte` as a Svelte component entry.
 
-`@subvertic/sveltekit` exports:
+`@subvertic/vrl-sveltekit` exports:
 
 - `createVrlSvelteKitData(source, options)` for load-ready diagram state.
 - `createVrlSvelteKitLoad({ source, options, key })` for reusable SvelteKit `load` functions.

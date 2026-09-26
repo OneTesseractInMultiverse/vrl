@@ -1,4 +1,4 @@
-import { assertFiniteNumber } from "@subvertic/core";
+import { assertFiniteNumber } from "@subvertic/vrl-core";
 import { validatePaint } from "./paint.js";
 import { escapeXml } from "./xml.js";
 

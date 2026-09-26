@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileRoute } from "@subvertic/core";
-import { computeTopoScene, renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene, renderTopoSvg } from "@subvertic/vrl-render-svg";
 import { routeCases, parseSeed, caseName } from "./helpers/seeded-cases.js";
 import { clippedPrimitives } from "./helpers/svg-bounds.js";
 import { xmlDocument, byClass, clippedBounds, nonfinitePaths } from "./helpers/invariant-observations.js";

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileRoute, createRouteCompiler, createRouteElement, formatDiagnostic, normalizeElement, normalizeRoute, parseVrl, validateElement, validateRoute } from "@subvertic/core";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState } from "@subvertic/svelte";
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+import { compileRoute, createRouteCompiler, createRouteElement, formatDiagnostic, normalizeElement, normalizeRoute, parseVrl, validateElement, validateRoute } from "@subvertic/vrl-core";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
 function route(body) {
   return `route "Identifier survey"\n${body}`;

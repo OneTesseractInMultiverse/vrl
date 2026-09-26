@@ -1,5 +1,5 @@
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
   export let data = {};
   export let source = "";

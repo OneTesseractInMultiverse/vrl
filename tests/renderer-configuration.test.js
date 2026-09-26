@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import * as core from "@subvertic/core";
-import * as svg from "@subvertic/render-svg";
-import { createVrlReactDiagramState, createVrlDiagramComponent } from "@subvertic/react";
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
+import * as core from "@subvertic/vrl-core";
+import * as svg from "@subvertic/vrl-render-svg";
+import { createVrlReactDiagramState, createVrlDiagramComponent } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 import { svgAttribute } from "../packages/vrl-render-svg/src/attributes.js";
 
 const SOURCE = 'route "Configuration"\nstart "Entry"\nrappel height=10m rope=20m anchor=bolts anchor_count=2 station=left stages=4m+6m redirection=3m:left\npool type=deep\nhazard type=snake severity=high\nexit "Finish"';

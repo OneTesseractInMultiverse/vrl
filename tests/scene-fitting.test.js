@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { documentFor, emittedBounds, clippedPrimitives } from "./helpers/svg-bounds.js";
-import { compileRoute } from "@subvertic/core";
-import { computeTopoScene, renderTopoSvg, topoLegendHeight } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene, renderTopoSvg, topoLegendHeight } from "@subvertic/vrl-render-svg";
 import { unionBounds } from "../packages/vrl-render-svg/src/scene-bounds.js";
 import { CASES, LONG_ROUTE, DENSE, DETAILS } from "./fixtures/scene-fitting.js";
 

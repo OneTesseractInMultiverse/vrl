@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileRoute, computeElevationLayout, computeVerticalLayout, createRouteCompiler, createTraversal, normalizeRoute, parseVrl, technicalSegmentDelta, validateGeometry } from "@subvertic/core";
-import { renderRouteSegments, renderTopoSvg, resolveTheme, segmentTechnicalElement } from "@subvertic/render-svg";
+import { compileRoute, computeElevationLayout, computeVerticalLayout, createRouteCompiler, createTraversal, normalizeRoute, parseVrl, technicalSegmentDelta, validateGeometry } from "@subvertic/vrl-core";
+import { renderRouteSegments, renderTopoSvg, resolveTheme, segmentTechnicalElement } from "@subvertic/vrl-render-svg";
 
 const PAIRS = [
   ["rappel", "rappel", -30, -5, 65],

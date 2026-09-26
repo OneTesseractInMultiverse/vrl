@@ -1,4 +1,4 @@
-import { assertOptionsRecord } from "@subvertic/core";
+import { assertOptionsRecord } from "@subvertic/vrl-core";
 import { validatePaint } from "./paint.js";
 
 export const LIGHT_THEME = Object.freeze({

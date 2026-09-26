@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import { compileRoute, computeVerticalLayout, createRouteCompiler, createTraversal, elevationSegmentDeltas, normalizeRoute, parseVrl, residualDistributionWeights } from "@subvertic/core";
-import { renderTopoSvg, renderRouteSegments, resolveTheme } from "@subvertic/render-svg";
+import { compileRoute, computeVerticalLayout, createRouteCompiler, createTraversal, elevationSegmentDeltas, normalizeRoute, parseVrl, residualDistributionWeights } from "@subvertic/vrl-core";
+import { renderTopoSvg, renderRouteSegments, resolveTheme } from "@subvertic/vrl-render-svg";
 
 function source(lines, entrance = 100, exit = 0) {
   return ['route "Boundaries"', `metadata entrance_elevation=${entrance}m exit_elevation=${exit}m`, ...lines].join("\n");

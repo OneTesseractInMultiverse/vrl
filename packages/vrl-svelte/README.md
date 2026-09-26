@@ -1,4 +1,4 @@
-# @subvertic/svelte
+# @subvertic/vrl-svelte
 
 See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
 
@@ -8,19 +8,19 @@ Svelte adapter for Vertical Route Language.
 
 This package exposes an SSR-friendly markup helper, a diagram state helper, and a Svelte component for rendering VRL diagrams through the core and SVG renderer packages.
 
-State creation delegates to the first-party `@subvertic/diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
 
 ## Install
 
 ```sh
-npm install @subvertic/svelte @subvertic/core @subvertic/render-svg svelte
+npm install @subvertic/vrl-svelte @subvertic/vrl-core @subvertic/vrl-render-svg svelte
 ```
 
 ## Usage
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
   export let source = "";
 </script>
@@ -32,7 +32,7 @@ npm install @subvertic/svelte @subvertic/core @subvertic/render-svg svelte
 ```
 
 ```js
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const diagram = createVrlSvelteDiagramState(source, {
   symbology: "spanish",
@@ -69,7 +69,7 @@ Compiler layout options live under `options.layout`, including `width`, `spineX`
 ## SSR Helper
 
 ```js
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const html = renderVrlSvelteMarkup(
   source,

@@ -1,4 +1,4 @@
-import type { ElementType, LayoutNode, LayoutPoint, Position } from "@subvertic/core";
+import type { ElementType, LayoutNode, LayoutPoint, Position } from "@subvertic/vrl-core";
 import type { Theme } from "./index.js";
 
 /** Advanced presentation contracts, revision 1; these are not route data interchange schemas. */

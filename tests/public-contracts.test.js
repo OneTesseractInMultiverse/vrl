@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import * as core from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
-import { createDiagramState } from "@subvertic/diagram";
+import * as core from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 
 const readJson = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
 const contract = readJson("../docs/contracts/v1.json");
@@ -11,7 +11,7 @@ const fixture = readJson("./fixtures/model-v1.json");
 
 for (const [name, api] of Object.entries(contract.packages)) {
   const runtime = await import(name);
-  const directory = `../packages/vrl-${name.slice("@subvertic/".length)}/`;
+  const directory = `../packages/${name.slice("@subvertic/".length)}/`;
   const manifest = readJson(`${directory}package.json`);
   test(`${name} preserves every classified runtime export without duplicates`, () => {
     assert.deepEqual([...api.stable, ...api.advanced].sort(), Object.keys(runtime).sort());

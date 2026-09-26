@@ -34,7 +34,7 @@ React accepts all three settings in `createVrlDiagramComponent(React, defaults)`
 The same props work on the Svelte and SvelteKit components. For string markup:
 
 ```js
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const source = 'route "Short rope"\nrappel height=10m rope=5m';
 const html = renderVrlSvelteMarkup(source, {}, { warningsLabel: "Route warnings" });
@@ -52,7 +52,7 @@ Clean success and hidden warnings preserve the previous single image container. 
 
 ## Shared selection and ownership
 
-`diagramWarningText(diagram, showWarnings = true)` is a pure exported helper from `@subvertic/diagram`. It selects successful-state warning diagnostics in their original order, formats each with core's `formatDiagnostic`, and joins them with newlines. It returns `""` for failed state, intentional suppression, or no warnings. It never changes input state, invokes compilation/rendering, or imports a framework/DOM API. Legacy supplied successful states without `diagnostics` (or with `null`) return no warning text; callers needing a panel should supply complete diagnostic records, not just `diagnosticsText`.
+`diagramWarningText(diagram, showWarnings = true)` is a pure exported helper from `@subvertic/vrl-diagram`. It selects successful-state warning diagnostics in their original order, formats each with core's `formatDiagnostic`, and joins them with newlines. It returns `""` for failed state, intentional suppression, or no warnings. It never changes input state, invokes compilation/rendering, or imports a framework/DOM API. Legacy supplied successful states without `diagnostics` (or with `null`) return no warning text; callers needing a panel should supply complete diagnostic records, not just `diagnosticsText`.
 
 The helper uses trusted state; it does not repeat domain validation or reconcile contradictory caller-built state. Core owns severity and domain rules, the shared application layer owns warning selection, and each adapter owns markup/escaping. This keeps presentation choices out of the domain.
 

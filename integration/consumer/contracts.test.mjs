@@ -7,23 +7,23 @@ import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
 import { compile, VERSION } from "svelte/compiler";
 import { build } from "esbuild";
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 import { SOURCES } from "./src/lib/cases.js";
 
 const require = createRequire(import.meta.url);
 const names = ["core", "render-svg", "diagram", "react", "svelte", "sveltekit"];
 for (const name of names) {
   test(`packed ${name} resolves inside the isolated application`, () => {
-    assert.equal(require.resolve(`@subvertic/${name}`).startsWith(join(process.cwd(), "node_modules", "@subvertic", name)), true);
+    assert.equal(require.resolve(`@subvertic/vrl-${name}`).startsWith(join(process.cwd(), "node_modules", "@subvertic", `vrl-${name}`)), true);
   });
   test(`packed ${name} rejects private package entry paths`, async () => {
-    await assert.rejects(import(`@subvertic/${name}/src/index.js`), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
+    await assert.rejects(import(`@subvertic/vrl-${name}/src/index.js`), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
   });
 }
 for (const name of ["svelte", "sveltekit"]) {
   for (const target of ["client", "server"]) {
     test(`${name} component compiles for ${target} with installed Svelte ${VERSION}`, () => {
-      const filename = require.resolve(`@subvertic/${name}/VrlDiagram.svelte`);
+      const filename = require.resolve(`@subvertic/vrl-${name}/VrlDiagram.svelte`);
       const legacy = VERSION.startsWith("4.");
       const result = compile(readFileSync(filename, "utf8"), { filename, generate: legacy ? target === "client" ? "dom" : "ssr" : target, ...(legacy ? { hydratable: true } : {}) });
       assert.equal(typeof result.js.code === "string" && result.js.code.includes("export"), true);
@@ -41,8 +41,8 @@ test("caller configuration errors propagate from packed state", () => {
   assert.throws(() => createDiagramState(SOURCES.valid, { legend: "false" }), TypeError);
 });
 test("a missing public component entry fails the consuming build", async () => {
-  await assert.rejects(build({ stdin: { contents: 'import Diagram from "@subvertic/svelte/Missing.svelte"; console.log(Diagram);', resolveDir: process.cwd() }, bundle: true, write: false, logLevel: "silent" }),
-    error => error.errors.some(item => item.text.includes('Could not resolve "@subvertic/svelte/Missing.svelte"')));
+  await assert.rejects(build({ stdin: { contents: 'import Diagram from "@subvertic/vrl-svelte/Missing.svelte"; console.log(Diagram);', resolveDir: process.cwd() }, bundle: true, write: false, logLevel: "silent" }),
+    error => error.errors.some(item => item.text.includes('Could not resolve "@subvertic/vrl-svelte/Missing.svelte"')));
 });
 
 for (const [name, alias, version] of [["react", "react-unsupported", "17.0.2"], ["svelte", "svelte-unsupported", "3.59.2"]]) {
@@ -61,7 +61,7 @@ function rejectedPeerInstall(name, alias) {
     const packed = spawnSync("npm", ["pack", tarball, "--json", "--pack-destination", directory, "--offline", "--ignore-scripts"], { encoding: "utf8" });
     if (packed.status !== 0) throw new Error(packed.stderr);
     const legacy = JSON.parse(packed.stdout)[0].filename;
-    const dependencies = Object.fromEntries(["core", "render-svg", "diagram", name].map(item => [`@subvertic/${item}`, `file:${join(process.cwd(), "tarballs", `${item}.tgz`)}`]));
+    const dependencies = Object.fromEntries(["core", "render-svg", "diagram", name].map(item => [`@subvertic/vrl-${item}`, `file:${join(process.cwd(), "tarballs", `vrl-${item}.tgz`)}`]));
     dependencies[name] = `file:${join(directory, legacy)}`;
     writeFileSync(join(directory, "package.json"), JSON.stringify({ name: "unsupported-peer-consumer", version: "1.0.0", private: true, dependencies }));
     return spawnSync("npm", ["install", "--package-lock-only", "--offline", "--ignore-scripts", "--strict-peer-deps", "--legacy-peer-deps=false", "--json", "--no-audit", "--no-fund"], { cwd: directory, encoding: "utf8", timeout: 30_000 });

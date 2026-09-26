@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import { compileRoute, createRouteCompiler } from "@subvertic/core";
-import { computeTopoScene, renderDirectTechnicalSegment, renderDropLadderSegment, renderTopoSvg, resolveTheme } from "@subvertic/render-svg";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState } from "@subvertic/svelte";
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+import { compileRoute, createRouteCompiler } from "@subvertic/vrl-core";
+import { computeTopoScene, renderDirectTechnicalSegment, renderDropLadderSegment, renderTopoSvg, resolveTheme } from "@subvertic/vrl-render-svg";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
 const SHAPES = ["ladder", "direct", "slab"];
 const DETAILS = "height=30m rope=60m stages=10m+20m redirection=5m:left";

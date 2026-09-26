@@ -1,7 +1,7 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
-import { createVrlDiagramComponent } from "@subvertic/react";
+import { createVrlDiagramComponent } from "@subvertic/vrl-react";
 
 const Diagram = createVrlDiagramComponent(React);
 let props = JSON.parse(document.getElementById("props").textContent);

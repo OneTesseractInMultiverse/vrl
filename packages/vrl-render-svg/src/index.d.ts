@@ -1,4 +1,4 @@
-import type { ElementType, ElementView, LayoutNode, LayoutPoint, Measurement, Position, Redirection, RouteLayout, RouteView } from "@subvertic/core";
+import type { ElementType, ElementView, LayoutNode, LayoutPoint, Measurement, Position, Redirection, RouteLayout, RouteView } from "@subvertic/vrl-core";
 import type { BadgeCategory, InfoBox, LabelPlacement, LadderGeometry, Legend, LegendRow, NodeRenderOptions, PreparedNode, SymbolEntry, TopoScene } from "./scene.js";
 export type * from "./scene.js";
 

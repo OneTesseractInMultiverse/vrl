@@ -1,4 +1,4 @@
-import { formatDiagnostic } from "@subvertic/core";
+import { formatDiagnostic } from "@subvertic/vrl-core";
 
 /** Select nonblocking presentation text without changing state or diagnostic ownership. */
 export function diagramWarningText(diagram, showWarnings = true) {

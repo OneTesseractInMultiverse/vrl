@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import { compileRoute, createRouteCompiler } from "@subvertic/core";
-import { anchorMarkCount, computeTopoScene, formatTopoDetail, renderAnchorMarks, renderTopoSvg, resolveTheme } from "@subvertic/render-svg";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState } from "@subvertic/svelte";
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+import { compileRoute, createRouteCompiler } from "@subvertic/vrl-core";
+import { anchorMarkCount, computeTopoScene, formatTopoDetail, renderAnchorMarks, renderTopoSvg, resolveTheme } from "@subvertic/vrl-render-svg";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
 const COUNTS = [[1, 1, ""], [3, 3, ""], [4, 4, ""], [5, 4, "+1"], [9, 4, "+5"], [2147483647, 4, "+2147483643"], [9007199254740991, 4, "+9007199254740987"]];
 

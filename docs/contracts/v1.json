@@ -10,7 +10,7 @@
     "diagram": 1
   },
   "packages": {
-    "@subvertic/core": {
+    "@subvertic/vrl-core": {
       "stable": [
         "compileRoute",
         "computeVerticalLayout",
@@ -68,7 +68,7 @@
       ],
       "subpaths": []
     },
-    "@subvertic/render-svg": {
+    "@subvertic/vrl-render-svg": {
       "stable": [
         "DARK_THEME",
         "LIGHT_THEME",
@@ -141,7 +141,7 @@
       ],
       "subpaths": []
     },
-    "@subvertic/diagram": {
+    "@subvertic/vrl-diagram": {
       "stable": [
         "createDiagramState",
         "diagramWarningText"
@@ -149,7 +149,7 @@
       "advanced": [],
       "subpaths": []
     },
-    "@subvertic/react": {
+    "@subvertic/vrl-react": {
       "stable": [
         "createVrlDiagramComponent",
         "createVrlReactDiagramState"
@@ -157,7 +157,7 @@
       "advanced": [],
       "subpaths": []
     },
-    "@subvertic/svelte": {
+    "@subvertic/vrl-svelte": {
       "stable": [
         "createVrlSvelteDiagramState",
         "renderVrlSvelteMarkup"
@@ -167,7 +167,7 @@
         "./VrlDiagram.svelte"
       ]
     },
-    "@subvertic/sveltekit": {
+    "@subvertic/vrl-sveltekit": {
       "stable": [
         "createVrlSvelteKitData",
         "createVrlSvelteKitLoad"

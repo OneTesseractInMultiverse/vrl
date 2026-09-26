@@ -4,16 +4,16 @@ import {
   compileRoute, compileRouteWithDependencies, computeElevationLayout, computeVerticalLayout,
   createDiagnostic, createEmptyRoute, createRouteCompiler, createRouteElement, exportRouteJson,
   formatDiagnostic, normalizeRoute, parseMeasurementToken, parseVrl, validateGeometry, validateRoute
-} from "@subvertic/core";
-import type { CompilerPorts, CompileResult, RouteAst, RouteModel, RouteLayout, RouteElement, ProcessingLimits } from "@subvertic/core";
-import { computeTopoScene, dropLadderGeometry, renderTopoSvg, resolveTheme, renderNode } from "@subvertic/render-svg";
-import { createDiagramState } from "@subvertic/diagram";
-import type { DiagramState } from "@subvertic/diagram";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
-import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
-import SvelteDiagram from "@subvertic/svelte/VrlDiagram.svelte";
-import KitDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+} from "@subvertic/vrl-core";
+import type { CompilerPorts, CompileResult, RouteAst, RouteModel, RouteLayout, RouteElement, ProcessingLimits } from "@subvertic/vrl-core";
+import { computeTopoScene, dropLadderGeometry, renderTopoSvg, resolveTheme, renderNode } from "@subvertic/vrl-render-svg";
+import { createDiagramState } from "@subvertic/vrl-diagram";
+import type { DiagramState } from "@subvertic/vrl-diagram";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
+import SvelteDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
+import KitDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
 
 const source = 'route Contract\nstart\nrappel pitch height=12m rope=24m\nexit';
 const result: CompileResult = compileRoute(source, { limits: { maxElements: 100 }, layout: { width: 600 } });

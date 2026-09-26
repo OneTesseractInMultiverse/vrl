@@ -1,4 +1,4 @@
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 import { requestProps } from "$lib/cases.js";
 
 export async function load(event) {

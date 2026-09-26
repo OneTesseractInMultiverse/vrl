@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import * as core from "@subvertic/core";
+import * as core from "@subvertic/vrl-core";
 import { compileRouteWithPorts } from "../packages/vrl-core/src/application/compile-route.js";
 
 const NAMES = ["parse", "validate", "normalize", "validateGeometry", "layout", "exportJson"];

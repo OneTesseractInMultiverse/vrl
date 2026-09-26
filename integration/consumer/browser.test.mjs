@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test, { before, after, describe } from "node:test";
 import { chromium } from "playwright";
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 import { SOURCES } from "./src/lib/cases.js";
 import { startApplication, openPage, snapshot } from "./browser-support.mjs";
 

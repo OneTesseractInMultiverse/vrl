@@ -1,6 +1,6 @@
 {
-  "name": "@subvertic/diagram",
-  "version": "0.2.0",
+  "name": "@subvertic/vrl-diagram",
+  "version": "0.2.1",
   "type": "module",
   "description": "Framework-neutral diagram state coordination for Vertical Route Language.",
   "license": "MIT",
@@ -44,8 +44,8 @@
   ],
   "sideEffects": false,
   "dependencies": {
-    "@subvertic/core": "0.2.0",
-    "@subvertic/render-svg": "0.2.0"
+    "@subvertic/vrl-core": "0.2.1",
+    "@subvertic/vrl-render-svg": "0.2.1"
   },
   "engines": {
     "node": ">=20.0.0"

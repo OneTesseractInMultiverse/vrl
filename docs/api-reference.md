@@ -6,12 +6,12 @@ See the [public API classifications, typed contracts, and revision policy](publi
 
 VRL is split into small packages so consumers can choose the layer they need. The core package is framework-free. Renderers and framework adapters depend inward on the core.
 
-## @subvertic/core
+## @subvertic/vrl-core
 
 Install:
 
 ```sh
-npm install @subvertic/core
+npm install @subvertic/vrl-core
 ```
 
 Common imports:
@@ -24,7 +24,7 @@ import {
   normalizeRoute,
   computeVerticalLayout,
   exportRouteJson
-} from "@subvertic/core";
+} from "@subvertic/vrl-core";
 ```
 
 `compileRoute(source, options)` is the main use case. It checks document budgets, parses source, validates it, normalizes the route model, computes layout, and exports JSON.
@@ -86,7 +86,7 @@ Use `createRouteCompiler(overrides)` when an application needs to inject custom 
 `lexVrlLine(line, location = { line: 1, column: 1 })` scans one physical line without dependencies or I/O. It returns `{ tokens, diagnostics, commentStart }`. A token has `kind: "bare" | "quoted" | "attribute"`, its original `raw` spelling, its decoded `value`, and a `span: { start, end }`. Attribute tokens also have `key`, `valueForm: "bare" | "quoted"`, `keySpan`, and `valueSpan`. Their key/value spans exclude the `=` separator; quoted token/value spans include the delimiters. All spans are end-exclusive, with one-based source lines and UTF-16 columns relative to the supplied origin. Tabs count as one code unit. `commentStart` is the zero-based UTF-16 offset of an outside `#` in the supplied line, or `null`.
 
 ```js
-import { lexVrlLine } from "@subvertic/core";
+import { lexVrlLine } from "@subvertic/vrl-core";
 
 const result = lexVrlLine('start "A=B"', { line: 4, column: 1 });
 // result.tokens[1]:
@@ -263,19 +263,19 @@ Use `layout.segments` to iterate technical events, `segment.element` for feature
 
 For custom geometry, pass a positioned segment as the final argument to `dropLadderGeometry`, `technicalLineVerticalDelta`, or the technical segment render helpers. They consume its `technicalDeltaY` directly. The older elevation-layout overload remains available for callers with an already unambiguous pair, but compiled rendering uses only the positioned segment contract.
 
-## @subvertic/render-svg
+## @subvertic/vrl-render-svg
 
 Install:
 
 ```sh
-npm install @subvertic/core @subvertic/render-svg
+npm install @subvertic/vrl-core @subvertic/vrl-render-svg
 ```
 
 Render a compiled route:
 
 ```js
-import { compileRoute } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute(source);
 
@@ -343,8 +343,8 @@ The route summary occupies a separate row above the route content. The legend fo
 Use the additive `computeTopoScene(route, layout, options = {})` export to inspect the same presentation without producing markup:
 
 ```js
-import { compileRoute } from "@subvertic/core";
-import { computeTopoScene } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute(source, { layout: { width: 320 } });
 if (result.ok) {
@@ -416,12 +416,12 @@ The rule belongs to the rendering adapter: core compilation and JSON export can 
 
 Caller-provided `diagram.svg` is **trusted markup**. React inserts it with `dangerouslySetInnerHTML`; the Svelte component uses `@html`, and `renderVrlSvelteMarkup` embeds it directly. Supplying `diagram` bypasses compilation, configuration validation, and SVG generation. Use state created by VRL's diagram factories within a trusted application pipeline. If an application accepts arbitrary SVG or precomputed states from another source, it must apply its own appropriate sanitization before passing them to these adapters. Escaping wrapper attributes or diagnostics does not sanitize `diagram.svg`. React's `containerProps` and `diagnosticsProps` are also application-owned component props.
 
-## @subvertic/diagram
+## @subvertic/vrl-diagram
 
-Install `@subvertic/diagram` to create state without framework peers:
+Install `@subvertic/vrl-diagram` to create state without framework peers:
 
 ```js
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 
 const diagram = createDiagramState(source, {
   language: "es",
@@ -440,19 +440,19 @@ All three existing adapter factories delegate to this operation and preserve the
 
 React, Svelte, SvelteKit, and `renderVrlSvelteMarkup` display an accompanying warning panel by default. Adapter props `showWarnings`, `warningsClassName`, and `warningsLabel` control its visibility, CSS class, and accessible name. For markup, use the third `renderOptions` argument. These settings do not belong in compiler/renderer `options`. State remains complete when the panel is hidden. See the [warning presentation policy](warning-presentation.md) for defaults, escaping, accessibility, and the added wrapper on warning-only success.
 
-## @subvertic/react
+## @subvertic/vrl-react
 
 Install:
 
 ```sh
-npm install @subvertic/react react
+npm install @subvertic/vrl-react react
 ```
 
 Create a component with dependency-injected React:
 
 ```jsx
 import React, { useMemo } from "react";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 
@@ -494,19 +494,19 @@ See the [precomputed diagram trust boundary](#precomputed-diagram-trust-boundary
 
 Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
-## @subvertic/svelte
+## @subvertic/vrl-svelte
 
 Install:
 
 ```sh
-npm install @subvertic/svelte svelte
+npm install @subvertic/vrl-svelte svelte
 ```
 
 Component usage:
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
   export let source = "";
 </script>
@@ -517,7 +517,7 @@ Component usage:
 Server-side markup helper:
 
 ```js
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const diagram = createVrlSvelteDiagramState(source, {
   language: "es",
@@ -545,18 +545,18 @@ Component props:
 
 Compiler layout options live under `options.layout`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
-## @subvertic/sveltekit
+## @subvertic/vrl-sveltekit
 
 Install:
 
 ```sh
-npm install @subvertic/sveltekit @subvertic/svelte @sveltejs/kit svelte
+npm install @subvertic/vrl-sveltekit @subvertic/vrl-svelte @sveltejs/kit svelte
 ```
 
 Create a reusable load function:
 
 ```js
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
@@ -571,7 +571,7 @@ Render the loaded data:
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
   export let data;
 </script>
 

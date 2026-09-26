@@ -1,4 +1,4 @@
-import { DARK_THEME, LIGHT_THEME, diagramText, resolveSymbolProfile, resolveTheme } from "@subvertic/render-svg";
+import { DARK_THEME, LIGHT_THEME, diagramText, resolveSymbolProfile, resolveTheme } from "@subvertic/vrl-render-svg";
 
 // @ts-expect-error Exported defaults are frozen shared definitions.
 LIGHT_THEME.background = "#fff";

@@ -3,11 +3,11 @@ import test from "node:test";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import { createDiagnostic } from "@subvertic/core";
-import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
-import { createVrlDiagramComponent } from "@subvertic/react";
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createDiagnostic } from "@subvertic/vrl-core";
+import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
+import { createVrlDiagramComponent } from "@subvertic/vrl-react";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 import { loadSvelteDiagrams } from "./helpers/svelte-ssr.js";
 
 const VALID = 'route "Good rope"\nstart\nrappel height=10m rope=20m\nexit';

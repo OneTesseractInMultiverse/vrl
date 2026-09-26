@@ -1,4 +1,4 @@
-# @subvertic/core
+# @subvertic/vrl-core
 
 Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
 
@@ -9,13 +9,13 @@ This package parses compact VRL source, validates route semantics, normalizes ro
 ## Install
 
 ```sh
-npm install @subvertic/core
+npm install @subvertic/vrl-core
 ```
 
 ## Usage
 
 ```js
-import { compileRoute, formatDiagnostic } from "@subvertic/core";
+import { compileRoute, formatDiagnostic } from "@subvertic/vrl-core";
 
 const source = `
 route "Quebrada Gata"
@@ -55,7 +55,7 @@ import {
   compileRoute,
   createRouteCompiler,
   exportRouteJson
-} from "@subvertic/core";
+} from "@subvertic/vrl-core";
 ```
 
 - `parseVrl(source, options)` returns `{ ast, diagnostics }`; optional `options.limits` controls document budgets.
@@ -74,7 +74,7 @@ Normalized models include `traversal.points` and `traversal.segments`: domain-ow
 
 Layouts retain one `nodes` entry per route element in source order. Annotation nodes include `anchorPointIndex` and their anchor's measured elevation when available; their symbols are offset independently. Traversal `points` and positioned `segments` contain only physical progression and implicit boundaries. Renderers should use the latter instead of choosing a technical owner from neighboring nodes. `validateGeometry(model)` checks normalized elevation constraints; compilation calls this injectable port before layout/export. Missing measurements and underdetermined profiles are diagnosed, and inconsistent technical-only profiles block compilation. At most one start/exit is allowed, and these must enclose all progression; annotations may appear outside them. Endpoint metadata binds to these explicit markers or implicit outer boundaries when omitted. A trailing note cannot move the exit elevation. Direct layouts also reject invalid boundary declarations. See the repository API reference for the complete contract and custom renderer migration.
 
-Layout dimensions are provisional framing values. Complete canvas fitting belongs to the renderer, which accounts for its own fonts, labels, decorations, and legend without changing core coordinates. For SVG output, use `computeTopoScene` from `@subvertic/render-svg` or the rendered SVG dimensions when sizing an embedding surface.
+Layout dimensions are provisional framing values. Complete canvas fitting belongs to the renderer, which accounts for its own fonts, labels, decorations, and legend without changing core coordinates. For SVG output, use `computeTopoScene` from `@subvertic/vrl-render-svg` or the rendered SVG dimensions when sizing an embedding surface.
 
 ## AST and Normalized Records
 

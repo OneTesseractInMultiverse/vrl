@@ -1,6 +1,6 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
-import { createVrlDiagramComponent } from "@subvertic/react";
+import { createVrlDiagramComponent } from "@subvertic/vrl-react";
 import { requestProps } from "$lib/cases.js";
 
 const Diagram = createVrlDiagramComponent(React);

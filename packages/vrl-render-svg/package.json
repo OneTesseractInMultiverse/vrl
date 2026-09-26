@@ -1,6 +1,6 @@
 {
-  "name": "@subvertic/render-svg",
-  "version": "0.2.0",
+  "name": "@subvertic/vrl-render-svg",
+  "version": "0.2.1",
   "type": "module",
   "description": "SVG topo rendering adapter for normalized VRL route models.",
   "license": "MIT",
@@ -44,7 +44,7 @@
   ],
   "sideEffects": false,
   "dependencies": {
-    "@subvertic/core": "0.2.0"
+    "@subvertic/vrl-core": "0.2.1"
   },
   "engines": {
     "node": ">=20.0.0"

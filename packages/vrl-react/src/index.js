@@ -1,4 +1,4 @@
-import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
+import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";

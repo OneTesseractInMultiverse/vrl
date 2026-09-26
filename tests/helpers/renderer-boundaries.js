@@ -16,8 +16,8 @@ export function rendererDependencyViolations(file, source) {
     const target = posix.normalize(posix.join(posix.dirname(file), specifier));
     const internal = specifier.startsWith("./") && !target.includes("/");
     const allowed = file === "svg-serializer.js" ? internal && ENCODING.has(target)
-      : COMPUTATIONS.has(file) ? specifier === "@subvertic/core" || internal && COMPUTATIONS.has(target)
-      : specifier === "@subvertic/core" || internal;
+      : COMPUTATIONS.has(file) ? specifier === "@subvertic/vrl-core" || internal && COMPUTATIONS.has(target)
+      : specifier === "@subvertic/vrl-core" || internal;
     if (!allowed) violations.push(`${file} -> ${specifier}`);
   }
   return violations;

@@ -2,7 +2,7 @@
 
 See the [tested framework/runtime combinations and packed consumer checks](framework-compatibility.md) for SSR, hydration, updates and compatibility limits.
 
-Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+Diagram-state creation delegates to `@subvertic/vrl-diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
 
 The Svelte package exposes both a component and SSR-friendly helpers. The component compiles source internally unless a precomputed `diagram` state is provided.
 
@@ -14,7 +14,7 @@ Treat a supplied `diagram.svg` as trusted markup: the component uses `@html`, an
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
 
   const source = `
 route "Quebrada Gata"
@@ -43,8 +43,8 @@ Use `createVrlSvelteDiagramState` when a parent component or server route owns c
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/svelte/VrlDiagram.svelte";
-  import { createVrlSvelteDiagramState } from "@subvertic/svelte";
+  import VrlDiagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
+  import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
 
   export let source = "";
 
@@ -63,7 +63,7 @@ Use `createVrlSvelteDiagramState` when a parent component or server route owns c
 `renderVrlSvelteMarkup(source, options, renderOptions)` returns a string. It escapes diagnostics and wrapper attributes, and it embeds renderer-produced SVG when valid.
 
 ```js
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 export function renderRouteHtml(source) {
   return renderVrlSvelteMarkup(

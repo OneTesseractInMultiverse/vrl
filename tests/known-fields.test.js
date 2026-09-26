@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import * as core from "@subvertic/core";
+import * as core from "@subvertic/vrl-core";
 
 const ELEMENTS = ["start", "exit", "walk", "rappel", "downclimb", "climb", "pool", "hazard"];
 const CONTEXTS = ["metadata", ...ELEMENTS];

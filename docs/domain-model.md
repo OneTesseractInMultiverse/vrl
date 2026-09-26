@@ -100,7 +100,7 @@ The legacy `normalizeAttributes` and individual token helpers remain permissive 
 The SVG adapter reads separated extensions while still accepting older supplied models with descriptive values in their original bags. When both are supplied by a low-level caller, the original attribute/metadata value takes precedence. Recompile source to migrate stored models; the adapter fallback does not certify old domain values. Default rendered output is preserved.
 
 ```js
-import { compileRoute } from "@subvertic/core";
+import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route "Survey"\nmetadata region=CR\nwalk distance=3m note="Approach"');
 // result.model.metadata is {}
