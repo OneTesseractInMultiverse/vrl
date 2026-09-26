@@ -8,6 +8,8 @@ The SVG adapter prepares a complete presentation scene before generating XML. `c
 
 Core owns route validation, technical segment ownership, traversal direction, and physical measurements. The renderer consumes a normalized model and the positioned segments from core. It does not parse the DSL or reconstruct segment ownership from neighboring labels.
 
+`svg-identifiers.js` validates a caller-owned `idPrefix` and computes an owned identifier record. `topo-scene.js` carries it as `scene.identifiers`; serialization uses the same resolved ID in definitions and references. Allocation across diagram instances stays with the embedding application. See [multiple inline diagrams](svg-identifiers.md).
+
 The adapter has three stages:
 
 1. `detail-content.js` selects display facts from normalized fields. It assigns badge categories before localization and keeps descriptive text as text.

@@ -1,5 +1,7 @@
 # Svelte Example
 
+When embedding multiple diagrams, pass a stable, unique `options.idPrefix` per occurrence and reuse it for SSR and hydration. Precomputed states keep their original IDs. See [SVG namespace ownership and validation](svg-identifiers.md).
+
 See the [tested framework/runtime combinations and packed consumer checks](framework-compatibility.md) for SSR, hydration, updates and compatibility limits.
 
 Diagram-state creation delegates to `@subvertic/vrl-diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.

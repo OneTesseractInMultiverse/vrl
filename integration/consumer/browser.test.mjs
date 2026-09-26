@@ -17,6 +17,40 @@ describe("production framework consumers", () => {
   }
 
   for (const surface of ["react", "svelte", "sveltekit"]) {
+    for (const hydrated of [false, true]) {
+      test(`${surface} ${hydrated ? "hydration" : "SSR"} keeps same-route marker references local across themes`, async (t) => {
+        const context = await openPage(browser, application.origin, surface, "valid", hydrated, { multiple: "true" });
+        t.after(() => context.close());
+        const output = await markerSnapshot(context.page);
+        const retained = hydrated ? await context.page.evaluate(() =>
+          JSON.stringify(window.ssrMarkerIds) === JSON.stringify([...document.querySelectorAll("svg marker")].map(marker => marker.id)) &&
+          window.ssrImage === document.querySelector('[role="img"]')) : true;
+        assert.deepEqual([output, context.errors, retained], [[
+          ["left-arrow", "#111111", "rgb(17, 17, 17)", 1, true],
+          ["right-arrow", "#c3ccd4", "rgb(195, 204, 212)", 1, true]
+        ], [], true]);
+      });
+    }
+    test(`${surface} changes one namespace after hydration without altering its neighbor`, async (t) => {
+      const context = await openPage(browser, application.origin, surface, "valid", true, { multiple: "true" });
+      t.after(() => context.close());
+      await context.page.evaluate(() => window.fixture.update({ options: { legend: false, idPrefix: "updated" } }));
+      assert.deepEqual([await markerSnapshot(context.page), context.errors], [[
+        ["updated-arrow", "#111111", "rgb(17, 17, 17)", 1, true],
+        ["right-arrow", "#c3ccd4", "rgb(195, 204, 212)", 1, true]
+      ], []]);
+    });
+    test(`${surface} duplicate caller prefixes demonstrate the document-wide collision`, async (t) => {
+      const context = await openPage(browser, application.origin, surface, "valid", true, { multiple: "true" });
+      t.after(() => context.close());
+      await context.page.evaluate(() => window.fixture.update({ options: { legend: false, idPrefix: "right" } }));
+      const collisions = await context.page.evaluate(() => [...document.querySelectorAll("#diagram svg")].map(svg => {
+        const marker = svg.querySelector("marker");
+        const path = svg.querySelector("path[marker-end]");
+        return [marker.id, svg.contains(document.getElementById(path.getAttribute("marker-end").slice(5, -1)))];
+      }));
+      assert.deepEqual([collisions, context.errors], [[["right-arrow", true], ["right-arrow", false]], []]);
+    });
     for (const name of Object.keys(SOURCES)) {
       for (const hydrated of [false, true]) {
         test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves ${name} output`, async (t) => {
@@ -74,3 +108,15 @@ describe("production framework consumers", () => {
     assert.deepEqual([await snapshot(context.page), await context.page.evaluate(() => window.navigationMarker), context.errors], [expected("warning"), "retained", []]);
   });
 });
+
+async function markerSnapshot(page) {
+  return page.evaluate(() => [...document.querySelectorAll("#diagram svg")].map(svg => {
+    const marker = svg.querySelector("marker");
+    const paint = marker.querySelector("path");
+    const paths = [...svg.querySelectorAll("path[marker-end]")];
+    return [marker.id, paint.getAttribute("fill"), getComputedStyle(paint).fill, paths.length,
+      document.querySelectorAll(`[id="${marker.id}"]`).length === 1 && paths.every(path =>
+        document.getElementById(path.getAttribute("marker-end").slice(5, -1)) === marker &&
+        path.getAttribute("stroke") === paint.getAttribute("fill"))];
+  }));
+}

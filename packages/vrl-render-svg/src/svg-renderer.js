@@ -1,3 +1,4 @@
+import { resolveSvgIdentifiers } from "./svg-identifiers.js";
 import { computeTopoScene } from "./topo-scene.js";
 import { prepareNodes, prepareNode, labelLeaderPath, prepareAnchorMarks, symbolPlacement } from "./node-scene.js";
 import { prepareInfoBox, prepareLegend, prepareLegendRow, legendSymbolPlacements, placeInfoBox, placeLegend } from "./panel-scene.js";
@@ -74,16 +75,16 @@ export function renderWaterSegments(layout, theme) {
   return svg.serializeWaterSegments(prepareWaterSegments(layout), theme);
 }
 
-export function renderRouteSegments(layout, theme, language = "en") {
-  return svg.serializeRouteSegments(prepareRouteSegments(layout, language), theme);
+export function renderRouteSegments(layout, theme, language = "en", idPrefix) {
+  return svg.serializeRouteSegments(prepareRouteSegments(layout, language), theme, resolveSvgIdentifiers(idPrefix));
 }
 
-export function renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null) {
-  return svg.serializeTechnicalSegment(prepareTechnicalSegment(previous, node, element, language, layout, "ladder"), theme);
+export function renderDropLadderSegment(previous, node, theme, element = previous.element, language = "en", layout = null, idPrefix) {
+  return svg.serializeTechnicalSegment(prepareTechnicalSegment(previous, node, element, language, layout, "ladder"), theme, resolveSvgIdentifiers(idPrefix));
 }
 
-export function renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null, language = "en") {
-  return svg.serializeTechnicalSegment(prepareTechnicalSegment(previous, node, element, language, layout, "direct"), theme);
+export function renderDirectTechnicalSegment(previous, node, theme, element = previous.element, layout = null, language = "en", idPrefix) {
+  return svg.serializeTechnicalSegment(prepareTechnicalSegment(previous, node, element, language, layout, "direct"), theme, resolveSvgIdentifiers(idPrefix));
 }
 
 export function renderDropRungs(geometry, theme) {

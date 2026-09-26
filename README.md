@@ -265,3 +265,5 @@ rappel "R1" height=28m rope=60m traverse=80m anchor=bolts anchor_count=2 station
 downclimb "D1" height=3m exposure=medium anchor_count=1 station=right landing=pool shape=ladder inclination=60%
 climb "C1" height=5m exposure=medium station=right landing=trail shape=ladder inclination=55%
 ```
+
+For pages with multiple inline diagrams, see [SVG ID namespaces](docs/svg-identifiers.md) for stable per-instance prefixes across server rendering and hydration.

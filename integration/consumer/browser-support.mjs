@@ -33,7 +33,7 @@ function availablePort() {
   });
 }
 
-export async function openPage(browser, origin, surface, name, hydrated) {
+export async function openPage(browser, origin, surface, name, hydrated, query = {}) {
   const context = await browser.newContext({ javaScriptEnabled: hydrated, serviceWorkers: "block" });
   const errors = [];
   await context.route("**/*", route => {
@@ -45,7 +45,7 @@ export async function openPage(browser, origin, surface, name, hydrated) {
   page.on("console", message => { if (message.type() === "error" || /hydration|mismatch/i.test(message.text())) errors.push(message.text()); });
   const path = surface === "react" ? "/react" : "/";
   try {
-    await page.goto(`${origin}${path}?surface=${surface}&case=${name}`);
+    await page.goto(`${origin}${path}?${new URLSearchParams({ surface, case: name, ...query })}`);
     if (hydrated) await page.waitForFunction(() => document.documentElement.dataset.hydrated === "true");
     return { page, errors, close: () => context.close() };
   } catch (error) { await context.close(); throw error; }

@@ -47,3 +47,5 @@ See the [diagram-state contract](https://github.com/OneTesseractInMultiverse/vrl
 ## License
 
 MIT. Copyright (c) 2026 Pedro Guzmán.
+
+For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).

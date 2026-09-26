@@ -174,3 +174,23 @@ The revision baseline introduces declarations without changing persisted data sh
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 
 Each behavioral test uses one assertion. Coverage remains a 100% target, supplemented by explicit expected facts, deliberate failures, export/declaration inventory checks, and a saved revision 1 model fixture. Changes to that fixture require a compatibility explanation, not automatic snapshot regeneration.
+
+## SVG instance namespaces
+
+`RenderOptions.idPrefix` and the final namespace argument on SVG fragment helpers are additive next-minor APIs. Existing defaults and model/layout/diagnostic revisions remain unchanged. `TopoScene.identifiers` exposes the resolved marker identity as inspection data. See [namespace validation, duplicate handling, and adapter ownership](svg-identifiers.md).
+
+This example is typechecked and executed against all six packed packages by `check:packed`:
+
+```ts
+import { createDiagramState } from "@subvertic/vrl-diagram";
+
+const source = "route Repeated\nrappel height=10m rope=20m\nexit";
+const overview = createDiagramState(source, { idPrefix: "overview", theme: "light" });
+const detail = createDiagramState(source, { idPrefix: "detail", theme: "dark" });
+if (!overview.ok || !detail.ok ||
+    !overview.svg.includes('id="overview-arrow"') || !overview.svg.includes('url(#overview-arrow)') ||
+    !detail.svg.includes('id="detail-arrow"') || !detail.svg.includes('url(#detail-arrow)') ||
+    overview.json !== detail.json) {
+  throw new Error("SVG instances must resolve distinct markers without changing route facts");
+}
+```

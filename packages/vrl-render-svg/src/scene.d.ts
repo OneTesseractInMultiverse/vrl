@@ -59,6 +59,7 @@ export interface Legend extends Rectangle {
   titleX: number; titleY: number; drawingRows: LegendDrawingRow[];
 }
 export interface TopoScene {
+  identifiers: { arrow: string };
   language: "en" | "es"; title: string; description: string;
   nodes: PreparedNode[]; segments: PreparedSegment[]; segmentLabels: (Position & { text: string })[];
   terrainPath: string; waterPaths: string[]; stationTicks: Line[][];
