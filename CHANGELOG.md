@@ -5,6 +5,7 @@ This project follows Semantic Versioning once public releases begin.
 ## Unreleased
 
 - Add the first-party `@subvertic/vrl-icons` package with original immutable geometry, typed public APIs, standalone SVG assets and deterministic generation checks. Release order and packed consumers include all seven workspaces.
+- Keep standalone and renderer icons transparent: remove the node-icon backing square and text halo, preserve original strokes and abbreviations, and demonstrate host-controlled light, dark and checkerboard backgrounds.
 - Add explicit `symbols: "icons"` node pictograms and soft-terrain `annotations`/`minimal` modes. Selected pilot icons sit beside factual labels with reserved stroke bounds, protected geometry clearance and equivalent text/coordinates when hidden. Default exports remain unchanged.
 - Document pilot mapping, unknown-value fallbacks, full counts, declared rope meaning, decorative accessibility, next-minor scene additions, and the reproducible light/dark gallery. Narrow continuation and complete accessible descriptions remain separate work.
 

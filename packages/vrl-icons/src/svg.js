@@ -60,7 +60,7 @@ export function renderIconGeometry(id) {
  * @responsibility coordinator
  * @param {string} id - Exact canonical icon registry identifier.
  * @param {Object} options - Optional explicit configuration; omitted fields retain documented defaults.
- * @returns {string} Complete SVG with named or decorative semantics and no generated IDs.
+ * @returns {string} Transparent, stroke-only SVG with named or decorative semantics and no generated IDs.
  * @throws {TypeError} Size is nonpositive/nonfinite, decorative is not boolean, title is blank/nontext, or description is nontext.
  * @throws {RangeError} No canonical icon matches the supplied ID.
  */

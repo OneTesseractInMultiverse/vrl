@@ -15,17 +15,15 @@ export function serializeAnnotationIcon(icon, color) {
 }
 
 /**
- * Serialize the compatible node-icon presentation, retaining its code and existing opaque clearance square.
+ * Serialize a transparent node pictogram and its abbreviation without painting a backing or text halo.
  * @responsibility coordinator
  * @param {Object} marker - Prepared icon marker with origin, code and text positions.
  * @param {string} color - Supported foreground paint.
- * @param {string} panelColor - Supported panel paint for the clearance square.
- * @returns {string} Decorative node group preserving exact package geometry and abbreviation text.
+ * @returns {string} Decorative node group preserving exact package geometry and abbreviation text over the host surface.
  */
-export function serializeIconMarker(marker, color, panelColor) {
+export function serializeIconMarker(marker, color) {
   return `<g class="vrl-symbol vrl-symbol-icon" aria-hidden="true">
-    <rect x="${svgAttribute(marker.x - 14)}" y="${svgAttribute(marker.y - 14)}" width="28" height="28" rx="3" fill="${svgPaint(panelColor)}"/>
     ${serializeAnnotationIcon({ id: marker.id, x: marker.x - 12, y: marker.y - 12, size: 24 }, color)}
-    <text x="${svgAttribute(marker.textX)}" y="${svgAttribute(marker.textY)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="${svgPaint(color)}" stroke="${svgPaint(panelColor)}" stroke-width="3" paint-order="stroke">${svgAttribute(marker.code)}</text>
+    <text x="${svgAttribute(marker.textX)}" y="${svgAttribute(marker.textY)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="${svgPaint(color)}">${svgAttribute(marker.code)}</text>
   </g>`;
 }

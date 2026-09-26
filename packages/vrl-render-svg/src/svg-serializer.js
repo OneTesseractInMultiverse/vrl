@@ -475,7 +475,7 @@ export function serializeAnchorOverflow({ text, x, y, fontSize, anchor }, theme)
  * @returns {string} Escaped SVG markup for the prepared drawing records; optional absent primitives serialize to empty text.
  */
 export function serializeSymbol(item, color, panelColor) {
-  if (item.kind === "icon") return serializeIconMarker(item, color, panelColor);
+  if (item.kind === "icon") return serializeIconMarker(item, color);
   const code = escapeXml(item.code ?? "");
 
   if (item.kind === "snake") {

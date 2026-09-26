@@ -34,6 +34,12 @@ Typed subpaths are `/registry`, `/semantics` and `/svg`. `/manifest.json`, `/svg
 
 Standalone rendering defaults to size 32, currentColor, registry title/description and a named image. Positive finite sizes are supported. Invalid size, title, description or decorative flags throw `TypeError`; unknown IDs throw `RangeError`. Text and color are XML-escaped; arbitrary SVG attributes or markup are not accepted. Named icons include role, title, description and accessible labels. Decorative icons omit those names and use `aria-hidden`. No IDs are generated, so repeated icons do not need namespace allocation. External HTML images still need appropriate `alt` text and do not inherit the page's color.
 
+## Transparent backgrounds
+
+Standalone assets and programmatic SVGs paint only the original strokes, with `fill="none"` and no background shape. Inline SVG inherits the host's CSS `color` through `currentColor`; use `renderIcon("tree", { color: "#176b59" })` to set the stroke explicitly. Set any desired background on the surrounding HTML element. External `<img>` SVGs do not inherit host text color; supply an explicitly colored SVG for those uses.
+
+Both renderer icon modes preserve transparency. Node pictograms retain their abbreviation but have no solid square or panel-colored text halo. Full diagram canvas and panel paints remain controlled separately by the renderer's `themeTokens.background` and `themeTokens.panel`; they accept `"transparent"`. The [comparison gallery](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/assets/canyoning-icons.html) demonstrates standalone and rendered node icons on light, dark and checkerboard host backgrounds.
+
 ## Geometry and scope
 
 The existing catalog contains 63 original definitions in nine categories: vertical progression, aquatic obstacles, terrain features, anchors/equipment, hazards, environment, route information, illustrative difficulty, and diagram line styles. Authoring provenance distinguishes 57 reference-taxonomy concepts and six VRL extensions. All paths use a 32-unit square canvas with a two-unit stroke; line-pattern metadata retains its own caps and dashes. The annotation pilot uses these paths unchanged at 24 drawing units. Inspect smaller uses rather than assuming recognizability.

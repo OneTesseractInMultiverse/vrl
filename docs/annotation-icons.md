@@ -22,11 +22,17 @@ The same options work through React, Svelte and SvelteKit. Supplied diagram stat
 | `symbols` | Behavior |
 | --- | --- |
 | omitted or `classic` | Existing abbreviation and structural node markers, unchanged |
-| `icons` | Primary node pictograms using the original library mappings; retains abbreviation text and the 28-unit node clearance square |
+| `icons` | Primary node pictograms using the original library mappings; retains abbreviation text on a transparent background without a clearance square or text halo |
 | `annotations` | Five selective pilot roles beside labels, with no opaque icon squares over geometry; requires soft terrain |
 | `minimal` | Same annotation layout and labels, including reserved 24-unit icon slots, without pictograms; requires soft terrain |
 
-The previously local node-icon option is retained as `symbols: "icons"`. Its renderer integration now uses prepared scene records; geometry comes exclusively from the public icon package. It is a separate display choice, not the annotation default. Invalid symbol values and annotation/minimal modes without soft terrain throw `TypeError`; no silent fallback hides configuration errors. Existing strict geometry, numeric and paint failures still apply.
+The previously local node-icon option is retained as `symbols: "icons"`. Its former opaque square and panel-colored abbreviation halo are intentionally removed so the underlying surface remains visible. Icon geometry, mappings, abbreviation and placement are preserved. Its renderer integration now uses prepared scene records; geometry comes exclusively from the public icon package. It is a separate display choice, not the annotation default. Invalid symbol values and annotation/minimal modes without soft terrain throw `TypeError`; no silent fallback hides configuration errors. Existing strict geometry, numeric and paint failures still apply.
+
+## Transparent backgrounds and host styling
+
+All standalone icon assets and both renderer icon modes have transparent backgrounds. Paths use `fill="none"`; only the strokes and any adjacent abbreviation paint pixels. Inline SVG defaults to `currentColor`, so a host CSS `color` controls the standalone icon stroke; `renderIcon(id, { color: "#176b59" })` supplies an explicit color. A host element may provide a background when desired. External `<img>` SVGs do not inherit host text color; render with an explicit color for those uses.
+
+Transparency belongs to the icon, independently of the full diagram canvas and panels. For a transparent diagram canvas, use the existing `themeTokens: { background: "transparent" }` option; `panel: "transparent"` separately removes panel fills and panel-colored clearance strokes. Those settings do not remove terrain, water, badges or other meaningful geometry. Select foreground colors that remain readable on the chosen host surface. The gallery includes standalone and actual renderer node icons on light, dark and checkerboard HTML backgrounds.
 
 ## Pilot mapping and factual meaning
 

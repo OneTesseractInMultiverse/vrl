@@ -339,6 +339,13 @@ test("asset directory exactly matches the public registry", /**
 });
 
 for (const id of icons.iconIds) {
+  test(`${id} paints original strokes on a transparent canvas`, /**
+   * Reject backgrounds, filled shapes and effects that would obstruct the host surface in any catalog icon.
+   * @responsibility coordinator
+   * @returns {void} Completes after its single transparent-artwork contract assertion succeeds.
+   */ () => {
+    assert.doesNotMatch(icons.renderIcon(id), /<(?:rect|image|style|filter|mask|foreignObject)\b|\b(?:style|filter|mask)=|\bfill="(?!none")/);
+  });
   test(`${id} standalone asset matches its programmatic export`, /**
    * Verify the current fixture standalone asset matches its programmatic export using explicit fixture expectations; setup and assertion failures propagate to the runner.
    * @responsibility coordinator

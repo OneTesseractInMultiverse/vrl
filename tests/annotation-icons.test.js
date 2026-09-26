@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
+import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
 import { compileRoute } from "@subvertic/vrl-core";
 import { computeTopoScene, renderTopoSvg, renderSymbolMarker } from "@subvertic/vrl-render-svg";
 import { renderIconGeometry, iconManifest } from "@subvertic/vrl-icons";
@@ -187,6 +188,24 @@ test("node icon mode retains the local implementation's explicit symbol choice",
  * @responsibility coordinator
  * @returns {void} Completes after its single correctness or failure assertion succeeds.
  */ () => { assert.match(svg({ symbols: "icons" }), /vrl-symbol-icon/); });
+test("node icons retain their abbreviation without opaque squares or text halos", /**
+ * Inspect emitted node primitives to reject the former backing square and panel-colored text stroke.
+ * @responsibility coordinator
+ * @returns {void} Completes after the single transparency and abbreviation assertion succeeds.
+ */ () => {
+  const markup = renderSymbolMarker({ x: 32, y: 40 }, { type: "rappel", attributes: {} }, "#123456", "federation", "#f6f8fa", "en", "icons");
+  const document = new DOMParser({ onError: onErrorStopParsing }).parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${markup}</svg>`, "image/svg+xml");
+  const text = document.getElementsByTagName("text")[0];
+  assert.deepEqual([document.getElementsByTagName("rect").length, text.hasAttribute("stroke"), text.getAttribute("fill"), text.textContent], [0, false, "#123456", "R"]);
+});
+test("node icon output is independent of panel background paint", /**
+ * Verify that changing the surrounding panel cannot introduce a background into a transparent node marker.
+ * @responsibility coordinator
+ * @returns {void} Completes after identical marker output is established for different panel colors.
+ */ () => {
+  const node = { x: 32, y: 40 }, element = { type: "rappel", attributes: {} };
+  assert.equal(renderSymbolMarker(node, element, "currentColor", "federation", "white", "en", "icons"), renderSymbolMarker(node, element, "currentColor", "federation", "black", "en", "icons"));
+});
 test("unknown node icon types fall back to the existing abbreviation symbol", /**
  * Verify unknown node icon types fall back to the existing abbreviation symbol using explicit fixture expectations; setup and assertion failures propagate to the runner.
  * @responsibility coordinator
