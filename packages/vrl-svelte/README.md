@@ -1,5 +1,7 @@
 # @subvertic/svelte
 
+See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
+
 Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Existing runtime entry points and serialized diagram state are unchanged; successful components now show warnings by default.
 
 Svelte adapter for Vertical Route Language.

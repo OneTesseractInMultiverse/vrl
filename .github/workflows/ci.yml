@@ -8,12 +8,43 @@ on:
 
 jobs:
   test:
+    name: Workspace / Node ${{ matrix.node }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["25.0.0", "26.10.0"]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: "25.x"
+          node-version: ${{ matrix.node }}
           cache: "npm"
       - run: npm ci
       - run: make check
+
+  consumers:
+    name: Consumers / ${{ matrix.profile }} / Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: minimum
+            node: "20.0.0"
+          - profile: current
+            node: "24.21.0"
+          - profile: current
+            node: "26.10.0"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: integration/profiles/${{ matrix.profile }}/package-lock.json
+      - run: node scripts/prepare-consumers.mjs ${{ matrix.profile }}
+      - name: Install locked browser and system libraries
+        run: node .consumers/${{ matrix.profile }}/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node scripts/check-consumers.mjs ${{ matrix.profile }}

@@ -4,9 +4,9 @@ Coverage records execution, not correctness. A passing test must establish an ob
 
 ## Quality gate and suites
 
-After `npm ci`, run `make check`. It runs the test convention/inventory check, consumer type checks, all behavioral suites with the existing 100% JavaScript line/branch/function thresholds, selected mutation probes, package dry runs, and an isolated offline tarball consumer. CI runs the same command. Test output reports behavioral results and mutation detection separately from the coverage table.
+After `npm ci`, run `make check`. It runs the test convention/inventory check, consumer type checks, all behavioral suites with the existing 100% JavaScript line/branch/function thresholds, selected mutation probes, package dry runs, and an isolated offline tarball consumer. Workspace CI runs the same command on the development runtime minimum and current runtime. Separate [framework consumer jobs](framework-compatibility.md) install packed artifacts with strict peers and verify production SSR/hydration across the declared package runtime minimum and current framework versions. Test output reports behavioral results and mutation detection separately from the coverage table.
 
-The executable inventory is [`scripts/testing/test-suites.mjs`](../scripts/testing/test-suites.mjs). Every `.test.js` file must belong to exactly one primary suite. Missing, duplicate, or unassigned files fail the gate, so new regressions cannot accidentally disappear from a selected suite. Files remain in `tests/` to preserve fixture and source references; the inventory supplies their logical organization.
+The executable inventory is [`scripts/testing/test-suites.mjs`](../scripts/testing/test-suites.mjs). Every workspace `.test.js` file must belong to exactly one primary suite. Missing, duplicate, or unassigned files fail the gate, so new regressions cannot accidentally disappear from a selected suite. Files remain in `tests/` to preserve fixture and source references; the inventory supplies their logical organization.
 
 | Suite | Responsibilities and representative regressions |
 | --- | --- |
@@ -60,7 +60,7 @@ The independent SVG primitive inspector lives in [`tests/helpers/svg-bounds.js`]
 
 ## Single-assert convention
 
-`check:tests` parses JavaScript with Acorn (a root development dependency). It checks inline `node:test` callbacks, including parameterized registrations, and requires exactly one imported strict assertion as a direct expression in the callback body. Awaited assertions and concise arrow callbacks are supported. Assertions hidden in conditionals, loops, delegated helpers, or outside tests fail the check; assertion-like text in comments/strings does not count. The tool's own success and failure fixtures exercise these rules.
+`check:tests` parses JavaScript with Acorn (a root development dependency). It scans workspace JavaScript and the isolated consumer JavaScript/`.mjs` sources. It checks inline `node:test` callbacks, including parameterized registrations, and requires exactly one imported strict assertion as a direct expression in the callback body. Awaited assertions and concise arrow callbacks are supported. Assertions hidden in conditionals, loops, delegated helpers, or outside tests fail the check; assertion-like text in comments/strings does not count. The tool's own success and failure fixtures exercise these rules.
 
 Keep setup inside the callback and put one behavior-focused assertion after it. A structured comparison may express one coherent contract, such as a failed result together with its diagnostic and untouched downstream ports. Split unrelated behaviors into separate tests. Observation helpers return facts and contain no assertions. The AST check enforces this repository convention; it is not general control-flow proof or a substitute for reviewing assertion quality.
 
@@ -71,3 +71,7 @@ Keep setup inside the callback and put one behavior-focused assertion after it. 
 `check:mutations` copies packages and tests into an owned temporary workspace, connects first-party package imports to those copies, and links the already installed development modules. For each fault it first runs the unmodified witness, requires a passing assertion, changes exactly one reviewed source fragment, and requires the intended test to fail with `ERR_ASSERTION`. It restores that copied file before proceeding and removes the temporary workspace on completion/failure. It never edits the checkout or installs packages.
 
 A surviving fault fails the gate. Syntax/import errors, timeouts, signals, zero selected tests, an unrelated witness, ambiguous replacement targets, or an already-failing baseline also fail the gate; none counts as successful detection. Each subprocess has a 30-second timeout and bounded output. The probes validate test sensitivity to these selected faults, not a universal mutation score. When implementation refactoring moves a target, update its reviewed replacement while preserving the behavioral witness and baseline/detection checks.
+
+## Framework integration coverage
+
+The [compatibility guide](framework-compatibility.md) records exact runtime/framework combinations, reproducible preparation, locked builds, browser behavior and expected install/build failures. These jobs complement workspace imports and the packed TypeScript checks. Their `.svelte` server/client compilation and browser behavior are not included in the configured JavaScript coverage percentage; passing the coverage gate alone does not certify framework compatibility.

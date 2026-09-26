@@ -14,7 +14,7 @@ make check
 make run
 ```
 
-`make check` is the local gate before opening a pull request. It runs the 100 percent coverage gate and npm package dry-run checks.
+`make check` is the local gate before opening a pull request. It runs behavioral and type checks, the configured 100 percent JavaScript coverage gate, mutation probes and packed-package checks. CI also runs the real framework consumers across the [compatibility matrix](docs/framework-compatibility.md); run those checks for framework, packaging or compatibility changes.
 
 ## Architecture Rules
 
@@ -24,7 +24,7 @@ Each function should have one responsibility. Parser code parses. Validation cod
 
 ## Tests
 
-Tests must be self-contained. They must not require network access, external services, local secrets, databases, manual setup, or a specific machine state.
+Tests must be self-contained. They must not require external services, local secrets, databases, manual interaction, or a specific machine state. Framework consumer preparation downloads locked packages and Chromium; test execution runs offline against an owned local server with isolated browser contexts. See the [reproduction commands](docs/framework-compatibility.md#reproduce-locally).
 
 Each test function should contain exactly one assertion. Split behavior checks into separate focused tests.
 

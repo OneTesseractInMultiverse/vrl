@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { testSources } from "../scripts/testing/test-files.mjs";
 import { inspectTestPolicy } from "../scripts/testing/test-policy.mjs";
 import { selectTestFiles } from "../scripts/testing/test-suites.mjs";
 
@@ -54,4 +58,15 @@ for (const [name, available, registry, details] of [
 }
 test("unknown suite names fail instead of running zero tests", () => {
   assert.throws(() => selectTestFiles(["tests/a.test.js"], "constructor", { domain: ["a"] }), /Unknown test suite/);
+});
+
+test("an empty consumer test module cannot silently pass inspection", () => {
+  assert.match(inspectTestPolicy(imports, "consumer.test.mjs").violations[0], /no supported node:test registrations/);
+});
+
+test("consumer test discovery includes modules and excludes non-JavaScript assets", t => {
+  const root = mkdtempSync(join(tmpdir(), "vrl-test-policy-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const name of ["browser.test.mjs", "fixture.js", "index.html"]) writeFileSync(join(root, name), "");
+  assert.deepEqual(testSources(root, root), ["browser.test.mjs", "fixture.js"]);
 });
