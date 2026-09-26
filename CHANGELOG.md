@@ -2,7 +2,9 @@
 
 This project follows Semantic Versioning once public releases begin.
 
-## 0.1.0 - Unreleased
+## 0.2.0 - Unreleased
+
+- Prepare the first release under `@subvertic/core`, `@subvertic/render-svg`, `@subvertic/diagram`, `@subvertic/react`, `@subvertic/svelte` and `@subvertic/sveltekit`. These are distinct from the earlier `@subvertic/vrl-*` package identities; update dependency and import names explicitly.
 
 - Configure npm publication through verified release tags, complete workspace and framework-consumer gates, isolated OIDC publishing, and manual validation/resume operations. Correct package repository metadata for provenance.
 - Separate release planning/preparation from publication. Add rollback for caught preparation failures and integrity-checked recovery from partial publication, with explicit correctness/failure tests and bootstrap guidance.

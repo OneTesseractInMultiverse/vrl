@@ -1,6 +1,6 @@
 {
   "name": "@subvertic/svelte",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Svelte adapter for rendering VRL diagrams.",
   "license": "MIT",
@@ -61,8 +61,8 @@
     "svelte": ">=4.0.0"
   },
   "dependencies": {
-    "@subvertic/diagram": "0.1.0",
-    "@subvertic/render-svg": "0.1.0"
+    "@subvertic/diagram": "0.2.0",
+    "@subvertic/render-svg": "0.2.0"
   },
   "types": "./src/index.d.ts"
 }
