@@ -11,6 +11,7 @@ import { verifyReleaseIdentity } from "../scripts/release/verification.mjs";
 const original = readFiles();
 const version = JSON.parse(original["package.json"]).version;
 const names = WORKSPACES.map(pkg => pkg.name);
+const nextVersion = version.split(".").map((part, index) => index === 2 ? Number(part) + 1 : part).join(".");
 function changedFile(path, change) {
   const files = { ...original }, value = JSON.parse(files[path]);
   change(value); files[path] = JSON.stringify(value); return files;
@@ -82,20 +83,20 @@ test("already published versions require explicit resume", () => {
   assert.throws(() => createPlan(version, { [names[0]]: [version] }, parseOptions([])), /--resume/);
 });
 test("preparation updates all version and lock records without mutating input", () => {
-  const before = JSON.stringify(original), prepared = prepareFiles(original, "0.2.0");
-  assert.deepEqual([validateManifests(prepared), JSON.parse(prepared["package-lock.json"]).version, JSON.stringify(original)], ["0.2.0", "0.2.0", before]);
+  const before = JSON.stringify(original), prepared = prepareFiles(original, nextVersion);
+  assert.deepEqual([validateManifests(prepared), JSON.parse(prepared["package-lock.json"]).version, JSON.stringify(original)], [nextVersion, nextVersion, before]);
 });
 test("planning only reads and reports without writing or running checks", () => {
   const h = harness(); runRelease(parseOptions(["--plan", "--skip-registry"]), h.ports);
   assert.deepEqual(h.calls, ["read", "report"]);
 });
 test("preparation only writes projected version files", () => {
-  const h = harness(); runRelease(parseOptions(["--prepare", "--skip-registry", "--version", "0.2.0"]), h.ports);
-  assert.deepEqual([h.calls, validateManifests(h.writes)], [["read", "report", ...Array(8).fill("write")], "0.2.0"]);
+  const h = harness(); runRelease(parseOptions(["--prepare", "--skip-registry", "--version", nextVersion]), h.ports);
+  assert.deepEqual([h.calls, validateManifests(h.writes)], [["read", "report", ...Array(8).fill("write")], nextVersion]);
 });
 for (let failAt = 0; failAt < Object.keys(original).length; failAt++) {
   test(`failed preparation write ${failAt} restores every attempted file`, () => {
-    const files = { ...original }, updated = prepareFiles(files, "0.2.0"); let calls = 0, message;
+    const files = { ...original }, updated = prepareFiles(files, nextVersion); let calls = 0, message;
     try { writePreparedFiles(files, updated, { write: (path, content) => { files[path] = content; if (calls++ === failAt) throw new Error("disk failure"); } }); } catch (error) { message = error.message; }
     assert.deepEqual([message, files], ["disk failure", original]);
   });
