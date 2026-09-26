@@ -13,13 +13,13 @@
       "name": "Pedro Guzmán"
     }
   ],
-  "homepage": "https://github.com/vertical-route-language/vrl#readme",
+  "homepage": "https://github.com/OneTesseractInMultiverse/vrl#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vertical-route-language/vrl.git"
+    "url": "git+https://github.com/OneTesseractInMultiverse/vrl.git"
   },
   "bugs": {
-    "url": "https://github.com/vertical-route-language/vrl/issues"
+    "url": "https://github.com/OneTesseractInMultiverse/vrl/issues"
   },
   "keywords": [
     "vrl",

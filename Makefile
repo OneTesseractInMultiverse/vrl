@@ -1,6 +1,6 @@
-RELEASE ?= auto
+RELEASE ?= current
 PROVENANCE ?= false
-PUBLISH_ARGS = $(if $(VERSION),--version $(VERSION),--release $(RELEASE)) $(if $(OTP),--otp $(OTP),) $(if $(filter true,$(PROVENANCE)),--provenance,)
+PUBLISH_ARGS = $(if $(VERSION),--version $(VERSION),--release $(RELEASE)) $(if $(OTP),--otp $(OTP),) $(if $(filter true,$(RESUME)),--resume,) $(if $(filter true,$(PROVENANCE)),--provenance,)
 
 .PHONY: help install ci test coverage check run render-assets pack-dry-run publish-dry-run publish-plan release-prepare publish publish-ci clean
 

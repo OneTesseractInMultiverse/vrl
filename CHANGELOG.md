@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Configure npm publication through verified release tags, complete workspace and framework-consumer gates, isolated OIDC publishing, and manual validation/resume operations. Correct package repository metadata for provenance.
+- Separate release planning/preparation from publication. Add rollback for caught preparation failures and integrity-checked recovery from partial publication, with explicit correctness/failure tests and bootstrap guidance.
+
 - Extract all tagged VRL fences in repository documentation and verify complete documents, explicit fragments and deliberate failures against reviewed model, diagnostic and physical-geometry expectations. Source fingerprints and inventory checks reject stale or missing examples.
 - Make normative budget, numeric-range, enum-context and ID-prefix tables executable checks against domain policies. Document failure examples, trust/compatibility boundaries and the explicit progression needed by the measured metadata fragment.
 - Add focused documentation checks and contributor/release guidance while preserving runtime APIs, package dependencies and the configured coverage target.

@@ -2,21 +2,115 @@ name: Publish
 
 on:
   release:
-    types:
-      - published
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable version tag (vX.Y.Z) reachable from main
+        required: true
+        type: string
+      operation:
+        description: Validate only, publish, or resume an interrupted publication
+        required: true
+        default: dry-run
+        type: choice
+        options: [dry-run, publish, resume]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publication
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
 
 jobs:
-  publish:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      commit: ${{ steps.identity.outputs.commit }}
+    steps:
+      - name: Validate trigger
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          if [[ "$EVENT" == workflow_dispatch ]]; then
+            [[ "$REF" == refs/heads/main ]]
+          fi
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "26.10.0"
+          package-manager-cache: false
+      - name: Verify release identity
+        id: identity
+        run: |
+          node scripts/verify-release.mjs
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - run: npm ci
+      - run: make check
+
+  consumers:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: minimum
+            node: "20.0.0"
+          - profile: current
+            node: "24.21.0"
+          - profile: current
+            node: "26.10.0"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.verify.outputs.commit }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: node scripts/prepare-consumers.mjs ${{ matrix.profile }}
+      - run: node .consumers/${{ matrix.profile }}/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node scripts/check-consumers.mjs ${{ matrix.profile }}
+
+  publish:
+    needs: [verify, consumers]
+    if: github.event_name == 'release' || inputs.operation != 'dry-run'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.verify.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: "25.x"
+          node-version: "26.10.0"
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
-      - run: npm ci
-      - run: make publish-ci
+      - run: node scripts/verify-release.mjs
+      # Package sources require no build or install; validation ran without OIDC.
+      - name: Publish verified tarballs with npm OIDC
+        env:
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          args=(--release current --provenance --trusted-publisher --skip-check)
+          if [[ "$OPERATION" == resume ]]; then args+=(--resume); fi
+          node scripts/publish-workspaces.mjs "${args[@]}"
