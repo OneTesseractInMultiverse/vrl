@@ -8,5 +8,10 @@ export const SOURCES = {
 export function requestProps(url) {
   const name = url.searchParams.get("case") ?? "valid";
   if (!Object.hasOwn(SOURCES, name)) throw new Error(`Unknown route case: ${name}`);
-  return { source: SOURCES[name], options: { legend: false }, showWarnings: url.searchParams.get("warnings") !== "hide" };
+  const props = { source: SOURCES[name], options: { legend: false }, showWarnings: url.searchParams.get("warnings") !== "hide" };
+  if (url.searchParams.has("multiple")) {
+    props.options.idPrefix = "left";
+    props.companion = { source: SOURCES[name], options: { legend: false, idPrefix: "right", theme: "dark" } };
+  }
+  return props;
 }

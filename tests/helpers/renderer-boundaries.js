@@ -3,7 +3,7 @@ import { posix } from "node:path";
 const COMPUTATIONS = new Set([
   "anchor-presentation.js", "badge-style.js", "detail-content.js", "detail-layout.js",
   "element-formatters.js", "locale.js", "node-scene.js", "panel-scene.js", "presentation.js",
-  "render-options.js", "route-data.js", "scene-bounds.js", "scene-path.js", "segment-scene.js", "symbol-registry.js", "topo-scene.js"
+  "render-options.js", "route-data.js", "scene-bounds.js", "scene-path.js", "segment-scene.js", "symbol-registry.js", "svg-identifiers.js", "topo-scene.js"
 ]);
 const ENCODING = new Set(["attributes.js", "badge-style.js", "paint.js", "xml.js"]);
 

@@ -4,7 +4,7 @@ export const TEST_SUITES = {
   parsing: ["lexer", "document-grammar", "source-diagnostics", "invariants-parsing"],
   compilation: ["compiler-ports", "processing-limits", "public-contracts", "documentation-contracts", "vrl"],
   layout: ["technical-segments", "route-boundaries", "invariants-layout"],
-  serialization: ["anchor-counts", "renderer-configuration", "renderer-scene", "scene-fitting", "technical-annotations", "xml-text", "render-defaults", "invariants-serialization"],
+  serialization: ["anchor-counts", "svg-identifiers", "renderer-configuration", "renderer-scene", "scene-fitting", "technical-annotations", "xml-text", "render-defaults", "invariants-serialization"],
   adapters: ["diagram-package", "diagram-state", "warning-presentation"],
   tooling: ["dependency-boundaries", "test-policy", "seeded-cases", "mutation-tooling", "consumer-lock", "documentation-tooling", "release-tooling"]
 };

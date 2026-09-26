@@ -9,7 +9,7 @@ export function serializeTopoScene(scene, theme) {
   const terrainProfile = serializeTerrain(scene.terrainPath, theme);
   const nodes = scene.nodes.map((item) => serializeNode(item.drawing, theme)).join("");
   const waterSegments = serializeWaterSegments(scene.waterPaths, theme);
-  const routeSegments = serializeRouteSegments(scene.segments, theme);
+  const routeSegments = serializeRouteSegments(scene.segments, theme, scene.identifiers);
   const segmentLabels = serializeSegmentLabels(scene.segmentLabels, theme);
   const stationTicks = scene.stationTicks.map((item) => serializeStationTick(item, theme)).join("");
   const infoBox = serializeInfoBox(scene.infoBox, theme);
@@ -18,7 +18,7 @@ export function serializeTopoScene(scene, theme) {
   <title>${escapeXml(scene.title)}</title>
   <desc>${escapeXml(scene.description)}</desc>
   <defs>
-    <marker id="vrl-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <marker id="${svgAttribute(scene.identifiers.arrow)}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="${svgPaint(theme.routeLine)}"/>
     </marker>
   </defs>
@@ -71,19 +71,19 @@ export function serializeWaterSegments(paths, theme) {
   return paths.map((path) => `<path class="vrl-water-run" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.water)}" stroke-width="6" stroke-linecap="round"/>`).join("");
 }
 
-export function serializeRouteSegments(segments, theme) {
-  return segments.map((segment) => segment.kind === "connection" ? serializeConnection(segment, theme) : serializeTechnicalSegment(segment, theme)).join("");
+export function serializeRouteSegments(segments, theme, identifiers) {
+  return segments.map((segment) => segment.kind === "connection" ? serializeConnection(segment, theme) : serializeTechnicalSegment(segment, theme, identifiers)).join("");
 }
 
 export function serializeConnection({ path }, theme) {
   return `<path class="vrl-route-segment" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
-export function serializeTechnicalSegment({ shape, paths, rungs, stages, redirections }, theme) {
+export function serializeTechnicalSegment({ shape, paths, rungs, stages, redirections }, theme, identifiers) {
   const decorations = [serializeRungs(rungs, theme), serializeStages(stages, theme), serializeRedirections(redirections, theme)].join("\n    ");
   return `<g class="vrl-drop-${svgAttribute(shape)}">
     <path class="vrl-route-segment vrl-drop-lead" d="${svgAttribute(paths.lead)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <path class="vrl-route-segment vrl-drop-slope" d="${svgAttribute(paths.slope)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#vrl-arrow)"/>
+    <path class="vrl-route-segment vrl-drop-slope" d="${svgAttribute(paths.slope)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#${svgAttribute(identifiers.arrow)})"/>
     ${decorations}
     <path class="vrl-route-segment vrl-drop-exit" d="${svgAttribute(paths.exit)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>`;

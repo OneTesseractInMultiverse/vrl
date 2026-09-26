@@ -26,6 +26,7 @@ The checks establish:
 - Valid, warning, invalid and escaped-title output through React, the direct Svelte component, and the SvelteKit wrapper; blocking failures retain diagnostics and suppress SVG.
 - Hydration retains the server image node, reports no browser errors or hydration warnings, and updates source through warning, failure and recovery states.
 - Language/theme changes, warning visibility, supplied-state precedence and escaped diagnostic text work after hydration.
+- Same-route diagrams with different themes retain unique marker IDs and local references across SSR/hydration; a namespace update leaves its neighbor unchanged. A deliberate duplicate-prefix control demonstrates document-wide ID resolution. See [SVG namespaces](svg-identifiers.md).
 - A real asynchronous SvelteKit server load with a custom data key survives serialization and client navigation without a full document reload.
 - All six package roots resolve inside the installed consumer. Private exports and a missing public component entry fail with the expected resolution/build errors.
 - Offline strict installations of actual React 17 and Svelte 3 packages fail with peer-resolution errors against the corresponding packed adapters. These are unsupported examples, not an exhaustive rejection matrix.

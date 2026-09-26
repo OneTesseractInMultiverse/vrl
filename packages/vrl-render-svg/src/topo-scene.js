@@ -1,3 +1,4 @@
+import { resolveSvgIdentifiers } from "./svg-identifiers.js";
 import { anchorCountDescription } from "./anchor-presentation.js";
 import { diagramText } from "./locale.js";
 import { validateRenderLayout, validateRenderOptions } from "./render-options.js";
@@ -10,6 +11,7 @@ import { prepareRouteSegments, prepareWaterSegments, prepareSegmentLabels, prepa
 /** Prepare once: fitting and serialization consume the same presentation records. */
 export function computeTopoScene(route, layout, options = {}) {
   validateRenderOptions(options);
+  const identifiers = resolveSvgIdentifiers(options.idPrefix);
   validateRenderLayout(layout);
   const language = resolveRenderLanguage(options);
   const nodes = prepareNodes(layout, language, options.symbology);
@@ -22,7 +24,7 @@ export function computeTopoScene(route, layout, options = {}) {
   const infoBox = prepareInfoBox(route, layout, language, contentBounds.minY - 160);
   const legend = options.legend === false ? null : prepareLegend({ ...layout, height: Math.max(layout.height, contentBounds.maxY + 12) }, language, options.symbology);
   const sceneBounds = unionBounds([contentBounds, infoBox.bounds, ...(legend === null ? [] : [legend.bounds])]);
-  return { language, title: `${route.name} ${diagramText(language).topo}`, description: sceneDescription(route, layout, language),
+  return { identifiers, language, title: `${route.name} ${diagramText(language).topo}`, description: sceneDescription(route, layout, language),
     nodes, segments, segmentLabels, terrainPath: terrainProfilePath(layout), waterPaths: prepareWaterSegments(layout), stationTicks: prepareStationTicks(layout),
     infoBox, legend, contentBounds, bounds: sceneBounds, viewBox: fitSceneBounds(sceneBounds, layout.width, layout.height) };
 }

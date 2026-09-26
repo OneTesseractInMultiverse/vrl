@@ -2,6 +2,11 @@
 
 This project follows Semantic Versioning once public releases begin.
 
+## Unreleased
+
+- Add caller-controlled `idPrefix` namespaces for SVG marker definitions/references and advanced fragment helpers. Validate bounded ASCII prefixes, preserve deterministic standalone defaults, and keep namespace ownership in the embedding application.
+- Document stable per-instance namespaces across framework SSR/hydration, duplicate-prefix behavior and precomputed states. Add correctness/failure, type, and packed browser regressions for neighboring same-route diagrams with different themes and namespace updates. No runtime dependency or route-model change.
+
 ## 0.2.1 - Unreleased
 
 - Restore the `vrl-` project prefix in all six npm package names under the `@subvertic` organization. Update internal dependencies, imports, examples, public contracts, packed consumer fixtures, and release tooling together.

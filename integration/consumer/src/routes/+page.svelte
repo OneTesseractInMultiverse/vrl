@@ -31,8 +31,10 @@
 <section id="diagram">
   {#if data.surface === "svelte"}
     <Diagram {source} {options} {showWarnings} diagram={override} />
+    {#if data.companion}<Diagram {...data.companion} />{/if}
   {:else}
     <KitDiagram data={{ route }} diagramKey="route" {source} {options} {showWarnings} diagram={override} />
+    {#if data.companion}<KitDiagram {...data.companion} />{/if}
   {/if}
 </section>
 <a id="warning-route" href={`/?surface=${data.surface}&case=warning`}>Warning route</a>

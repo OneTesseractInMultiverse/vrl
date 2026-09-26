@@ -14,6 +14,8 @@ export interface RenderOptions {
   theme?: "light" | "dark" | undefined; themeTokens?: Partial<Theme> | undefined;
   language?: string | undefined; locale?: string | undefined; symbology?: string | undefined;
   legend?: boolean | undefined;
+  /** Document-unique prefix: 1–64 ASCII letters/digits/_/-, starting with a letter. Default: vrl. */
+  idPrefix?: string | undefined;
 }
 /** Caller-built layouts may omit points and use nodes as the terrain path. */
 export type RenderLayout = Omit<RouteLayout, "points" | "spine"> & { points?: LayoutPoint[]; spine?: RouteLayout["spine"] };
@@ -70,10 +72,10 @@ export function redirectionRatio(redirection: Redirection, element: ElementView)
 export function redirectionsForElement(element: ElementView): Redirection[];
 export function renderAnchorMarks(node: Position, element: ElementView, theme: Theme, side?: "left" | "right", language?: string): string;
 export function renderDetailLine(detail: string, x: number, y: number, theme: Theme, language?: string, maxWidth?: number, rows?: string[][] | null): string;
-export function renderDirectTechnicalSegment(previous: ElementPosition, node: Position, theme: Theme, element?: ElementView, layout?: TechnicalScale | null, language?: string): string;
-export function renderDirectTechnicalSegment(previous: Position, node: Position, theme: Theme, element: ElementView, layout?: TechnicalScale | null, language?: string): string;
-export function renderDropLadderSegment(previous: ElementPosition, node: Position, theme: Theme, element?: ElementView, language?: string, layout?: TechnicalScale | null): string;
-export function renderDropLadderSegment(previous: Position, node: Position, theme: Theme, element: ElementView, language?: string, layout?: TechnicalScale | null): string;
+export function renderDirectTechnicalSegment(previous: ElementPosition, node: Position, theme: Theme, element?: ElementView, layout?: TechnicalScale | null, language?: string, idPrefix?: string): string;
+export function renderDirectTechnicalSegment(previous: Position, node: Position, theme: Theme, element: ElementView, layout?: TechnicalScale | null, language?: string, idPrefix?: string): string;
+export function renderDropLadderSegment(previous: ElementPosition, node: Position, theme: Theme, element?: ElementView, language?: string, layout?: TechnicalScale | null, idPrefix?: string): string;
+export function renderDropLadderSegment(previous: Position, node: Position, theme: Theme, element: ElementView, language?: string, layout?: TechnicalScale | null, idPrefix?: string): string;
 export function renderDropRungs(geometry: LadderGeometry, theme: Theme): string;
 export function renderInfoBox(route: RouteView, layout: RenderLayout, theme: Theme, language?: string, prepared?: Omit<InfoBox, "textLines" | "label"> & Partial<Pick<InfoBox, "textLines" | "label">>): string;
 export function renderLabelLeader(node: Position, placement: LabelPlacement, theme: Theme): string;
@@ -85,7 +87,7 @@ export function renderNode(node: LayoutNode, theme: Theme, symbology?: string, p
 export function renderNodes(layout: RenderLayout, theme: Theme, symbology?: string, language?: string, prepared?: PreparedNode[]): string;
 export function renderRappelStageMarkers(geometry: LadderGeometry, element: ElementView, theme: Theme): string;
 export function renderRedirectionMarkers(geometry: LadderGeometry, element: ElementView, theme: Theme, language?: string): string;
-export function renderRouteSegments(layout: RenderLayout, theme: Theme, language?: string): string;
+export function renderRouteSegments(layout: RenderLayout, theme: Theme, language?: string, idPrefix?: string): string;
 export function renderSegmentLabels(layout: RenderLayout, theme: Theme): string;
 export function renderStationTick(node: ElementPosition, theme: Theme): string;
 export function renderStationTicks(layout: RenderLayout, theme: Theme): string;

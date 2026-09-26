@@ -1,5 +1,7 @@
 # Shared diagram state
 
+When embedding multiple diagrams, pass a stable, unique `options.idPrefix` per occurrence and reuse it for SSR and hydration. Precomputed states keep their original IDs. See [SVG namespace ownership and validation](svg-identifiers.md).
+
 See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
 
 `@subvertic/vrl-diagram` owns framework-neutral diagram coordination. React, Svelte, and SvelteKit delegate their state factories to `createDiagramState(source, options = {})`. Consumers can also use it directly without installing a framework.
