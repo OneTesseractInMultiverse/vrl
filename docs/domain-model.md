@@ -74,7 +74,9 @@ Each normalized element has `type`, nonblank `id`, `label` (string/null), `attri
 | Unique identity validation/allocation | `domain/element-identifiers.js` |
 | Strict conversion and extension separation | `domain/normalize-attributes.js` |
 | Normalization coordination and explicit element construction | `domain/model.js` |
-| Counts and aggregate measurements | `domain/route-summary.js` |
+| Legacy counts and aggregates | `domain/route-summary.js` |
+| Explicit declared/observed measurements and unknowns | `domain/route-measurements.js` |
+| Partial walk-sum comparison against declared total | `domain/route-distance.js`; exact units in `domain/metric-source-units.js` |
 | Technical ownership, direction, motion, annotation attachment | `domain/traversal.js` |
 | Located messages and diagnostic codes | Validation modules consuming domain assessments |
 | Boundary order and elevation feasibility | Geometry validation, after normalization |
@@ -85,7 +87,7 @@ The shared domain assessments feed both source diagnostics and direct normalizat
 
 `traversal.points` refers to progression elements or implicit boundaries. Technical segments refer to their owning element and carry `direction` plus signed `verticalDeltaMeters`: descents are negative, climbs positive, and optional unmeasured downclimbs remain null. Inclination scales physical vertical motion. Notes/hazards retain their element index and the boundary they annotate without adding physical progression. Drawing shape, language, theme, and layout spacing do not determine ownership or physical motion.
 
-Traversal and summary contracts are unchanged. Summaries use validated known fields, never similarly named extensions. Normalization does not establish boundary/elevation feasibility or renderable layout geometry; `validateGeometry` still owns those later checks. Use `compileRoute` for complete source diagnostics, nonblocking warnings, geometry validation, layout, and export. A direct normalized result may still need geometry corrections.
+Traversal and legacy model-summary contracts are unchanged. Summaries use validated known fields, never similarly named extensions. The separate `summarizeRouteMeasurements` helper exposes nullable observations, declared totals and counts without modifying model JSON. Legacy rope/distance names are deprecated; see [meaning, provenance and compatibility](route-summary.md). A declared total below recorded walks produces a nonblocking validation warning, preserving both quantities. Normalization does not establish boundary/elevation feasibility or renderable layout geometry; `validateGeometry` still owns those later checks. Use `compileRoute` for complete source diagnostics, nonblocking warnings, geometry validation, layout, and export. A direct normalized result may still need geometry corrections.
 
 ## Failure, Determinism, and Compatibility
 
@@ -124,4 +126,4 @@ These are the implemented aggregate names in the current model revision. Descrip
 
 For the shared fictional canyon, the two rappel heights are 18 m and 12 m, declared ropes are 40 m and 30 m, and the only walk distance is 120 m. Its summaries are therefore `highestRappelMeters: 18`, `requiredRopeMeters: 40` and `totalDistanceMeters: 120`. It has no declared endpoint elevations.
 
-Measurement naming/completeness improvements are tracked in [#25](https://github.com/OneTesseractInMultiverse/vrl/issues/25). Consumers must use the contract shipped in their installed version; the proposed replacement names are not part of this checkout.
+The additive `summarizeRouteMeasurements` helper exposes explicit measurement names, observation counts and null unknowns without replacing these legacy fields. See [summary meaning and provenance](route-summary.md) for its full contract and distance-conflict warning. Consumers must use the contract shipped in their installed version; this addition is scheduled for the next minor release.

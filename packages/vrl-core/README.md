@@ -17,7 +17,7 @@ npm install @subvertic/vrl-core
 ## Usage
 
 ```js
-import { compileRoute, formatDiagnostic } from "@subvertic/vrl-core";
+import { compileRoute, formatDiagnostic, summarizeRouteMeasurements } from "@subvertic/vrl-core";
 
 const source = `route "Synthetic two-rappel canyon"
 start "Entry"
@@ -39,8 +39,8 @@ const result = compileRoute(source, {
 
 for (const diagnostic of result.diagnostics) console.error(formatDiagnostic(diagnostic));
 if (result.ok) {
-  // Historical name: maximum declared rope, not an equipment calculation.
-  console.log(result.model.summary.requiredRopeMeters);
+  const observations = summarizeRouteMeasurements(result.model.elements, result.model.metadata);
+  console.log(observations.maximumDeclaredRopeMeters); // null if absent; a declaration, not an equipment requirement
   console.log(result.layout.nodes.length);
   console.log(result.json);
 }
@@ -67,6 +67,7 @@ import {
 - `compileRoute(source, options)` runs the full parser, validation, normalization, layout, and JSON export pipeline.
 - `createRouteCompiler(overrides)` creates an injectable compiler for tests or alternate ports.
 - `exportRouteJson(model)` serializes normalized route data.
+- `summarizeRouteMeasurements(elements, metadata?)` keeps declared totals, observed walk/rope measurements and null unknowns separate. Existing model summaries and JSON remain unchanged. See [summary provenance and conflicts](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/route-summary.md).
 
 Compiler wiring lives in a composition module; the application coordinator depends only on its contracts and domain policies. JSON serialization is a separate output adapter. All ports are synchronous. Invalid wiring throws at configuration time, malformed results throw a port-specific `TypeError` before later stages, and adapter exceptions propagate unchanged. The public `compileRouteWithDependencies(source, options, dependencies)` helper retains its optional default geometry validator; its other ports are required. See the [compiler contracts and example](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/compiler-ports.md) for result shapes, error ordering, and compatibility.
 

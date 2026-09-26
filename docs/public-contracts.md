@@ -190,6 +190,26 @@ The revision baseline introduces declarations without changing persisted data sh
 
 Each behavioral test uses one assertion. Coverage remains a 100% target, supplemented by explicit expected facts, deliberate failures, export/declaration inventory checks, and a saved revision 1 model fixture. Changes to that fixture require a compatibility explanation, not automatic snapshot regeneration.
 
+## Explicit route measurements
+
+`summarizeRouteMeasurements(elements, metadata?)` is an additive advanced core export. `RouteMeasurementSummary` separates declared totals, observed rope/walk measurements, counts and null unknowns. Existing `RouteSummary`, model JSON and contract revision 1 remain unchanged. The new total-distance warning preserves successful compilation and both source quantities; it adds a diagnostic code without changing failure envelopes. See [summary meaning and provenance](route-summary.md) for migration from the ambiguous legacy names and the partial-total comparison policy.
+
+```ts
+import { compileRoute, summarizeRouteMeasurements } from "@subvertic/vrl-core";
+import type { RouteMeasurementSummary } from "@subvertic/vrl-core";
+
+const result = compileRoute('route Survey\nmetadata total_distance=20m\nwalk distance=25m\nwalk');
+if (!result.ok) throw new Error("Expected a nonblocking summary conflict");
+const observations: RouteMeasurementSummary = summarizeRouteMeasurements(result.model.elements, result.model.metadata);
+if (observations.declaredTotalDistanceMeters !== 20 || observations.summedWalkDistanceMeters !== 25
+    || observations.measuredWalkCount !== 1 || observations.walkCount !== 2
+    || observations.maximumDeclaredRopeMeters !== null
+    || result.diagnostics[0]?.code !== "VRL_TOTAL_DISTANCE_BELOW_WALK_SUM") {
+  throw new Error("Declared and observed quantities must remain separate");
+}
+console.log(observations);
+```
+
 ## SVG instance namespaces
 
 `RenderOptions.idPrefix` and the final namespace argument on SVG fragment helpers are additive next-minor APIs. Existing defaults and model/layout/diagnostic revisions remain unchanged. `TopoScene.identifiers` exposes the resolved marker identity as inspection data. See [namespace validation, duplicate handling, and adapter ownership](svg-identifiers.md).

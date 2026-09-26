@@ -24,7 +24,8 @@ import {
   validateRoute,
   normalizeRoute,
   computeVerticalLayout,
-  exportRouteJson
+  exportRouteJson,
+  summarizeRouteMeasurements
 } from "@subvertic/vrl-core";
 ```
 
@@ -45,11 +46,13 @@ const result = compileRoute(source, {
 
 for (const diagnostic of result.diagnostics) console.error(formatDiagnostic(diagnostic));
 if (result.ok) {
-  // Historical name: maximum declared rope, not an equipment calculation.
-  console.log(result.model.summary.requiredRopeMeters);
+  const observations = summarizeRouteMeasurements(result.model.elements, result.model.metadata);
+  console.log(observations.maximumDeclaredRopeMeters); // null if no rope is recorded
   console.log(result.json);
 }
 ```
+
+`summarizeRouteMeasurements(elements, metadata?)` returns explicit declared/observed quantities and null unknowns without modifying `model.summary` or JSON. Legacy `requiredRopeMeters` is a maximum declaration, not an equipment requirement; `totalDistanceMeters` is only a recorded-walk sum. See [summary provenance and conflicts](route-summary.md) for all fields, observation counts and the nonblocking total-distance warning.
 
 Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
 

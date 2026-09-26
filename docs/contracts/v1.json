@@ -57,6 +57,7 @@
         "routeElevationProfile",
         "stripComment",
         "summarizeRoute",
+        "summarizeRouteMeasurements",
         "technicalElementIndexesBetween",
         "technicalSegmentDelta",
         "technicalVerticalMeters",

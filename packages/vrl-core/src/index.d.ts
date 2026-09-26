@@ -107,9 +107,25 @@ export interface Traversal {
 }
 export interface RouteSummary {
   numberOfRappels: number; numberOfHazards: number; highestRappelMeters: number;
-  requiredRopeMeters: number; totalDistanceMeters: number;
+  /** @deprecated Maximum declared rappel rope, or 0 when absent; not an equipment requirement. Use summarizeRouteMeasurements. */
+  requiredRopeMeters: number;
+  /** @deprecated Sum of recorded walk distances only, or 0 when absent. Use summarizeRouteMeasurements. */
+  totalDistanceMeters: number;
   entranceElevationMeters: number | null; exitElevationMeters: number | null;
   totalElevationChangeMeters: number;
+}
+/** Explicit observations from normalized records; null means no measurement supplied. */
+export interface RouteMeasurementSummary {
+  maximumDeclaredRopeMeters: number | null;
+  declaredRopeCount: number;
+  rappelCount: number;
+  summedWalkDistanceMeters: number | null;
+  measuredWalkCount: number;
+  walkCount: number;
+  declaredTotalDistanceMeters: number | null;
+  declaredTotalDescentMeters: number | null;
+  /** Entrance minus exit; positive for net descent, distinct from total descent. */
+  endpointElevationChangeMeters: number | null;
 }
 export interface RouteModel {
   name: string; metadata: CommonFields; extensions: Record<string, string>;
@@ -302,6 +318,16 @@ export function normalizeElement(element: RouteElementAst, counters?: Partial<Re
  * @returns {RouteSummary} Counts, declared maxima, walk-distance sum and endpoint elevation fields; legacy missing aggregates are zero and missing endpoints are null.
  */
 export function summarizeRoute(elements: ElementView[], metadata?: CommonFields): RouteSummary;
+/**
+ * Summarize normalized observations separately from declared route totals without changing inputs or the legacy model summary.
+ * @responsibility computation
+ * @param {readonly ElementView[]} elements - Compatible normalized elements in source order; only rappel rope and walk distance observations contribute to their respective aggregates.
+ * @param {CommonFields} [metadata] - Optional normalized route metadata; defaults to an empty record; absent measurements remain null.
+ * @returns {RouteMeasurementSummary} Independently owned measurements and observation counts; missing values are null, and endpoint change is entrance minus exit in meters.
+ * @throws {TypeError} A present measurement is not a normalized record.
+ * @throws {RangeError} A measurement or computed aggregate is nonfinite or outside the supported numeric range.
+ */
+export function summarizeRouteMeasurements(elements: readonly ElementView[], metadata?: CommonFields): RouteMeasurementSummary;
 /**
  * Construct physical progression from route elements and attach standalone annotations to their reached boundaries.
  * @responsibility coordinator

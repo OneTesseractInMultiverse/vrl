@@ -10,6 +10,7 @@ export { createEmptyRoute, createRouteElement } from "./application/route-ast.js
 export { normalizeElement, normalizeRoute } from "./domain/model.js";
 export { normalizeAttributes } from "./domain/normalize-attributes.js";
 export { summarizeRoute } from "./domain/route-summary.js";
+export { summarizeRouteMeasurements } from "./domain/route-measurements.js";
 export { isMeasurementField, normalizeAttributeValue, parseMeasurementToken } from "./domain/measurements.js";
 export {
   isRappelStagesField,
