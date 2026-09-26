@@ -2,6 +2,9 @@ import { assertFiniteNumber, assertOptionsRecord } from "@subvertic/vrl-core";
 
 export function validateRenderOptions(options) {
   assertOptionsRecord(options, "Renderer options");
+  if (options.style !== undefined && options.style !== "classic" && options.style !== "soft-terrain") {
+    throw new TypeError("Renderer style must be classic or soft-terrain.");
+  }
   if (options.legend !== undefined && typeof options.legend !== "boolean") {
     throw new TypeError("Renderer option legend must be a boolean.");
   }

@@ -1,3 +1,4 @@
+import { curvedTechnicalPath, curvedTechnicalPoint, validateSoftSegment } from "./soft-terrain-geometry.js";
 import { scenePath } from "./scene-path.js";
 import { diagramText } from "./locale.js";
 import {
@@ -6,30 +7,32 @@ import {
   segmentLabel, segmentLabelPosition, stationTickLine, needsSegmentArrow
 } from "./presentation.js";
 
-export function prepareRouteSegments(layout, language) {
+export function prepareRouteSegments(layout, language, style = "classic") {
   if (!Array.isArray(layout.segments)) {
     throw new TypeError("Route rendering requires layout.segments; recompute the layout with computeVerticalLayout.");
   }
-  return layout.segments.map((segment) => prepareRouteSegment(segment, language));
+  return layout.segments.map((segment) => prepareRouteSegment(segment, language, style));
 }
 
-function prepareRouteSegment(segment, language) {
+function prepareRouteSegment(segment, language, style) {
   if (segment.element === null) return { kind: "connection", path: routeSegmentPath(segment.start, segment.end, segment.start.element), start: segment.start, end: segment.end };
+  if (style === "soft-terrain") validateSoftSegment(segment);
   return prepareTechnicalSegment(segment.start, segment.end, segment.element, language, segment,
-    (segment.element.attributes.shape ?? "ladder") === "ladder" ? "ladder" : "direct");
+    style === "soft-terrain" ? "curve" : (segment.element.attributes.shape ?? "ladder") === "ladder" ? "ladder" : "direct");
 }
 
 export function prepareTechnicalSegment(previous, node, element, language, layout, shape) {
   const geometry = dropLadderGeometry(previous, node, element, layout);
-  return { kind: "technical", ownerId: element.id, shape, geometry, paths: technicalPaths(geometry),
+  const pointAt = shape === "curve" ? curvedTechnicalPoint : technicalLinePoint;
+  return { kind: "technical", ownerId: element.id, shape, geometry, paths: technicalPaths(geometry, shape),
     rungs: shape === "ladder" ? rungPlacements(geometry) : [],
-    stages: stagePlacements(geometry, element), redirections: redirectionPlacements(geometry, element, language) };
+    stages: stagePlacements(geometry, element, pointAt), redirections: redirectionPlacements(geometry, element, language, pointAt) };
 }
 
-function technicalPaths(geometry) {
+function technicalPaths(geometry, shape) {
   return {
     lead: scenePath`M ${geometry.startX} ${geometry.startY} L ${geometry.dropX} ${geometry.startY}`,
-    slope: scenePath`M ${geometry.dropX} ${geometry.startY} L ${geometry.bottomX} ${geometry.bottomY}`,
+    slope: shape === "curve" ? curvedTechnicalPath(geometry) : scenePath`M ${geometry.dropX} ${geometry.startY} L ${geometry.bottomX} ${geometry.bottomY}`,
     exit: scenePath`M ${geometry.bottomX} ${geometry.bottomY} L ${geometry.endX} ${geometry.endY}`
   };
 }
@@ -52,30 +55,30 @@ export function rungPlacements(geometry) {
   });
 }
 
-export function stagePlacements(geometry, element) {
+export function stagePlacements(geometry, element, pointAt = technicalLinePoint) {
   const stages = rappelStagesForElement(element);
   const total = stages.reduce((sum, stage) => sum + stage.meters, 0);
   const direction = technicalLabelDirection(geometry);
   let cumulative = 0;
   return stages.map((stage, index) => {
-    const point = technicalLinePoint(geometry, (cumulative + stage.meters / 2) / total);
+    const point = pointAt(geometry, (cumulative + stage.meters / 2) / total);
     cumulative += stage.meters;
     const boundaryRatio = index === stages.length - 1 ? null : cumulative / total;
     return { x: point.x + direction * 16, y: point.y - 2, text: formatMeters(stage), fontSize: 9,
       anchor: direction === -1 ? "end" : "start", boundaryRatio,
-      boundary: boundaryRatio === null ? null : stageBoundaryPlacement(geometry, boundaryRatio) };
+      boundary: boundaryRatio === null ? null : stageBoundaryPlacement(geometry, boundaryRatio, pointAt) };
   });
 }
 
-export function stageBoundaryPlacement(geometry, ratio) {
-  const point = technicalLinePoint(geometry, ratio);
+export function stageBoundaryPlacement(geometry, ratio, pointAt = technicalLinePoint) {
+  const point = pointAt(geometry, ratio);
   return { x1: point.x - 8, y1: point.y, x2: point.x + 8, y2: point.y };
 }
 
-export function redirectionPlacements(geometry, element, language) {
+export function redirectionPlacements(geometry, element, language, pointAt = technicalLinePoint) {
   const direction = -technicalLabelDirection(geometry);
   return redirectionsForElement(element).map((redirection) => {
-    const point = technicalLinePoint(geometry, redirectionRatio(redirection, element));
+    const point = pointAt(geometry, redirectionRatio(redirection, element));
     const text = redirectionLabel(redirection, language);
     return { point, x: point.x + direction * 12, y: point.y + 3, text, fontSize: 8,
       anchor: direction === -1 ? "end" : "start", label: `${diagramText(language).redirectionAnchor} ${text}`,

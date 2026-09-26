@@ -6,13 +6,13 @@ import { detailBadgeStyle, themeSafeStroke } from "./badge-style.js";
 
 export function serializeTopoScene(scene, theme) {
   const { viewBox } = scene;
-  const terrainProfile = serializeTerrain(scene.terrainPath, theme);
+  const terrainProfile = scene.style === "soft-terrain" ? serializeSoftTerrain(scene.terrain, theme) : serializeTerrain(scene.terrainPath, theme);
   const nodes = scene.nodes.map((item) => serializeNode(item.drawing, theme)).join("");
-  const waterSegments = serializeWaterSegments(scene.waterPaths, theme);
+  const waterSegments = scene.style === "soft-terrain" ? serializeSoftPools(scene.pools, theme) : serializeWaterSegments(scene.waterPaths, theme);
   const routeSegments = serializeRouteSegments(scene.segments, theme, scene.identifiers);
   const segmentLabels = serializeSegmentLabels(scene.segmentLabels, theme);
   const stationTicks = scene.stationTicks.map((item) => serializeStationTick(item, theme)).join("");
-  const infoBox = serializeInfoBox(scene.infoBox, theme);
+  const infoBox = serializeInfoBox(scene.infoBox, theme, scene.style === "soft-terrain");
   const legend = scene.legend === null ? "" : serializeLegend(scene.legend, theme);
   return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
   <title>${escapeXml(scene.title)}</title>
@@ -38,11 +38,11 @@ export function serializeTerrain(path, theme) {
   return `<path class="vrl-terrain-profile" d="${svgAttribute(path)}" fill="${svgPaint(theme.terrain)}"/>`;
 }
 
-export function serializeLegend({ x, y, width, height, title, titleX, titleY, drawingRows }, theme) {
+export function serializeLegend({ x, y, width, height, title, titleX, titleY, drawingRows, styleNotes = [] }, theme) {
   return `<g class="vrl-legend" aria-label="${svgAttribute(title)}">
     <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" rx="4" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1"/>
     <text x="${svgAttribute(titleX)}" y="${svgAttribute(titleY)}" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="${svgPaint(theme.text)}">${escapeXml(title)}</text>
-    ${drawingRows.map((item) => serializeLegendRow(item, theme)).join("")}
+    ${drawingRows.map((item) => serializeLegendRow(item, theme)).join("")}${styleNotes.map(item => serializePlainText(item, theme)).join("")}
   </g>`;
 }
 
@@ -60,9 +60,9 @@ export function serializeLegendSymbols(entries, theme) {
     </text>`).join("")}</g>`;
 }
 
-export function serializeInfoBox({ x, y, width, height, label, textLines }, theme) {
+export function serializeInfoBox({ x, y, width, height, label, textLines }, theme, softTerrain = false) {
   return `<g class="vrl-info-box" aria-label="${svgAttribute(label)}">
-    <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" fill="#86a844" stroke="${svgPaint(theme.routeLine)}" stroke-width="2"/>
+    <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" fill="${softTerrain ? svgPaint(theme.panel) : "#86a844"}" stroke="${svgPaint(theme.routeLine)}" stroke-width="2"/>
     ${textLines.map((item) => `<text x="${svgAttribute(item.x)}" y="${svgAttribute(item.y)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="${svgAttribute(item.fontSize)}"${item.heading ? ' font-weight="900"' : ""} fill="${svgPaint(theme.text)}">${escapeXml(item.text)}</text>`).join("")}
   </g>`;
 }
@@ -79,13 +79,15 @@ export function serializeConnection({ path }, theme) {
   return `<path class="vrl-route-segment" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
-export function serializeTechnicalSegment({ shape, paths, rungs, stages, redirections }, theme, identifiers) {
+export function serializeTechnicalSegment({ ownerId, shape, paths, rungs, stages, redirections }, theme, identifiers) {
+  const width = shape === "curve" ? 2 : 3;
+  const owner = shape === "curve" ? ` data-owner-id="${svgAttribute(ownerId)}"` : "";
   const decorations = [serializeRungs(rungs, theme), serializeStages(stages, theme), serializeRedirections(redirections, theme)].join("\n    ");
-  return `<g class="vrl-drop-${svgAttribute(shape)}">
-    <path class="vrl-route-segment vrl-drop-lead" d="${svgAttribute(paths.lead)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <path class="vrl-route-segment vrl-drop-slope" d="${svgAttribute(paths.slope)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#${svgAttribute(identifiers.arrow)})"/>
+  return `<g class="vrl-drop-${svgAttribute(shape)}"${owner}>
+    <path class="vrl-route-segment vrl-drop-lead" d="${svgAttribute(paths.lead)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-slope" d="${svgAttribute(paths.slope)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#${svgAttribute(identifiers.arrow)})"/>
     ${decorations}
-    <path class="vrl-route-segment vrl-drop-exit" d="${svgAttribute(paths.exit)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-exit" d="${svgAttribute(paths.exit)}" fill="none" stroke="${svgPaint(theme.routeLine)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>
   </g>`;
 }
 
@@ -204,4 +206,16 @@ export function serializeBadge(badge, theme) {
 
 export function serializePlainText({ text, x, y, fontSize, strokeWidth }, theme) {
   return `<text x="${svgAttribute(x)}" y="${svgAttribute(y)}" font-family="system-ui, sans-serif" font-size="${svgAttribute(fontSize)}" fill="${svgPaint(theme.mutedText)}" stroke="${svgPaint(theme.panel)}" stroke-width="${svgAttribute(strokeWidth)}" stroke-linejoin="round" paint-order="stroke">${escapeXml(text)}</text>`;
+}
+
+export function serializeSoftTerrain(terrain, theme) {
+  return `<path class="vrl-terrain-wash" d="${svgAttribute(terrain.fill)}" fill="${svgPaint(theme.terrain)}" fill-opacity="0.45"/>
+  <path class="vrl-terrain-contour" d="${svgAttribute(terrain.contour)}" fill="none" stroke="${svgPaint(theme.mutedText)}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+
+export function serializeSoftPools(pools, theme) {
+  return pools.map(pool => `<g class="vrl-pool-symbol" data-owner-id="${svgAttribute(pool.ownerId)}">
+    <path class="vrl-pool-basin" d="${svgAttribute(pool.basin)}" fill="${pool.dry ? "none" : svgPaint(theme.water)}" fill-opacity="0.16" stroke="${svgPaint(pool.dry ? theme.mutedText : theme.water)}" stroke-width="1.5"/>
+    ${pool.surface === null ? "" : `<path class="vrl-pool-surface" d="${svgAttribute(pool.surface)}" fill="none" stroke="${svgPaint(theme.water)}" stroke-width="1.5"/>`}
+  </g>`).join("");
 }

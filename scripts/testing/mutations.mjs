@@ -24,11 +24,24 @@ export const MUTATIONS = [
     before: "const right = Math.ceil(Math.max(minimumWidth, content.maxX + 12));", after: "const right = minimumWidth;",
     testFile: "tests/invariants-serialization.test.js", testName: caseName("scene bounds enclose content and panels") },
   { name: "rope stage preservation", file: "packages/vrl-render-svg/src/segment-scene.js",
-    before: "stages: stagePlacements(geometry, element),", after: "stages: [],",
+    before: "stages: stagePlacements(geometry, element, pointAt),", after: "stages: [],",
     testFile: "tests/invariants-serialization.test.js", testName: caseName("scene contains all supplied stage and redirection facts") },
   { name: "duplicate field rejection", file: "packages/vrl-core/src/parser/attribute-parser.js",
     before: "if (firstLocation !== undefined) {", after: "if (false && firstLocation !== undefined) {",
-    testFile: "tests/invariants-parsing.test.js", testName: caseName("malformed input blocks downstream") + " duplicate-field" }
+    testFile: "tests/invariants-parsing.test.js", testName: caseName("malformed input blocks downstream") + " duplicate-field" },
+  { name: "soft curve traversal direction", file: "packages/vrl-render-svg/src/soft-terrain-geometry.js",
+    before: 'return scenePath`M ${geometry.dropX} ${geometry.startY} C ${first.x} ${first.y} ${second.x} ${second.y} ${geometry.bottomX} ${geometry.bottomY}`;',
+    after: 'return scenePath`M ${geometry.bottomX} ${geometry.bottomY} C ${second.x} ${second.y} ${first.x} ${first.y} ${geometry.dropX} ${geometry.startY}`;',
+    testFile: "tests/soft-terrain.test.js", testName: "emitted curve arrows follow descent, ascent and descent in source order" },
+  { name: "soft curve stage preservation", file: "packages/vrl-render-svg/src/segment-scene.js",
+    before: "stages: stagePlacements(geometry, element, pointAt),", after: 'stages: shape === "curve" ? [] : stagePlacements(geometry, element, pointAt),',
+    testFile: "tests/soft-terrain.test.js", testName: "stages and redirections lie on the curve, preserving labels and counts" },
+  { name: "soft style anchor quantity", file: "packages/vrl-render-svg/src/detail-content.js",
+    before: "const count = anchorSummary(element, language);", after: 'const count = anchorSummary({ ...element, attributes: { ...element.attributes, anchor_count: "1" } }, language);',
+    testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" },
+  { name: "soft pool uncertainty", file: "packages/vrl-render-svg/src/soft-terrain-text.js",
+    before: 'poolUnknown: "pool depth unknown"', after: 'poolUnknown: "pool depth 2m"',
+    testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" }
 ];
 
 export function applyMutation(source, { name, before, after }) {

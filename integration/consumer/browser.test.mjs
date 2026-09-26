@@ -18,6 +18,30 @@ describe("production framework consumers", () => {
 
   for (const surface of ["react", "svelte", "sveltekit"]) {
     for (const hydrated of [false, true]) {
+      test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves soft terrain and route facts`, async (t) => {
+        const context = await openPage(browser, application.origin, surface, "valid", hydrated, { style: "soft-terrain" });
+        t.after(() => context.close());
+        const retained = hydrated ? await context.page.evaluate(() => window.ssrImage === document.querySelector('[role="img"]')) : true;
+        assert.deepEqual([await styleSnapshot(context.page), context.errors, retained], [
+          ["Good route topo", 1, 1, 0, ["R1"], true, true], [], true
+        ]);
+      });
+    }
+    test(`${surface} switches styles after hydration while retaining technical facts`, async (t) => {
+      const context = await openPage(browser, application.origin, surface, "valid", true, { style: "soft-terrain" });
+      t.after(() => context.close());
+      await context.page.evaluate(() => window.fixture.update({ options: { style: "classic", legend: false } }));
+      const classic = await context.page.evaluate(() => [
+        document.querySelectorAll(".vrl-terrain-contour").length,
+        document.querySelectorAll(".vrl-drop-rung").length > 0,
+        document.querySelector("#diagram svg").textContent.includes("R1, 10m")
+      ]);
+      await context.page.evaluate(() => window.fixture.update({ options: { style: "soft-terrain", legend: false } }));
+      assert.deepEqual([classic, await styleSnapshot(context.page), context.errors], [
+        [0, true, true], ["Good route topo", 1, 1, 0, ["R1"], true, true], []
+      ]);
+    });
+    for (const hydrated of [false, true]) {
       test(`${surface} ${hydrated ? "hydration" : "SSR"} keeps same-route marker references local across themes`, async (t) => {
         const context = await openPage(browser, application.origin, surface, "valid", hydrated, { multiple: "true" });
         t.after(() => context.close());
@@ -108,6 +132,16 @@ describe("production framework consumers", () => {
     assert.deepEqual([await snapshot(context.page), await context.page.evaluate(() => window.navigationMarker), context.errors], [expected("warning"), "retained", []]);
   });
 });
+
+async function styleSnapshot(page) {
+  return page.evaluate(() => {
+    const svg = document.querySelector("#diagram svg");
+    return [svg.querySelector("title").textContent, svg.querySelectorAll(".vrl-terrain-contour").length,
+      svg.querySelectorAll(".vrl-drop-curve").length, svg.querySelectorAll(".vrl-drop-rung").length,
+      [...svg.querySelectorAll(".vrl-drop-curve")].map(group => group.getAttribute("data-owner-id")),
+      svg.textContent.includes("R1, 10m"), svg.textContent.includes("declared rope: 20m")];
+  });
+}
 
 async function markerSnapshot(page) {
   return page.evaluate(() => [...document.querySelectorAll("#diagram svg")].map(svg => {

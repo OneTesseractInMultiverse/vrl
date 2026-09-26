@@ -38,7 +38,7 @@ export interface StagePlacement extends TextPlacement { boundaryRatio: number | 
 export interface RedirectionPlacement extends TextPlacement { point: Position; label: string; path: string }
 export type PreparedSegment =
   { kind: "connection"; path: string; start: LayoutPoint; end: LayoutPoint }
-  | { kind: "technical"; ownerId: string; shape: "ladder" | "direct"; geometry: Required<LadderGeometry>;
+  | { kind: "technical"; ownerId: string; shape: "ladder" | "direct" | "curve"; geometry: Required<LadderGeometry>;
       paths: { lead: string; slope: string; exit: string }; rungs: Line[]; stages: StagePlacement[]; redirections: RedirectionPlacement[] };
 export type SymbolEntry = [code: string, label: string];
 export type LegendRow =
@@ -55,10 +55,14 @@ export interface InfoBox extends Rectangle {
   textLines: (Position & { text: string; fontSize: number; heading: boolean })[];
 }
 export interface Legend extends Rectangle {
+  styleNotes?: PlainText[];
   title: string; rows: (Position & { row: LegendRow })[]; bounds: Bounds;
   titleX: number; titleY: number; drawingRows: LegendDrawingRow[];
 }
+export interface SoftTerrain { contour: string; fill: string; bounds: Bounds }
+export interface SoftPool { ownerId: string; dry: boolean; basin: string; surface: string | null; bounds: Bounds }
 export interface TopoScene {
+  style: "classic" | "soft-terrain"; terrain: SoftTerrain | null; pools: SoftPool[];
   identifiers: { arrow: string };
   language: "en" | "es"; title: string; description: string;
   nodes: PreparedNode[]; segments: PreparedSegment[]; segmentLabels: (Position & { text: string })[];

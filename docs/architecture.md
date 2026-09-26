@@ -112,3 +112,7 @@ The SVG adapter owns immutable rendering definitions: theme constants, symbol pr
 ## Documentation contracts
 
 Documentation verification remains outside published packages. A filesystem adapter discovers repository Markdown; pure tooling extracts tagged examples, validates the expectation inventory, reads marked normative tables and projects observable facts. Tests coordinate the public compiler and compare reviewed outcomes. Domain rules are not implemented again in that tooling: expected route facts are reviewed data, and normative field/range/budget/identity tables are checked against their existing domain owners. Root tooling introduces no inward dependencies on filesystem, Markdown, test frameworks or fixture files. Existing import-boundary and public-contract tests remain authoritative for dependency direction and API inventories. See [maintaining executable documentation](documentation-contracts.md).
+
+## Optional canyon style
+
+Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.

@@ -1,0 +1,8 @@
+# Fictional stress fixture: adjacent technical owners, stages, redirection, and a dry pool.
+route "Synthetic annotated canyon"
+start
+rappel R1 height=18m rope=40m anchor=bolts anchor_count=7 stages=6m+12m redirection=9m:right note="Check station"
+climb C1 height=6m exposure=high note="Shared boundary"
+downclimb D1
+pool P1 type=dry
+exit

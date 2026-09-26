@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add optional `style: "soft-terrain"` canyon diagrams with neutral terrain, directed technical curves, restrained symbolic pools, explicit uncertainty and declared rope/anchor labels. Preserve classic defaults, canonical ownership, measurements, stages, redirections and notes.
+- Extend advanced scene inspection with style/terrain/pool records and the `curve` technical-shape variant; exhaustive shape consumers must add that case in the next minor release. No model/DSL revision or runtime dependency change.
+- Add a reproducible fictional visual gallery, independent fact and failure tests, four semantic mutation probes, and packed SSR/hydration/style-update checks. Document schematic limits and pending practitioner evaluation.
+
 - Add caller-controlled `idPrefix` namespaces for SVG marker definitions/references and advanced fragment helpers. Validate bounded ASCII prefixes, preserve deterministic standalone defaults, and keep namespace ownership in the embedding application.
 - Document stable per-instance namespaces across framework SSR/hydration, duplicate-prefix behavior and precomputed states. Add correctness/failure, type, and packed browser regressions for neighboring same-route diagrams with different themes and namespace updates. No runtime dependency or route-model change.
 

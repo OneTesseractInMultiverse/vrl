@@ -1,4 +1,5 @@
 import { scenePath } from "./scene-path.js";
+import { softTerrainText } from "./soft-terrain-text.js";
 import { anchorMarkPlacements, anchorSummary } from "./anchor-presentation.js";
 import { detailRecordsForElement, detailRecordText } from "./detail-content.js";
 import { detailRecordRows, placeDetailRows, legacyDetailRecord } from "./detail-layout.js";
@@ -10,20 +11,37 @@ import {
   detailLineRows, STANDARD_SYMBOL_CODE_Y_OFFSET
 } from "./presentation.js";
 
-export function prepareNodes(layout, language, symbology = "federation") {
+export function prepareNodes(layout, language, symbology = "federation", style = "classic") {
   let nextTitleY = null;
   return nodesInVisualOrder(layout.nodes).map((node) => {
-    const placement = nodeLabelPlacement(node, nextTitleY);
-    const maxDetailWidth = detailLineMaxWidth(layout.width, placement.labelX);
-    const drawing = prepareNode(node, symbology, placement, language, { maxDetailWidth });
+    const prepared = preparePlacedNode(node, nodeLabelPlacement(node, nextTitleY), layout, language, symbology, style);
+    const { placement, drawing } = prepared;
     if (drawing.title !== "" || drawing.details.length > 0) nextTitleY = nextLabelTitleY(placement, drawing.details.length);
-    return { node, placement, title: drawing.title, detail: drawing.detail, maxDetailWidth,
-      detailRows: drawing.detailRecords.map((row) => row.map(detailRecordText)), drawing };
+    return prepared;
   });
 }
 
+function preparePlacedNode(node, initialPlacement, layout, language, symbology, style) {
+  let placement = initialPlacement;
+  for (;;) {
+    const maxDetailWidth = detailLineMaxWidth(layout.width, placement.labelX);
+    const drawing = prepareNode(node, symbology, placement, language, { maxDetailWidth, style });
+    const clearX = style === "soft-terrain" ? symbolClearanceX(layout.nodes, placement, drawing.details.length) : placement.labelX;
+    if (clearX === placement.labelX) return { node, placement, title: drawing.title, detail: drawing.detail, maxDetailWidth,
+      detailRows: drawing.detailRecords.map(row => row.map(detailRecordText)), drawing };
+    placement = { ...placement, labelX: clearX };
+  }
+}
+
+/** Move only right; each iteration clears another finite symbol envelope before rewrapping. */
+function symbolClearanceX(nodes, placement, rowCount) {
+  const top = placement.titleY - 20;
+  const bottom = nextLabelTitleY(placement, rowCount);
+  return nodes.reduce((x, node) => node.y + 32 < top || node.y - 32 > bottom ? x : Math.max(x, node.x + 44), placement.labelX);
+}
+
 export function prepareNode(node, symbology, placement, language, options) {
-  const title = options.title ?? formatTopoLabel(node.element, language);
+  const title = options.title ?? defaultNodeTitle(node.element, language, options.style);
   const details = prepareNodeDetails(node, language, options);
   const records = details.rows;
   return { type: node.element.type, colorToken: elementColorToken(node.element),
@@ -35,13 +53,18 @@ export function prepareNode(node, symbology, placement, language, options) {
     anchors: prepareAnchorMarks(node, node.element, "left", language) };
 }
 
+function defaultNodeTitle(element, language, style) {
+  return style === "soft-terrain" && element.type === "downclimb" && element.attributes.height === undefined
+    ? `${element.id}, ${softTerrainText(language).heightUnknown}` : formatTopoLabel(element, language);
+}
+
 function prepareNodeDetails(node, language, options) {
   if (options.detail != null || options.detailRows != null) {
     const text = options.detail ?? formatTopoDetail(node.element, node, language);
     return { text, rows: text === "" ? [] : (options.detailRows ?? detailLineRows(text, options.maxDetailWidth, language))
       .map((row) => row.map((part) => legacyDetailRecord(part, language))) };
   }
-  const records = detailRecordsForElement(node.element, node, language);
+  const records = detailRecordsForElement(node.element, node, language, options.style);
   return { text: records.map(detailRecordText).join(" / "), rows: detailRecordRows(records, options.maxDetailWidth ?? Infinity) };
 }
 

@@ -52,7 +52,7 @@ if (result.ok === false) {
 }
 ```
 
-Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
+Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
 
 Returned shape:
 
@@ -297,6 +297,7 @@ Renderer options:
   symbology: "federation" | "french" | "spanish",
   legend: true | false,
   idPrefix: "route-overview",
+  style: "classic" | "soft-terrain",
   theme: "light" | "dark",
   themeTokens: {
     background: "#eef6f8",
@@ -307,6 +308,8 @@ Renderer options:
 ```
 
 `language` controls diagram text such as element names, route-summary labels, accessibility labels, the legend, and common detail values. `locale` is accepted as an alias. If neither is set, `symbology: "spanish"` selects Spanish text; otherwise English text is used. `legend` defaults to `true`; set it to `false` only when the embedding surface already explains topo abbreviations and detail fields such as flow, exposure, severity, and inclination. Flow, exposure, hazard severity, and inclination values render as category-colored SVG badges and use matching colors in the legend. Lower-level helpers such as `dropLadderGeometry` and `technicalLineVerticalDelta` expose the same scaled technical-line geometry for custom renderers.
+
+`style` defaults to `classic`. The optional `soft-terrain` style adds a neutral contour/wash, directed curves without rungs, symbolic pools, explicit uncertainty, and declared rope/anchor labels. It applies to complete diagrams, preserves model/layout facts, and rejects other values with `TypeError`. See the [style contract and visual examples](soft-terrain.md) for compatibility, failure and schematic limits.
 
 `idPrefix` gives each diagram occurrence a document-unique namespace for SVG definitions and references. It defaults to `vrl`; accepted strings are 1–64 ASCII letters/digits/underscores/hyphens starting with a letter. Non-strings throw `TypeError`; malformed strings throw `RangeError`. Every inline diagram on a page must use a distinct prefix, stable across SSR and hydration. Supplied diagram states preserve their existing SVG IDs. See [multiple inline diagrams](svg-identifiers.md) for ownership, duplicate-prefix behavior, fragments and migration.
 
@@ -364,6 +367,7 @@ The returned plain record contains:
 - `contentBounds` and `bounds`: `{ minX, minY, maxX, maxY }` envelopes, respectively before and after adding the summary and legend.
 - `language`: resolved presentation language.
 - `nodes`: visual-order records retaining the original `node` reference, `placement`, `title`, `detail`, `maxDetailWidth`, and display-string `detailRows`; `drawing` adds structured detail records and their placed text/badges, symbols, anchors, and leader.
+- `style`, `terrain`, `pools`: selected style and optional prepared soft-terrain/pool geometry; classic has null terrain and an empty pool array.
 - `title`, `description`, `terrainPath`, `waterPaths`, `segments`, `segmentLabels`, and `stationTicks`: prepared accessible text and geometry consumed by serialization.
 - `infoBox`: summary position, dimensions, display-text `lines` (including the uppercase route heading), placed `textLines`, and bounds. These strings are not XML-encoded.
 - `legend`: position, dimensions, title, existing rows, placed `drawingRows`, and bounds; `null` when disabled.
@@ -496,7 +500,7 @@ Pass `source` and `options` for simple use. Pass `diagram` from `createVrlReactD
 
 See the [precomputed diagram trust boundary](#precomputed-diagram-trust-boundary) before accepting cached or externally supplied diagram states.
 
-Compiler layout options live under `options.layout`. Renderer options such as `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
 ## @subvertic/vrl-svelte
 
@@ -547,7 +551,7 @@ Component props:
 }
 ```
 
-Compiler layout options live under `options.layout`. Renderer options such as `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
+Compiler layout options live under `options.layout`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level.
 
 ## @subvertic/vrl-sveltekit
 

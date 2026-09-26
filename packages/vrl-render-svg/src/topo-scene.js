@@ -1,3 +1,5 @@
+import { prepareSoftTerrain, prepareSoftPools } from "./soft-terrain-geometry.js";
+import { softTerrainText } from "./soft-terrain-text.js";
 import { resolveSvgIdentifiers } from "./svg-identifiers.js";
 import { anchorCountDescription } from "./anchor-presentation.js";
 import { diagramText } from "./locale.js";
@@ -14,17 +16,20 @@ export function computeTopoScene(route, layout, options = {}) {
   const identifiers = resolveSvgIdentifiers(options.idPrefix);
   validateRenderLayout(layout);
   const language = resolveRenderLanguage(options);
-  const nodes = prepareNodes(layout, language, options.symbology);
-  const segments = prepareRouteSegments(layout, language);
+  const style = options.style ?? "classic";
+  const terrain = style === "soft-terrain" ? prepareSoftTerrain(layout) : null;
+  const pools = style === "soft-terrain" ? prepareSoftPools(layout) : [];
+  const nodes = prepareNodes(layout, language, options.symbology, style);
+  const segments = prepareRouteSegments(layout, language, style);
   const segmentLabels = prepareSegmentLabels(layout);
   const contentBounds = unionBounds([
-    terrainBounds(layout), ...nodeBounds(nodes), ...segmentBounds(segments),
+    (terrain?.bounds ?? terrainBounds(layout)), ...pools.map(pool => pool.bounds), ...nodeBounds(nodes), ...segmentBounds(segments),
     ...segmentLabels.map((item) => textBounds(item.text, item.x, item.y, 10, "middle"))
   ]);
   const infoBox = prepareInfoBox(route, layout, language, contentBounds.minY - 160);
-  const legend = options.legend === false ? null : prepareLegend({ ...layout, height: Math.max(layout.height, contentBounds.maxY + 12) }, language, options.symbology);
+  const legend = options.legend === false ? null : prepareLegend({ ...layout, height: Math.max(layout.height, contentBounds.maxY + 12) }, language, options.symbology, style);
   const sceneBounds = unionBounds([contentBounds, infoBox.bounds, ...(legend === null ? [] : [legend.bounds])]);
-  return { identifiers, language, title: `${route.name} ${diagramText(language).topo}`, description: sceneDescription(route, layout, language),
+  return { style, terrain, pools, identifiers, language, title: `${route.name} ${diagramText(language).topo}`, description: sceneDescription(route, layout, language) + (style === "soft-terrain" ? ` ${softTerrainText(language).schematic}` : ""),
     nodes, segments, segmentLabels, terrainPath: terrainProfilePath(layout), waterPaths: prepareWaterSegments(layout), stationTicks: prepareStationTicks(layout),
     infoBox, legend, contentBounds, bounds: sceneBounds, viewBox: fitSceneBounds(sceneBounds, layout.width, layout.height) };
 }
@@ -78,7 +83,7 @@ function segmentBounds(segments) {
       Math.min(geometry.startX, geometry.dropX, geometry.bottomX, geometry.endX),
       Math.min(geometry.startY, geometry.bottomY, geometry.endY),
       Math.max(geometry.startX, geometry.dropX, geometry.bottomX, geometry.endX),
-      Math.max(geometry.startY, geometry.bottomY, geometry.endY), 24
+      Math.max(geometry.startY, geometry.bottomY, geometry.endY), segment.shape === "curve" ? 36 : 24
     );
     const annotations = [...segment.stages, ...segment.redirections];
     return [shapeBounds, ...annotations.map((item) => textBounds(item.text, item.x, item.y, item.fontSize, item.anchor))];

@@ -52,3 +52,7 @@ hazard type=snake_dense_area severity=high note="Dense snake area"
 ```
 
 These render as `SN` with a simple snake mark. This is intentionally marked as a VRL extension, not a French or Spanish federation standard.
+
+## Optional canyon style
+
+Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.

@@ -1,0 +1,6 @@
+[
+  { "name": "classic-light", "source": "examples/soft-terrain-canyon.vrl", "layout": { "width": 736 }, "render": { "style": "classic", "theme": "light" } },
+  { "name": "soft-light", "source": "examples/soft-terrain-canyon.vrl", "layout": { "width": 736 }, "render": { "style": "soft-terrain", "theme": "light" } },
+  { "name": "soft-dark", "source": "examples/soft-terrain-canyon.vrl", "layout": { "width": 736 }, "render": { "style": "soft-terrain", "theme": "dark" } },
+  { "name": "soft-annotated-es", "source": "examples/soft-terrain-annotated.vrl", "layout": { "width": 736 }, "render": { "style": "soft-terrain", "theme": "light", "symbology": "spanish" } }
+]

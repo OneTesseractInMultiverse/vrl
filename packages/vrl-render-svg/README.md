@@ -41,6 +41,7 @@ if (result.ok) {
 renderTopoSvg(model, layout, {
   language: "es",           // en or es
   symbology: "federation", // federation, french, or spanish
+  style: "soft-terrain",   // optional; classic remains the default
   legend: true,            // default; set false when the container provides its own legend
   theme: "light",          // light or dark
   themeTokens: {
@@ -116,3 +117,9 @@ import {
 MIT. Copyright (c) 2026 Pedro Guzmán.
 
 For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).
+
+## Optional soft terrain
+
+`style: "soft-terrain"` adds a neutral contour/wash, directed technical curves without rungs, symbolic pool outlines/waves, explicit unknowns and declared rope/anchor labels. Missing anchor counts are stated as unknown in this style. Existing shapes, measurements and ownership remain in the model; stages, redirections and notes remain visible. Language, symbology, themes and marker namespaces retain their existing contracts. Invalid style values throw `TypeError`; contradictory supplied technical direction/delta throws `RangeError`.
+
+Use the complete renderer for this style; standalone fragment helpers retain their historical behavior. The advanced scene adds `style`, `terrain`, `pools` and the `curve` technical-shape variant. This is a next-minor addition; exhaustive shape consumers must handle `curve`. See the [style contract and reproducible gallery](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/soft-terrain.md) for symbolic geometry, uncertainty, compatibility and evaluation limits.

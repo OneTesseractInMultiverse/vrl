@@ -1,3 +1,4 @@
+import { softTerrainText } from "./soft-terrain-text.js";
 import { diagramText } from "./locale.js";
 import { bounds, textEnvelopeWidth } from "./scene-bounds.js";
 import { legendSymbolRows, elevationSummary, estimatedTextWidth, detailBadgeListWidth, detailBadgeWidth, LEGEND_FONT_SIZE } from "./presentation.js";
@@ -14,7 +15,7 @@ export function prepareInfoBox(route, layout, language, y = 26) {
   return placeInfoBox({ x, y, width, height: 122, lines, bounds: bounds(x, y, x + width, y + 122, 3) }, language);
 }
 
-export function prepareLegend(layout, language, symbology) {
+export function prepareLegend(layout, language, symbology, style = "classic") {
   const text = diagramText(language);
   const symbolRows = legendSymbolRows(language, symbology).map((entries) => ({ kind: "symbols", entries }));
   const rows = [
@@ -35,7 +36,8 @@ export function prepareLegend(layout, language, symbology) {
     ...symbolRows.map((row, index) => ({ row, x: x + 14, y: y + 42 + index * 16 })),
     ...rows.map((row, index) => ({ row, x: x + 14 + (index < 3 ? 0 : firstWidth + 24), y: y + 80 + index % 3 * 16 }))
   ];
-  return placeLegend({ x, y, width, height: 124, title: text.legendTitle, rows: placedRows, bounds: bounds(x, y, x + width, y + 124, 3) }, language);
+  const legend = placeLegend({ x, y, width, height: 124, title: text.legendTitle, rows: placedRows, bounds: bounds(x, y, x + width, y + 124, 3) }, language);
+  return style === "soft-terrain" ? withStyleNotes(legend, language) : legend;
 }
 
 function legendRowWidth(row, language) {
@@ -98,4 +100,13 @@ export function placeInfoBox(info, language) {
 export function placeLegend(legend, language) {
   return { ...legend, titleX: legend.x + 14, titleY: legend.y + 22,
     drawingRows: legend.rows.map((item) => prepareLegendRow(item.row, item.x, item.y, language)) };
+}
+
+function withStyleNotes(legend, language) {
+  const notes = softTerrainText(language).legend;
+  const width = notes.reduce((maximum, line) => Math.max(maximum, textEnvelopeWidth(line, 9) + 28), legend.width);
+  const height = legend.height + 38;
+  return { ...legend, width, height,
+    styleNotes: notes.map((line, index) => placePlainText(line, legend.x + 14, legend.y + legend.height + 12 + index * 14, 9, 0)),
+    bounds: bounds(legend.x, legend.y, legend.x + width, legend.y + height, 3) };
 }

@@ -16,6 +16,8 @@ The adapter has three stages:
 2. `node-scene.js`, `segment-scene.js`, `panel-scene.js`, and `detail-layout.js` compute positions, wrapping, symbols, annotation geometry, and panel records. `topo-scene.js` coordinates these computations and fits the canvas using prepared detail and annotation positions. `scene-bounds.js` handles envelopes; `scene-path.js` requires finite numeric coordinates before building path data.
 3. `svg-serializer.js` encodes those placed records as SVG. It imports only XML/attribute encoding and badge style helpers. It receives no model, layout, or locale arguments and does not infer meanings or calculate positions. `svg-renderer.js` coordinates preparation and serialization and retains the public fragment helpers.
 
+`soft-terrain-geometry.js` computes optional contour, pool and directed-curve geometry; `soft-terrain-text.js` owns the localized style explanations. Style selection stays in the renderer, and curve annotation positions share the prepared path geometry. The new `curve` technical shape is an advanced scene union addition; exhaustive consumers must handle it. Legacy `terrainPath`/`waterPaths` remain available as classic geometry; soft serialization uses `terrain`/`pools`. See the [style contract](soft-terrain.md).
+
 `presentation.js` supplies shared pure calculations and historical formatting helpers. Locale strings and symbol profiles are presentation policies. Theme lookup, XML escaping, and paint validation remain in the output adapter. This separation adds no runtime dependencies or browser measurements. Dependency tests prevent scene computations from importing serializers and prevent serializers from importing geometry, locale, or core semantics.
 
 ## Inspecting a scene
@@ -47,6 +49,7 @@ The scene retains `language`, `nodes`, `infoBox`, `legend`, `contentBounds`, `bo
 
 | Field | Contents |
 | --- | --- |
+| `style`, `terrain`, `pools` | Selected `classic` or `soft-terrain` style; soft contour/fill/bounds or `null`; symbolic pool records (owner, dry state, basin, optional wave, bounds) or an empty array. |
 | `title`, `description` | Localized accessible strings, before XML escaping. |
 | `terrainPath`, `waterPaths` | Prepared terrain and water path data. |
 | `segments` | Connection paths or technical records with `ownerId`, display `shape`, `geometry`, `paths`, `rungs`, `stages`, and `redirections`. |
@@ -55,6 +58,7 @@ The scene retains `language`, `nodes`, `infoBox`, `legend`, `contentBounds`, `bo
 | `nodes[].drawing` | Node type, color token, accessible label, title coordinates, structured detail rows, placed details, marker, anchor marks, and optional leader path. |
 | `infoBox.textLines` | Text, coordinates, font size, and heading flag for each summary line. |
 | `legend.drawingRows` | Placed symbols, labels, badges, and descriptions. |
+| `legend.styleNotes` | Optional placed explanations for schematic curves and symbolic pools. |
 
 Technical stages include a placed boundary line or `null` for the last stage. Redirections include their marker path and localized accessible label. All supported shapes retain the same stage/redirection records; only ladder shapes have rungs. `slab` uses the existing `direct` display group. Stage/redirection values and owner IDs come from the positioned segment, not from translated text.
 

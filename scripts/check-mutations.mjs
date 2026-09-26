@@ -18,7 +18,7 @@ try {
 
 function prepareWorkspace(source, target) {
   writeFileSync(join(target, "package.json"), '{"type":"module","private":true}');
-  for (const directory of ["packages", "tests"]) cpSync(join(source, directory), join(target, directory), { recursive: true });
+  for (const directory of ["packages", "tests", "examples"]) cpSync(join(source, directory), join(target, directory), { recursive: true });
   mkdirSync(join(target, "node_modules", "@subvertic"), { recursive: true });
   for (const entry of readdirSync(join(source, "node_modules"), { withFileTypes: true })) {
     if (entry.name === "@subvertic" || entry.name.startsWith(".")) continue;

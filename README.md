@@ -267,3 +267,7 @@ climb "C1" height=5m exposure=medium station=right landing=trail shape=ladder in
 ```
 
 For pages with multiple inline diagrams, see [SVG ID namespaces](docs/svg-identifiers.md) for stable per-instance prefixes across server rendering and hydration.
+
+## Optional canyon style
+
+Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](docs/soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.

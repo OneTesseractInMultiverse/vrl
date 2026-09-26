@@ -1,0 +1,9 @@
+# Fictional visual fixture; schematic geometry, not a route description for field use.
+route "Synthetic two-rappel canyon"
+start "Entry"
+rappel R1 height=18m rope=40m anchor=bolts anchor_count=2 station=right
+pool P1 type=unknown
+walk W1 distance=120m
+rappel R2 height=12m rope=30m anchor=tree
+hazard H1 type=slippery note="Slippery landing"
+exit "Exit"

@@ -11,6 +11,8 @@ export interface Theme {
   inclinationBadgeText: string; levelBadge: string; levelBadgeText: string;
 }
 export interface RenderOptions {
+  /** Optional schematic presentation; classic preserves historical output. */
+  style?: "classic" | "soft-terrain" | undefined;
   theme?: "light" | "dark" | undefined; themeTokens?: Partial<Theme> | undefined;
   language?: string | undefined; locale?: string | undefined; symbology?: string | undefined;
   legend?: boolean | undefined;
