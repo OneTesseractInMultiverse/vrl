@@ -2,11 +2,13 @@
 
 VRL documents are text files. The implemented vertical slice supports a compact line-oriented style where every non-empty line starts with a statement keyword. Comments start with `#` outside quoted strings.
 
+Each tagged VRL fence is checked as a complete document or explicitly wrapped fragment. The [success/failure examples](language-examples.md) and [documentation contract guide](documentation-contracts.md) explain expected outcomes and maintenance. Normative rules below describe the implemented compact language; future block syntax is identified separately.
+
 ## Quoted Text, Escapes, and Token Boundaries
 
 Double quotes delimit text within one physical line. Quoted text preserves equals signs, hashes, Unicode, and all interior whitespace, including leading/trailing spaces and literal tabs. Only two escape sequences are supported: `\"` produces a literal double quote, and `\\` produces one literal backslash. Decoding happens once, from left to right. Spellings such as `\n`, `\t`, `\u0041`, and `\#` are errors; write Unicode and hashes directly, or double a backslash when the spelling itself is intended as text.
 
-```vrl
+```vrl example=quoted-text kind=document
 route "Cañón #1"
 metadata description="Marker A=B; path A\\B"
 start "A=B"
@@ -37,7 +39,7 @@ The route declaration must be first. Metadata must follow it and precede every e
 
 Every attribute key is unique within its element statement. Metadata keys are unique across all metadata lines in the document. Keys are case-sensitive; extension keys `custom` and `Custom` are distinct. Repeating a key is a syntax error even when its values match, use different quoting, or denote the same measurement (`30m` and `30.0m`). There is no override syntax or implicit last-value policy. The same key on different elements, or in metadata and an element, is allowed. Assignment-shaped tokens in route names and free-form `note` text remain literal text rather than attributes.
 
-```vrl
+```vrl example=metadata-order kind=document
 route "Canyon survey"
 metadata country="Costa Rica"
 metadata region="Bajos del Toro"
@@ -72,7 +74,7 @@ These rules do not support nested `section`/`access` blocks or attribute-only li
 
 Every document starts with a route statement.
 
-```vrl
+```vrl example=route-name kind=document
 route "Quebrada Gata"
 ```
 
@@ -82,18 +84,18 @@ The route name is required. It becomes the title used by JSON export and rendere
 
 Metadata is represented as attributes on one or more `metadata` lines between the route declaration and the first element. Each line adds previously undeclared keys; duplicate keys are rejected.
 
-```vrl
+```vrl example=metadata-header kind=fragment
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III"
 metadata descent_time="5-7h" season="December-May" entrance_elevation=1300m exit_elevation=1100m
 ```
 
-The metadata examples above are header fragments following a route declaration. Metadata values are normalized only when the field is measurement-bearing, such as `total_distance=1300m`, `total_descent=200m`, `entrance_elevation=1300m`, or `exit_elevation=1100m`.
+The metadata example above is a header fragment following a route declaration. Its executable context adds `start`, `walk distance=10m` and `exit` after the header: the unmeasured connections can account for the declared 200 m descent, with an estimated-elevations warning. A route header alone with these unequal endpoints cannot establish a valid physical profile. Metadata values are normalized only when the field is measurement-bearing, such as `total_distance=1300m`, `total_descent=200m`, `entrance_elevation=1300m`, or `exit_elevation=1100m`.
 
 ## Elements
 
 The first slice supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
 
-```vrl
+```vrl example=element-catalog kind=fragment
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
 start "Quebrada Pilas entrance"
 walk distance=80m note="Short creek walk after the hanging bridge"
@@ -118,6 +120,7 @@ All explicit IDs are reserved before any generated ID is allocated, even when th
 
 Generated IDs use these prefixes:
 
+<!-- vrl-table:id-prefixes -->
 | Type | Prefix |
 | --- | --- |
 | `start` | `S` |
@@ -129,10 +132,11 @@ Generated IDs use these prefixes:
 | `pool` | `P` |
 | `hazard` | `H` |
 | `note` | `N` |
+<!-- /vrl-table:id-prefixes -->
 
 Each type’s counter starts at zero. In source order, every element advances its type’s counter once, including explicitly named elements. For an unnamed element, allocation keeps advancing until the prefix plus counter is unreserved. Explicit IDs are preserved and their numeric-looking suffixes are never parsed into counters. This retains previous numbering where no collision occurs; the result need not be consecutive.
 
-```vrl
+```vrl example=identifier-reservation kind=document
 route "Identifier survey"
 rappel R2 height=5m rope=10m
 rappel height=5m rope=10m
@@ -146,13 +150,15 @@ Repeated compilation of identical input produces identical IDs without random va
 
 Source measurements use ordinary decimal notation with at most six fractional digits, including trailing zeros, and an absolute magnitude no greater than `1000000000m`. Scientific notation, nonfinite values, larger magnitudes, and extra fractional digits are rejected rather than rounded. The smallest positive source measurement is `0.000001m`. These representation limits keep the six-digit fractional grid distinguishable within JavaScript's numeric precision.
 
+<!-- vrl-table:numeric-ranges -->
 | Numeric field | Accepted range |
 | --- | --- |
 | `entrance_elevation`, `exit_elevation` | From `-1000000000m` to `1000000000m`, including zero |
 | `distance`, `height`, `rope`, `traverse`, `total_distance`, `total_descent`, `vertical_gain`, `descent` | Greater than zero, up to `1000000000m` |
-| `inclination` | Greater than `0%` and at most `100%`, with up to six fractional digits; `%` may be omitted |
+| `inclination` | Greater than `0%` and at most `100%`, with up to 6 fractional digits; `%` may be omitted |
 | `anchor_count` | Decimal integer from `1` to `9007199254740991`, without leading zeros |
 | `stages`, `redirection`, `redirections` | Each contained measurement follows the same magnitude, precision, and positive-length rules |
+<!-- /vrl-table:numeric-ranges -->
 
 Recognized numeric fields follow these rules in metadata and on every element. Both redirection aliases are checked if both are supplied. Existing stage/height and redirection-position checks still apply. Empty numeric fields are invalid; omit an optional field when unknown. Negative zero in a parsed measurement or percentage is normalized to positive zero, so JSON preserves its numeric meaning.
 
@@ -168,6 +174,7 @@ Core has one domain-owned field specification for applicability, required fields
 
 Categorical fields apply in the following contexts:
 
+<!-- vrl-table:field-vocabularies -->
 | Field | Validated on | Accepted values |
 | --- | --- | --- |
 | `anchor` | Rappel | `bolts`, `natural`, `tree`, `thread`, `removable`, `fixed`, `unknown`, `mixed` |
@@ -178,6 +185,7 @@ Categorical fields apply in the following contexts:
 | `flow` | Every element | `dry`, `low`, `medium`, `high` |
 | `type` | Pool | `deep`, `shallow`, `swimmer`, `dry`, `unknown` |
 | `severity` | Hazard | `low`, `medium`, `high`, `critical` |
+<!-- /vrl-table:field-vocabularies -->
 
 These enums are case-sensitive. A present empty value is invalid in its defined context; omit optional fields when unknown. Outside the listed contexts, these names remain extension text: for example, `hazard type=swift_water` does not use the pool vocabulary, and metadata `flow` remains descriptive text. Unknown names such as `survey_team` are preserved without a vocabulary check. Known-field validation does not promise that every accepted attribute has a visual representation.
 
@@ -193,7 +201,7 @@ Leading, trailing, consecutive, and whitespace-only empty list entries are error
 
 Stage totals are compared with height **exactly on the source's six-decimal grid**, with no tolerance. The comparison uses temporary integer millionths of a meter, including an exact sum when the total exceeds the safe integer range in those units. Thus `0.1m+0.2m` matches `0.3m`; `0.1m+0.200001m` differs by one millionth and produces a warning. Trailing zeros and stage order do not change the result. This check does not rewrite source values or alter the floating-point model, geometry, or JSON contract described above.
 
-```vrl
+```vrl example=decimal-stages kind=document
 route "Decimal survey"
 rappel height=0.3m rope=1m stages=0.1m+0.2m inclination=0.5%
 climb height=2m exposure=medium
@@ -209,7 +217,7 @@ When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL
 
 A rappel or downclimb starts at its element node and proceeds to its lower boundary. A climb ends at its element node, with its upward traversal immediately before that node. When a descent is followed directly by a climb, an intermediate boundary separates them; neither event takes precedence. A leading climb receives an implicit entry boundary, and a trailing rappel/downclimb receives an implicit final boundary. These are traversal boundaries, not additional DSL statements or named route elements.
 
-```vrl
+```vrl example=descent-ascent kind=document
 route "Descent and ascent"
 metadata entrance_elevation=100m exit_elevation=75m
 start "Entry"
@@ -230,7 +238,7 @@ A route may contain at most one `start` and one `exit`. A declared start must be
 
 Annotations are drawn beside their attachment point and retain its physical elevation. Adding, removing, or moving annotations does not change progression coordinates, technical ownership, residual allocation, or endpoint elevations. Multiple annotations at one boundary receive separate visual rows without adding route segments. Their symbol positions are presentation coordinates, not extra measured positions. An annotation-only document has no physical traversal, and its annotations have no measured elevation; it cannot explain a nonzero endpoint elevation change.
 
-```vrl
+```vrl example=annotated-exit kind=document
 route "Annotated exit"
 metadata entrance_elevation=100m exit_elevation=0m
 note "Seasonal conditions"
@@ -275,7 +283,7 @@ The SVG renderer labels ambiguous diagram detail fields, so `flow=medium` appear
 
 Use `redirection` or `redirections` when a single rappel has intermediate redirection anchors along the same rope line. The distance is measured from the rappel head and must be greater than `0m` and shorter than the rappel `height`; the side must be `left`, `right`, `center`, or `unknown`. Use `stages` when that single rappel should show multiple rope-length sections, for example before and after a redirection. Use two separate `rappel` elements when the canyon has two actual rappel stations. Stage lengths are shown as SVG text and their boundaries are positioned in proportion to the declared stage total. A stage total that differs from `height` retains the existing warning and displays the declared lengths unchanged. Redirection positions use distance divided by height, along the measured technical slope rather than any extra connector introduced for readable spacing. For endpoint clearance, the existing schematic placement clamps stage/anchor positions to the interior 5–95% of that slope; the displayed measurement remains exact.
 
-```vrl
+```vrl example=technical-details kind=document
 route "Technical survey"
 rappel height=30m rope=60m stages=10m+20m redirection=5m:left shape=direct
 ```
@@ -296,7 +304,7 @@ Rappel detail text and anchor accessibility labels report the full count, with l
 | `anchor_count=5` | 4 | `+1` | `5 anchors` |
 | `anchor_count=9` | 4 | `+5` | `9 anchors` |
 
-```vrl
+```vrl example=anchor-overflow kind=document
 route "Anchor survey"
 rappel height=30m rope=60m anchor_count=5
 ```
@@ -315,7 +323,25 @@ Diagnostics are structured objects with `kind`, `severity`, `message`, `location
 
 The parser and compiler reject documents beyond configured budgets with an error diagnostic whose `kind` is `limit`. Defaults are 1 MiB of UTF-8 source, 20,000 physical lines, 16 KiB per line, 10,000 elements (including annotations), and 1,024 entries per stage/redirection attribute. Exact limits are accepted. Blank lines, comments, and a trailing empty line count; LF/CRLF delimiters count toward source bytes but not line bytes.
 
+<!-- vrl-table:processing-limits -->
+| Option | Default |
+| --- | --- |
+| maxSourceBytes | 1048576 |
+| maxLines | 20000 |
+| maxLineBytes | 16384 |
+| maxElements | 10000 |
+| maxListEntries | 1024 |
+<!-- /vrl-table:processing-limits -->
+
+These exact defaults and the field, range and ID tables above are checked against their domain owners. Source precision is six fractional digits; tests also verify the accepted minimum and maximum and deliberate failures immediately beyond the bounds.
+
 Pass `{ limits: { maxSourceBytes, maxLines, maxLineBytes, maxElements, maxListEntries } }` as the second argument to `compileRoute` or `parseVrl` to override selected defaults with positive safe integers. List budgets include empty positions in malformed lists, while arbitrary extension text and source note text remain text. Parsing stops when an element/list budget is exceeded; any returned prefix AST is for diagnostics only. Compilation produces no model, layout, or JSON on a limit failure. See the [processing API](api-reference.md#document-processing-limits) for UTF-8 counting, diagnostic locations, configuration errors, and custom parser responsibilities.
+
+## Compatibility and Trust Boundaries
+
+Changes to lexical acceptance, diagnostic codes/locations, normalized attribute paths, identity allocation, physical traversal or serialized data require contract review and migration notes. Identical input with the same options remains deterministic; generated element IDs are not persistence across edits. See [public API stability and versioned contracts](public-contracts.md) for stable facades, advanced extension points and revision rules.
+
+Accepted source is data, not HTML. Rendering escapes valid XML text and rejects XML-invalid characters; precomputed `diagram.svg` is caller-trusted markup and bypasses that validation. Compiler success is not route or equipment safety certification. Configuration/programming errors throw; source diagnostics use the failure envelope described above. See the [API trust boundary](api-reference.md#precomputed-diagram-trust-boundary) and [diagram-state contract](diagram-state.md).
 
 ## Future Block Syntax
 

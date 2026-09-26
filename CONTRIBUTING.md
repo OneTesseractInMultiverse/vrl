@@ -30,7 +30,7 @@ Each test function should contain exactly one assertion. Split behavior checks i
 
 ## Pull Requests
 
-Pull requests should include a clear description, a rationale, tests for behavior changes, and any documentation updates needed by users or contributors. Keep unrelated refactors out of feature and bug-fix pull requests.
+Pull requests should include a clear description, a rationale, tests for behavior changes, and any documentation updates needed by users or contributors. Keep unrelated refactors out of feature and bug-fix pull requests. Every behavior change must update the relevant language/API rule, example and expected results together; follow the [executable documentation workflow](docs/documentation-contracts.md) and run `npm run check:docs` alongside the full quality gate.
 
 ## Safety and Domain Accuracy
 

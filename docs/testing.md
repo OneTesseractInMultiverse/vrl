@@ -75,3 +75,7 @@ A surviving fault fails the gate. Syntax/import errors, timeouts, signals, zero 
 ## Framework integration coverage
 
 The [compatibility guide](framework-compatibility.md) records exact runtime/framework combinations, reproducible preparation, locked builds, browser behavior and expected install/build failures. These jobs complement workspace imports and the packed TypeScript checks. Their `.svelte` server/client compilation and browser behavior are not included in the configured JavaScript coverage percentage; passing the coverage gate alone does not certify framework compatibility.
+
+## Executable documentation
+
+`npm run check:docs` runs the documentation contract and tooling suites; the full coverage run includes both through the normal test inventory. Discovery finds tagged VRL fences across root, guide and package Markdown. Reviewed fixtures assert normalized facts, complete diagnostic categories/codes/source locations, technical ownership/direction, endpoints and annotation attachment. Missing/orphan cases, malformed tags and stale source fingerprints fail; normative field/ID/range/budget tables are checked against domain policies. Fragment context and deliberate failures are explicit. See [documentation maintenance](documentation-contracts.md) for authoring, verification limits and review requirements. API typing/export/dependency checks retain their separate ownership.
