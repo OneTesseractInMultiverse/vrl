@@ -1,6 +1,6 @@
 {
   "name": "@subvertic/sveltekit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "SvelteKit load helpers for rendering VRL diagrams.",
   "license": "MIT",
@@ -12,14 +12,14 @@
       "name": "Pedro Guzmán"
     }
   ],
-  "homepage": "https://github.com/vertical-route-language/vrl/tree/main/packages/vrl-sveltekit#readme",
+  "homepage": "https://github.com/OneTesseractInMultiverse/vrl/tree/main/packages/vrl-sveltekit#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vertical-route-language/vrl.git",
+    "url": "git+https://github.com/OneTesseractInMultiverse/vrl.git",
     "directory": "packages/vrl-sveltekit"
   },
   "bugs": {
-    "url": "https://github.com/vertical-route-language/vrl/issues"
+    "url": "https://github.com/OneTesseractInMultiverse/vrl/issues"
   },
   "keywords": [
     "vrl",
@@ -53,15 +53,16 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "registry": "https://registry.npmjs.org"
   },
   "peerDependencies": {
     "@sveltejs/kit": ">=2.0.0",
     "svelte": ">=4.0.0"
   },
   "dependencies": {
-    "@subvertic/diagram": "0.1.0",
-    "@subvertic/svelte": "0.1.0"
+    "@subvertic/diagram": "0.2.0",
+    "@subvertic/svelte": "0.2.0"
   },
   "types": "./src/index.d.ts"
 }

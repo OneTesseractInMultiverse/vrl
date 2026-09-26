@@ -6,7 +6,7 @@ export const TEST_SUITES = {
   layout: ["technical-segments", "route-boundaries", "invariants-layout"],
   serialization: ["anchor-counts", "renderer-configuration", "renderer-scene", "scene-fitting", "technical-annotations", "xml-text", "render-defaults", "invariants-serialization"],
   adapters: ["diagram-package", "diagram-state", "warning-presentation"],
-  tooling: ["dependency-boundaries", "test-policy", "seeded-cases", "mutation-tooling", "consumer-lock", "documentation-tooling"]
+  tooling: ["dependency-boundaries", "test-policy", "seeded-cases", "mutation-tooling", "consumer-lock", "documentation-tooling", "release-tooling"]
 };
 
 export function selectTestFiles(available, suite = "all", registry = TEST_SUITES) {
