@@ -24,7 +24,7 @@ if (refresh) {
 } else {
   const template = JSON.parse(readFileSync(join(fixture, "package-lock.json"), "utf8"));
   const packed = packages.map(item => ({ ...item,
-    manifest: JSON.parse(readFileSync(join(root, "packages", `vrl-${item.name.split("/")[1]}`, "package.json"), "utf8"))
+    manifest: JSON.parse(readFileSync(join(root, "packages", item.name.split("/")[1], "package.json"), "utf8"))
   }));
   const lock = refreshPackedEntries(template, packed);
   writeFileSync(join(directory, "package-lock.json"), JSON.stringify(lock, null, 2) + "\n");

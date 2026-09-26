@@ -19,8 +19,8 @@ The adapter has three stages:
 ## Inspecting a scene
 
 ```js
-import { compileRoute } from "@subvertic/core";
-import { computeTopoScene, renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene, renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const source = `route "Badge semantics"
 rappel height=10m rope=20m flow=high inclination=80%

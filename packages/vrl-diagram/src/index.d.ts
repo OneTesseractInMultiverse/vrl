@@ -1,5 +1,5 @@
-import type { CompileOptions, CompileResult, Diagnostic } from "@subvertic/core";
-import type { RenderOptions } from "@subvertic/render-svg";
+import type { CompileOptions, CompileResult, Diagnostic } from "@subvertic/vrl-core";
+import type { RenderOptions } from "@subvertic/vrl-render-svg";
 
 export interface DiagramOptions extends CompileOptions, RenderOptions {}
 /** Mutable state for one compilation. A supplied state is trusted caller markup. */

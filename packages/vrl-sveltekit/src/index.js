@@ -1,4 +1,4 @@
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 
 export function createVrlSvelteKitData(source, options = {}) {
   return createDiagramState(source, options);

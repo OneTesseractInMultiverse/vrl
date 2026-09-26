@@ -20,7 +20,7 @@ try {
   run("npm", ["ci", "--offline", "--ignore-scripts", "--legacy-peer-deps", "--no-audit", "--no-fund", "--cache", cache], temporary);
   run(process.execPath, ["node_modules/typescript/bin/tsc", "-p", "types/tsconfig.json"], temporary);
   examples.forEach((_, index) => run(process.execPath, [`types/documentation-${index}.ts`], temporary));
-  run(process.execPath, ["--input-type=module", "-e", "import {createDiagramState} from '@subvertic/diagram'; const state = createDiagramState('route Consumer\\nstart\\nexit'); if (!state.ok || !state.svg.startsWith('<svg ')) throw new Error('Packed facade failed');"], temporary);
+  run(process.execPath, ["--input-type=module", "-e", "import {createDiagramState} from '@subvertic/vrl-diagram'; const state = createDiagramState('route Consumer\\nstart\\nexit'); if (!state.ok || !state.svg.startsWith('<svg ')) throw new Error('Packed facade failed');"], temporary);
   console.log(`Checked declarations, ${examples.length} documentation examples, and runtime entry points from ${packages.length} packed packages in an isolated offline consumer.`);
 } finally {
   rmSync(temporary, { recursive: true, force: true });

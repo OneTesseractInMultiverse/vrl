@@ -1,6 +1,6 @@
 {
   "name": "vertical-route-language",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Vertical Route Language monorepo for parsing, validating, normalizing, and rendering technical route documents.",

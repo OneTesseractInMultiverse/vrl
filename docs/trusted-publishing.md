@@ -4,7 +4,9 @@ VRL publishes six public packages from `OneTesseractInMultiverse/vrl` through `.
 
 ## Package identity and first publication
 
-The current names are `@subvertic/core`, `@subvertic/render-svg`, `@subvertic/diagram`, `@subvertic/react`, `@subvertic/svelte` and `@subvertic/sveltekit`. Older `@subvertic/vrl-*` packages are separate registry identities: publishing a shorter name does not update, redirect or deprecate an older package. Consumers must explicitly change their dependency and import names. Do not configure the old packages expecting that configuration to authorize the new names.
+The canonical names are `@subvertic/vrl-core`, `@subvertic/vrl-render-svg`, `@subvertic/vrl-diagram`, `@subvertic/vrl-react`, `@subvertic/vrl-svelte` and `@subvertic/vrl-sveltekit`. `subvertic` is the organization scope; `vrl-` identifies the project inside that organization.
+
+Version 0.2.0 used incorrect names without the `vrl-` prefix. Version 0.2.1 restores the canonical identities and internal dependency names. Existing `@subvertic/vrl-*` packages retain their earlier release history; `@subvertic/vrl-diagram` is a new package. Consumers of 0.2.0 must update all six dependency/import names together. npm cannot rename a published package, and trusted-publisher settings do not transfer between names. Configure only the canonical identities below.
 
 npm requires a package to exist before a trusted publisher can be configured. For unpublished names:
 
@@ -12,7 +14,7 @@ npm requires a package to exist before a trusted publisher can be configured. Fo
 2. Prepare and merge the release commit, including versions and changelog. Verify the workspace gate and framework consumer matrix.
 3. In a clean checkout of that commit, authenticate the npm CLI with `npm login --auth-type=web --registry=https://registry.npmjs.org`. A browser session by itself does not authenticate the CLI. Complete npm's authentication challenge interactively; do not store an OTP in source or CI secrets.
 4. Review `make publish-plan` and `make publish-dry-run`.
-5. Bootstrap the six public packages using `make publish` (local provenance is disabled). If interrupted, follow the recovery procedure below. This is a real public release, not a placeholder package.
+5. Publish the prepared workspace set, including any new package identities, using `make publish` (local provenance is disabled). If interrupted, follow the recovery procedure below. This is a real public release, not a placeholder package.
 6. Configure trusted publishing on each newly created package. Subsequent versions can publish from GitHub with provenance.
 
 Do not create a public GitHub release before bootstrap and trusted-publisher setup are complete: the release event initiates publication immediately. A local bootstrap does not acquire GitHub provenance retroactively; the first subsequent CI-published version will have it.
@@ -34,8 +36,8 @@ Save the configuration and complete npm's authentication challenge. The workflow
 Alternatively, npm CLI 11.15+ supports an interactive configuration command per existing package:
 
 ```sh
-npm trust github @subvertic/core --repo OneTesseractInMultiverse/vrl --file publish.yml --allow-publish
-npm trust list @subvertic/core
+npm trust github @subvertic/vrl-core --repo OneTesseractInMultiverse/vrl --file publish.yml --allow-publish
+npm trust list @subvertic/vrl-core
 ```
 
 Repeat for every current package name. Inspect existing connections before adding another; do not revoke unrelated publishers or tokens. Once the new flow is verified, package maintainers may choose the restrictive 2FA/token policy in npm settings. It does not disable OIDC publishing.

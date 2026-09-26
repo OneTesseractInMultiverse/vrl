@@ -1,4 +1,4 @@
-import { formatDiagnostic } from "@subvertic/core";
+import { formatDiagnostic } from "@subvertic/vrl-core";
 
 /** Project compiler output into the shared presentation-state contract. */
 export function assembleDiagramState(result, svg) {

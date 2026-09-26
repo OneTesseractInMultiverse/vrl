@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileRoute, createRouteCompiler } from "@subvertic/core";
+import { compileRoute, createRouteCompiler } from "@subvertic/vrl-core";
 import { routeCases, parseSeed, caseName } from "./helpers/seeded-cases.js";
 import { BLOCKED, failureState, progressionFacts } from "./helpers/invariant-observations.js";
 

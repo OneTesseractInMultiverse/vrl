@@ -1,8 +1,8 @@
 <script>
   import { onMount, tick } from "svelte";
-  import Diagram from "@subvertic/svelte/VrlDiagram.svelte";
-  import KitDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
-  import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+  import Diagram from "@subvertic/vrl-svelte/VrlDiagram.svelte";
+  import KitDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
+  import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
   export let data;
   let source, options, showWarnings, route;

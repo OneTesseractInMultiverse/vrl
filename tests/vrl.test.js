@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import * as core from "@subvertic/core";
-import * as svg from "@subvertic/render-svg";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
-import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import * as core from "@subvertic/vrl-core";
+import * as svg from "@subvertic/vrl-render-svg";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 const VALID_SOURCE = `route "Rio Azul"
 metadata country="Costa Rica" region="Cartago" difficulty="V4 A3 III" entrance_elevation=1240m exit_elevation=1170m

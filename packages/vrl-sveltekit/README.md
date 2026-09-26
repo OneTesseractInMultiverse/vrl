@@ -1,4 +1,4 @@
-# @subvertic/sveltekit
+# @subvertic/vrl-sveltekit
 
 See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
 
@@ -8,18 +8,18 @@ SvelteKit load helpers for Vertical Route Language.
 
 This package compiles VRL source into serializable diagram data that can be returned from SvelteKit `load` functions and rendered with a Svelte component.
 
-State creation delegates to the first-party `@subvertic/diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
 
 ## Install
 
 ```sh
-npm install @subvertic/sveltekit @subvertic/svelte @subvertic/core @subvertic/render-svg @sveltejs/kit svelte
+npm install @subvertic/vrl-sveltekit @subvertic/vrl-svelte @subvertic/vrl-core @subvertic/vrl-render-svg @sveltejs/kit svelte
 ```
 
 ## Usage
 
 ```js
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
@@ -32,7 +32,7 @@ export const load = createVrlSvelteKitLoad({
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
 
   export let data;
 </script>
@@ -49,7 +49,7 @@ If your load function uses a custom key, pass the same key to the component:
 ## Load Helpers
 
 ```js
-import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 import { loadRouteSource } from "$lib/routes";
 ```
 

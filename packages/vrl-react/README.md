@@ -1,4 +1,4 @@
-# @subvertic/react
+# @subvertic/vrl-react
 
 See the [tested framework/runtime combinations](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/framework-compatibility.md) for packed-application SSR, hydration, updates and compatibility limits.
 
@@ -8,19 +8,19 @@ React adapter for Vertical Route Language.
 
 This package exposes a dependency-injected React component factory and a framework-neutral diagram state helper. It keeps React as a peer dependency and delegates parsing, validation, layout, and SVG rendering to the core and renderer packages.
 
-State creation delegates to the first-party `@subvertic/diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
+State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
 
 ## Install
 
 ```sh
-npm install @subvertic/react @subvertic/core @subvertic/render-svg react
+npm install @subvertic/vrl-react @subvertic/vrl-core @subvertic/vrl-render-svg react
 ```
 
 ## Usage
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileRoute, createDiagnostic, createRouteCompiler, formatDiagnostic, parseAttributeTokens, parseVrl } from "@subvertic/core";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState } from "@subvertic/svelte";
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+import { compileRoute, createDiagnostic, createRouteCompiler, formatDiagnostic, parseAttributeTokens, parseVrl } from "@subvertic/vrl-core";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
 const ELEMENTS = ["start", "exit", "walk distance=1m", "rappel height=30m rope=60m", "downclimb height=2m", "climb height=2m", "pool type=deep", 'hazard type=snake', 'note "Notice"'];
 const INVALID_DOCUMENTS = [

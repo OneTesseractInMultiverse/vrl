@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import * as core from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState } from "@subvertic/svelte";
+import * as core from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
 
 const OVERFLOW = "9".repeat(400);
 const MEASUREMENTS = ["distance", "height", "rope", "traverse", "total_distance", "total_descent", "entrance_elevation", "exit_elevation", "vertical_gain", "descent"];

@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import { compileRoute, formatDiagnostic } from "@subvertic/core";
-import { createDiagramState } from "@subvertic/diagram";
-import { renderTopoSvg } from "@subvertic/render-svg";
-import { createVrlReactDiagramState, createVrlDiagramComponent } from "@subvertic/react";
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
-import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { compileRoute, formatDiagnostic } from "@subvertic/vrl-core";
+import { createDiagramState } from "@subvertic/vrl-diagram";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
+import { createVrlReactDiagramState, createVrlDiagramComponent } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 import { createDiagramStateWithPorts } from "../packages/vrl-diagram/src/application/create-diagram-state.js";
 import { assembleDiagramState } from "../packages/vrl-diagram/src/application/diagram-state.js";
 

@@ -1,10 +1,10 @@
-# @subvertic/render-svg
+# @subvertic/vrl-render-svg
 
 Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
 
 Shared themes, symbol profiles, and localization dictionaries (including nested labels/values) are frozen and typed read-only. Strict-mode writes throw `TypeError`. Customize each render through `themeTokens`, `theme`, `language`/`locale`, and the registered `symbology` profiles. `resolveTheme` returns an owned mutable copy without changing defaults; custom symbol/localization dictionaries are not renderer options. Unknown selectors, including prototype-property names, use the documented fallback. See [mutation behavior and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#shared-rendering-definitions-and-customization).
 
-Technical routes are rendered from the core layout's explicit `segments`, including separate endpoints for adjacent descents and climbs and for first/last technical elements. The core owns direction, physical deltas, and annotation ownership; SVG consumes positioned endpoints and pixel deltas. This package depends on the first-party `@subvertic/core` package and has no third-party runtime dependencies.
+Technical routes are rendered from the core layout's explicit `segments`, including separate endpoints for adjacent descents and climbs and for first/last technical elements. The core owns direction, physical deltas, and annotation ownership; SVG consumes positioned endpoints and pixel deltas. This package depends on the first-party `@subvertic/vrl-core` package and has no third-party runtime dependencies.
 
 Recompute older node-only layouts with `computeVerticalLayout` before rendering. For custom renderers, iterate `layout.segments` and pass each positioned segment to the technical geometry helpers. The legacy single-owner helper rejects ambiguous descent/climb pairs rather than choosing one event. See `docs/api-reference.md` for the traversal contract and compatibility details.
 
@@ -15,14 +15,14 @@ This package renders normalized VRL route models and layout data as accessible S
 ## Install
 
 ```sh
-npm install @subvertic/core @subvertic/render-svg
+npm install @subvertic/vrl-core @subvertic/vrl-render-svg
 ```
 
 ## Usage
 
 ```js
-import { compileRoute } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute(source, { layout: { pixelsPerMeter: 6 } });
 
@@ -108,7 +108,7 @@ import {
   resolveSymbolProfile,
   formatTopoLabel,
   formatTopoDetail
-} from "@subvertic/render-svg";
+} from "@subvertic/vrl-render-svg";
 ```
 
 ## License

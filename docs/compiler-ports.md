@@ -55,7 +55,7 @@ Adapters should treat supplied ASTs, models, provenance, and options as read-onl
 An application can keep the default parser, validation, normalization, and layout while choosing its own export representation:
 
 ```js
-import { createRouteCompiler } from "@subvertic/core";
+import { createRouteCompiler } from "@subvertic/vrl-core";
 
 const compile = createRouteCompiler({
   exportJson: (model) => JSON.stringify({

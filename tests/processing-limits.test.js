@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import * as core from "@subvertic/core";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState } from "@subvertic/svelte";
+import * as core from "@subvertic/vrl-core";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
 
 const SOURCE = 'route "Limits"\nwalk distance=1m';
 const LIMITS = { maxSourceBytes: 1048576, maxLines: 20000, maxLineBytes: 16384, maxElements: 10000, maxListEntries: 1024 };

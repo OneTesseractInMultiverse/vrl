@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import * as core from "@subvertic/core";
-import { renderTopoSvg, formatElementDetail, isSnakeHazard } from "@subvertic/render-svg";
+import * as core from "@subvertic/vrl-core";
+import { renderTopoSvg, formatElementDetail, isSnakeHazard } from "@subvertic/vrl-render-svg";
 
 const metric = (meters) => ({ value: meters, unit: "m", meters });
 const SOURCE = 'route "Survey"\nmetadata entrance_elevation=10m exit_elevation=6m region="Costa Rica" survey_team="A"\nstart "Entry"\nwalk distance=3m note="Approach"\nhazard type=snake severity=high note="Look carefully"\nnote "height=unknown"\nrappel drop height=5m rope=10m stages=2m+3m redirections=2m:left shape=direct survey_id="old 1"\nclimb rise height=2m inclination=50% exposure=low\nexit "End"';

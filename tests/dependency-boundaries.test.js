@@ -58,17 +58,17 @@ test("shared diagram application and framework adapters obey their dependency bo
 });
 
 for (const [file, source] of [
-  ["vrl-diagram/src/application/create-diagram-state.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
+  ["vrl-diagram/src/application/create-diagram-state.js", 'import { renderTopoSvg } from "@subvertic/vrl-render-svg";'],
   ["vrl-diagram/src/application/create-diagram-state.js", 'import { createDiagramState } from "../composition/diagram-state.js";'],
-  ["vrl-diagram/src/application/diagram-state.js", 'import { compileRoute } from "@subvertic/core";'],
-  ["vrl-diagram/src/application/diagram-warnings.js", 'import { compileRoute } from "@subvertic/core";'],
-  ["vrl-diagram/src/application/diagram-warnings.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
+  ["vrl-diagram/src/application/diagram-state.js", 'import { compileRoute } from "@subvertic/vrl-core";'],
+  ["vrl-diagram/src/application/diagram-warnings.js", 'import { compileRoute } from "@subvertic/vrl-core";'],
+  ["vrl-diagram/src/application/diagram-warnings.js", 'import { renderTopoSvg } from "@subvertic/vrl-render-svg";'],
   ["vrl-diagram/src/composition/diagram-state.js", 'import React from "react";'],
-  ["vrl-diagram/src/composition/diagram-state.js", 'import { createVrlSvelteDiagramState } from "@subvertic/svelte";'],
+  ["vrl-diagram/src/composition/diagram-state.js", 'import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";'],
   ["vrl-diagram/src/application/diagram-state.js", 'import { formatDiagnostic } from "../../../vrl-core/src/domain/diagnostics.js";'],
-  ["vrl-react/src/index.js", 'import { compileRoute } from "@subvertic/core";'],
-  ["vrl-svelte/src/index.js", 'import { renderTopoSvg } from "@subvertic/render-svg";'],
-  ["vrl-sveltekit/src/index.js", 'import { createVrlSvelteDiagramState } from "@subvertic/svelte";'],
+  ["vrl-react/src/index.js", 'import { compileRoute } from "@subvertic/vrl-core";'],
+  ["vrl-svelte/src/index.js", 'import { renderTopoSvg } from "@subvertic/vrl-render-svg";'],
+  ["vrl-sveltekit/src/index.js", 'import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";'],
   ["vrl-diagram/src/application/diagram-state.js", 'const module = import(name);']
 ]) {
   test(`diagram boundary rejects ${file}: ${source}`, () => {
@@ -82,7 +82,7 @@ for (const [file, source] of [
   ["topo-scene.js", 'export * from "./svg-renderer.js";'],
   ["svg-serializer.js", 'import { diagramText } from "./locale.js";'],
   ["svg-serializer.js", 'import { detailBadgePart } from "./presentation.js";'],
-  ["svg-serializer.js", 'import { technicalVerticalMeters } from "@subvertic/core";'],
+  ["svg-serializer.js", 'import { technicalVerticalMeters } from "@subvertic/vrl-core";'],
   ["segment-scene.js", 'import { model } from "../../vrl-core/src/domain/model.js";'],
   ["svg-renderer.js", 'import library from "external-package";'],
   ["panel-scene.js", 'import fs from "node:fs";'],

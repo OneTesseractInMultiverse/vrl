@@ -2,10 +2,10 @@
 
 See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
 
-`@subvertic/diagram` owns framework-neutral diagram coordination. React, Svelte, and SvelteKit delegate their state factories to `createDiagramState(source, options = {})`. Consumers can also use it directly without installing a framework.
+`@subvertic/vrl-diagram` owns framework-neutral diagram coordination. React, Svelte, and SvelteKit delegate their state factories to `createDiagramState(source, options = {})`. Consumers can also use it directly without installing a framework.
 
 ```js
-import { createDiagramState } from "@subvertic/diagram";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 
 const source = `route "Short rope"
 rappel height=10m rope=5m`;
@@ -63,7 +63,7 @@ The following existing functions retain their arguments and complete state shape
 
 State created by `createDiagramState` can be passed to those adapters' existing `diagram` inputs. A supplied non-null state takes precedence over source/options and bypasses compilation, configuration validation, and rendering. SvelteKit's component preserves its precedence: explicit `diagram`, then `data[diagramKey]`, then source/options. Successful injected SVG remains trusted caller markup; failed injected diagnostics remain text. See the [trust boundary](api-reference.md#precomputed-diagram-trust-boundary).
 
-State creation preserves its source and SVG behavior. Warning-only component markup adds the wrapper described in the [display migration](warning-presentation.md#markup-and-accessibility). Direct consumers of the shared helpers should install `@subvertic/diagram`; existing adapter consumers receive it transitively. There are no new third-party runtime dependencies. The adapters' package manifests and lockfile declare the new first-party dependency explicitly; Svelte still uses the renderer's XML encoder, and SvelteKit still uses the Svelte component.
+State creation preserves its source and SVG behavior. Warning-only component markup adds the wrapper described in the [display migration](warning-presentation.md#markup-and-accessibility). Direct consumers of the shared helpers should install `@subvertic/vrl-diagram`; existing adapter consumers receive it transitively. There are no new third-party runtime dependencies. The adapters' package manifests and lockfile declare the new first-party dependency explicitly; Svelte still uses the renderer's XML encoder, and SvelteKit still uses the Svelte component.
 
 ## Packaging and validation
 

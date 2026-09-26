@@ -1,5 +1,5 @@
-import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
-import { escapeXml } from "@subvertic/render-svg";
+import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
+import { escapeXml } from "@subvertic/vrl-render-svg";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";

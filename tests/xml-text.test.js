@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DOMParser, onErrorStopParsing } from "@xmldom/xmldom";
-import { compileRoute } from "@subvertic/core";
-import { computeTopoScene, escapeXml, renderDetailLine, renderInfoBox, renderTopoSvg, resolveTheme } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene, escapeXml, renderDetailLine, renderInfoBox, renderTopoSvg, resolveTheme } from "@subvertic/vrl-render-svg";
 import { svgAttribute } from "../packages/vrl-render-svg/src/attributes.js";
-import { createVrlReactDiagramState } from "@subvertic/react";
-import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/svelte";
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
+import { createVrlReactDiagramState } from "@subvertic/vrl-react";
+import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
 function documentFor(markup) {
   // The dependency defaults to XML 1.1 line normalization; standalone SVG uses XML 1.0.

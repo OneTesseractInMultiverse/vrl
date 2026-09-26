@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileRoute } from "@subvertic/core";
-import { createDiagramState } from "@subvertic/diagram";
+import { compileRoute } from "@subvertic/vrl-core";
+import { createDiagramState } from "@subvertic/vrl-diagram";
 import {
   LIGHT_THEME, DARK_THEME, diagramText, elementLabel, localizeDetailValue,
   renderTopoSvg, resolveDiagramLanguage, resolveSymbolProfile, resolveTheme, symbolCode
-} from "@subvertic/render-svg";
+} from "@subvertic/vrl-render-svg";
 
 const SOURCE = 'route Defaults\nstart\nrappel pitch height=12m rope=24m anchor=bolts\nexit';
 const result = compileRoute(SOURCE);

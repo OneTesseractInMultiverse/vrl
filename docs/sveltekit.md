@@ -2,13 +2,13 @@
 
 See the [tested framework/runtime combinations and packed consumer checks](framework-compatibility.md) for SSR, hydration, updates and compatibility limits.
 
-Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+Diagram-state creation delegates to `@subvertic/vrl-diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
 
 The SvelteKit package exposes reusable load helpers and a component that reads precomputed diagram state from `data.vrl` by default.
 
 ```svelte
 <script>
-  import VrlDiagram from "@subvertic/sveltekit/VrlDiagram.svelte";
+  import VrlDiagram from "@subvertic/vrl-sveltekit/VrlDiagram.svelte";
 
   export let data;
 </script>
@@ -21,7 +21,7 @@ When `createVrlSvelteKitLoad` uses a custom `key`, pass the same value as `diagr
 Server-side loading can read VRL source from a local file, CMS, database, or API endpoint before passing compiled diagram state into the page component.
 
 ```js
-import { createVrlSvelteKitLoad } from "@subvertic/sveltekit";
+import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
@@ -35,8 +35,8 @@ export const load = createVrlSvelteKitLoad({
 For server-only rendering, use the markup helper:
 
 ```js
-import { createVrlSvelteKitData } from "@subvertic/sveltekit";
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 export function renderRoute(source) {
   const diagram = createVrlSvelteKitData(source, { theme: "dark" });

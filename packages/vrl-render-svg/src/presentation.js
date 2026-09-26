@@ -1,7 +1,7 @@
 import { DETAIL_BADGE_TOKENS } from "./badge-style.js";
 import { detailRecordsForElement, detailRecordText } from "./detail-content.js";
 export { anchorMarkCount, anchorSummary, anchorLabel } from "./anchor-presentation.js";
-import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/core";
+import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/vrl-core";
 import { formatElementTitle, formatMeasurement } from "./element-formatters.js";
 import { diagramText, localizeDetailValue, resolveDiagramLanguage } from "./locale.js";
 import { resolveSymbolProfile } from "./symbol-registry.js";

@@ -34,7 +34,7 @@ Retain prior contract inventories and compatibility fixtures when introducing a 
 Applications that persist model JSON must store its contract revision themselves, for example:
 
 ```js
-import { compileRoute } from "@subvertic/core";
+import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
@@ -63,9 +63,9 @@ Import types from the owning package root using `import type`. The declarations 
 `ElementView` and `RouteView` describe the broader inputs of low-level helpers, including historical manually supplied records. They are not evidence that a value passed domain validation. Individual token parsers return `{ ok: true, value }` or `{ ok: false, reason }`; a successfully converted token can still violate a field's semantic range. Parsed redirection side text, for example, is unrestricted until normalization.
 
 ```ts
-import { compileRoute } from "@subvertic/core";
-import type { RouteModel } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import type { RouteModel } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const result = compileRoute('route Typed\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (result.ok) {
@@ -82,8 +82,8 @@ if (result.ok) {
 Partial `createRouteCompiler` overrides must preserve the default AST/model/layout types because omitted stages still use built-in implementations. Custom shapes require a complete `CompilerPorts<A, M, L, O>` set: AST, model, layout, and layout-option types respectively. This prevents a custom normalizer from accidentally feeding unrelated records into the default layout/export pipeline. Both composition functions retain their legacy optional/default geometry port at runtime; use complete wiring for custom shapes.
 
 ```ts
-import { createRouteCompiler, parseVrl } from "@subvertic/core";
-import type { CompilerPorts, RouteAst } from "@subvertic/core";
+import { createRouteCompiler, parseVrl } from "@subvertic/vrl-core";
+import type { CompilerPorts, RouteAst } from "@subvertic/vrl-core";
 
 const ports: CompilerPorts<RouteAst, { title: string }, { title: string }, { prefix: string }> = {
   parse: parseVrl,
@@ -130,8 +130,8 @@ Exported `LIGHT_THEME`/`DARK_THEME`, resolved symbol profiles, and localization 
 Use per-call `themeTokens`, `theme`, `language`/`locale`, and registered `symbology` selections. `resolveTheme` deliberately returns an owned, mutable copy. There is currently no custom symbol/localization dictionary option; copying those dictionaries supports application-owned UI only. Shared definitions have no mutation-based customization hook.
 
 ```js
-import { createDiagramState } from "@subvertic/diagram";
-import { DARK_THEME, resolveTheme } from "@subvertic/render-svg";
+import { createDiagramState } from "@subvertic/vrl-diagram";
+import { DARK_THEME, resolveTheme } from "@subvertic/vrl-render-svg";
 
 const localTheme = resolveTheme("dark", { water: "#176f91" });
 localTheme.terrain = "#c8be9c";
@@ -151,8 +151,8 @@ Successful React, Svelte, SvelteKit, and string-markup diagrams now display warn
 `diagramWarningText` is an additive stable export for the same pure warning selection. Custom presentations can use it or consume diagnostic records directly:
 
 ```js
-import { createDiagramState, diagramWarningText } from "@subvertic/diagram";
-import { renderVrlSvelteMarkup } from "@subvertic/svelte";
+import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
+import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 
 const diagram = createDiagramState('route "Short rope"\nrappel height=10m rope=5m');
 const text = diagramWarningText(diagram);

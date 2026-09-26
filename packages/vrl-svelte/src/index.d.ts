@@ -1,5 +1,5 @@
-import type { DiagramOptions, DiagramState, WarningDisplayOptions } from "@subvertic/diagram";
-export type { DiagramOptions, DiagramState } from "@subvertic/diagram";
+import type { DiagramOptions, DiagramState, WarningDisplayOptions } from "@subvertic/vrl-diagram";
+export type { DiagramOptions, DiagramState } from "@subvertic/vrl-diagram";
 
 export interface VrlMarkupOptions extends WarningDisplayOptions {
   diagram?: DiagramState | null | undefined;

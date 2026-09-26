@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
-import { compileRoute } from "@subvertic/core";
-import { renderTopoSvg } from "@subvertic/render-svg";
+import { compileRoute } from "@subvertic/vrl-core";
+import { renderTopoSvg } from "@subvertic/vrl-render-svg";
 
 const source = readFileSync(new URL("../examples/quebrada-gata.vrl", import.meta.url), "utf8");
 const result = compileRoute(source, {

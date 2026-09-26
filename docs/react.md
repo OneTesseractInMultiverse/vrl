@@ -2,7 +2,7 @@
 
 See the [tested framework/runtime combinations and packed consumer checks](framework-compatibility.md) for SSR, hydration, updates and compatibility limits.
 
-Diagram-state creation delegates to `@subvertic/diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
+Diagram-state creation delegates to `@subvertic/vrl-diagram`. Existing adapter factory names, options, and state fields are unchanged; the neutral `createDiagramState` result can also be supplied directly. See the [shared state contract](diagram-state.md) for warning, failure, exception, and caching behavior.
 
 Invalid layout or renderer configuration throws `TypeError` or `RangeError` from the state factory or component. See the [configuration contract](api-reference.md#configuration-validation) and [supported paint values](api-reference.md#renderer-configuration-and-svg-attributes).
 
@@ -12,7 +12,7 @@ The React adapter uses dependency injection so the package can keep React as a p
 
 ```jsx
 import React from "react";
-import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/react";
+import { createVrlDiagramComponent, createVrlReactDiagramState } from "@subvertic/vrl-react";
 
 const VrlDiagram = createVrlDiagramComponent(React);
 

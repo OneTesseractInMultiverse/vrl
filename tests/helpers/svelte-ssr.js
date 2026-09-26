@@ -7,8 +7,8 @@ import { compile } from "svelte/compiler";
 export async function loadSvelteDiagrams() {
   const hook = registerHooks({ load: loadComponent });
   try {
-    const svelte = await import("@subvertic/svelte/VrlDiagram.svelte");
-    const kit = await import("@subvertic/sveltekit/VrlDiagram.svelte");
+    const svelte = await import("@subvertic/vrl-svelte/VrlDiagram.svelte");
+    const kit = await import("@subvertic/vrl-sveltekit/VrlDiagram.svelte");
     return { svelte: svelte.default, kit: kit.default };
   } finally {
     hook.deregister();

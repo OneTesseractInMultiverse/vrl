@@ -1,4 +1,4 @@
-import { assertFiniteNumber, assertOptionsRecord } from "@subvertic/core";
+import { assertFiniteNumber, assertOptionsRecord } from "@subvertic/vrl-core";
 
 export function validateRenderOptions(options) {
   assertOptionsRecord(options, "Renderer options");
