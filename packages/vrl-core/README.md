@@ -15,7 +15,7 @@ npm install @subvertic/core
 ## Usage
 
 ```js
-import { compileRoute, formatDiagnostic } from "@subvertic/core";
+import { compileRoute, formatDiagnostic, summarizeRouteMeasurements } from "@subvertic/core";
 
 const source = `
 route "Quebrada Gata"
@@ -38,7 +38,8 @@ const result = compileRoute(source, {
 if (result.ok === false) {
   console.error(result.diagnostics.map(formatDiagnostic).join("\n"));
 } else {
-  console.log(result.model.summary.requiredRopeMeters);
+  const observations = summarizeRouteMeasurements(result.model.elements, result.model.metadata);
+  console.log(observations.maximumDeclaredRopeMeters); // null if absent; a declaration, not an equipment requirement
   console.log(result.layout.nodes.length);
   console.log(result.json);
 }
@@ -65,6 +66,7 @@ import {
 - `compileRoute(source, options)` runs the full parser, validation, normalization, layout, and JSON export pipeline.
 - `createRouteCompiler(overrides)` creates an injectable compiler for tests or alternate ports.
 - `exportRouteJson(model)` serializes normalized route data.
+- `summarizeRouteMeasurements(elements, metadata?)` keeps declared totals, observed walk/rope measurements and null unknowns separate. Existing model summaries and JSON remain unchanged. See [summary provenance and conflicts](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/route-summary.md).
 
 Compiler wiring lives in a composition module; the application coordinator depends only on its contracts and domain policies. JSON serialization is a separate output adapter. All ports are synchronous. Invalid wiring throws at configuration time, malformed results throw a port-specific `TypeError` before later stages, and adapter exceptions propagate unchanged. The public `compileRouteWithDependencies(source, options, dependencies)` helper retains its optional default geometry validator; its other ports are required. See the [compiler contracts and example](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/compiler-ports.md) for result shapes, error ordering, and compatibility.
 
