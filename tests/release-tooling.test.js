@@ -254,7 +254,7 @@ for (const [name, path, mutate] of [
    * @param {unknown} value - Candidate value; accepted shape, missing-value behavior and rejection rules are described above.
    * @returns {void} Completes the documented operation; no return value is consumed.
    */ value => { delete value.packages[WORKSPACES[0].directory]; }],
-  ["wrong internal pin", WORKSPACES[1].path, /**
+  ["wrong internal pin", WORKSPACES[2].path, /**
    * Deliberately modify value.dependencies[names[0]] in the caller-owned fixture so the enclosing test can
    * observe the specified mutation or failure boundary.
    * @responsibility computation
@@ -262,12 +262,12 @@ for (const [name, path, mutate] of [
    * @returns {void} Completes the documented operation; no return value is consumed.
    */ value => { value.dependencies[names[0]] = "^0.1.0"; }],
   ["wrong locked pin", "package-lock.json", /**
-   * Deliberately modify value.packages[WORKSPACES[1].directory].dependencies[names[0]] in the caller-owned
+   * Deliberately modify value.packages[WORKSPACES[2].directory].dependencies[names[0]] in the caller-owned
    * fixture so the enclosing test can observe the specified mutation or failure boundary.
    * @responsibility computation
    * @param {unknown} value - Candidate value; accepted shape, missing-value behavior and rejection rules are described above.
    * @returns {void} Completes the documented operation; no return value is consumed.
-   */ value => { value.packages[WORKSPACES[1].directory].dependencies[names[0]] = "^0.1.0"; }]
+   */ value => { value.packages[WORKSPACES[2].directory].dependencies[names[0]] = "^0.1.0"; }]
 ]) {
   test(`${name} blocks release validation`, /**
    * Verify ${name} blocks release validation; arrange the scenario and make its single direct assertion.
@@ -349,7 +349,7 @@ test("preparation only writes projected version files", /**
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const h = harness(); runRelease(parseOptions(["--prepare", "--skip-registry", "--version", nextVersion]), h.ports);
-  assert.deepEqual([h.calls, validateManifests(h.writes)], [["read", "report", ...Array(8).fill("write")], nextVersion]);
+  assert.deepEqual([h.calls, validateManifests(h.writes)], [["read", "report", ...Array(WORKSPACES.length + 2).fill("write")], nextVersion]);
 });
 for (let failAt = 0; failAt < Object.keys(original).length; failAt++) {
   test(`failed preparation write ${failAt} restores every attempted file`, /**
@@ -420,7 +420,7 @@ test("successful publication validates all artifacts before publishing in depend
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const h = harness(), result = runRelease(parseOptions([]), h.ports);
-  assert.deepEqual([h.calls, h.attempted, h.writes, result.published], [["read", "versions", "report", "clean", "check", "authenticate", "pack", "integrity", ...Array(6).fill("publish"), "cleanup"], names, {}, names]);
+  assert.deepEqual([h.calls, h.attempted, h.writes, result.published], [["read", "versions", "report", "clean", "check", "authenticate", "pack", "integrity", ...Array(names.length).fill("publish"), "cleanup"], names, {}, names]);
 });
 for (const stage of ["versions", "clean", "check", "authenticate", "pack", "integrity"]) {
   test(`failure during ${stage} prevents all publication and version writes`, /**

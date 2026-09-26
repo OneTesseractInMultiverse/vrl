@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="-14 -99 1171 883" width="1171" height="883" style="max-width: 100%; height: auto;">
+  <title>Synthetic two-rappel canyon topo</title>
+  <desc>Vertical Route Language schematic for Synthetic two-rappel canyon. Rappel R1: 2 anchors. Terrain and technical curves are schematic; pool outlines do not measure depth or require swimming.</desc>
+  <defs>
+    <marker id="dark-annotations-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L7,3 z" fill="#c3ccd4"/>
+    </marker>
+  </defs>
+  <rect x="-14" y="-99" width="1171" height="883" fill="#14171a"/>
+  <path class="vrl-terrain-wash" d="M 0 142 L 106 122 L 150 207 L 208 265 L 266 326 L 310 411 L 388 459 L 736 479 L 736 509 L 0 509 Z" fill="#2e3129" fill-opacity="0.45"/>
+  <path class="vrl-terrain-contour" d="M 0 142 L 106 122 L 150 207 L 208 265 L 266 326 L 310 411 L 388 459 L 736 479" fill="none" stroke="#a8b3bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="vrl-info-box" aria-label="Route summary">
+    <rect x="193.5" y="-84" width="500.5" height="122" fill="#1f252b" stroke="#c3ccd4" stroke-width="2"/>
+    <text x="443.75" y="-60" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="#eef2f5">SYNTHETIC TWO-RAPPEL CANYON</text><text x="443.75" y="-36" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#eef2f5">Difficulty: no data</text><text x="443.75" y="-16" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#eef2f5">Elevation change: no data</text><text x="443.75" y="4" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#eef2f5">Region: no data</text><text x="443.75" y="24" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#eef2f5">Country: no data</text>
+  </g>
+  <g class="vrl-pool-symbol" data-owner-id="P1">
+    <path class="vrl-pool-basin" d="M 170 253 Q 201 283 232 253 Z" fill="#5cc8ff" fill-opacity="0.16" stroke="#5cc8ff" stroke-width="1.5"/>
+    <path class="vrl-pool-surface" d="M 172 253 Q 180 249 188 253 Q 196 257 204 253 Q 212 249 220 253 L 230 253" fill="none" stroke="#5cc8ff" stroke-width="1.5"/>
+  </g>
+  <path class="vrl-route-segment" d="M 96 108 L 106 151 L 140 193" fill="none" stroke="#c3ccd4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g class="vrl-drop-curve" data-owner-id="R1">
+    <path class="vrl-route-segment vrl-drop-lead" d="M 140 193 L 174 193" fill="none" stroke="#c3ccd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-slope" d="M 174 193 C 183.66666666666666 212.33333333333334 183.66666666666666 231.66666666666666 174 251" fill="none" stroke="#c3ccd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#dark-annotations-arrow)"/>
+
+
+
+    <path class="vrl-route-segment vrl-drop-exit" d="M 174 251 L 198 251" fill="none" stroke="#c3ccd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g><path class="vrl-route-segment" d="M 198 251 L 215 282 L 256 312" fill="none" stroke="#c3ccd4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path class="vrl-route-segment" d="M 256 312 L 266 355 L 300 397" fill="none" stroke="#c3ccd4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g class="vrl-drop-curve" data-owner-id="R2">
+    <path class="vrl-route-segment vrl-drop-lead" d="M 300 397 L 334 397" fill="none" stroke="#c3ccd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="vrl-route-segment vrl-drop-slope" d="M 334 397 C 342 413 342 429 334 445" fill="none" stroke="#c3ccd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#dark-annotations-arrow)"/>
+
+
+
+    <path class="vrl-route-segment vrl-drop-exit" d="M 334 445 L 378 445" fill="none" stroke="#c3ccd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g class="vrl-station-tick vrl-station-tick-clearance" stroke="#1f252b" stroke-width="5" stroke-linecap="round">
+      <line x1="148" y1="185" x2="164" y2="191"/>
+      <line x1="148" y1="181" x2="164" y2="187"/>
+    </g><g class="vrl-station-tick" stroke="#c3ccd4" stroke-width="1.5" stroke-linecap="round">
+      <line x1="148" y1="185" x2="164" y2="191"/>
+      <line x1="148" y1="181" x2="164" y2="187"/>
+    </g>
+  <g class="vrl-node vrl-node-start" aria-label="Start Entry">
+
+    <g class="vrl-symbol vrl-symbol-standard">
+    <circle class="vrl-symbol-clearance" cx="96" cy="108" r="8" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+    <circle cx="96" cy="108" r="4" fill="#8fb04b" stroke="#7ee0a7" stroke-width="1"/>
+    <text x="96" y="93" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#7ee0a7" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">IN</text>
+  </g>
+
+    <text x="200" y="99" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#eef2f5" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">Start Entry</text>
+    <g class="vrl-annotation-icon" data-vrl-icon="start" aria-hidden="true" focusable="false" transform="translate(168 81) scale(0.75)" color="#7ee0a7"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"/><path d="M 13 10 22 16 13 22 Z"/></g></g>
+  </g><g class="vrl-node vrl-node-rappel" aria-label="Rappel R1">
+    <g class="vrl-anchor-marks" aria-label="2 anchors">
+    <circle cx="126" cy="169" r="3" fill="#1f252b" stroke="#c3ccd4" stroke-width="1.4"/><circle cx="118" cy="169" r="3" fill="#1f252b" stroke="#c3ccd4" stroke-width="1.4"/>
+  </g>
+    <g class="vrl-symbol vrl-symbol-standard">
+    <circle class="vrl-symbol-clearance" cx="140" cy="193" r="8" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+    <circle cx="140" cy="193" r="4" fill="#8fb04b" stroke="#d7dde3" stroke-width="1"/>
+    <text x="140" y="178" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#d7dde3" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">R</text>
+  </g>
+
+    <text x="278" y="184" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#eef2f5" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">R1, 18m</text>
+    <g class="vrl-detail-line"><g class="vrl-detail-row"><text x="278" y="202" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">declared rope: 40m</text></g><g class="vrl-detail-row"><text x="278" y="216" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">bolts / 2 anchors</text></g></g><g class="vrl-annotation-icon" data-vrl-icon="bolt" aria-hidden="true" focusable="false" transform="translate(246 198) scale(0.75)" color="#d7dde3"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 12 7 a 4 4 0 1 0 8 0 a 4 4 0 1 0 -8 0"/><path d="M 10 23 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0"/><path d="M 13 11 v 6 M 19 11 v 6"/></g></g>
+  </g><g class="vrl-node vrl-node-pool" aria-label="Pool P1">
+
+    <g class="vrl-symbol vrl-symbol-standard">
+    <circle class="vrl-symbol-clearance" cx="198" cy="251" r="8" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+    <circle cx="198" cy="251" r="4" fill="#8fb04b" stroke="#5cc8ff" stroke-width="1"/>
+    <text x="198" y="236" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#5cc8ff" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">V</text>
+  </g>
+
+
+    <g class="vrl-detail-line"><g class="vrl-detail-row"><text x="316" y="260" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">pool depth unknown</text></g></g>
+  </g><g class="vrl-node vrl-node-walk" aria-label="Walk W1">
+
+    <g class="vrl-symbol vrl-symbol-standard">
+    <circle class="vrl-symbol-clearance" cx="256" cy="312" r="8" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+    <circle cx="256" cy="312" r="4" fill="#8fb04b" stroke="#c3ccd4" stroke-width="1"/>
+    <text x="256" y="297" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#c3ccd4" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">M</text>
+  </g>
+
+
+    <g class="vrl-detail-line"><g class="vrl-detail-row"><text x="360" y="321" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">120m</text></g></g>
+  </g><g class="vrl-node vrl-node-rappel" aria-label="Rappel R2">
+
+    <g class="vrl-symbol vrl-symbol-standard">
+    <circle class="vrl-symbol-clearance" cx="300" cy="397" r="8" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+    <circle cx="300" cy="397" r="4" fill="#8fb04b" stroke="#d7dde3" stroke-width="1"/>
+    <text x="300" y="382" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#d7dde3" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">R</text>
+  </g>
+
+    <text x="458" y="388" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#eef2f5" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">R2, 12m</text>
+    <g class="vrl-detail-line"><g class="vrl-detail-row"><text x="458" y="406" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">declared rope: 30m</text></g><g class="vrl-detail-row"><text x="458" y="420" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">tree / anchor count unknown</text></g></g><g class="vrl-annotation-icon" data-vrl-icon="tree" aria-hidden="true" focusable="false" transform="translate(426 402) scale(0.75)" color="#d7dde3"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 16 3 9 11 h 4 l -7 8 h 8 v 9 h 4 v -9 h 8 l -7 -8 h 4 Z"/></g></g>
+  </g><g class="vrl-node vrl-node-hazard" aria-label="Hazard H1">
+
+    <g class="vrl-symbol vrl-symbol-hazard">
+      <path class="vrl-symbol-clearance" d="M 346 433 L 335 456 L 357 456 Z" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+      <path d="M 346 436 L 338 453 L 354 453 Z" fill="#d53a2f" stroke="#ff8a80" stroke-width="1"/>
+    </g>
+
+    <text x="778" y="436" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#eef2f5" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">Hazard H1: slippery</text>
+    <g class="vrl-detail-line"><g class="vrl-detail-row"><text x="778" y="454" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">Slippery landing</text></g></g><g class="vrl-annotation-icon" data-vrl-icon="slippery" aria-hidden="true" focusable="false" transform="translate(746 418) scale(0.75)" color="#ff8a80"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 16 3 30 28 H 2 Z"/><path d="M 16.5 11 a 1.5 1.5 0 1 0 3 0 a 1.5 1.5 0 1 0 -3 0"/><path d="M 16 15 l -5 2 7 3 5 -2 M 18 20 l -4 5 M 14 16 l 5 -1 M 7 25 h 3"/></g></g>
+  </g><g class="vrl-node vrl-node-exit" aria-label="Exit Exit">
+
+    <g class="vrl-symbol vrl-symbol-standard">
+    <circle class="vrl-symbol-clearance" cx="378" cy="445" r="8" fill="#1f252b" stroke="#1f252b" stroke-width="2"/>
+    <circle cx="378" cy="445" r="4" fill="#8fb04b" stroke="#7ee0a7" stroke-width="1"/>
+    <text x="378" y="430" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#7ee0a7" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">OUT</text>
+  </g>
+    <path class="vrl-label-leader" d="M 390 443 L 770 466" fill="none" stroke="#a8b3bd" stroke-width="1" stroke-linecap="round" stroke-dasharray="3 3"/>
+    <text x="778" y="470" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#eef2f5" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">Exit Exit</text>
+    <g class="vrl-annotation-icon" data-vrl-icon="finish" aria-hidden="true" focusable="false" transform="translate(746 452) scale(0.75)" color="#7ee0a7"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"/><path d="M 11 11 h 10 v 10 H 11 Z"/></g></g>
+  </g>
+  <g class="vrl-legend" aria-label="Legend">
+    <rect x="24" y="537" width="1117.25" height="232" rx="4" fill="#1f252b" stroke="#c3ccd4" stroke-width="1"/>
+    <text x="38" y="559" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="#eef2f5">Legend</text>
+    <g class="vrl-legend-symbol-row"><text class="vrl-legend-symbol-entry" x="38" y="579" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">IN</tspan><tspan> = Start</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="108" y="579" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">OUT</tspan><tspan> = Exit</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="178" y="579" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">M</tspan><tspan> = Walk</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="238" y="579" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">R</tspan><tspan> = Rappel</tspan>
+    </text></g><g class="vrl-legend-symbol-row"><text class="vrl-legend-symbol-entry" x="38" y="595" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">D</tspan><tspan> = Downclimb</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="124" y="595" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">C</tspan><tspan> = Climb</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="189" y="595" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">V</tspan><tspan> = Pool</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="249" y="595" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">
+      <tspan font-weight="800" fill="#eef2f5">!</tspan><tspan> = Hazard</tspan>
+    </text></g><text class="vrl-legend-row" x="38" y="617" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">Rappel: rope / anchors / landing / flow / inclination</text><text class="vrl-legend-row" x="38" y="633" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd">Downclimb/climb: height / exposure / landing / inclination</text><text x="38" y="649" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">flow:</text><g class="vrl-level-badge vrl-level-badge-dry vrl-detail-badge vrl-detail-badge-flow">
+    <rect x="68" y="636" width="28" height="14" rx="3" fill="#5cc8ff"/>
+    <text x="82" y="645" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">dry</text>
+  </g><g class="vrl-level-badge vrl-level-badge-low vrl-detail-badge vrl-detail-badge-flow">
+    <rect x="100" y="636" width="28" height="14" rx="3" fill="#5cc8ff"/>
+    <text x="114" y="645" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">low</text>
+  </g><g class="vrl-level-badge vrl-level-badge-medium vrl-detail-badge vrl-detail-badge-flow">
+    <rect x="132" y="636" width="44" height="14" rx="3" fill="#5cc8ff"/>
+    <text x="154" y="645" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">medium</text>
+  </g><g class="vrl-level-badge vrl-level-badge-high vrl-detail-badge vrl-detail-badge-flow">
+    <rect x="180" y="636" width="34" height="14" rx="3" fill="#5cc8ff"/>
+    <text x="197" y="645" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">high</text>
+  </g><text x="714.5" y="617" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">exposure:</text><g class="vrl-level-badge vrl-level-badge-low vrl-detail-badge vrl-detail-badge-exposure">
+    <rect x="764.5" y="604" width="28" height="14" rx="3" fill="#a9b3ff"/>
+    <text x="778.5" y="613" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">low</text>
+  </g><g class="vrl-level-badge vrl-level-badge-medium vrl-detail-badge vrl-detail-badge-exposure">
+    <rect x="796.5" y="604" width="44" height="14" rx="3" fill="#a9b3ff"/>
+    <text x="818.5" y="613" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">medium</text>
+  </g><g class="vrl-level-badge vrl-level-badge-high vrl-detail-badge vrl-detail-badge-exposure">
+    <rect x="844.5" y="604" width="34" height="14" rx="3" fill="#a9b3ff"/>
+    <text x="861.5" y="613" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">high</text>
+  </g><text x="714.5" y="633" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">hazard severity:</text><g class="vrl-level-badge vrl-level-badge-low vrl-detail-badge vrl-detail-badge-hazardSeverity">
+    <rect x="800.5" y="620" width="28" height="14" rx="3" fill="#ff8a80"/>
+    <text x="814.5" y="629" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">low</text>
+  </g><g class="vrl-level-badge vrl-level-badge-medium vrl-detail-badge vrl-detail-badge-hazardSeverity">
+    <rect x="832.5" y="620" width="44" height="14" rx="3" fill="#ff8a80"/>
+    <text x="854.5" y="629" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">medium</text>
+  </g><g class="vrl-level-badge vrl-level-badge-high vrl-detail-badge vrl-detail-badge-hazardSeverity">
+    <rect x="880.5" y="620" width="34" height="14" rx="3" fill="#ff8a80"/>
+    <text x="897.5" y="629" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">high</text>
+  </g><g class="vrl-level-badge vrl-level-badge-critical vrl-detail-badge vrl-detail-badge-hazardSeverity">
+    <rect x="918.5" y="620" width="55" height="14" rx="3" fill="#ff8a80"/>
+    <text x="946.5" y="629" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">critical</text>
+  </g><text x="714.5" y="649" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke">inclination:</text><g class="vrl-level-badge vrl-level-badge-inclination vrl-detail-badge vrl-detail-badge-inclination">
+    <rect x="779.5" y="636" width="28" height="14" rx="3" fill="#ffd166"/>
+    <text x="793.5" y="645" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">80%</text>
+  </g><text x="811.5" y="649" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="3" stroke-linejoin="round" paint-order="stroke"> percent of vertical change</text><text x="38" y="673" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Contour and technical curves: schematic; arrows: traversal direction.</text><text x="38" y="687" font-family="system-ui, sans-serif" font-size="9" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Pool outline: symbolic size; waves: water cue, not flow or depth.</text><g class="vrl-annotation-icon" data-vrl-icon="start" aria-hidden="true" focusable="false" transform="translate(38 709) scale(0.75)" color="#eef2f5"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"/><path d="M 13 10 22 16 13 22 Z"/></g></g><text x="70" y="725" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Access start</text><g class="vrl-annotation-icon" data-vrl-icon="finish" aria-hidden="true" focusable="false" transform="translate(340 709) scale(0.75)" color="#eef2f5"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"/><path d="M 11 11 h 10 v 10 H 11 Z"/></g></g><text x="372" y="725" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Access finish</text><g class="vrl-annotation-icon" data-vrl-icon="bolt" aria-hidden="true" focusable="false" transform="translate(642 709) scale(0.75)" color="#eef2f5"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 12 7 a 4 4 0 1 0 8 0 a 4 4 0 1 0 -8 0"/><path d="M 10 23 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0"/><path d="M 13 11 v 6 M 19 11 v 6"/></g></g><text x="674" y="725" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Bolts: count in text</text><g class="vrl-annotation-icon" data-vrl-icon="tree" aria-hidden="true" focusable="false" transform="translate(38 739) scale(0.75)" color="#eef2f5"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 16 3 9 11 h 4 l -7 8 h 8 v 9 h 4 v -9 h 8 l -7 -8 h 4 Z"/></g></g><text x="70" y="755" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Tree anchor</text><g class="vrl-annotation-icon" data-vrl-icon="slippery" aria-hidden="true" focusable="false" transform="translate(340 739) scale(0.75)" color="#eef2f5"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 16 3 30 28 H 2 Z"/><path d="M 16.5 11 a 1.5 1.5 0 1 0 3 0 a 1.5 1.5 0 1 0 -3 0"/><path d="M 16 15 l -5 2 7 3 5 -2 M 18 20 l -4 5 M 14 16 l 5 -1 M 7 25 h 3"/></g></g><text x="372" y="755" font-family="system-ui, sans-serif" font-size="10" fill="#a8b3bd" stroke="#1f252b" stroke-width="0" stroke-linejoin="round" paint-order="stroke">Slippery footing</text>
+  </g>
+</svg>

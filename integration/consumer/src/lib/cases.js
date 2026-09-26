@@ -1,4 +1,5 @@
 export const SOURCES = {
+  icons: 'route "Synthetic two-rappel canyon"\nstart "Entry"\nrappel R1 height=18m rope=40m anchor=bolts anchor_count=2 station=right\npool P1 type=unknown\nwalk W1 distance=120m\nrappel R2 height=12m rope=30m anchor=tree\nhazard H1 type=slippery note="Slippery landing"\nexit "Exit"',
   valid: 'route "Good route"\nstart\nrappel height=10m rope=20m\nexit',
   warning: 'route "Short rope"\nrappel height=10m rope=5m',
   invalid: 'route "Bad height"\nrappel height=-10m rope=20m',
@@ -17,6 +18,8 @@ export function requestProps(url) {
   const name = url.searchParams.get("case") ?? "valid";
   if (!Object.hasOwn(SOURCES, name)) throw new Error(`Unknown route case: ${name}`);
   const props = { source: SOURCES[name], options: { legend: false }, showWarnings: url.searchParams.get("warnings") !== "hide" };
+  if (url.searchParams.has("symbols")) props.options.symbols = url.searchParams.get("symbols");
+  if (url.searchParams.has("width")) props.options.layout = { width: Number(url.searchParams.get("width")) };
   if (url.searchParams.has("style")) props.options.style = url.searchParams.get("style");
   if (url.searchParams.has("multiple")) {
     props.options.idPrefix = "left";

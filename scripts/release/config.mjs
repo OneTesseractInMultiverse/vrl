@@ -1,8 +1,7 @@
 export const REPOSITORY = "OneTesseractInMultiverse/vrl";
 export const REGISTRY = "https://registry.npmjs.org";
-export const WORKSPACES = ["core", "render-svg", "diagram", "react", "svelte", "sveltekit"].map(/**
- * Project name, directory, path into the record required by ["core", "render-svg", "diagram", "react",
- * "svelte", "sveltekit"].map.
+export const WORKSPACES = ["core", "icons", "render-svg", "diagram", "react", "svelte", "sveltekit"].map(/**
+ * Resolve canonical package identities and paths in dependency publication order.
  * @responsibility computation
  * @param {unknown} name - Field, port, fixture or other named subject selected by the surrounding operation.
  * @returns {Object} A record containing name, directory, path.

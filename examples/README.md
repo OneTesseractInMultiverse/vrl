@@ -33,3 +33,7 @@ The root quick start, core package quick start, [React](../docs/react.md) and [S
 For multiple inline diagrams, allocate a stable, distinct `idPrefix` per occurrence. Recompute cached diagram state after changing source or render options; supplying `diagram` bypasses those inputs. Framework adapters show nonblocking warnings by default. Direct compiler/SVG integrations must present `result.diagnostics` themselves.
 
 Standalone source files and quick-start copies have behavioral regression checks, including their expected warnings and declared facts. Generated SVG checks compare current output with reviewed artifacts after removing blank-line indentation. These checks complement visual review and do not validate real routes.
+
+## Selective annotation icons
+
+`symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](../docs/annotation-icons.md).

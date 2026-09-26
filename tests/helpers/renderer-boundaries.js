@@ -1,7 +1,7 @@
 import { posix } from "node:path";
 
 const COMPUTATIONS = new Set([
-  "anchor-presentation.js", "badge-style.js", "detail-content.js", "detail-layout.js",
+  "annotation-icons.js", "anchor-presentation.js", "badge-style.js", "detail-content.js", "detail-layout.js",
   "element-formatters.js", "locale.js", "node-scene.js", "panel-scene.js", "presentation.js",
   "render-options.js", "route-data.js", "scene-bounds.js", "scene-path.js", "segment-scene.js", "symbol-registry.js", "svg-identifiers.js", "soft-terrain-geometry.js", "soft-terrain-text.js", "topo-scene.js"
 ]);
@@ -23,8 +23,9 @@ export function rendererDependencyViolations(file, source) {
   for (const [, specifier] of imports) {
     const target = posix.normalize(posix.join(posix.dirname(file), specifier));
     const internal = specifier.startsWith("./") && !target.includes("/");
-    const allowed = file === "svg-serializer.js" ? internal && ENCODING.has(target)
-      : COMPUTATIONS.has(file) ? specifier === "@subvertic/vrl-core" || internal && COMPUTATIONS.has(target)
+    const allowed = file === "icon-serializer.js" ? specifier === "@subvertic/vrl-icons/svg" || internal && target === "attributes.js"
+      : file === "svg-serializer.js" ? internal && (ENCODING.has(target) || target === "icon-serializer.js")
+      : COMPUTATIONS.has(file) ? specifier === "@subvertic/vrl-core" || specifier === "@subvertic/vrl-icons/semantics" || internal && COMPUTATIONS.has(target)
       : specifier === "@subvertic/vrl-core" || internal;
     if (!allowed) violations.push(`${file} -> ${specifier}`);
   }

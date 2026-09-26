@@ -36,7 +36,7 @@ if (refresh) {
 }
 run(["ci", "--strict-peer-deps", "--legacy-peer-deps=false", "--engine-strict"], directory);
 if (refresh) cpSync(join(directory, "package-lock.json"), join(fixture, "package-lock.json"));
-console.log(`Prepared ${profile} consuming application from six current tarballs with strict peers and locked dependencies.`);
+console.log(`Prepared ${profile} consuming application from ${packages.length} current tarballs with strict peers and locked dependencies.`);
 
 /**
  * Execute the requested verification command in its working directory and propagate process or nonzero-exit

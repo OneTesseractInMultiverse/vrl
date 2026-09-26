@@ -94,3 +94,5 @@ Successful diagrams show a warning panel by default. `showWarnings` defaults to 
 MIT. Copyright (c) 2026 Pedro Guzmán.
 
 For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).
+
+Pass `options={{ style: "soft-terrain", symbols: "annotations" }}` through the component or state helper for selective pictograms. Use `symbols: "minimal"` for the equivalent text layout. See the [annotation contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/annotation-icons.md) for supported modes and failures.

@@ -2,7 +2,7 @@
 
 ## Prepare and review
 
-1. Confirm the six current `@subvertic/vrl-*` package names, organization ownership, repository URLs and per-package trusted publisher settings. See [initial publication and npm configuration](trusted-publishing.md).
+1. Confirm the seven current `@subvertic/vrl-*` package names, organization ownership, repository URLs and per-package trusted publisher settings. See [initial publication and npm configuration](trusted-publishing.md).
 2. Start from current `main` in an isolated checkout and run `npm ci`.
 3. Inspect the read-only plan: `make publish-plan RELEASE=minor`.
 4. Prepare explicitly: `make release-prepare RELEASE=minor`. Preparation updates only root/workspace manifests and the lockfile, including its top-level version and internal dependency pins. It does not publish or run the quality gate.
@@ -14,7 +14,7 @@
 
 8. In GitHub Actions, choose **Publish → Run workflow**, select `main`, enter the existing tag and choose `dry-run`. All release checks run; no package is published.
 9. Publish the matching GitHub Release, or choose the manual `publish` operation. Both paths publish the committed version only, through trusted OIDC with provenance, after verification and consumer tests.
-10. Verify all six registry versions, provenance and package installation. If interrupted, follow [partial-publication recovery](trusted-publishing.md#partial-publication-recovery) using the same tag and `resume`.
+10. Verify all seven registry versions, provenance and package installation. If interrupted, follow [partial-publication recovery](trusted-publishing.md#partial-publication-recovery) using the same tag and `resume`.
 
 Initial publication is a separate prerequisite when the package names do not yet exist. Complete the local bootstrap and per-package npm configuration before triggering a GitHub release.
 

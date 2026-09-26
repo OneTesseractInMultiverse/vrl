@@ -48,7 +48,17 @@ export const MUTATIONS = [
     testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" },
   { name: "soft pool uncertainty", file: "packages/vrl-render-svg/src/soft-terrain-text.js",
     before: 'poolUnknown: "pool depth unknown"', after: 'poolUnknown: "pool depth 2m"',
-    testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" }
+    testFile: "tests/soft-terrain.test.js", testName: "soft terrain displays exact measurements, anchor types/counts, uncertainty and hazard ownership" },
+  { name: "pilot anchor mapping", file: "packages/vrl-render-svg/src/annotation-icons.js",
+    before: 'return id === "bolt" || id === "tree" ? id : null;', after: 'return id === "bolt" || id === "tree" ? "tree" : null;',
+    testFile: "tests/annotation-icons.test.js", testName: "pilot icons retain exact access, anchor and slippery ownership" },
+  { name: "annotation icon gutter", file: "packages/vrl-render-svg/src/annotation-icons.js",
+    before: "const x = placement.labelX - 32;", after: "const x = placement.labelX;",
+    testFile: "tests/annotation-icons.test.js", testName: "annotation slots include full stroke clearance beside labels" },
+  { name: "pilot hazard text", file: "packages/vrl-render-svg/src/node-scene.js",
+    before: 'const kind = elementAttribute(element, "type");', after: 'const kind = undefined;',
+    testFile: "tests/annotation-icons.test.js", testName: "pilot text preserves physical drops, declared ropes, full count, unknown pool and slippery note" }
+
 ];
 
 /**

@@ -12,6 +12,12 @@ export function validateRenderOptions(options) {
   if (options.style !== undefined && options.style !== "classic" && options.style !== "soft-terrain") {
     throw new TypeError("Renderer style must be classic or soft-terrain.");
   }
+  if (options.symbols !== undefined && !["classic", "icons", "annotations", "minimal"].includes(options.symbols)) {
+    throw new TypeError("Renderer symbols must be classic, icons, annotations or minimal.");
+  }
+  if ((options.symbols === "annotations" || options.symbols === "minimal") && options.style !== "soft-terrain") {
+    throw new TypeError("Annotation and minimal symbols require the soft-terrain style.");
+  }
   if (options.legend !== undefined && typeof options.legend !== "boolean") {
     throw new TypeError("Renderer option legend must be a boolean.");
   }

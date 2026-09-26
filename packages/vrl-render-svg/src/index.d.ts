@@ -10,7 +10,10 @@ export interface Theme {
   hazardSeverityBadge: string; hazardSeverityBadgeText: string; inclinationBadge: string;
   inclinationBadgeText: string; levelBadge: string; levelBadgeText: string;
 }
+export type SymbolPresentation = "classic" | "icons" | "annotations" | "minimal";
 export interface RenderOptions {
+  /** Annotation and minimal modes require soft terrain and reserve identical icon slots. */
+  symbols?: SymbolPresentation | undefined;
   /** Optional schematic presentation; classic preserves historical output. */
   style?: "classic" | "soft-terrain" | undefined;
   theme?: "light" | "dark" | undefined; themeTokens?: Partial<Theme> | undefined;
@@ -533,9 +536,10 @@ export function renderStageBoundary(geometry: LadderGeometry, ratio: number, the
  * @param {string} [symbology] - Symbol profile name used for element codes and legend entries; defaults to "federation".
  * @param {string} [panelColor] - Validated background/clearance paint value; defaults to "#f6f8fa".
  * @param {string} [language] - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to "en".
+ * @param {string} symbols - Symbol presentation; defaults to classic. Annotation and minimal modes reserve identical icon space.
  * @returns {string} Serialized SVG markup, with the documented defaults and failure behavior.
  */
-export function renderSymbolMarker(node: Position, element: ElementView, color: string, symbology?: string, panelColor?: string, language?: string): string;
+export function renderSymbolMarker(node: Position, element: ElementView, color: string, symbology?: string, panelColor?: string, language?: string, symbols?: SymbolPresentation): string;
 /**
  * Prepare terrain profile drawing records and delegate their SVG serialization; preserve the compatibility helper's defaults and propagate validation failures.
  * @responsibility coordinator

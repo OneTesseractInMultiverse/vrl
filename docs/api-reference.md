@@ -620,3 +620,7 @@ make publish OTP=123456
 ```
 
 `make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks and publishes the current committed version in dependency order; it does not update versions. Version changes must be prepared, reviewed and committed first. Per-package npm bootstrap/trusted-publisher setup is a separate prerequisite; see the [release checklist](release-checklist.md). If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.
+
+## Selective annotation icons
+
+`symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](annotation-icons.md).

@@ -177,6 +177,22 @@
       "subpaths": [
         "./VrlDiagram.svelte"
       ]
+    },
+    "@subvertic/vrl-icons": {
+      "stable": [
+        "getIcon",
+        "getLineStyle",
+        "iconIds",
+        "iconManifest",
+        "iconRegistry",
+        "listIcons",
+        "renderIcon",
+        "renderIconGeometry",
+        "resolveAttributeIconId",
+        "resolveElementIconId"
+      ],
+      "advanced": [],
+      "subpaths": []
     }
   }
 }

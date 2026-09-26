@@ -1,0 +1,1128 @@
+{
+  "schemaVersion": 1,
+  "license": "MIT",
+  "provenance": "Original VRL vector artwork based on the canyoning poster taxonomy; not federation-certified symbols.",
+  "viewBox": "0 0 32 32",
+  "strokeWidth": 2,
+  "strokeLinecap": "round",
+  "strokeLinejoin": "round",
+  "categories": [
+    {
+      "id": "vertical-progression",
+      "label": "Vertical progression"
+    },
+    {
+      "id": "aquatic-obstacles",
+      "label": "Aquatic obstacles"
+    },
+    {
+      "id": "terrain-features",
+      "label": "Terrain features"
+    },
+    {
+      "id": "anchors-equipment",
+      "label": "Anchors and equipment"
+    },
+    {
+      "id": "hazards-warnings",
+      "label": "Hazards and warnings"
+    },
+    {
+      "id": "environment-conditions",
+      "label": "Environment and conditions"
+    },
+    {
+      "id": "route-information",
+      "label": "Route information"
+    },
+    {
+      "id": "difficulty",
+      "label": "Difficulty (illustrative)"
+    },
+    {
+      "id": "diagram-line-styles",
+      "label": "Diagram line styles"
+    }
+  ],
+  "icons": [
+    {
+      "id": "rappel",
+      "label": "Rappel",
+      "description": "Rope descent past a vertical edge.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 4 h 6 v 24 M 25 3 v 25 M 17 12 l 5 4 3 -5 M 17 12 l -3 8 6 3 -2 6 M 14 20 l -4 4"
+        },
+        {
+          "d": "M 16 7 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/rappel.svg"
+    },
+    {
+      "id": "guided-rappel",
+      "label": "Guided rappel",
+      "description": "Rope descent with a separate diagonal guide line.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 4 h 6 v 24 M 24 3 v 17 M 12 29 29 8 M 17 12 l 5 4 2 -5 M 17 12 l -3 8 6 3 -2 6"
+        },
+        {
+          "d": "M 16 7 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/guided-rappel.svg"
+    },
+    {
+      "id": "downclimb",
+      "label": "Downclimb",
+      "description": "Downward climbing movement without a depicted rappel rope.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 4 h 5 v 11 h 6 v 10 h 6 M 17 11 l -5 4 6 3 -2 7 M 16 12 l 5 4 M 26 18 v 11 m -3 -3 3 3 3 -3"
+        },
+        {
+          "d": "M 16 6 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/downclimb.svg"
+    },
+    {
+      "id": "climb",
+      "label": "Climb",
+      "description": "Upward climbing movement; called up-climb in the reference poster.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 28 h 8 v -8 h 7 v -9 h 5 M 13 12 l -3 7 5 3 -2 6 M 13 12 l 5 3 3 -6 M 26 16 V 3 m -3 3 3 -3 3 3"
+        },
+        {
+          "d": "M 10 7 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/climb.svg"
+    },
+    {
+      "id": "handline",
+      "label": "Handline",
+      "description": "Horizontal rope used as a handline.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 28 16 22 h 13 M 5 9 29 16 M 29 12 v 8 M 12 13 l 5 3 4 -2 M 12 13 v 9 l -5 6 M 12 21 l 6 6"
+        },
+        {
+          "d": "M 9 5 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/handline.svg"
+    },
+    {
+      "id": "fixed-ladder",
+      "label": "Fixed ladder",
+      "description": "Fixed ladder between rock walls.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 10 3 v 26 M 22 3 v 26 M 10 8 h 12 M 10 14 h 12 M 10 20 h 12 M 10 26 h 12 M 3 5 l 2 11 -2 11 M 29 5 l -2 11 2 11"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/fixed-ladder.svg"
+    },
+    {
+      "id": "via-ferrata",
+      "label": "Via ferrata",
+      "description": "Fixed protection cable and climbing rungs.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 8 28 14 4 h 10 M 18 9 h 8 M 16 16 h 8 M 14 23 h 8 M 4 26 9 14 12 10"
+        },
+        {
+          "d": "M 8 6 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/via-ferrata.svg"
+    },
+    {
+      "id": "walk",
+      "label": "Walk",
+      "description": "Progression on foot.",
+      "origin": "vrl-extension",
+      "paths": [
+        {
+          "d": "M 15 5 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        },
+        {
+          "d": "M 15 10 l -3 8 6 4 3 7 M 15 10 l 5 5 5 1 M 14 12 l -6 5 M 12 18 l -3 7 -4 3"
+        }
+      ],
+      "category": "vertical-progression",
+      "asset": "svg/walk.svg"
+    },
+    {
+      "id": "pool",
+      "label": "Pool",
+      "description": "A pool with unspecified depth.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 5 v 22 M 29 5 v 22"
+        },
+        {
+          "d": "M 4 21 q 3 -3 6 0 t 6 0 t 6 0 t 6 0 M 4 26 q 3 -3 6 0 t 6 0 t 6 0 t 6 0"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/pool.svg"
+    },
+    {
+      "id": "deep-pool",
+      "label": "Deep pool",
+      "description": "Pool explicitly described as deep; no numeric depth is implied.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 4 v 20 q 13 8 26 0 V 4 M 6 10 q 3 -3 6 0 t 6 0 t 6 0 M 16 15 v 11 m -4 -4 4 4 4 -4"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/deep-pool.svg"
+    },
+    {
+      "id": "waterfall",
+      "label": "Waterfall",
+      "description": "Water flowing over a vertical edge.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 4 h 5 q 5 0 5 7 v 10 q 0 7 7 7 M 12 3 q 6 0 6 9 v 8 q 0 6 6 7 M 20 3 q 4 4 4 12 v 5 q 0 5 5 5"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/waterfall.svg"
+    },
+    {
+      "id": "natural-slide",
+      "label": "Natural slide",
+      "description": "Sloping rock chute carrying water.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 6 h 5 q 5 0 8 9 t 13 9 M 3 12 q 5 -1 8 7 t 13 10 M 14 5 q 5 3 7 9 t 8 5"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/natural-slide.svg"
+    },
+    {
+      "id": "siphon",
+      "label": "Siphon",
+      "description": "Submerged passage beneath a rock roof.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 4 h 17 l 9 8 v 7 h -9 v -9 H 3 M 8 14 l 4 3 -4 3"
+        },
+        {
+          "d": "M 4 21 q 3 -3 6 0 t 6 0 t 6 0 t 6 0 M 4 26 q 3 -3 6 0 t 6 0 t 6 0 t 6 0"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/siphon.svg"
+    },
+    {
+      "id": "swim",
+      "label": "Swim",
+      "description": "Swimming section.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 21 14 a 3 3 0 1 0 6 0 a 3 3 0 1 0 -6 0"
+        },
+        {
+          "d": "M 6 18 l 7 -5 5 4 M 13 13 l 4 -8 6 2"
+        },
+        {
+          "d": "M 4 21 q 3 -3 6 0 t 6 0 t 6 0 t 6 0 M 4 26 q 3 -3 6 0 t 6 0 t 6 0 t 6 0"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/swim.svg"
+    },
+    {
+      "id": "shallow-pool",
+      "label": "Shallow pool",
+      "description": "Pool explicitly described as shallow; no numeric depth is implied.",
+      "origin": "vrl-extension",
+      "paths": [
+        {
+          "d": "M 3 8 v 16 q 13 5 26 0 V 8 M 5 17 q 3 -3 6 0 t 6 0 t 6 0 M 13 12 h 6"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/shallow-pool.svg"
+    },
+    {
+      "id": "dry-pool",
+      "label": "Dry pool",
+      "description": "Dry basin with no water shown.",
+      "origin": "vrl-extension",
+      "paths": [
+        {
+          "d": "M 3 8 v 13 q 13 13 26 0 V 8 M 9 25 l 5 -5 3 4 5 -3"
+        }
+      ],
+      "category": "aquatic-obstacles",
+      "asset": "svg/dry-pool.svg"
+    },
+    {
+      "id": "narrow-section",
+      "label": "Narrow section",
+      "description": "Constricted canyon passage.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 3 h 7 l 4 10 -3 8 2 8 H 3 M 29 3 h -7 l -4 10 3 8 -2 8 h 10"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/narrow-section.svg"
+    },
+    {
+      "id": "open-canyon",
+      "label": "Open canyon",
+      "description": "Wide canyon passage.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 3 h 3 l 3 12 -2 14 H 3 M 29 3 h -3 l -3 12 2 14 h 4"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/open-canyon.svg"
+    },
+    {
+      "id": "boulder-field",
+      "label": "Boulder field",
+      "description": "Accumulation of boulders or rock chaos.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 17 10 14 15 21 11 28 3 26 Z M 17 15 22 12 29 18 27 25 19 27 15 22 Z M 9 4 16 3 19 9 14 13 7 10 Z"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/boulder-field.svg"
+    },
+    {
+      "id": "exposed-traverse",
+      "label": "Exposed traverse",
+      "description": "Traverse above a drop.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 25 26 16 v 13 M 14 12 l -3 7 7 1 3 5 M 11 19 l -5 6 M 14 12 l 6 3 6 -5"
+        },
+        {
+          "d": "M 13 6 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/exposed-traverse.svg"
+    },
+    {
+      "id": "cave-tunnel",
+      "label": "Cave or tunnel",
+      "description": "Passage through a cave or tunnel.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 28 C 4 2 28 2 29 28 H 22 C 23 12 9 12 10 28 Z"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/cave-tunnel.svg"
+    },
+    {
+      "id": "natural-bridge",
+      "label": "Natural bridge",
+      "description": "Rock bridge spanning an opening.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 7 q 13 4 26 0 v 21 h -7 c 0 -16 -12 -16 -12 0 H 3 Z"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/natural-bridge.svg"
+    },
+    {
+      "id": "log-jam",
+      "label": "Log jam",
+      "description": "Accumulated logs obstructing the channel.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 5 28 24 25 28 2 9 Z M 19 4 23 6 9 29 5 26 Z M 3 20 l 26 -8 1 4 -26 8 Z"
+        }
+      ],
+      "category": "terrain-features",
+      "asset": "svg/log-jam.svg"
+    },
+    {
+      "id": "bolt",
+      "label": "Bolt",
+      "description": "Bolt and hanger; condition and strength are unspecified.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 12 7 a 4 4 0 1 0 8 0 a 4 4 0 1 0 -8 0"
+        },
+        {
+          "d": "M 10 23 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0"
+        },
+        {
+          "d": "M 13 11 v 6 M 19 11 v 6"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/bolt.svg"
+    },
+    {
+      "id": "natural-anchor",
+      "label": "Natural anchor",
+      "description": "Sling around a natural feature; suitability is unspecified.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 5 22 9 7 17 4 25 13 28 24 Z M 6 17 q 10 8 20 0 M 11 22 v 5 q 5 4 10 0 v -5"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/natural-anchor.svg"
+    },
+    {
+      "id": "rock-horn",
+      "label": "Rock horn",
+      "description": "Rock horn available as an anchor feature.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 27 Q 12 20 10 4 Q 20 8 19 19 L 26 13 Q 30 26 22 28 Z M 8 21 q 10 7 18 0"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/rock-horn.svg"
+    },
+    {
+      "id": "tree",
+      "label": "Tree",
+      "description": "Tree anchor feature; condition is unspecified.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 9 11 h 4 l -7 8 h 8 v 9 h 4 v -9 h 8 l -7 -8 h 4 Z"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/tree.svg"
+    },
+    {
+      "id": "boulder",
+      "label": "Boulder",
+      "description": "Single boulder anchor feature.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 23 7 11 17 5 27 13 29 25 20 28 7 27 Z M 7 19 q 10 8 21 -1"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/boulder.svg"
+    },
+    {
+      "id": "rappel-station",
+      "label": "Rappel station",
+      "description": "Two connected anchor points and a master point.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 6 a 3 3 0 1 0 6 0 a 3 3 0 1 0 -6 0"
+        },
+        {
+          "d": "M 23 6 a 3 3 0 1 0 6 0 a 3 3 0 1 0 -6 0"
+        },
+        {
+          "d": "M 13 26 a 3 3 0 1 0 6 0 a 3 3 0 1 0 -6 0"
+        },
+        {
+          "d": "M 7 9 16 23 25 9 M 9 6 q 7 5 14 0"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/rappel-station.svg"
+    },
+    {
+      "id": "fixed-rope",
+      "label": "Fixed rope",
+      "description": "Rope fixed between two points.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 2 23 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        },
+        {
+          "d": "M 26 7 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        },
+        {
+          "d": "M 4 25 v 4 M 28 9 v 6 M 6 22 Q 24 23 27 9"
+        }
+      ],
+      "category": "anchors-equipment",
+      "asset": "svg/fixed-rope.svg"
+    },
+    {
+      "id": "falling-rocks",
+      "label": "Falling rocks",
+      "description": "Potential falling rock hazard.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 15 11 18 10 20 13 17 15 Z M 11 18 15 17 17 21 13 23 Z M 22 19 l 3 5 M 9 24 h 2"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/falling-rocks.svg"
+    },
+    {
+      "id": "flash-flood-risk",
+      "label": "Flash flood risk",
+      "description": "Potential sudden rise in water level.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 16 21 V 12 m -3 3 3 -3 3 3 M 8 24 q 2 -2 4 0 t 4 0 t 4 0 t 4 0"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/flash-flood-risk.svg"
+    },
+    {
+      "id": "slippery",
+      "label": "Slippery",
+      "description": "Slippery footing hazard.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 16.5 11 a 1.5 1.5 0 1 0 3 0 a 1.5 1.5 0 1 0 -3 0"
+        },
+        {
+          "d": "M 16 15 l -5 2 7 3 5 -2 M 18 20 l -4 5 M 14 16 l 5 -1 M 7 25 h 3"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/slippery.svg"
+    },
+    {
+      "id": "strong-current",
+      "label": "Strong current",
+      "description": "Strong or swift water current.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 8 24 q 2 -2 4 0 t 4 0 t 4 0 t 4 0 M 9 20 h 13 m -4 -3 4 3 -4 3 M 13 15 h 6"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/strong-current.svg"
+    },
+    {
+      "id": "undercut",
+      "label": "Undercut",
+      "description": "Water extending beneath an undercut rock wall.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 16 10 l 6 12 h -6 v -7 h -4 M 8 25 q 2 -2 4 0 t 4 0 t 4 0 t 4 0"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/undercut.svg"
+    },
+    {
+      "id": "poor-anchor",
+      "label": "Poor anchor",
+      "description": "Reported anchor concern requiring explicit route notes.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 14 13 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        },
+        {
+          "d": "M 16 15 v 3 l -3 2 M 19 20 l -3 2 v 3 M 10 16 22 24"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/poor-anchor.svg"
+    },
+    {
+      "id": "lightning-risk",
+      "label": "Lightning risk",
+      "description": "Potential lightning hazard.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 18 9 12 18 h 5 l -2 7 7 -11 h -6 Z"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/lightning-risk.svg"
+    },
+    {
+      "id": "warning",
+      "label": "Warning",
+      "description": "Unspecified hazard; consult the accompanying route text.",
+      "origin": "vrl-extension",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 16 12 v 7"
+        },
+        {
+          "d": "M 15.25 24 a 0.75 0.75 0 1 0 1.5 0 a 0.75 0.75 0 1 0 -1.5 0"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/warning.svg"
+    },
+    {
+      "id": "snake",
+      "label": "Snake hazard",
+      "description": "VRL tropical extension: reported snake presence.",
+      "origin": "vrl-extension",
+      "paths": [
+        {
+          "d": "M 16 3 30 28 H 2 Z"
+        },
+        {
+          "d": "M 10 24 c 12 0 12 -5 5 -5 s -4 -7 4 -5 M 19 14 l 2 -2"
+        }
+      ],
+      "category": "hazards-warnings",
+      "asset": "svg/snake.svg"
+    },
+    {
+      "id": "sunny",
+      "label": "Sunny",
+      "description": "Sunny conditions.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 10 16 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0"
+        },
+        {
+          "d": "M 16 2 v 4 M 16 26 v 4 M 2 16 h 4 M 26 16 h 4 M 6 6 l 3 3 M 23 23 l 3 3 M 6 26 l 3 -3 M 23 9 l 3 -3"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/sunny.svg"
+    },
+    {
+      "id": "cloudy",
+      "label": "Cloudy",
+      "description": "Cloud cover.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 8 21 a 5 5 0 0 1 -1 -10 a 8 8 0 0 1 15 -2 a 6 6 0 0 1 2 12 Z"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/cloudy.svg"
+    },
+    {
+      "id": "rain",
+      "label": "Rain",
+      "description": "Rain conditions.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 8 21 a 5 5 0 0 1 -1 -10 a 8 8 0 0 1 15 -2 a 6 6 0 0 1 2 12 Z"
+        },
+        {
+          "d": "M 10 25 l -2 4 M 18 25 l -2 4 M 26 25 l -2 4"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/rain.svg"
+    },
+    {
+      "id": "snow-ice",
+      "label": "Snow or ice",
+      "description": "Snow or ice conditions.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 2 v 28 M 4 9 28 23 M 4 23 28 9 M 12 4 l 4 4 4 -4 M 12 28 l 4 -4 4 4 M 4 14 l 6 -1 -1 -6 M 23 25 l -1 -6 6 -1 M 4 18 l 6 1 -1 6 M 23 7 l -1 6 6 1"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/snow-ice.svg"
+    },
+    {
+      "id": "cold",
+      "label": "Cold",
+      "description": "Cold conditions; no measured temperature is implied.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 10 20 V 6 a 4 4 0 0 1 8 0 v 14 a 6 6 0 1 1 -8 0 M 14 17 v 7 M 23 8 h 6"
+        },
+        {
+          "d": "M 12 24 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/cold.svg"
+    },
+    {
+      "id": "hot",
+      "label": "Hot",
+      "description": "Hot conditions; no measured temperature is implied.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 10 20 V 6 a 4 4 0 0 1 8 0 v 14 a 6 6 0 1 1 -8 0 M 14 9 v 15 M 23 8 h 6 M 26 5 v 6"
+        },
+        {
+          "d": "M 12 24 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/hot.svg"
+    },
+    {
+      "id": "vegetation",
+      "label": "Vegetation",
+      "description": "Vegetation along the route.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 16 29 Q 1 24 3 5 Q 17 8 16 23 Q 17 8 29 5 Q 31 24 16 29 M 8 12 16 29 24 12"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/vegetation.svg"
+    },
+    {
+      "id": "wildlife",
+      "label": "Wildlife",
+      "description": "Wildlife presence.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 2.5 14 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0"
+        },
+        {
+          "d": "M 9.5 7 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0"
+        },
+        {
+          "d": "M 18.5 7 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0"
+        },
+        {
+          "d": "M 25.5 14 a 2.5 2.5 0 1 0 5 0 a 2.5 2.5 0 1 0 -5 0"
+        },
+        {
+          "d": "M 16 16 c -4 0 -4 4 -7 6 s -1 7 3 6 q 4 -2 8 0 c 4 1 6 -4 3 -6 s -3 -6 -7 -6 Z"
+        }
+      ],
+      "category": "environment-conditions",
+      "asset": "svg/wildlife.svg"
+    },
+    {
+      "id": "start",
+      "label": "Start",
+      "description": "Route start or entrance.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"
+        },
+        {
+          "d": "M 13 10 22 16 13 22 Z"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/start.svg"
+    },
+    {
+      "id": "finish",
+      "label": "Finish",
+      "description": "Route finish or exit.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"
+        },
+        {
+          "d": "M 11 11 h 10 v 10 H 11 Z"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/finish.svg"
+    },
+    {
+      "id": "waypoint",
+      "label": "Waypoint",
+      "description": "Identified point on a route.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"
+        },
+        {
+          "d": "M 12 16 a 4 4 0 1 0 8 0 a 4 4 0 1 0 -8 0"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/waypoint.svg"
+    },
+    {
+      "id": "distance",
+      "label": "Distance",
+      "description": "Distance measurement; value and unit supplied separately.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 h 26 M 8 11 l -5 5 5 5 M 24 11 l 5 5 -5 5 M 12 13 v 6 M 20 13 v 6"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/distance.svg"
+    },
+    {
+      "id": "elevation-change",
+      "label": "Elevation change",
+      "description": "Vertical elevation difference; value and unit supplied separately.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 10 28 V 4 m -5 5 5 -5 5 5 M 22 4 v 24 m -5 -5 5 5 5 -5"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/elevation-change.svg"
+    },
+    {
+      "id": "time",
+      "label": "Time",
+      "description": "Duration or time; value supplied separately.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"
+        },
+        {
+          "d": "M 16 8 v 8 l 6 4"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/time.svg"
+    },
+    {
+      "id": "note",
+      "label": "Note",
+      "description": "Additional route information.",
+      "origin": "vrl-extension",
+      "paths": [
+        {
+          "d": "M 4 16 a 12 12 0 1 0 24 0 a 12 12 0 1 0 -24 0"
+        },
+        {
+          "d": "M 15 9 a 1 1 0 1 0 2 0 a 1 1 0 1 0 -2 0"
+        },
+        {
+          "d": "M 13 15 h 3 v 9 M 12 24 h 8"
+        }
+      ],
+      "category": "route-information",
+      "asset": "svg/note.svg"
+    },
+    {
+      "id": "difficulty-easy",
+      "label": "Illustrative difficulty: easy",
+      "description": "Illustrative level 1 of 5, not an official canyon grade or hazard severity.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0"
+        },
+        {
+          "d": "M 8 21 v -10"
+        }
+      ],
+      "illustrativeLevel": 1,
+      "category": "difficulty",
+      "asset": "svg/difficulty-easy.svg"
+    },
+    {
+      "id": "difficulty-moderate",
+      "label": "Illustrative difficulty: moderate",
+      "description": "Illustrative level 2 of 5, not an official canyon grade or hazard severity.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0"
+        },
+        {
+          "d": "M 8 21 v -10"
+        },
+        {
+          "d": "M 12 21 v -10"
+        }
+      ],
+      "illustrativeLevel": 2,
+      "category": "difficulty",
+      "asset": "svg/difficulty-moderate.svg"
+    },
+    {
+      "id": "difficulty-difficult",
+      "label": "Illustrative difficulty: difficult",
+      "description": "Illustrative level 3 of 5, not an official canyon grade or hazard severity.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0"
+        },
+        {
+          "d": "M 8 21 v -10"
+        },
+        {
+          "d": "M 12 21 v -10"
+        },
+        {
+          "d": "M 16 21 v -10"
+        }
+      ],
+      "illustrativeLevel": 3,
+      "category": "difficulty",
+      "asset": "svg/difficulty-difficult.svg"
+    },
+    {
+      "id": "difficulty-very-difficult",
+      "label": "Illustrative difficulty: very difficult",
+      "description": "Illustrative level 4 of 5, not an official canyon grade or hazard severity.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0"
+        },
+        {
+          "d": "M 8 21 v -10"
+        },
+        {
+          "d": "M 12 21 v -10"
+        },
+        {
+          "d": "M 16 21 v -10"
+        },
+        {
+          "d": "M 20 21 v -10"
+        }
+      ],
+      "illustrativeLevel": 4,
+      "category": "difficulty",
+      "asset": "svg/difficulty-very-difficult.svg"
+    },
+    {
+      "id": "difficulty-extreme",
+      "label": "Illustrative difficulty: extreme",
+      "description": "Illustrative level 5 of 5, not an official canyon grade or hazard severity.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0"
+        },
+        {
+          "d": "M 8 21 v -10"
+        },
+        {
+          "d": "M 12 21 v -10"
+        },
+        {
+          "d": "M 16 21 v -10"
+        },
+        {
+          "d": "M 20 21 v -10"
+        },
+        {
+          "d": "M 24 21 v -10"
+        }
+      ],
+      "illustrativeLevel": 5,
+      "category": "difficulty",
+      "asset": "svg/difficulty-extreme.svg"
+    },
+    {
+      "id": "rappel-line",
+      "label": "Rappel line",
+      "description": "Dashed rope line; apply the lineStyle metadata to a diagram path.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 H 29"
+        }
+      ],
+      "lineStyle": {
+        "strokeWidth": 2,
+        "strokeDasharray": "6 3",
+        "strokeLinecap": "butt"
+      },
+      "category": "diagram-line-styles",
+      "asset": "svg/rappel-line.svg"
+    },
+    {
+      "id": "water-flow-line",
+      "label": "Water flow line",
+      "description": "Dash-dot water-flow line; direction must be indicated by the diagram.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 H 29"
+        }
+      ],
+      "lineStyle": {
+        "strokeWidth": 2,
+        "strokeDasharray": "6 3 1 3",
+        "strokeLinecap": "round"
+      },
+      "category": "diagram-line-styles",
+      "asset": "svg/water-flow-line.svg"
+    },
+    {
+      "id": "approach-trail-line",
+      "label": "Approach trail line",
+      "description": "Dotted approach trail.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 H 29"
+        }
+      ],
+      "lineStyle": {
+        "strokeWidth": 2,
+        "strokeDasharray": "1 4",
+        "strokeLinecap": "round"
+      },
+      "category": "diagram-line-styles",
+      "asset": "svg/approach-trail-line.svg"
+    },
+    {
+      "id": "escape-route-line",
+      "label": "Escape route line",
+      "description": "Long-dash escape route; route availability must be documented separately.",
+      "origin": "poster-taxonomy",
+      "paths": [
+        {
+          "d": "M 3 16 H 29"
+        }
+      ],
+      "lineStyle": {
+        "strokeWidth": 2,
+        "strokeDasharray": "10 4",
+        "strokeLinecap": "butt"
+      },
+      "category": "diagram-line-styles",
+      "asset": "svg/escape-route-line.svg"
+    }
+  ],
+  "semanticMappings": {
+    "elements": {
+      "start": "start",
+      "exit": "finish",
+      "walk": "walk",
+      "rappel": "rappel",
+      "downclimb": "downclimb",
+      "climb": "climb",
+      "pool": "pool",
+      "hazard": "warning",
+      "note": "note"
+    },
+    "subtypes": {
+      "pool": {
+        "deep": "deep-pool",
+        "shallow": "shallow-pool",
+        "swimmer": "swim",
+        "dry": "dry-pool",
+        "unknown": "pool"
+      },
+      "hazard": {
+        "falling_rocks": "falling-rocks",
+        "flash_flood": "flash-flood-risk",
+        "flash_flood_risk": "flash-flood-risk",
+        "slippery": "slippery",
+        "swift_water": "strong-current",
+        "strong_current": "strong-current",
+        "undercut": "undercut",
+        "poor_anchor": "poor-anchor",
+        "lightning": "lightning-risk",
+        "lightning_risk": "lightning-risk",
+        "snake": "snake",
+        "snakes": "snake",
+        "snake_area": "snake",
+        "snake_dense_area": "snake",
+        "serpent": "snake",
+        "serpents": "snake",
+        "serpiente": "snake",
+        "serpientes": "snake"
+      }
+    },
+    "attributes": {
+      "anchor": {
+        "bolts": "bolt",
+        "natural": "natural-anchor",
+        "tree": "tree"
+      },
+      "landing": {
+        "pool": "pool",
+        "chaos": "boulder-field",
+        "gallery": "cave-tunnel",
+        "trail": "walk"
+      }
+    }
+  }
+}

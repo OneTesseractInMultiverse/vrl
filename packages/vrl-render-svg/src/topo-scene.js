@@ -1,3 +1,4 @@
+import { contourObstacles } from "./annotation-icons.js";
 import { prepareSoftTerrain, prepareSoftPools } from "./soft-terrain-geometry.js";
 import { softTerrainText } from "./soft-terrain-text.js";
 import { resolveSvgIdentifiers } from "./svg-identifiers.js";
@@ -29,9 +30,26 @@ export function computeTopoScene(route, layout, options = {}) {
   const style = options.style ?? "classic";
   const terrain = style === "soft-terrain" ? prepareSoftTerrain(layout) : null;
   const pools = style === "soft-terrain" ? prepareSoftPools(layout) : [];
-  const nodes = prepareNodes(layout, language, options.symbology, style);
   const segments = prepareRouteSegments(layout, language, style);
   const segmentLabels = prepareSegmentLabels(layout);
+  const obstacles = [...layout.nodes.map(/**
+   * Reserve the node symbol, station ticks, anchor marks and their clearance strokes.
+   * @responsibility computation
+   * @param {Object} node - Positioned route node supplying the symbol origin.
+   * @returns {Object} Conservative node envelope in scene coordinates.
+   */ node => bounds(node.x - 44, node.y - 32, node.x + 40, node.y + 32)),
+    ...segmentLabels.map(/**
+     * Reserve the measured envelope of a centered technical segment label.
+     * @responsibility computation
+     * @param {Object} item - Prepared segment text and its centered baseline coordinates.
+     * @returns {Object} Conservative text bounds at the rendered ten-unit font size.
+     */ item => textBounds(item.text, item.x, item.y, 10, "middle")), ...segmentBounds(segments), ...contourObstacles(terrain?.contourPoints ?? []), ...pools.map(/**
+   * Read the complete prepared pool envelope for annotation clearance.
+   * @responsibility computation
+   * @param {Object} pool - Prepared pool shape with its owner and complete bounds.
+   * @returns {Object} Existing complete pool envelope, including its stroke.
+   */ pool => pool.bounds)];
+  const nodes = prepareNodes(layout, language, options.symbology, style, options.symbols, obstacles);
   const contentBounds = unionBounds([
     (terrain?.bounds ?? terrainBounds(layout)), ...pools.map(/**
      * Project pool.bounds from the current record.
@@ -47,7 +65,7 @@ export function computeTopoScene(route, layout, options = {}) {
      */ (item) => textBounds(item.text, item.x, item.y, 10, "middle"))
   ]);
   const infoBox = prepareInfoBox(route, layout, language, contentBounds.minY - 160);
-  const legend = options.legend === false ? null : prepareLegend({ ...layout, height: Math.max(layout.height, contentBounds.maxY + 12) }, language, options.symbology, style);
+  const legend = options.legend === false ? null : prepareLegend({ ...layout, height: Math.max(layout.height, contentBounds.maxY + 12) }, language, options.symbology, style, options.symbols);
   const sceneBounds = unionBounds([contentBounds, infoBox.bounds, ...(legend === null ? [] : [legend.bounds])]);
   return { style, terrain, pools, identifiers, language, title: `${route.name} ${diagramText(language).topo}`, description: sceneDescription(route, layout, language) + (style === "soft-terrain" ? ` ${softTerrainText(language).schematic}` : ""),
     nodes, segments, segmentLabels, terrainPath: terrainProfilePath(layout), waterPaths: prepareWaterSegments(layout), stationTicks: prepareStationTicks(layout),
@@ -86,6 +104,7 @@ function nodeBounds(nodes) {
     // Symbols, pool curves, station ticks, anchor marks, and their clearance strokes.
     bounds(node.x - 44, node.y - 32, node.x + 40, node.y + 32),
     ...symbolTextBounds(drawing.marker),
+    ...(drawing.annotationSlot === undefined || drawing.annotationSlot === null ? [] : [drawing.annotationSlot.bounds]),
     textBounds(drawing.title, drawing.titleX, drawing.titleY, 11),
     ...anchorOverflowBounds(drawing.anchors),
     ...drawing.details.flatMap(/**
