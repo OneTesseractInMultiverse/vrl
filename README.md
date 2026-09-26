@@ -58,6 +58,8 @@ npm install @subvertic/sveltekit @sveltejs/kit svelte
 - [API reference](docs/api-reference.md)
 - [AST and normalized domain contracts](docs/domain-model.md)
 - [Language reference](docs/language-reference.md)
+- [Executable language examples](docs/language-examples.md)
+- [Documentation contract maintenance](docs/documentation-contracts.md)
 - [Architecture](docs/architecture.md)
 - [Rendering scenes and badge semantics](docs/rendering-scene.md)
 - [Behavioral verification and test replay](docs/testing.md)
@@ -224,7 +226,7 @@ Pipeline: VRL source -> parser -> AST plus diagnostics -> validator -> normalize
 
 ## Testing Strategy
 
-Tests use Node's built-in test runner and coverage thresholds, organized into executable domain, parsing, compilation, layout, serialization, adapter, and tooling suites. Seeded cases check observable invariants and precise failures; selected mutations verify that those assertions detect broken behavior. See [behavioral verification](docs/testing.md) for suite selection, replay commands, oracles, and limits. Workspace tests are self-contained and do not require network access, browsers, databases, secrets, or local configuration. Separate CI jobs build packed React/Svelte/SvelteKit applications and verify SSR, hydration and updates in an installed Chromium browser across the [framework/runtime matrix](docs/framework-compatibility.md). Preparation downloads locked dependencies and the browser; test execution uses only an owned local server. Each test function contains exactly one assertion. Documentation route snippets are validated through the same parser and compiler path used by library consumers.
+Tests use Node's built-in test runner and coverage thresholds, organized into executable domain, parsing, compilation, layout, serialization, adapter, and tooling suites. Seeded cases check observable invariants and precise failures; selected mutations verify that those assertions detect broken behavior. See [behavioral verification](docs/testing.md) for suite selection, replay commands, oracles, and limits. Workspace tests are self-contained and do not require network access, browsers, databases, secrets, or local configuration. Separate CI jobs build packed React/Svelte/SvelteKit applications and verify SSR, hydration and updates in an installed Chromium browser across the [framework/runtime matrix](docs/framework-compatibility.md). Preparation downloads locked dependencies and the browser; test execution uses only an owned local server. Each test function contains exactly one assertion. Every tagged VRL fence in root, guide and package Markdown is extracted automatically and checked through the public compiler against reviewed model facts, exact diagnostics and physical geometry. Complete documents, explicit fragments and deliberate failures have separate contracts; normative language tables are compared with their domain owners. Run `npm run check:docs` for focused feedback. See [documentation contracts](docs/documentation-contracts.md) for the scope and review workflow.
 
 Run:
 
@@ -243,7 +245,7 @@ npm run coverage
 
 ## Minimal Example
 
-```vrl
+```vrl example=readme-canyon kind=document
 route "Quebrada Gata"
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m total_descent=200m total_distance=1300m
 start "Quebrada Pilas entrance"
@@ -256,9 +258,9 @@ hazard type=swift_water severity=high note="Dry-season weather window recommende
 exit "Old metal ladder"
 ```
 
-Expressive descent attributes are ordinary `key=value` fields, so existing files remain compatible:
+Expressive descent attributes are ordinary `key=value` fields, so existing files remain compatible. The following fragment is checked after an explicit `route "Documentation fragment"` header:
 
-```vrl
+```vrl example=readme-technical kind=fragment
 rappel "R1" height=28m rope=60m traverse=80m anchor=bolts anchor_count=2 station=left landing=pool flow=medium shape=ladder inclination=90%
 downclimb "D1" height=3m exposure=medium anchor_count=1 station=right landing=pool shape=ladder inclination=60%
 climb "C1" height=5m exposure=medium station=right landing=trail shape=ladder inclination=55%

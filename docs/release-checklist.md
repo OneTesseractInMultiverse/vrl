@@ -8,7 +8,7 @@ Use this checklist before publishing npm packages.
 4. Run `make ci`.
 5. Prepare the release version with `make release-prepare RELEASE=patch`, `make release-prepare RELEASE=minor`, or `make release-prepare VERSION=0.2.0`.
 6. Update `CHANGELOG.md`.
-7. Run `make check` (test policy, consumer types, behavioral coverage, selected mutation probes, package contents, and isolated tarball consumer), and require the [framework consumer matrix](framework-compatibility.md) to pass for the release commit. Review the [contract inventory and revision policy](public-contracts.md) for API/data compatibility, preserve older fixtures, and document any migration.
+7. Run `make check` (test policy, consumer types, behavioral coverage, selected mutation probes, package contents, and isolated tarball consumer), and require the [framework consumer matrix](framework-compatibility.md) to pass for the release commit. Review changed language/API examples and their [executable expectations](documentation-contracts.md), including deliberate failures and any migration. Review the [contract inventory and revision policy](public-contracts.md) for API/data compatibility, preserve older fixtures, and document any migration.
 8. Run `make publish-dry-run`.
 9. Review generated package file lists from the dry run.
 10. Commit the version, lockfile, changelog, and documentation updates.

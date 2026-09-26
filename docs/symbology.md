@@ -44,9 +44,9 @@ https://fedme.es/barranquismo/
 
 ## Tropical Extension
 
-VRL adds one non-federation extension for tropical canyons:
+VRL adds one non-federation extension for tropical canyons. This fragment is checked after a `route "Documentation fragment"` header; its hazards are annotations and create no physical traversal:
 
-```vrl
+```vrl example=tropical-hazards kind=fragment
 hazard type=snake severity=medium note="Potential snake area"
 hazard type=snake_dense_area severity=high note="Dense snake area"
 ```

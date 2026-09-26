@@ -4,6 +4,10 @@ This project follows Semantic Versioning once public releases begin.
 
 ## 0.1.0 - Unreleased
 
+- Extract all tagged VRL fences in repository documentation and verify complete documents, explicit fragments and deliberate failures against reviewed model, diagnostic and physical-geometry expectations. Source fingerprints and inventory checks reject stale or missing examples.
+- Make normative budget, numeric-range, enum-context and ID-prefix tables executable checks against domain policies. Document failure examples, trust/compatibility boundaries and the explicit progression needed by the measured metadata fragment.
+- Add focused documentation checks and contributor/release guidance while preserving runtime APIs, package dependencies and the configured coverage target.
+
 - Add locked, isolated framework consumers of all six packed packages. Verify React 18/19 and Svelte 4/5 with SvelteKit production builds, SSR, browser hydration, updates, asynchronous loads and precise failure output.
 - Exercise the declared Node 20.0.0 package floor and current LTS/current runtimes with strict peers and engines. Reject unsupported framework peers and invalid package entries; retain the separate workspace quality gate and JavaScript coverage target.
 - Document the exact compatibility matrix, setup versus offline execution, verification limits and fixture maintenance. Keep browser/build tooling outside published runtime packages.

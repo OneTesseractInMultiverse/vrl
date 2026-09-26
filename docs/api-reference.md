@@ -1,5 +1,7 @@
 # API Reference
 
+Language examples are [executable contracts](documentation-contracts.md): complete documents, explicit fragments and deliberate failures compare normalized facts, located diagnostics and physical traversal. See the [success/failure examples](language-examples.md); public API and declaration compatibility remain governed by the [contract revision policy](public-contracts.md).
+
 See the [public API classifications, typed contracts, and revision policy](public-contracts.md).
 
 VRL is split into small packages so consumers can choose the layer they need. The core package is framework-free. Renderers and framework adapters depend inward on the core.

@@ -1,0 +1,1386 @@
+{
+  "readme-canyon": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "geometry",
+          "warning",
+          "VRL_GEOMETRY_ELEVATIONS_ESTIMATED",
+          2,
+          118
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Quebrada Gata",
+        "/model/extensions/country": "Costa Rica",
+        "/model/metadata/total_descent": {
+          "value": 200,
+          "unit": "m",
+          "meters": 200
+        },
+        "/model/metadata/total_distance": {
+          "value": 1300,
+          "unit": "m",
+          "meters": 1300
+        },
+        "/model/elements/0/label": "Quebrada Pilas entrance",
+        "/model/elements/2/attributes/height": {
+          "value": 28,
+          "unit": "m",
+          "meters": 28
+        },
+        "/model/elements/2/attributes/rope": {
+          "value": 60,
+          "unit": "m",
+          "meters": 60
+        },
+        "/model/elements/2/attributes/inclination/percent": 90,
+        "/model/elements/3/attributes/inclination/percent": 85,
+        "/model/elements/5/extensions/note": "Catarata Celestial",
+        "/model/elements/6/extensions/type": "swift_water"
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "W1",
+          "R1",
+          "R2",
+          "W2",
+          "R4",
+          "E1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -25.2
+          ],
+          [
+            "R2",
+            "down",
+            -23.8
+          ],
+          [
+            "R4",
+            "down",
+            -18
+          ]
+        ],
+        "annotations": [
+          [
+            "H1",
+            6
+          ]
+        ],
+        "endpoints": [
+          1300,
+          1100
+        ]
+      }
+    },
+    "sha256": "62417be293095381d7e48d65364842cd2b994767ad2267d94d44a6837393529e"
+  },
+  "readme-technical": {
+    "kind": "fragment",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/traverse": {
+          "value": 80,
+          "unit": "m",
+          "meters": 80
+        },
+        "/model/elements/0/attributes/shape": "ladder",
+        "/model/elements/1/type": "downclimb",
+        "/model/elements/1/attributes/anchor_count": "1",
+        "/model/elements/2/type": "climb",
+        "/model/elements/2/attributes/landing": "trail"
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          "D1",
+          null,
+          "C1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -25.2
+          ],
+          [
+            "D1",
+            "down",
+            -1.7999999999999998
+          ],
+          [
+            "C1",
+            "up",
+            2.75
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "prefix": "route \"Documentation fragment\"\n",
+    "sha256": "09754e1a370134ab60acd55221ae2ea35560d2483da9d4aa0400d7550559b094"
+  },
+  "quoted-text": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Cañón #1",
+        "/model/extensions/description": "Marker A=B; path A\\B",
+        "/model/elements/0/label": "A=B",
+        "/model/elements/1/attributes/distance": {
+          "value": 1,
+          "unit": "m",
+          "meters": 1
+        },
+        "/model/elements/1/extensions/note": "Use the \"left\" bank # marked",
+        "/model/elements/2/extensions/text": "  Preserve these spaces  "
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "W1",
+          "E1"
+        ],
+        "technical": [],
+        "annotations": [
+          [
+            "N1",
+            1
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "775a3692ce562655a9f7193e410786bbe20ec15182c142edca96af2170aff7a5"
+  },
+  "metadata-order": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Canyon survey",
+        "/model/extensions": {
+          "country": "Costa Rica",
+          "region": "Bajos del Toro"
+        },
+        "/model/elements/1/attributes/height": {
+          "value": 30,
+          "unit": "m",
+          "meters": 30
+        },
+        "/model/elements/1/attributes/rope": {
+          "value": 60,
+          "unit": "m",
+          "meters": 60
+        }
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "R1",
+          "E1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -30
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "b63f6cf65461e0b06bf648dd0dd51e5370b414251e8a966068cec6aee37f1a5f"
+  },
+  "route-name": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Quebrada Gata",
+        "/model/elements": [],
+        "/model/metadata": {},
+        "/model/extensions": {}
+      },
+      "geometry": {
+        "points": [],
+        "technical": [],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "38f5f48625547b50f9be60c19e3f294a02b42e6eb829fc478ca595a105f67add"
+  },
+  "metadata-header": {
+    "kind": "fragment",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "geometry",
+          "warning",
+          "VRL_GEOMETRY_ELEVATIONS_ESTIMATED",
+          3,
+          92
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/extensions": {
+          "country": "Costa Rica",
+          "region": "Bajos del Toro",
+          "difficulty": "V3 A4 III",
+          "descent_time": "5-7h",
+          "season": "December-May"
+        },
+        "/model/metadata": {
+          "entrance_elevation": {
+            "value": 1300,
+            "unit": "m",
+            "meters": 1300
+          },
+          "exit_elevation": {
+            "value": 1100,
+            "unit": "m",
+            "meters": 1100
+          }
+        }
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "W1",
+          "E1"
+        ],
+        "technical": [],
+        "annotations": [],
+        "endpoints": [
+          1300,
+          1100
+        ]
+      }
+    },
+    "prefix": "route \"Documentation fragment\"\n",
+    "suffix": "\nstart\nwalk distance=10m\nexit",
+    "sha256": "e6c3253a1766032ab027b07c8739e2187c9b2f3d40838a735ba9d2a099e869ee"
+  },
+  "element-catalog": {
+    "kind": "fragment",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "geometry",
+          "warning",
+          "VRL_GEOMETRY_ELEVATIONS_ESTIMATED",
+          2,
+          118
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/3/attributes/type": "shallow",
+        "/model/elements/4/attributes/exposure": "medium",
+        "/model/elements/5/attributes/inclination/percent": 55,
+        "/model/elements/6/extensions/type": "swift_water",
+        "/model/elements/8/extensions/text": "Low-water route only",
+        "/layout/nodes/8/elevationMeters": 1100
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "W1",
+          "R1",
+          "P1",
+          "D1",
+          null,
+          "C1",
+          "E1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -25.2
+          ],
+          [
+            "D1",
+            "down",
+            -1.7999999999999998
+          ],
+          [
+            "C1",
+            "up",
+            2.75
+          ]
+        ],
+        "annotations": [
+          [
+            "H1",
+            6
+          ],
+          [
+            "N1",
+            7
+          ]
+        ],
+        "endpoints": [
+          1300,
+          1100
+        ]
+      }
+    },
+    "prefix": "route \"Documentation fragment\"\n",
+    "sha256": "857a8d5c364fbaf325af3446c611ebd3140afaf0766303f109d34f613f3b34da"
+  },
+  "identifier-reservation": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/id": "R2",
+        "/model/elements/1/id": "R3",
+        "/model/elements/1/attributes/height": {
+          "value": 5,
+          "unit": "m",
+          "meters": 5
+        }
+      },
+      "geometry": {
+        "points": [
+          "R2",
+          "R3",
+          null
+        ],
+        "technical": [
+          [
+            "R2",
+            "down",
+            -5
+          ],
+          [
+            "R3",
+            "down",
+            -5
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "5c25b567813964af3237a38a640d5b87a7d086de1de06574a2be595c19c85ce5"
+  },
+  "decimal-stages": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/stages": [
+          {
+            "value": 0.1,
+            "unit": "m",
+            "meters": 0.1
+          },
+          {
+            "value": 0.2,
+            "unit": "m",
+            "meters": 0.2
+          }
+        ],
+        "/model/elements/0/attributes/height": {
+          "value": 0.3,
+          "unit": "m",
+          "meters": 0.3
+        },
+        "/model/elements/0/attributes/inclination": {
+          "value": 0.5,
+          "unit": "%",
+          "percent": 0.5
+        },
+        "/model/elements/1/attributes/exposure": "medium"
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null,
+          "C1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -0.0015
+          ],
+          [
+            "C1",
+            "up",
+            2
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "f82e9976acef28b78408098a9e9ec07d00fd07696028151952464bae23cc79db"
+  },
+  "descent-ascent": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/1/attributes/height": {
+          "value": 30,
+          "unit": "m",
+          "meters": 30
+        },
+        "/model/elements/2/attributes/height": {
+          "value": 5,
+          "unit": "m",
+          "meters": 5
+        },
+        "/layout/points/2/elevationMeters": 70,
+        "/layout/nodes/2/elevationMeters": 75
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "R1",
+          null,
+          "C1",
+          "E1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -30
+          ],
+          [
+            "C1",
+            "up",
+            5
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          100,
+          75
+        ]
+      }
+    },
+    "sha256": "9d38d30edb2ace65f79d23d31f4778347220b025f372e0b4842fd56b02b2e0d9"
+  },
+  "annotated-exit": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "geometry",
+          "warning",
+          "VRL_GEOMETRY_ELEVATIONS_ESTIMATED",
+          2,
+          49
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/extensions/text": "Seasonal conditions",
+        "/model/elements/4/extensions/text": "Trail continues left",
+        "/model/elements/5/extensions/type": "swift_water",
+        "/layout/nodes/0/elevationMeters": 100,
+        "/layout/nodes/4/elevationMeters": 0,
+        "/layout/nodes/5/elevationMeters": 0
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "W1",
+          "E1"
+        ],
+        "technical": [],
+        "annotations": [
+          [
+            "N1",
+            0
+          ],
+          [
+            "N2",
+            2
+          ],
+          [
+            "H1",
+            2
+          ]
+        ],
+        "endpoints": [
+          100,
+          0
+        ]
+      }
+    },
+    "sha256": "00e41a75f24a22150174d89ba5f0a8f50978d629bd48d21252ae7fec5c3c604a"
+  },
+  "technical-details": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/stages": [
+          {
+            "value": 10,
+            "unit": "m",
+            "meters": 10
+          },
+          {
+            "value": 20,
+            "unit": "m",
+            "meters": 20
+          }
+        ],
+        "/model/elements/0/attributes/redirection": [
+          {
+            "distance": {
+              "value": 5,
+              "unit": "m",
+              "meters": 5
+            },
+            "side": "left"
+          }
+        ],
+        "/model/elements/0/attributes/shape": "direct"
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -30
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "215d3b65375e4a7583ee6f5f8226eb578c5f44286c2f8c1b093ad579fef58d82"
+  },
+  "anchor-overflow": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/anchor_count": "5",
+        "/model/elements/0/attributes/rope": {
+          "value": 60,
+          "unit": "m",
+          "meters": 60
+        }
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -30
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "72cefb1c54058fa6af8f75b31c0e797da866d21f500d8d563fad9f80f85b45be"
+  },
+  "tropical-hazards": {
+    "kind": "fragment",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/extensions/type": "snake",
+        "/model/elements/0/attributes/severity": "medium",
+        "/model/elements/1/extensions/type": "snake_dense_area",
+        "/model/elements/1/attributes/severity": "high"
+      },
+      "geometry": {
+        "points": [],
+        "technical": [],
+        "annotations": [
+          [
+            "H1",
+            null
+          ],
+          [
+            "H2",
+            null
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "prefix": "route \"Documentation fragment\"\n",
+    "sha256": "b0b4746060c5a70b35042b517fb5b60502d4f52d8d3e4e3972b6eeeb873513e8"
+  },
+  "cosmetic-braces": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Cosmetic",
+        "/model/elements/0/extensions/text": "A=B # inside"
+      },
+      "geometry": {
+        "points": [],
+        "technical": [],
+        "annotations": [
+          [
+            "N1",
+            null
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "22b21f143ad332f055c847da9538c2129627e8c5075a3582a31400ffc587384e"
+  },
+  "unsupported-escape": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "syntax",
+          "error",
+          "VRL_LEX_UNSUPPORTED_ESCAPE",
+          2,
+          10
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "b4065f519a067d25ce1a6e8a511bad84548dc16f038544bebcfbf77c3b1c66c4"
+  },
+  "duplicate-route": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "syntax",
+          "error",
+          "VRL_SYNTAX_DUPLICATE_ROUTE",
+          2,
+          1
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {
+        "/diagnostics/0/relatedLocations/0/location": {
+          "line": 1,
+          "column": 1
+        }
+      },
+      "geometry": null
+    },
+    "sha256": "0ddb8c97db33f8ebaeae8512018d0401bb2fb83c351821ed62013a0271c841d1"
+  },
+  "late-metadata": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "syntax",
+          "error",
+          "VRL_SYNTAX_METADATA_ORDER",
+          3,
+          1
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "81a49e0d2b986dcc33e3c47be9611da02f407f30694c268d12b03472e01fc384"
+  },
+  "duplicate-key": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "syntax",
+          "error",
+          "VRL_SYNTAX_DUPLICATE_ATTRIBUTE",
+          2,
+          18
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {
+        "/diagnostics/0/span": {
+          "start": {
+            "line": 2,
+            "column": 18
+          },
+          "end": {
+            "line": 2,
+            "column": 26
+          }
+        },
+        "/diagnostics/0/relatedLocations/0/location": {
+          "line": 2,
+          "column": 6
+        },
+        "/ast/elements/0/attributes/distance": "1m"
+      },
+      "geometry": null
+    },
+    "sha256": "27a8caae0bd97d2180f7a7c03cd693dee62f1eca133bb0e7ec603a861e805616"
+  },
+  "extension-fields": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/extensions": {
+          "survey_team": "A&B",
+          "flow": "descriptive"
+        },
+        "/model/metadata": {},
+        "/model/elements/1/extensions": {
+          "type": "swift_water",
+          "survey_team": "local"
+        },
+        "/model/elements/1/attributes": {
+          "severity": "high",
+          "flow": "medium"
+        }
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "E1"
+        ],
+        "technical": [],
+        "annotations": [
+          [
+            "H1",
+            0
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "b45cb3ba79b5bf8a4c6459fb02016263818f8ede634421d49d820c129820d6ba"
+  },
+  "invalid-pool-type": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_UNSUPPORTED_VALUE",
+          2,
+          11
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "a38c2f740209347eaead00994a04e80072e8f860ae7277c1c019168dcc6941c3"
+  },
+  "reserved-numeric": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_MEASUREMENT_SYNTAX",
+          2,
+          29
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "cf9dc58aefab81c2dfe9023fd27f920976cb8e8c1f4d6096ada3d514f28d2f2f"
+  },
+  "numeric-boundaries": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/metadata": {
+          "entrance_elevation": {
+            "value": 0,
+            "unit": "m",
+            "meters": 0
+          },
+          "exit_elevation": {
+            "value": -0.000001,
+            "unit": "m",
+            "meters": -0.000001
+          }
+        },
+        "/model/elements/0/attributes/height": {
+          "value": 0.000001,
+          "unit": "m",
+          "meters": 0.000001
+        },
+        "/model/elements/0/attributes/rope": {
+          "value": 1000000000,
+          "unit": "m",
+          "meters": 1000000000
+        },
+        "/model/elements/0/attributes/anchor_count": "9007199254740991",
+        "/model/elements/0/attributes/inclination/percent": 100
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -0.000001
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          0,
+          -0.000001
+        ]
+      }
+    },
+    "sha256": "35bb2924d17e7418fd202c2c20362db3468f37bca7715f775943d52b31ad9776"
+  },
+  "invalid-unit": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_MEASUREMENT_SYNTAX",
+          2,
+          15
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "635db1d4b8c824a80089b0dd075b1cba47c015b37d39d3dab99a281b483a6596"
+  },
+  "invalid-exponent": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_MEASUREMENT_SYNTAX",
+          2,
+          15
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "e006f3c93b6c4697f5e8285d60bb82f3f09b492285329ae786a7c33c319e238b"
+  },
+  "invalid-precision": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_MEASUREMENT_SYNTAX",
+          2,
+          15
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "02f176226c3a7236bc27fee325ab0cdac69c68c72e0049e786a4d4b4bf58c4ce"
+  },
+  "invalid-magnitude": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_MEASUREMENT_SYNTAX",
+          2,
+          15
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "7d158f88f85229a93d434939f74bf6793b128a3520211297ce066ef6c117f693"
+  },
+  "invalid-zero": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_MEASUREMENT_RANGE",
+          2,
+          15
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "b8f2870cdef997680a5cac2a71a182dcf8a21da1d230fbf372e622366e877f8e"
+  },
+  "duplicate-identifier": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_IDENTIFIER_DUPLICATE",
+          3,
+          8
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {
+        "/diagnostics/0/relatedLocations/0/location": {
+          "line": 2,
+          "column": 6
+        }
+      },
+      "geometry": null
+    },
+    "sha256": "9b75c7c8916a26920301c94e8c97536820d0796b1c474a087b18dc162b598c0e"
+  },
+  "progression-after-exit": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "geometry",
+          "error",
+          "VRL_BOUNDARY_ORDER",
+          2,
+          1
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "f9710f923c3b6dee93c97e3381d63d4d03f4130cd6895074b20f734ae5d3277a"
+  },
+  "contradictory-endpoints": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "geometry",
+          "error",
+          "VRL_GEOMETRY_ELEVATIONS_INCONSISTENT",
+          2,
+          49
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "3df87f87e5f8aac1862395a1d7ce24410d4834372600cd16ca85b91bba77b882"
+  },
+  "short-rope-warning": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "validation",
+          "warning",
+          "VRL_ROPE_SHORTER_THAN_HEIGHT",
+          2,
+          24
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/height": {
+          "value": 10,
+          "unit": "m",
+          "meters": 10
+        },
+        "/model/elements/0/attributes/rope": {
+          "value": 5,
+          "unit": "m",
+          "meters": 5
+        }
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -10
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "8756dbb5027b5cb8ff0011b51ef5bb6d4ffc3c46587f861138393534d242b878"
+  },
+  "stage-mismatch-warning": {
+    "kind": "document",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "validation",
+          "warning",
+          "VRL_STAGE_TOTAL_MISMATCH",
+          2,
+          35
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/stages": [
+          {
+            "value": 0.1,
+            "unit": "m",
+            "meters": 0.1
+          },
+          {
+            "value": 0.200001,
+            "unit": "m",
+            "meters": 0.200001
+          }
+        ],
+        "/model/elements/0/attributes/height": {
+          "value": 0.3,
+          "unit": "m",
+          "meters": 0.3
+        }
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -0.3
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    },
+    "sha256": "af8d4b322df9d6295db3e962de25f73ebff6c3ece8a993ee272e33bbfabc3ee5"
+  },
+  "empty-stage": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "validation",
+          "error",
+          "VRL_FIELD_STAGES_SYNTAX",
+          2,
+          35
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "sha256": "d14f63abbad51160cde436b9264e2de72d200308d47fd8cb0f69467efe895332"
+  },
+  "element-budget": {
+    "kind": "invalid",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "limit",
+          "error",
+          "VRL_LIMIT_MAX_ELEMENTS",
+          3,
+          1
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    },
+    "options": {
+      "limits": {
+        "maxElements": 1
+      }
+    },
+    "sha256": "0dc34f142659cf74b2c3bfd0972598dfeeaedf4244def5654dc2464f1b9e8c10"
+  }
+}

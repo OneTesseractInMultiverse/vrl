@@ -20,7 +20,7 @@ flowchart LR
   Implementations --> Domain
 ```
 
-The domain layer has no dependency on framework code, browser APIs, file systems, HTTP clients, storage, or renderer implementations. It receives source text and plain JavaScript values, then returns structured data. Application services coordinate the pure computations without owning parsing rules, validation logic, or drawing logic.
+The domain layer has no dependency on framework code, browser APIs, file systems, HTTP clients, storage, or renderer implementations. The parser adapter receives source text; domain computations receive plain JavaScript records and return structured data. Application services coordinate the pure computations without owning parsing rules, validation logic, or drawing logic.
 
 The renderer package receives a normalized route model and a layout. It does not parse source text and it does not validate safety rules. Its job is to convert stable route data into accessible SVG markup.
 
@@ -108,3 +108,7 @@ Dependency tests prevent diagram application code from importing concrete compil
 Public type declarations describe the package boundary without adding runtime imports or moving invariant ownership. Domain and application contracts remain in core; presentation types depend inward on core, shared diagram types combine core/render options, and framework props depend on the shared diagram contract. TypeScript, framework peer types, and packed-consumer tooling are development checks only. See [public contract revisions and stability classes](public-contracts.md).
 
 The SVG adapter owns immutable rendering definitions: theme constants, symbol profiles, and localization records are frozen at declaration, including nested dictionaries. Definition lookups use own keys so unsupported names cannot expose inherited objects. Per-call theme resolution produces an owned mutable copy. No process-wide customization state or new domain dependency is introduced; rendering determinism does not depend on earlier consumers.
+
+## Documentation contracts
+
+Documentation verification remains outside published packages. A filesystem adapter discovers repository Markdown; pure tooling extracts tagged examples, validates the expectation inventory, reads marked normative tables and projects observable facts. Tests coordinate the public compiler and compare reviewed outcomes. Domain rules are not implemented again in that tooling: expected route facts are reviewed data, and normative field/range/budget/identity tables are checked against their existing domain owners. Root tooling introduces no inward dependencies on filesystem, Markdown, test frameworks or fixture files. Existing import-boundary and public-contract tests remain authoritative for dependency direction and API inventories. See [maintaining executable documentation](documentation-contracts.md).
