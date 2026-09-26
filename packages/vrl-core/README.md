@@ -1,10 +1,12 @@
 # @subvertic/vrl-core
 
-Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
+Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). See the model migration below for extension-field paths.
 
 Framework-free core for Vertical Route Language.
 
 This package parses compact VRL source, validates route semantics, normalizes route models, computes elevation-aware vertical layout data, and exports JSON. It has no framework, DOM, file-system, or network dependencies.
+
+This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version. The quick start uses a fictional canyon fixture.
 
 ## Install
 
@@ -17,14 +19,14 @@ npm install @subvertic/vrl-core
 ```js
 import { compileRoute, formatDiagnostic } from "@subvertic/vrl-core";
 
-const source = `
-route "Quebrada Gata"
-metadata entrance_elevation=1300m exit_elevation=1100m difficulty="V3 A4 III"
-start "Quebrada Pilas entrance"
-rappel "R1" height=28m rope=60m anchor=bolts inclination=90%
-pool type=shallow
-exit "Old metal ladder"
-`;
+const source = `route "Synthetic two-rappel canyon"
+start "Entry"
+rappel R1 height=18m rope=40m anchor=bolts anchor_count=2 station=right
+pool P1 type=unknown
+walk W1 distance=120m
+rappel R2 height=12m rope=30m anchor=tree
+hazard H1 type=slippery note="Slippery landing"
+exit "Exit"`;
 
 const result = compileRoute(source, {
   layout: {
@@ -35,9 +37,9 @@ const result = compileRoute(source, {
   }
 });
 
-if (result.ok === false) {
-  console.error(result.diagnostics.map(formatDiagnostic).join("\n"));
-} else {
+for (const diagnostic of result.diagnostics) console.error(formatDiagnostic(diagnostic));
+if (result.ok) {
+  // Historical name: maximum declared rope, not an equipment calculation.
   console.log(result.model.summary.requiredRopeMeters);
   console.log(result.layout.nodes.length);
   console.log(result.json);
@@ -61,7 +63,7 @@ import {
 - `parseVrl(source, options)` returns `{ ast, diagnostics }`; optional `options.limits` controls document budgets.
 - `validateRoute(ast)` returns semantic diagnostics.
 - `normalizeRoute(ast)` returns a deterministic route model with unique element IDs and summary fields.
-- `computeVerticalLayout(model, options)` computes SVG-ready node positions.
+- `computeVerticalLayout(model, options)` positions canonical traversal points, segments and annotation nodes.
 - `compileRoute(source, options)` runs the full parser, validation, normalization, layout, and JSON export pipeline.
 - `createRouteCompiler(overrides)` creates an injectable compiler for tests or alternate ports.
 - `exportRouteJson(model)` serializes normalized route data.

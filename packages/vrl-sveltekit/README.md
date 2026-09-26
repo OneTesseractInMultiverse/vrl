@@ -10,6 +10,8 @@ This package compiles VRL source into serializable diagram data that can be retu
 
 State creation delegates to the first-party `@subvertic/vrl-diagram` package. Existing factory signatures and `{ ok, ast, diagnostics, diagnosticsText, model, layout, json, svg }` results are unchanged. Warning-only results still render SVG; blocking diagnostics skip rendering. The shared package has no framework peers. See the [state contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/diagram-state.md).
 
+This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version.
+
 ## Install
 
 ```sh
@@ -23,10 +25,11 @@ import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/quebrada-gata.vrl");
+    const response = await fetch("/routes/soft-terrain-canyon.vrl");
+    if (!response.ok) throw new Error(`Route source request failed: ${response.status}`);
     return response.text();
   },
-  options: { language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
+  options: { style: "soft-terrain", idPrefix: "canyon-overview", language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
 });
 ```
 
@@ -74,6 +77,8 @@ export const load = createVrlSvelteKitLoad({
 <VrlDiagram {data} diagramKey="routeDiagram" />
 ```
 
+The optional `style: "soft-terrain"` is forwarded to the renderer; classic remains the default. Give each inline occurrence a distinct stable `idPrefix`, including precomputed previews. See the [style guide](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/soft-terrain.md).
+
 ## Component Props
 
 ```js
@@ -94,7 +99,7 @@ export const load = createVrlSvelteKitLoad({
 
 The component reads `data.vrl` by default. Passing `diagram` overrides `data[diagramKey]`.
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Successful-state warnings
 

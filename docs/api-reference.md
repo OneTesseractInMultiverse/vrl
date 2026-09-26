@@ -19,6 +19,7 @@ Common imports:
 ```js
 import {
   compileRoute,
+  formatDiagnostic,
   parseVrl,
   validateRoute,
   normalizeRoute,
@@ -42,17 +43,17 @@ const result = compileRoute(source, {
   }
 });
 
-if (result.ok === false) {
-  for (const diagnostic of result.diagnostics) {
-    console.error(diagnostic.message);
-  }
-} else {
+for (const diagnostic of result.diagnostics) console.error(formatDiagnostic(diagnostic));
+if (result.ok) {
+  // Historical name: maximum declared rope, not an equipment calculation.
   console.log(result.model.summary.requiredRopeMeters);
   console.log(result.json);
 }
 ```
 
 Layout options are nested under `options.layout`. `horizontalScale` widens or tightens route progression while keeping the same vertical elevation model. `minNodeGap` keeps dense elevation-aware nodes readable when small real elevation changes would otherwise place symbols on top of each other; set it to `0` for strict elevation scale. Technical element lines in elevation-aware diagrams use `height * inclination * pixelsPerMeter`, and any additional spacing from `minNodeGap` is rendered as a connector. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` are consumed by renderer and framework packages at the top level.
+
+See the [current summary meanings](domain-model.md#current-summary-fields) before interpreting aggregate names as route totals or equipment requirements.
 
 Returned shape:
 
@@ -317,7 +318,7 @@ Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfil
 
 ### Technical annotations across line shapes
 
-`renderTopoSvg` and `renderRouteSegments` retain stage labels, stage boundaries, and redirection markers for `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs; annotation ownership, coordinates, values, and language remain the same. Stage lengths remain SVG text, and redirection groups retain localized `aria-label` values (for example, `Redirection anchor 5m L` or `Anclaje de desvio 5m izq`). `computeTopoScene` includes their text extents for every shape, so labels can expand the viewport. The top-level SVG `<desc>` also includes localized stage/redirection summaries in feature order with each owning feature ID; assistive technology can expose these facts through the image description without traversing internal SVG groups.
+In classic rendering, `renderTopoSvg` and `renderRouteSegments` retain stage labels, stage boundaries, and redirection markers for `ladder`, `direct`, and `slab`. Direct/slab lines omit rungs; annotation ownership, coordinates, values, and language remain the same. Stage lengths remain SVG text, and redirection groups retain localized `aria-label` values (for example, `Redirection anchor 5m L` or `Anclaje de desvio 5m izq`). `computeTopoScene` includes their text extents for every shape, so labels can expand the viewport. The top-level SVG `<desc>` also includes localized stage/redirection summaries in feature order with each owning feature ID; assistive technology can expose these facts through the image description without traversing internal SVG groups.
 
 Annotations follow the technical portion of the positioned segment, excluding extra connector spacing. Stages are proportioned by their declared total; a mismatch with height remains a compiler warning and does not rewrite the lengths. Redirections use distance/height. Existing endpoint clearance places markers and labels between 5% and 95% of the schematic slope while retaining the exact displayed values. See the [language example](language-reference.md#expressive-descent-attributes) for shape and validation rules.
 
@@ -344,7 +345,7 @@ The normalized `anchor_count` value and JSON representation are unchanged. The f
 
 `renderTopoSvg` prepares the complete presentation before serializing SVG. Requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.
 
-The route summary occupies a separate row above the route content. The legend follows the lowest route or annotation label, and its columns expand for localized text. Detail rows wrap once using the requested width; fitting does not feed the expanded width back into wrapping. Unbroken labels expand the canvas. This is deterministic growth, not pagination or a guarantee that all symbols remain separated when spacing is deliberately reduced.
+The route summary occupies a separate row above the route content. The legend follows the lowest route or annotation label, and its columns expand for localized text. Classic detail rows wrap once using the requested width; soft-terrain rows may rewrap while moving right to clear symbols. In both styles, fitting does not feed the expanded width back into wrapping. Unbroken labels expand the canvas. This is deterministic growth, not pagination or a guarantee that all symbols remain separated when spacing is deliberately reduced.
 
 Use the additive `computeTopoScene(route, layout, options = {})` export to inspect the same presentation without producing markup:
 
@@ -568,7 +569,8 @@ import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/quebrada-gata.vrl");
+    const response = await fetch("/routes/soft-terrain-canyon.vrl");
+    if (!response.ok) throw new Error(`Route source request failed: ${response.status}`);
     return response.text();
   },
   options: { language: "es", symbology: "spanish", layout: { pixelsPerMeter: 6 } }
@@ -606,12 +608,12 @@ export const load = createVrlSvelteKitLoad({
 Local publishing is centralized through the Makefile:
 
 ```sh
-make publish-plan
-make release-prepare RELEASE=patch
+make publish-plan RELEASE=minor
+make release-prepare RELEASE=minor
+# Review, test, commit and merge the prepared release before publication.
 make publish
-make publish VERSION=0.2.0
-make publish RELEASE=minor
+# When npm requests a fresh one-time code:
 make publish OTP=123456
 ```
 
-`make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks, updates versions, then publishes locally in dependency order. If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.
+`make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks and publishes the current committed version in dependency order; it does not update versions. Version changes must be prepared, reviewed and committed first. Per-package npm bootstrap/trusted-publisher setup is a separate prerequisite; see the [release checklist](release-checklist.md). If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.

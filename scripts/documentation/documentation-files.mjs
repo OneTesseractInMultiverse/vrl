@@ -11,6 +11,6 @@ function markdownFiles(directory) {
 /** Deliberate scope excludes generated consumers, dependencies and local caches. */
 export function readDocumentation(root) {
   const topLevel = readdirSync(root, { withFileTypes: true }).filter(entry => entry.isFile() && entry.name.endsWith(".md")).map(entry => join(root, entry.name));
-  const files = [...topLevel, ...markdownFiles(join(root, "docs")), ...markdownFiles(join(root, "packages"))].sort();
+  const files = [...topLevel, ...markdownFiles(join(root, "docs")), ...markdownFiles(join(root, "examples")), ...markdownFiles(join(root, "packages"))].sort();
   return files.map(path => ({ file: relative(root, path).split(sep).join("/"), markdown: readFileSync(path, "utf8") }));
 }

@@ -1,0 +1,38 @@
+# VRL documentation
+
+These guides describe the implementation in this checkout, including unreleased changes. Use the [changelog](../CHANGELOG.md), package version and README shipped in your installed tarball to determine release availability. Repository changes, package-name corrections and npm publication are separate steps.
+
+## Start here
+
+- [Quick start](../README.md#quick-start): compile a fictional canyon and render SVG, including nonblocking warnings.
+- [Example catalog](../examples/README.md): source files, expected warnings, rendering profiles and regeneration commands.
+- [Language reference](language-reference.md) and [success/failure examples](language-examples.md): grammar, identity, known fields, extensions, limits and diagnostics.
+- [API reference](api-reference.md) and [public contracts](public-contracts.md): package entry points, TypeScript, supported extension points and migrations.
+
+## Current capabilities
+
+| Area | Implemented behavior | Guide |
+| --- | --- | --- |
+| Source language | Ordered route/header/elements; located syntax and semantic diagnostics; deterministic IDs; bounded processing; strict known fields and preserved extensions | [Language](language-reference.md), [diagnostics](diagnostics.md), [domain model](domain-model.md) |
+| Physical traversal | Canonical owners, adjacent descents/ascents, implicit boundaries, attached notes/hazards, elevation validation and measured technical deltas | [Traversal API](api-reference.md#technical-traversal-and-geometry-validation) |
+| SVG | Classic default; optional soft terrain; complete fitted bounds; light/dark themes; English/Spanish text; three text-symbol profiles; stages, redirections and full anchor counts | [Scenes](rendering-scene.md), [soft terrain/gallery](soft-terrain.md), [symbology](symbology.md) |
+| Embedding | Caller-owned marker namespaces; shared diagram state; successful-state warnings; explicit precomputed-state trust and precedence | [SVG identifiers](svg-identifiers.md), [state](diagram-state.md), [warnings](warning-presentation.md) |
+| Frameworks | React factory, Svelte component/markup, SvelteKit data/load/component; packed SSR, hydration and update checks | [React](react.md), [Svelte](svelte.md), [SvelteKit](sveltekit.md), [tested matrix](framework-compatibility.md) |
+| Engineering | Inward dependency direction; computation/coordination separation; single-assert behavioral and failure tests; selected mutation probes; configured 100% JavaScript coverage | [Architecture](architecture.md), [ports](compiler-ports.md), [verification](testing.md) |
+| Releases | Six canonical `@subvertic/vrl-*` packages; explicit preparation, verified committed-version publication and partial-publication recovery | [Release checklist](release-checklist.md), [npm setup](trusted-publishing.md) |
+
+All six packages share a version; the repository's development runtime differs from the package runtime floor. Follow the compatibility matrix rather than assuming that the root tooling runs on every supported consumer runtime.
+
+## Scope and interpretation
+
+Canyon routes are the initial domain. Generic climb/downclimb elements do not establish complete cave, structure or climbing-route models. Slides, jumps, alternative lines, equipment systems and other canyon concepts require explicit modeling decisions; no new DSL semantics should be inferred from an icon, contour or extension string.
+
+Soft terrain is optional. Its curves and pool silhouettes are schematic, and practitioner comprehension evaluation remains pending. Curated icon placement, narrow continuation layouts and broader monochrome/accessibility work are tracked separately in [#36](https://github.com/OneTesseractInMultiverse/vrl/issues/36), [#37](https://github.com/OneTesseractInMultiverse/vrl/issues/37) and [#38](https://github.com/OneTesseractInMultiverse/vrl/issues/38). Canyon-model completeness and research remain under [#31](https://github.com/OneTesseractInMultiverse/vrl/issues/31) and [#32](https://github.com/OneTesseractInMultiverse/vrl/issues/32).
+
+Current aggregate names include historical terminology: `requiredRopeMeters` is the maximum declared rappel rope, and `totalDistanceMeters` sums supplied walk distances. Neither proves equipment requirements or a complete route distance. Missing declarations can produce zero aggregates. See the [current summary contract](domain-model.md#current-summary-fields); proposed measurement-summary changes are not assumed by these docs.
+
+## Keeping documentation current
+
+Update the owning guide, package README, working example and expected behavior with each implementation change. Use the [maintenance matrix](documentation-contracts.md#change-to-documentation-checklist) to find the affected surfaces. Run the [documentation checks](documentation-contracts.md), review regenerated SVGs, and complete `make check`; run the packed framework matrix when adapter behavior or its examples change.
+
+Contributor and project guidance: [contributing](contributing.md), [open source practices](open-source.md), [governance](../GOVERNANCE.md), [security](../SECURITY.md).

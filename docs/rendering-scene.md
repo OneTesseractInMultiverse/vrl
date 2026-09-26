@@ -60,7 +60,7 @@ The scene retains `language`, `nodes`, `infoBox`, `legend`, `contentBounds`, `bo
 | `legend.drawingRows` | Placed symbols, labels, badges, and descriptions. |
 | `legend.styleNotes` | Optional placed explanations for schematic curves and symbolic pools. |
 
-Technical stages include a placed boundary line or `null` for the last stage. Redirections include their marker path and localized accessible label. All supported shapes retain the same stage/redirection records; only ladder shapes have rungs. `slab` uses the existing `direct` display group. Stage/redirection values and owner IDs come from the positioned segment, not from translated text.
+Technical stages include a placed boundary line or `null` for the last stage. Redirections include their marker path and localized accessible label. All supported shapes retain the same declared stage/redirection values; only classic ladder shapes have rungs. Soft-terrain annotations use positions on the curve. In classic rendering, `slab` uses the existing `direct` display group; soft terrain uses `curve`. Stage/redirection values and owner IDs come from the positioned segment, not from translated text.
 
 ### Detail records
 

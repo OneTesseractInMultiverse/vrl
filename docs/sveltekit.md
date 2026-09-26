@@ -27,10 +27,11 @@ import { createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 
 export const load = createVrlSvelteKitLoad({
   source: async ({ fetch }) => {
-    const response = await fetch("/routes/quebrada-gata.vrl");
+    const response = await fetch("/routes/soft-terrain-canyon.vrl");
+    if (!response.ok) throw new Error(`Route source request failed: ${response.status}`);
     return response.text();
   },
-  options: { theme: "light" }
+  options: { theme: "light", style: "soft-terrain", idPrefix: "canyon-overview" }
 });
 ```
 
@@ -48,7 +49,7 @@ export function renderRoute(source) {
 
 Diagnostics are rendered as text when the route is invalid, which keeps validation failures visible during development and content review.
 
-Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
+Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
 ## Custom Keys and Direct State
 

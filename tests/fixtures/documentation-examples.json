@@ -1,91 +1,61 @@
 {
   "readme-canyon": {
     "kind": "document",
+    "sha256": "10ded5bf6d2c5c87e8e50173232fbe9a6c37f4d5e101dbf16fc8ec4b3674eadf",
     "expected": {
       "ok": true,
-      "diagnostics": [
-        [
-          "geometry",
-          "warning",
-          "VRL_GEOMETRY_ELEVATIONS_ESTIMATED",
-          2,
-          118
-        ]
-      ],
+      "diagnostics": [],
       "outputs": [
         true,
         true,
         true
       ],
       "facts": {
-        "/model/name": "Quebrada Gata",
-        "/model/extensions/country": "Costa Rica",
-        "/model/metadata/total_descent": {
-          "value": 200,
-          "unit": "m",
-          "meters": 200
-        },
-        "/model/metadata/total_distance": {
-          "value": 1300,
-          "unit": "m",
-          "meters": 1300
-        },
-        "/model/elements/0/label": "Quebrada Pilas entrance",
-        "/model/elements/2/attributes/height": {
-          "value": 28,
-          "unit": "m",
-          "meters": 28
-        },
-        "/model/elements/2/attributes/rope": {
-          "value": 60,
-          "unit": "m",
-          "meters": 60
-        },
-        "/model/elements/2/attributes/inclination/percent": 90,
-        "/model/elements/3/attributes/inclination/percent": 85,
-        "/model/elements/5/extensions/note": "Catarata Celestial",
-        "/model/elements/6/extensions/type": "swift_water"
+        "/model/name": "Synthetic two-rappel canyon",
+        "/model/elements/1/attributes/height/meters": 18,
+        "/model/elements/1/attributes/rope/meters": 40,
+        "/model/elements/1/attributes/anchor": "bolts",
+        "/model/elements/1/attributes/anchor_count": "2",
+        "/model/elements/2/attributes/type": "unknown",
+        "/model/elements/3/attributes/distance/meters": 120,
+        "/model/elements/4/attributes/height/meters": 12,
+        "/model/elements/4/attributes/rope/meters": 30,
+        "/model/elements/4/attributes/anchor": "tree",
+        "/model/elements/5/extensions/note": "Slippery landing"
       },
       "geometry": {
         "points": [
           "S1",
-          "W1",
           "R1",
+          "P1",
+          "W1",
           "R2",
-          "W2",
-          "R4",
           "E1"
         ],
         "technical": [
           [
             "R1",
             "down",
-            -25.2
+            -18
           ],
           [
             "R2",
             "down",
-            -23.8
-          ],
-          [
-            "R4",
-            "down",
-            -18
+            -12
           ]
         ],
         "annotations": [
           [
             "H1",
-            6
+            5
           ]
         ],
         "endpoints": [
-          1300,
-          1100
+          null,
+          null
         ]
       }
-    },
-    "sha256": "62417be293095381d7e48d65364842cd2b994767ad2267d94d44a6837393529e"
+    }
   },
   "readme-technical": {
     "kind": "fragment",
@@ -995,15 +965,15 @@
             "meters": 0
           },
           "exit_elevation": {
-            "value": -0.000001,
+            "value": -1e-06,
             "unit": "m",
-            "meters": -0.000001
+            "meters": -1e-06
           }
         },
         "/model/elements/0/attributes/height": {
-          "value": 0.000001,
+          "value": 1e-06,
           "unit": "m",
-          "meters": 0.000001
+          "meters": 1e-06
         },
         "/model/elements/0/attributes/rope": {
           "value": 1000000000,
@@ -1022,13 +992,13 @@
           [
             "R1",
             "down",
-            -0.000001
+            -1e-06
           ]
         ],
         "annotations": [],
         "endpoints": [
           0,
-          -0.000001
+          -1e-06
         ]
       }
     },

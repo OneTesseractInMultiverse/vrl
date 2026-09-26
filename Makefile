@@ -41,6 +41,7 @@ run:
 
 render-assets:
 	npm run example:svg
+	node scripts/render-style-gallery.mjs
 
 pack-dry-run:
 	npm run pack:dry-run

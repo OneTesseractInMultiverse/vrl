@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import * as core from "@subvertic/vrl-core";
@@ -1628,12 +1627,4 @@ test("createVrlSvelteKitLoad rejects invalid keys", () => {
 
 test("createVrlSvelteKitLoad rejects invalid sources", () => {
   assert.throws(() => createVrlSvelteKitLoad({ source: null }), TypeError);
-});
-
-test("example route compiles", () => {
-  assert.equal(core.compileRoute(readFileSync(new URL("../examples/quebrada-gata.vrl", import.meta.url), "utf8")).ok, true);
-});
-
-test("documentation SVG preview is generated", () => {
-  assert.match(readFileSync(new URL("../docs/assets/quebrada-gata.svg", import.meta.url), "utf8"), /<title>Quebrada Gata topo<\/title>/);
 });

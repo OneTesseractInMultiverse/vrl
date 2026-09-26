@@ -92,11 +92,11 @@ for (const [name, markdown] of [
     assert.throws(() => contractTable(markdown, "limits"), /contract table/);
   });
 }
-test("discovery covers root, nested docs and package Markdown without dependency or generated files", t => {
+test("discovery covers root, nested docs, examples and package Markdown without dependency or generated files", t => {
   const root = mkdtempSync(join(tmpdir(), "vrl-documents-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  for (const path of ["README.md", "CONTRIBUTING.md", "docs/nested/guide.md", "packages/adapter/README.md", "packages/adapter/node_modules/dependency/README.md", "node_modules/README.md", ".consumers/current/README.md", "docs/source.js"]) {
+  for (const path of ["README.md", "CONTRIBUTING.md", "docs/nested/guide.md", "examples/README.md", "packages/adapter/README.md", "packages/adapter/node_modules/dependency/README.md", "node_modules/README.md", ".consumers/current/README.md", "docs/source.js"]) {
     const file = join(root, path); mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, "text");
   }
-  assert.deepEqual(readDocumentation(root).map(item => item.file), ["CONTRIBUTING.md", "README.md", "docs/nested/guide.md", "packages/adapter/README.md"]);
+  assert.deepEqual(readDocumentation(root).map(item => item.file), ["CONTRIBUTING.md", "README.md", "docs/nested/guide.md", "examples/README.md", "packages/adapter/README.md"]);
 });

@@ -49,7 +49,7 @@
     "check:mutations": "node scripts/check-mutations.mjs",
     "prepare:consumers": "node scripts/prepare-consumers.mjs",
     "check:consumers": "node scripts/check-consumers.mjs",
-    "check:docs": "node --test tests/documentation-contracts.test.js tests/documentation-tooling.test.js"
+    "check:docs": "node --test tests/documentation-contracts.test.js tests/documentation-tooling.test.js tests/documentation-assets.test.js"
   },
   "engines": {
     "node": ">=25.0.0"
