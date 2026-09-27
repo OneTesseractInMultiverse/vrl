@@ -1,3 +1,4 @@
+import { annotationLegendEntries, selectiveSymbols } from "./annotation-icons.js";
 import { softTerrainText } from "./soft-terrain-text.js";
 import { diagramText } from "./locale.js";
 import { bounds, textEnvelopeWidth } from "./scene-bounds.js";
@@ -38,9 +39,10 @@ export function prepareInfoBox(route, layout, language, y = 26) {
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
  * @param {string} symbology - Symbol profile name used for element codes and legend entries.
  * @param {string} style - Renderer style, classic or soft-terrain; does not alter route facts; defaults to "classic".
+ * @param {string} symbols - Symbol presentation; defaults to classic. Annotation and minimal modes reserve identical icon space.
  * @returns {unknown} The selected result, including the documented absent-value fallback.
  */
-export function prepareLegend(layout, language, symbology, style = "classic") {
+export function prepareLegend(layout, language, symbology, style = "classic", symbols = "classic") {
   const text = diagramText(language);
   const symbolRows = legendSymbolRows(language, symbology).map(/**
    * Project kind, entries into the record required by legendSymbolRows(language, symbology).map.
@@ -94,7 +96,8 @@ export function prepareLegend(layout, language, symbology, style = "classic") {
      */ (row, index) => ({ row, x: x + 14 + (index < 3 ? 0 : firstWidth + 24), y: y + 80 + index % 3 * 16 }))
   ];
   const legend = placeLegend({ x, y, width, height: 124, title: text.legendTitle, rows: placedRows, bounds: bounds(x, y, x + width, y + 124, 3) }, language);
-  return style === "soft-terrain" ? withStyleNotes(legend, language) : legend;
+  const styled = style === "soft-terrain" ? withStyleNotes(legend, language) : legend;
+  return selectiveSymbols(symbols) ? withAnnotationLegend(styled, language, symbols) : styled;
 }
 
 /**
@@ -275,4 +278,38 @@ function withStyleNotes(legend, language) {
      * @returns {unknown} The result returned by placePlainText.
      */ (line, index) => placePlainText(line, legend.x + 14, legend.y + legend.height + 12 + index * 14, 9, 0)),
     bounds: bounds(legend.x, legend.y, legend.x + width, legend.y + height, 3) };
+}
+
+/**
+ * Add a two-row pilot key with identical label coordinates and bounds in icon and minimal modes.
+ * @responsibility computation
+ * @param {Object} legend - Existing prepared legend with owned dimensions and text.
+ * @param {string} language - Resolved diagram language.
+ * @param {string} symbols - Annotation presentation selecting visible or hidden pictograms.
+ * @returns {Object} Expanded owned legend; existing rows and input records are unchanged.
+ */
+function withAnnotationLegend(legend, language, symbols) {
+  const entries = annotationLegendEntries(language);
+  const column = Math.max(...entries.map(/**
+   * Compute the conservative text-and-icon width required by this legend entry.
+   * @responsibility computation
+   * @param {Array} entry - Canonical pilot ID and its localized legend label.
+   * @returns {number} Required drawing-unit width, including the pictogram gutter.
+   */ entry => textEnvelopeWidth(entry[1], 10) + 52));
+  const width = Math.max(legend.width, column * 3 + 28);
+  const height = legend.height + 70;
+  const annotationEntries = entries.map(/**
+   * Position one legend entry with a reserved 24-unit pictogram slot and adjacent text, keeping both modes aligned.
+   * @responsibility computation
+   * @param {Array} input1 - Canonical pilot ID and localized label pair.
+   * @param {string} input1[0] - Icon registry ID used when pictograms are visible.
+   * @param {string} input1[1] - Localized meaning retained in both presentations.
+   * @param {number} index - Pilot position determining its column and row.
+   * @returns {Object} Positioned plain text and a visible icon record or null.
+   */ ([id, label], index) => {
+    const x = legend.x + 14 + index % 3 * column, y = legend.y + legend.height + 10 + Math.floor(index / 3) * 30;
+    return { icon: symbols === "annotations" ? { id, x, y, size: 24 } : null,
+      text: placePlainText(label, x + 32, y + 16, 10, 0) };
+  });
+  return { ...legend, width, height, annotationEntries, bounds: bounds(legend.x, legend.y, legend.x + width, legend.y + height, 3) };
 }

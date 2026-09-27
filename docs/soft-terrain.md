@@ -21,7 +21,7 @@ All technical shapes (`ladder`, `direct`, `slab`) use the directed curve in this
 
 Both themes and existing theme-token overrides apply. Terrain uses `terrain` at 0.45 opacity, the contour uses `mutedText`, and the curve uses `routeLine`. The summary uses `panel` rather than the classic green fill. Pool fill uses `water` at 0.16 opacity; its wave cue also works without relying on fill color.
 
-English/Spanish language selection and federation/French/Spanish text-symbol profiles keep their existing precedence. Style explanations appear in the localized legend and accessible description. Existing symbols and namespace handling remain; there is no new icon option. The separately proposed icon integration in [#36](https://github.com/OneTesseractInMultiverse/vrl/issues/36) is not required to use this style.
+English/Spanish language selection and federation/French/Spanish text-symbol profiles keep their existing precedence. Style explanations appear in the localized legend and accessible description. Existing symbols and namespace handling remain; selected icons are available through `symbols: "annotations"`; see [annotation modes](annotation-icons.md). The optional icon modes are not required to use this style.
 
 Source errors retain the compiler's diagnostics and suppress derived output. Rendering still requires validated normalized input and a canonical segment layout. Contradictory supplied technical direction/delta (including zero) throws `RangeError`; nonfinite geometry is rejected. The style never repairs domain data or reassigns ownership from neighboring labels. Configuration errors propagate through the framework adapters.
 

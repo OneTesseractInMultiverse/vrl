@@ -1,6 +1,6 @@
 # Public API and compatibility contracts
 
-VRL publishes ESM JavaScript with bundled TypeScript declarations for all six packages. No compilation step or third-party runtime dependency is added to core, SVG rendering, or the shared diagram package. React uses a structural `createElement` port; Svelte component declarations refer to the existing Svelte peer. Development checks use TypeScript 7, React 18 types, and Svelte 4 types.
+VRL publishes ESM JavaScript with bundled TypeScript declarations for all seven packages. No compilation step or third-party runtime dependency is added to core, SVG rendering, or the shared diagram package. React uses a structural `createElement` port; Svelte component declarations refer to the existing Svelte peer. Development checks use TypeScript 7, React 18 types, and Svelte 4 types.
 
 ## Optional canyon presentation
 
@@ -214,7 +214,7 @@ console.log(observations);
 
 `RenderOptions.idPrefix` and the final namespace argument on SVG fragment helpers are additive next-minor APIs. Existing defaults and model/layout/diagnostic revisions remain unchanged. `TopoScene.identifiers` exposes the resolved marker identity as inspection data. See [namespace validation, duplicate handling, and adapter ownership](svg-identifiers.md).
 
-This example is typechecked and executed against all six packed packages by `check:packed`:
+This example is typechecked and executed against all seven packed packages by `check:packed`:
 
 ```ts
 import { createDiagramState } from "@subvertic/vrl-diagram";
@@ -228,4 +228,25 @@ if (!overview.ok || !detail.ok ||
     overview.json !== detail.json) {
   throw new Error("SVG instances must resolve distinct markers without changing route facts");
 }
+```
+
+## First-party icon contracts
+
+`@subvertic/vrl-icons` publishes deeply immutable registry definitions, exact geometry, explicit mappings, standalone SVGs and typed `/registry`, `/semantics` and `/svg` entry points. The SVG renderer's `symbols` option is additive; `annotations` and `minimal` require soft terrain. Advanced scene consumers gain an icon marker variant, optional annotation slots/legend entries and terrain contour points. Existing defaults, compiler records, persisted JSON and namespace policy remain unchanged. See [compatibility and limits](annotation-icons.md).
+
+```ts
+import { getIcon, renderIcon, renderIconGeometry, resolveAttributeIconId } from "@subvertic/vrl-icons";
+import { createDiagramState } from "@subvertic/vrl-diagram";
+
+const source = 'route Icons\nstart\nrappel R1 height=18m rope=40m anchor=bolts anchor_count=2\nexit';
+const annotated = createDiagramState(source, { style: "soft-terrain", symbols: "annotations" });
+const minimal = createDiagramState(source, { style: "soft-terrain", symbols: "minimal" });
+if (!annotated.ok || !minimal.ok || annotated.json !== minimal.json
+    || !annotated.svg.includes(renderIconGeometry("bolt")) || minimal.svg.includes("data-vrl-icon=")) {
+  throw new Error("Pictograms must preserve route facts and have an equivalent minimal presentation");
+}
+if (resolveAttributeIconId("anchor", "bolts") !== "bolt" || !Object.isFrozen(getIcon("bolt"))) {
+  throw new Error("Canonical anchor mapping and immutable definitions are required");
+}
+console.log(renderIcon("tree", { decorative: true, size: 24 }));
 ```

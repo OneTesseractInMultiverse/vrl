@@ -1,0 +1,74 @@
+{
+  "name": "@subvertic/vrl-icons",
+  "version": "0.2.1",
+  "type": "module",
+  "description": "Original, dependency-free canyoning vector icons, registry, semantic mappings, and SVG rendering for VRL.",
+  "license": "MIT",
+  "author": {
+    "name": "Pedro Guzmán"
+  },
+  "maintainers": [
+    {
+      "name": "Pedro Guzmán"
+    }
+  ],
+  "homepage": "https://github.com/OneTesseractInMultiverse/vrl/tree/main/packages/vrl-icons#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OneTesseractInMultiverse/vrl.git",
+    "directory": "packages/vrl-icons"
+  },
+  "bugs": {
+    "url": "https://github.com/OneTesseractInMultiverse/vrl/issues"
+  },
+  "keywords": [
+    "vrl",
+    "canyoning",
+    "canyoneering",
+    "barranquismo",
+    "svg",
+    "topo",
+    "route-documentation",
+    "icons",
+    "symbology"
+  ],
+  "main": "./src/index.js",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./registry": {
+      "types": "./src/registry.d.ts",
+      "default": "./src/registry.js"
+    },
+    "./semantics": {
+      "types": "./src/semantics.d.ts",
+      "default": "./src/semantics.js"
+    },
+    "./svg": {
+      "types": "./src/svg.d.ts",
+      "default": "./src/svg.js"
+    },
+    "./manifest.json": "./manifest.json",
+    "./svg/*.svg": "./svg/*.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "svg",
+    "manifest.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org"
+  },
+  "types": "./src/index.d.ts"
+}

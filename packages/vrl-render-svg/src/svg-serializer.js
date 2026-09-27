@@ -1,3 +1,4 @@
+import { serializeAnnotationIcon, serializeIconMarker } from "./icon-serializer.js";
 import { assertXmlCharacters, escapeXml } from "./xml.js";
 import { svgAttribute, svgPaint } from "./attributes.js";
 import { detailBadgeStyle, themeSafeStroke } from "./badge-style.js";
@@ -78,10 +79,11 @@ export function serializeTerrain(path, theme) {
  * @param {unknown} input1.titleY - Title baseline coordinate.
  * @param {Array} input1.drawingRows - Positioned legend drawing rows.
  * @param {Array} input1.styleNotes - Prepared style interpretation notes.
+ * @param {Array} input1.annotationEntries - Optional placed pilot key entries with decorative icons and equivalent text.
  * @param {Object} theme - Resolved theme record mapping semantic token names to supported paint strings.
  * @returns {string} Escaped SVG markup for the prepared drawing records; optional absent primitives serialize to empty text.
  */
-export function serializeLegend({ x, y, width, height, title, titleX, titleY, drawingRows, styleNotes = [] }, theme) {
+export function serializeLegend({ x, y, width, height, title, titleX, titleY, drawingRows, styleNotes = [], annotationEntries = [] }, theme) {
   return `<g class="vrl-legend" aria-label="${svgAttribute(title)}">
     <rect x="${svgAttribute(x)}" y="${svgAttribute(y)}" width="${svgAttribute(width)}" height="${svgAttribute(height)}" rx="4" fill="${svgPaint(theme.panel)}" stroke="${svgPaint(theme.routeLine)}" stroke-width="1"/>
     <text x="${svgAttribute(titleX)}" y="${svgAttribute(titleY)}" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="${svgPaint(theme.text)}">${escapeXml(title)}</text>
@@ -95,7 +97,12 @@ export function serializeLegend({ x, y, width, height, title, titleX, titleY, dr
      * @responsibility computation
      * @param {unknown} item - Current prepared record or test case.
      * @returns {unknown} The result returned by serializePlainText.
-     */ item => serializePlainText(item, theme)).join("")}
+     */ item => serializePlainText(item, theme)).join("")}${annotationEntries.map(/**
+      * Serialize a prepared legend pictogram and its adjacent text without changing their coordinates.
+      * @responsibility coordinator
+      * @param {Object} entry - Positioned text and an optional decorative icon owned by the legend scene.
+      * @returns {string} Combined escaped SVG markup, with absent pictograms omitted.
+      */ entry => serializeAnnotationIcon(entry.icon, theme.text) + serializePlainText(entry.text, theme)).join("") }
   </g>`;
 }
 
@@ -387,7 +394,7 @@ export function serializeNode(item, theme) {
     ${marker}
     ${labelLeader}
     ${titleLine}
-    ${detailLine}
+    ${detailLine}${item.annotationIcon === undefined ? "" : serializeAnnotationIcon(item.annotationIcon, theme[item.colorToken])}
   </g>`;
 }
 
@@ -468,6 +475,7 @@ export function serializeAnchorOverflow({ text, x, y, fontSize, anchor }, theme)
  * @returns {string} Escaped SVG markup for the prepared drawing records; optional absent primitives serialize to empty text.
  */
 export function serializeSymbol(item, color, panelColor) {
+  if (item.kind === "icon") return serializeIconMarker(item, color);
   const code = escapeXml(item.code ?? "");
 
   if (item.kind === "snake") {

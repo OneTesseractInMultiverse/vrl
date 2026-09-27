@@ -11,7 +11,7 @@ import { createDiagramState } from "@subvertic/vrl-diagram";
 import { SOURCES } from "./src/lib/cases.js";
 
 const require = createRequire(import.meta.url);
-const names = ["core", "render-svg", "diagram", "react", "svelte", "sveltekit"];
+const names = ["core", "icons", "render-svg", "diagram", "react", "svelte", "sveltekit"];
 for (const name of names) {
   test(`packed ${name} resolves inside the isolated application`, /**
    * Verify packed ${name} resolves inside the isolated application; arrange the scenario and make its single
@@ -126,8 +126,8 @@ function rejectedPeerInstall(name, alias) {
     const packed = spawnSync("npm", ["pack", tarball, "--json", "--pack-destination", directory, "--offline", "--ignore-scripts"], { encoding: "utf8" });
     if (packed.status !== 0) throw new Error(packed.stderr);
     const legacy = JSON.parse(packed.stdout)[0].filename;
-    const dependencies = Object.fromEntries(["core", "render-svg", "diagram", name].map(/**
-     * Project the current entry into an ordered tuple for ["core", "render-svg", "diagram", name].map.
+    const dependencies = Object.fromEntries(["core", "icons", "render-svg", "diagram", name].map(/**
+     * Project the current entry into an ordered tuple for ["core", "icons", "render-svg", "diagram", name].map.
      * @responsibility computation
      * @param {unknown} item - Current prepared record or test case.
      * @returns {Array} The ordered records or values assembled above.

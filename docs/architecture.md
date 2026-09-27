@@ -124,3 +124,9 @@ Explicit route-measurement observations live in `domain/route-measurements.js`, 
 ## Optional canyon style
 
 Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.
+
+## Icon ownership and annotation placement
+
+`@subvertic/vrl-icons` owns immutable authoring geometry, registry lookup, explicit semantic presentation mappings and geometry serialization. It has no runtime dependencies. Core never imports this package. Renderer scene computations may consume the public `/semantics` boundary; `icon-serializer.js` consumes `/svg` and owns placement transforms, theme paint and decorative semantics. Import-boundary checks reject geometry-to-serialization and serialization-to-domain crossings.
+
+Annotation mapping, protected-geometry clearance, node/detail placement and legend preparation remain separate computations. The scene coordinator supplies conservative path/contour/pool envelopes; the serializer consumes prepared coordinates without recomputing layout. The public scene adds optional annotation slots/icons and legend entries, an icon marker variant, and prepared terrain contour points. Exhaustive marker consumers must handle the additive icon case in the next minor release. See the [full contract](annotation-icons.md).

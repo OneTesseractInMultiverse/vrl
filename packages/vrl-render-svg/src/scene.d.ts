@@ -1,5 +1,5 @@
 import type { ElementType, LayoutNode, LayoutPoint, Position } from "@subvertic/vrl-core";
-import type { Theme } from "./index.js";
+import type { Theme, SymbolPresentation } from "./index.js";
 
 /** Advanced presentation contracts, revision 1; these are not route data interchange schemas. */
 export interface Bounds { minX: number; minY: number; maxX: number; maxY: number }
@@ -16,7 +16,9 @@ export type BadgeCategory = "flow" | "exposure" | "hazardSeverity" | "inclinatio
 export interface BadgeValue { category: BadgeCategory; className: string; label: string }
 export interface BadgePlacement extends BadgeValue, Rectangle { kind: "badge"; textX: number; textY: number }
 export type DetailRecord = { kind: "text"; text: string } | (BadgeValue & { kind: "badge"; prefix: string; value: string });
+export interface AnnotationIcon extends Position { id: string; size: number; bounds?: Bounds }
 export type Marker =
+  { kind: "icon"; id: string; code: string; x: number; y: number; textX: number; textY: number } |
   { kind: "standard"; code: string; x: number; y: number; textX: number; textY: number }
   | { kind: "snake"; code: string; label: string; path: string; textX: number; textY: number }
   | { kind: "hazard"; clearancePath: string; path: string };
@@ -24,9 +26,11 @@ export interface AnchorPlacement { count: number; marks: Position[]; overflow: T
 export interface NodeDrawing {
   type: ElementType; colorToken: keyof Theme; label: string; title: string; titleX: number; titleY: number;
   detail: string; detailRecords: DetailRecord[][]; details: (PlainText | BadgePlacement)[][];
+  annotationSlot?: (AnnotationIcon & { bounds: Bounds }) | null; annotationIcon?: AnnotationIcon | null;
   leader: string | null; marker: Marker; anchors: AnchorPlacement | null;
 }
 export interface NodeRenderOptions {
+  symbols?: SymbolPresentation | undefined; style?: "classic" | "soft-terrain" | undefined;
   title?: string | undefined; detail?: string | undefined; detailRows?: string[][] | undefined;
   maxDetailWidth?: number | undefined; drawing?: NodeDrawing | undefined;
 }
@@ -56,10 +60,11 @@ export interface InfoBox extends Rectangle {
 }
 export interface Legend extends Rectangle {
   styleNotes?: PlainText[];
+  annotationEntries?: { icon: AnnotationIcon | null; text: PlainText }[];
   title: string; rows: (Position & { row: LegendRow })[]; bounds: Bounds;
   titleX: number; titleY: number; drawingRows: LegendDrawingRow[];
 }
-export interface SoftTerrain { contour: string; fill: string; bounds: Bounds }
+export interface SoftTerrain { contourPoints: Position[]; contour: string; fill: string; bounds: Bounds }
 export interface SoftPool { ownerId: string; dry: boolean; basin: string; surface: string | null; bounds: Bounds }
 export interface TopoScene {
   style: "classic" | "soft-terrain"; terrain: SoftTerrain | null; pools: SoftPool[];

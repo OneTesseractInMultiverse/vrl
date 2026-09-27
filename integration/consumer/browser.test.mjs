@@ -38,6 +38,63 @@ describe("production framework consumers", /**
   }
 
   for (const surface of ["react", "svelte", "sveltekit"]) {
+    for (const width of [320, 736]) for (const hydrated of [false, true]) {
+      test(`${surface} ${hydrated ? "hydrated" : "SSR"} selective icons preserve meaning and clearance at ${width}`, /**
+       * Verify the current fixture the current fixture selective icons preserve meaning and clearance at the current fixture using explicit fixture expectations; setup and assertion failures propagate to the runner.
+       * @responsibility coordinator
+       * @param {unknown} t - Supplied fixture or presentation value consumed by the documented operation.
+       * @returns {Promise<void>} Resolves after the single browser assertion succeeds; setup and assertion failures reject.
+       */ async t => {
+        const context = await openPage(browser, application.origin, surface, "icons", hydrated, { style: "soft-terrain", symbols: "annotations", width: String(width) });
+        t.after(/**
+         * Close the test-owned browser context after the scenario.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves after pages and their resources are released.
+         */ () => context.close());
+        assert.deepEqual([await annotationSnapshot(context.page), context.errors], [{ ids: ["start", "bolt", "tree", "slippery", "finish"], hidden: true, collisions: [], hasFacts: true }, []]);
+      });
+    }
+    test(`${surface} toggles decorative icons without moving labels after hydration`, /**
+     * Verify the current fixture toggles decorative icons without moving labels after hydration using explicit fixture expectations; setup and assertion failures propagate to the runner.
+     * @responsibility coordinator
+     * @param {unknown} t - Supplied fixture or presentation value consumed by the documented operation.
+     * @returns {Promise<void>} Resolves after the single browser assertion succeeds; setup and assertion failures reject.
+     */ async t => {
+      const context = await openPage(browser, application.origin, surface, "icons", true, { style: "soft-terrain", symbols: "annotations" });
+      t.after(/**
+       * Close the test-owned browser context after the scenario.
+       * @responsibility coordinator
+       * @returns {Promise<void>} Resolves after pages and their resources are released.
+       */ () => context.close());
+      const before = await context.page.locator("#diagram svg text").evaluateAll(/**
+       * Project or check elements.map(element for the enclosing contract assertion.
+       * @responsibility computation
+       * @param {unknown} elements - Supplied fixture or presentation value consumed by the documented operation.
+       * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
+       */ elements => elements.map(/**
+       * Project or check [element.textContent, element.getAttribute("x"), element.getAttribute("y")] for the enclosing contract assertion.
+       * @responsibility computation
+       * @param {Object|null|undefined} element - Optional presentation record with type and explicit attribute values.
+       * @returns {Array} Ordered comparison or mapping tuple.
+       */ element => [element.textContent, element.getAttribute("x"), element.getAttribute("y")]));
+      await context.page.evaluate(/**
+       * Dispatch a minimal-mode update through the mounted framework fixture.
+       * @responsibility coordinator
+       * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
+       */ () => window.fixture.update({ options: { style: "soft-terrain", symbols: "minimal", legend: false } }));
+      const after = await context.page.locator("#diagram svg text").evaluateAll(/**
+       * Project or check elements.map(element for the enclosing contract assertion.
+       * @responsibility computation
+       * @param {unknown} elements - Supplied fixture or presentation value consumed by the documented operation.
+       * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
+       */ elements => elements.map(/**
+       * Project or check [element.textContent, element.getAttribute("x"), element.getAttribute("y")] for the enclosing contract assertion.
+       * @responsibility computation
+       * @param {Object|null|undefined} element - Optional presentation record with type and explicit attribute values.
+       * @returns {Array} Ordered comparison or mapping tuple.
+       */ element => [element.textContent, element.getAttribute("x"), element.getAttribute("y")]));
+      assert.deepEqual([before, await context.page.locator(".vrl-annotation-icon").count(), context.errors], [after, 0, []]);
+    });
     for (const hydrated of [false, true]) {
       test(`${surface} ${hydrated ? "hydration" : "SSR"} preserves soft terrain and route facts`, /**
        * Verify ${surface} ${hydrated ? "hydration" : "SSR"} preserves soft terrain and route facts; arrange the
@@ -412,4 +469,60 @@ async function markerSnapshot(page) {
         document.getElementById(path.getAttribute("marker-end").slice(5, -1)) === marker &&
         path.getAttribute("stroke") === paint.getAttribute("fill"))];
   }));
+}
+
+/**
+ * Inspect actual emitted pictogram paths, adjacent text and structural strokes in the browser.
+ * @responsibility coordinator
+ * @param {Object} page - Loaded production framework page.
+ * @returns {Promise<Object>} Pilot identities, decorative semantics, retained facts and observed collisions.
+ */
+async function annotationSnapshot(page) {
+  return page.evaluate(/**
+   * Read emitted DOM identities, text and transformed path points to detect lost facts and visible collisions.
+   * @responsibility coordinator
+   * @returns {Object} Independent browser observations; no DOM content is changed.
+   */ () => {
+    const icons = [...document.querySelectorAll("#diagram .vrl-node .vrl-annotation-icon")];
+    const texts = [...document.querySelectorAll("#diagram .vrl-node text")];
+    const paths = [...document.querySelectorAll("#diagram .vrl-terrain-contour, #diagram .vrl-technical-curve")];
+    const collisions = [];
+    for (const icon of icons) {
+      const box = icon.getBoundingClientRect();
+      for (const text of texts) {
+        const other = text.getBoundingClientRect();
+        if (box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top) collisions.push([icon.dataset.vrlIcon, text.textContent]);
+      }
+      for (const path of paths) {
+        const length = path.getTotalLength(), matrix = path.getScreenCTM();
+        for (let offset = 0; offset <= length; offset += 1) {
+          const point = path.getPointAtLength(offset).matrixTransform(matrix);
+          if (point.x >= box.left - 1 && point.x <= box.right + 1 && point.y >= box.top - 1 && point.y <= box.bottom + 1) { collisions.push([icon.dataset.vrlIcon, path.getAttribute("class")]); break; }
+        }
+      }
+    }
+    const text = [...document.querySelectorAll("#diagram .vrl-node text")].map(/**
+     * Project or check element.textContent for the enclosing contract assertion.
+     * @responsibility computation
+     * @param {Object|null|undefined} element - Optional presentation record with type and explicit attribute values.
+     * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
+     */ element => element.textContent).join(" ").replace(/\s+/g, " ");
+    return { ids: icons.map(/**
+     * Project or check icon.dataset.vrlIcon for the enclosing contract assertion.
+     * @responsibility computation
+     * @param {Object} icon - Immutable icon definition with original path and optional stroke data.
+     * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
+     */ icon => icon.dataset.vrlIcon), hidden: icons.every(/**
+     * Project or check icon.getAttribute("aria-hidden") === "true" for the enclosing contract assertion.
+     * @responsibility computation
+     * @param {Object} icon - Immutable icon definition with original path and optional stroke data.
+     * @returns {boolean} Whether the documented comparison or selection condition holds.
+     */ icon => icon.getAttribute("aria-hidden") === "true"), collisions,
+      hasFacts: ["18m", "12m", "declared rope: 40m", "declared rope: 30m", "2 anchors", "tree", "pool depth unknown", "120m", "Slippery landing"].every(/**
+       * Project or check text.includes(fact) for the enclosing contract assertion.
+       * @responsibility computation
+       * @param {unknown} fact - Supplied fixture or presentation value consumed by the documented operation.
+       * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
+       */ fact => text.includes(fact)) };
+  });
 }

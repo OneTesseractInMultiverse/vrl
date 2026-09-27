@@ -1,10 +1,10 @@
 # npm Trusted Publishing
 
-The VRL release workflow is configured to publish six public packages from `OneTesseractInMultiverse/vrl` through `.github/workflows/publish.yml`. GitHub Actions supplies an OIDC identity; the workflow does not need an `NPM_TOKEN` secret. Every package's repository URL must match this exact repository, including case.
+The VRL release workflow is configured to publish seven public packages from `OneTesseractInMultiverse/vrl` through `.github/workflows/publish.yml`. GitHub Actions supplies an OIDC identity; the workflow does not need an `NPM_TOKEN` secret. Every package's repository URL must match this exact repository, including case.
 
 ## Package identity and first publication
 
-The canonical names are `@subvertic/vrl-core`, `@subvertic/vrl-render-svg`, `@subvertic/vrl-diagram`, `@subvertic/vrl-react`, `@subvertic/vrl-svelte` and `@subvertic/vrl-sveltekit`. `subvertic` is the organization scope; `vrl-` identifies the project inside that organization.
+The canonical names are `@subvertic/vrl-core`, `@subvertic/vrl-icons`, `@subvertic/vrl-render-svg`, `@subvertic/vrl-diagram`, `@subvertic/vrl-react`, `@subvertic/vrl-svelte` and `@subvertic/vrl-sveltekit`. `subvertic` is the organization scope; `vrl-` identifies the project inside that organization.
 
 Version 0.2.0 used incorrect names without the `vrl-` prefix. The 0.2.1 naming correction prepares the canonical identities and internal dependency names. The changelog and actual registry state determine publication; this guide does not establish that bootstrap or trusted-publisher setup is complete. Existing `@subvertic/vrl-*` packages retain their earlier release history; `@subvertic/vrl-diagram` is a new package. Consumers of 0.2.0 must update all six dependency/import names together. npm cannot rename a published package, and trusted-publisher settings do not transfer between names. Configure only the canonical identities below.
 
@@ -21,7 +21,7 @@ Do not create a public GitHub release before bootstrap and trusted-publisher set
 
 ## npm settings
 
-For each of the six current package names, open **Settings → Trusted Publisher → GitHub Actions** and enter:
+For each of the seven current package names, open **Settings → Trusted Publisher → GitHub Actions** and enter:
 
 | Setting | Exact value |
 | --- | --- |
@@ -62,7 +62,7 @@ The workflow must be merged into `main`, and the release tag must contain it and
 
 ## Partial-publication recovery
 
-Publication cannot be atomic across six registry packages. A failure reports packages whose publish commands completed, but a failed network response can still mean npm accepted the last request. Do not assume the failed package is absent, unpublish successful packages, or move an existing tag.
+Publication cannot be atomic across seven registry packages. A failure reports packages whose publish commands completed, but a failed network response can still mean npm accepted the last request. Do not assume the failed package is absent, unpublish successful packages, or move an existing tag.
 
 1. Keep the exact source commit and version. Inspect npm versions and the workflow failure.
 2. Fix external authorization or registry availability without editing release files.
@@ -73,3 +73,5 @@ Publication cannot be atomic across six registry packages. A failure reports pac
 A permissions failure on an unpublished name may appear as an npm 404; verify ownership and authentication before interpreting that as permission to publish. OIDC mismatches, missing direct-publish permission, unsupported CLI versions and incorrect `repository.url` are common configuration failures.
 
 References: [npm trusted publishers](https://docs.npmjs.com/trusted-publishers/), [npm trust CLI](https://docs.npmjs.com/cli/v11/commands/npm-trust/), [npm provenance](https://docs.npmjs.com/generating-provenance-statements/).
+
+`@subvertic/vrl-icons` is added with the selective annotation work. Configure its package access and trusted publisher before releasing this checkout. This repository change does not establish that the new identity has been bootstrapped or published.

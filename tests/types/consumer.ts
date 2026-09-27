@@ -233,3 +233,9 @@ model.summary.maximumDeclaredRopeMeters;
 // @ts-expect-error The helper consumes normalized metric records, not raw source tokens.
 summarizeRouteMeasurements(model.elements, { total_distance: "100m" });
 void [ropeObservation, walkObservation, declaredDistance, measuredWalkCount, assumedEquipment];
+
+const iconScene = computeTopoScene(model, result.layout!, { style: "soft-terrain", symbols: "annotations" });
+const iconSlot: string | undefined = iconScene.nodes[0]?.drawing.annotationSlot?.id;
+// @ts-expect-error Only supported symbol presentations are accepted.
+createDiagramState(source, { symbols: "pictograms" });
+void iconSlot;

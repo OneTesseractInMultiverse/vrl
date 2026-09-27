@@ -56,3 +56,7 @@ These render as `SN` with a simple snake mark. This is intentionally marked as a
 ## Optional canyon style
 
 Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.
+
+## Selective annotation icons
+
+`symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](annotation-icons.md).

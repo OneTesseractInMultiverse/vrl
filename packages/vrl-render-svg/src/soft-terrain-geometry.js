@@ -88,7 +88,7 @@ export function prepareSoftTerrain(layout) {
    * @param {number} index - Zero-based position in the current ordered collection.
    * @returns {unknown} The selected result, including the documented absent-value fallback.
    */ (point, index) => index === 0 ? scenePath`M ${point.x} ${point.y}` : scenePath`L ${point.x} ${point.y}`).join(" ");
-  return { contour, fill: contour + scenePath` L ${extent.maxX} ${extent.maxY} L ${extent.minX} ${extent.maxY} Z`,
+  return { contourPoints: surface, contour, fill: contour + scenePath` L ${extent.maxX} ${extent.maxY} L ${extent.minX} ${extent.maxY} Z`,
     bounds: unionBounds([extent, ...surface.map(/**
      * Apply bounds to the supplied arguments; retain the callee's return and failure behavior.
      * @responsibility computation

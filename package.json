@@ -6,11 +6,11 @@
   "description": "Vertical Route Language monorepo for parsing, validating, normalizing, and rendering technical route documents.",
   "license": "MIT",
   "author": {
-    "name": "Pedro Guzm\u00e1n"
+    "name": "Pedro Guzmán"
   },
   "maintainers": [
     {
-      "name": "Pedro Guzm\u00e1n"
+      "name": "Pedro Guzmán"
     }
   ],
   "homepage": "https://github.com/OneTesseractInMultiverse/vrl#readme",
@@ -37,7 +37,7 @@
   "scripts": {
     "test": "node scripts/run-tests.mjs",
     "coverage": "node scripts/run-tests.mjs --coverage",
-    "check": "npm run check:function-docs && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
+    "check": "npm run check:function-docs && npm run icons:check && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
     "example": "node scripts/render-example.mjs",
     "example:svg": "node scripts/render-example.mjs docs/assets/quebrada-gata.svg",
     "pack:dry-run": "npm pack --workspaces --dry-run",
@@ -50,7 +50,9 @@
     "prepare:consumers": "node scripts/prepare-consumers.mjs",
     "check:consumers": "node scripts/check-consumers.mjs",
     "check:docs": "npm run check:function-docs && node --test tests/documentation-contracts.test.js tests/documentation-tooling.test.js tests/documentation-assets.test.js tests/function-documentation.test.js",
-    "check:function-docs": "node scripts/check-function-docs.mjs"
+    "check:function-docs": "node scripts/check-function-docs.mjs",
+    "icons:build": "node scripts/build-icons.mjs",
+    "icons:check": "node scripts/build-icons.mjs --check"
   },
   "engines": {
     "node": ">=25.0.0"

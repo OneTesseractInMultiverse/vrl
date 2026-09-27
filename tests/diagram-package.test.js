@@ -36,5 +36,5 @@ test("release planning includes the shared package before its adapters without r
    * @param {unknown} match - Regular-expression match including the capture groups consumed below.
    * @returns {unknown} The match.1 value selected or validated above.
    */ (match) => match[1]);
-  assert.deepEqual([result.status, order], [0, ["@subvertic/vrl-core", "@subvertic/vrl-render-svg", "@subvertic/vrl-diagram", "@subvertic/vrl-react", "@subvertic/vrl-svelte", "@subvertic/vrl-sveltekit"]]);
+  assert.deepEqual([result.status, order], [0, ["@subvertic/vrl-core", "@subvertic/vrl-icons", "@subvertic/vrl-render-svg", "@subvertic/vrl-diagram", "@subvertic/vrl-react", "@subvertic/vrl-svelte", "@subvertic/vrl-sveltekit"]]);
 });

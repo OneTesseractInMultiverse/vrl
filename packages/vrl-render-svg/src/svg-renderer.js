@@ -355,12 +355,13 @@ export function renderAnchorMarks(node, element, theme, side = "left", language 
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @param {string} color - Validated foreground paint value.
  * @param {string} symbology - Symbol profile name used for element codes and legend entries; defaults to "federation".
- * @param {string} panelColor - Validated background/clearance paint value; defaults to "#f6f8fa".
+ * @param {string} panelColor - Classic marker background/clearance paint; defaults to "#f6f8fa". Transparent icon markers ignore it.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to "en".
+ * @param {string} symbols - Symbol presentation; defaults to classic. Annotation and minimal modes reserve identical icon space.
  * @returns {string} Serialized SVG markup, with the documented defaults and failure behavior.
  */
-export function renderSymbolMarker(node, element, color, symbology = "federation", panelColor = "#f6f8fa", language = "en") {
-  return svg.serializeSymbol(symbolPlacement(node, element, symbology, language), color, panelColor);
+export function renderSymbolMarker(node, element, color, symbology = "federation", panelColor = "#f6f8fa", language = "en", symbols = "classic") {
+  return svg.serializeSymbol(symbolPlacement(node, element, symbology, language, symbols), color, panelColor);
 }
 
 /**

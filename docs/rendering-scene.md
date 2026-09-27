@@ -97,3 +97,7 @@ Fragment helpers do not fit a complete canvas or repeat core's semantic validati
 ## Verification
 
 Tests inspect pure rung, stage, redirection, text, badge, symbol, and panel placements independently of XML. End-to-end tests parse output with an independent XML parser across languages and shapes, verify exact domain facts and literal notes, exercise compatibility helpers and malformed inputs, and check deterministic output without input mutation. Existing canvas tests inspect emitted primitives and verify they fit the viewport. Each test uses one assertion; the coverage target complements these behavior and failure checks.
+
+## Selective annotation icons
+
+`symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](annotation-icons.md).

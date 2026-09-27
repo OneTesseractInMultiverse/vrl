@@ -29,6 +29,7 @@
     "playwright": "1.63.0",
     "esbuild": "0.28.2",
     "react-unsupported": "npm:react@17.0.2",
-    "svelte-unsupported": "npm:svelte@3.59.2"
+    "svelte-unsupported": "npm:svelte@3.59.2",
+    "@subvertic/vrl-icons": "file:./tarballs/vrl-icons.tgz"
   }
 }
