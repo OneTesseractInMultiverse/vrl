@@ -1491,5 +1491,48 @@
         ]
       }
     }
+  },
+  "unknown-rappel-height": {
+    "kind": "document",
+    "sha256": "4fc667caeecf3e8681d1e6048eaae33e49e5cb3ccd6936cabdf1bdbe098bf24f",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "geometry",
+          "warning",
+          "VRL_GEOMETRY_HEIGHT_UNKNOWN",
+          2,
+          18
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/0/attributes/height": "unknown",
+        "/model/elements/0/attributes/rope/meters": 20
+      },
+      "geometry": {
+        "points": [
+          "R1",
+          null
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            null
+          ]
+        ],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
   }
 }

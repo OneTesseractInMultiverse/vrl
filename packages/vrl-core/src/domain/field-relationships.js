@@ -5,7 +5,8 @@ import { stageTotalMatchesHeight } from "./stage-totals.js";
 
 /**
  * Compare valid declared heights with rope, redirection and stage fields; malformed tokens are left to field
- * validation.
+ * validation. Explicit unknown rappel heights retain independent rope warnings but reject measured details
+ * whose positions require a known height.
  * @responsibility computation
  * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
  * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
@@ -13,6 +14,9 @@ import { stageTotalMatchesHeight } from "./stage-totals.js";
  */
 export function attributeRelationshipProblems(attributes, scope) {
   if (!hasAttributeValue(attributes, "height")) return [];
+  if (scope === "rappel" && attributes.height === "unknown") {
+    return [...ropeProblems(attributes, scope, null), ...unplaceableDetailProblems(attributes)];
+  }
   const height = parseMeasurementToken(attributes.height);
   if (!height.ok) return [];
   return [...ropeProblems(attributes, scope, height.value.meters), ...redirectionProblems(attributes, height.value.meters), ...stageProblems(attributes)];
@@ -24,14 +28,28 @@ export function attributeRelationshipProblems(attributes, scope) {
  * @responsibility computation
  * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
  * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
- * @param {number} height - Validated declared technical height in meters.
+ * @param {number|null} height - Validated height in meters, or null for an explicitly unknown rappel height.
  * @returns {unknown} The ordered records or values assembled above. The selected result, including the documented absent-value fallback.
  */
 function ropeProblems(attributes, scope, height) {
   if (scope !== "rappel" || !hasAttributeValue(attributes, "rope")) return [];
   if (attributes.rope === "unknown") return [{ kind: "unknownRope", name: "rope", severity: "warning" }];
   const rope = parseMeasurementToken(attributes.rope);
-  return rope.ok && rope.value.meters < height ? [{ kind: "rope", name: "rope", severity: "warning" }] : [];
+  return height !== null && rope.ok && rope.value.meters < height ? [{ kind: "rope", name: "rope", severity: "warning" }] : [];
+}
+
+/**
+ * Identify supplied measured details that cannot be positioned against an explicitly unknown rappel height.
+ * @responsibility computation
+ * @param {Object} attributes - Raw attribute record already identified as an unknown-height rappel.
+ * @returns {Object[]} One blocking field problem per supplied stage/redirection field, in stable field order.
+ */
+function unplaceableDetailProblems(attributes) {
+  const problems = [];
+  for (const name of ["stages", "redirection", "redirections"]) {
+    if (hasAttributeValue(attributes, name)) problems.push({ kind: "unplaceableDetail", name, severity: "error" });
+  }
+  return problems;
 }
 
 /**

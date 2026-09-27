@@ -54,6 +54,7 @@ const SPECIFICATIONS = Object.fromEntries(Object.entries(DEFINITIONS).map(/**
  */ ([name, definition]) => [name, freezeSpecification(definition)]));
 
 const RAPPEL_ROPE = freezeSpecification({ ...DEFINITIONS.rope, acceptsUnknown: true });
+const RAPPEL_HEIGHT = freezeSpecification({ ...DEFINITIONS.height, acceptsUnknown: true });
 
 /**
  * Freeze a field specification and its nested rule collections so callers cannot mutate shared domain policy.
@@ -79,7 +80,7 @@ export function fieldSpecification(fieldName) {
 
 /**
  * Resolve a field's specification for its declared scope while retaining globally recognized numeric
- * validation.
+ * validation. Only rappel rope and height specifications permit the explicit unknown sentinel.
  * @responsibility computation
  * @param {string} fieldName - Own field name selecting the applicable parsing or measurement rule.
  * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
@@ -89,6 +90,7 @@ export function applicableFieldSpecification(fieldName, scope) {
   const specification = fieldSpecification(fieldName);
   if (specification === null) return null;
   if (fieldName === "rope" && scope === "rappel") return RAPPEL_ROPE;
+  if (fieldName === "height" && scope === "rappel") return RAPPEL_HEIGHT;
   const { applicability } = specification;
   const applies = applicability === "all" || (applicability === "elements" ? scope !== "metadata" : applicability.includes(scope));
   return applies ? specification : null;

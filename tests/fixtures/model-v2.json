@@ -1,0 +1,137 @@
+{
+  "contract": "vrl/model",
+  "revision": 2,
+  "sourceCommit": "3eeebed3dbc7cfd30b3923c3f4ac1f91cbdaafa1",
+  "source": "route \"Saved rope uncertainty\"\nstart S1\nrappel R1 height=12m rope=unknown anchor=bolts anchor_count=2 stages=5m+7m redirection=6m:right\nnote \"Lower station\"\nexit E1",
+  "model": {
+    "name": "Saved rope uncertainty",
+    "metadata": {},
+    "extensions": {},
+    "elements": [
+      {
+        "type": "start",
+        "id": "S1",
+        "label": "S1",
+        "attributes": {},
+        "extensions": {},
+        "sourceLocation": {
+          "line": 2,
+          "column": 1
+        }
+      },
+      {
+        "type": "rappel",
+        "id": "R1",
+        "label": null,
+        "attributes": {
+          "height": {
+            "value": 12,
+            "unit": "m",
+            "meters": 12
+          },
+          "rope": "unknown",
+          "anchor": "bolts",
+          "anchor_count": "2",
+          "stages": [
+            {
+              "value": 5,
+              "unit": "m",
+              "meters": 5
+            },
+            {
+              "value": 7,
+              "unit": "m",
+              "meters": 7
+            }
+          ],
+          "redirection": [
+            {
+              "distance": {
+                "value": 6,
+                "unit": "m",
+                "meters": 6
+              },
+              "side": "right"
+            }
+          ]
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 3,
+          "column": 1
+        }
+      },
+      {
+        "type": "note",
+        "id": "N1",
+        "label": null,
+        "attributes": {},
+        "extensions": {
+          "text": "Lower station"
+        },
+        "sourceLocation": {
+          "line": 4,
+          "column": 1
+        }
+      },
+      {
+        "type": "exit",
+        "id": "E1",
+        "label": "E1",
+        "attributes": {},
+        "extensions": {},
+        "sourceLocation": {
+          "line": 5,
+          "column": 1
+        }
+      }
+    ],
+    "traversal": {
+      "points": [
+        {
+          "elementIndex": 0
+        },
+        {
+          "elementIndex": 1
+        },
+        {
+          "elementIndex": 3
+        }
+      ],
+      "segments": [
+        {
+          "from": 0,
+          "to": 1,
+          "elementIndex": null,
+          "kind": "connection",
+          "direction": null,
+          "verticalDeltaMeters": 0
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "elementIndex": 1,
+          "kind": "technical",
+          "direction": "down",
+          "verticalDeltaMeters": -12
+        }
+      ],
+      "annotations": [
+        {
+          "elementIndex": 2,
+          "pointIndex": 2
+        }
+      ]
+    },
+    "summary": {
+      "numberOfRappels": 1,
+      "numberOfHazards": 0,
+      "highestRappelMeters": 12,
+      "requiredRopeMeters": 0,
+      "totalDistanceMeters": 0,
+      "entranceElevationMeters": null,
+      "exitElevationMeters": null,
+      "totalElevationChangeMeters": 0
+    }
+  }
+}

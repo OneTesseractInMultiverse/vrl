@@ -75,3 +75,5 @@ The fixtures follow the framework entry points documented for [React hydration](
 Selective-icon consumer scenarios verify the five pilot identities, retained text after wrapping, decorative semantics and absence of icon/text or sampled structural-stroke collisions at 320 and 736 layout units. SSR, hydration and icon-to-minimal updates run on each framework; displayed CSS width can still shrink a wide fitted profile. See the [annotation layout limits](annotation-icons.md).
 
 Standalone SVG export checks serve all thirteen visual cases from the real consumer application. External-image checks decode the image, compare structural drawing bands against inline raster output and inspect the full adjacent HTML description in Chromium. Deliberate clipping, hidden text, broken references, duplicate IDs and damaged XML must be detected. See [export evidence and tolerances](visual-regression.md).
+
+Unknown-height consumer scenarios verify successful warning states through SSR/hydration and independently specified null-motion descriptions in the hydrated classic/narrow monochrome accessibility tree. Both unknown rope and unknown height remain explicit source cases.

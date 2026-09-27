@@ -28,16 +28,11 @@ export function validateGeometry(route, sourceMap) {
    * @returns {unknown} The result of the documented comparison or calculation.
    */ (segment) => segment.kind === "technical" && segment.verticalDeltaMeters === null);
   const diagnostics = missing.map(/**
-   * Apply codedDiagnostic to the supplied arguments; retain the callee's return and failure behavior.
+   * Locate and classify one unmeasured technical height against the optional complete elevation profile.
    * @responsibility computation
    * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
-   * @returns {unknown} The result returned by codedDiagnostic.
-   */ (segment) => codedDiagnostic(
-    "VRL_GEOMETRY_HEIGHT_REQUIRED", "geometry", profile === null ? "warning" : "error",
-    "Technical elevation is undetermined because height is missing.",
-    declarationReference(sourceMap?.elements?.[segment.elementIndex], route.elements[segment.elementIndex].sourceLocation),
-    "Supply a height; without an elevation profile this feature is drawn schematically."
-  ));
+   * @returns {Object} Located warning for schematic output, or blocking error for a complete measured profile.
+   */ (segment) => unmeasuredHeightDiagnostic(route.elements[segment.elementIndex], sourceMap?.elements?.[segment.elementIndex], profile));
   if (profile === null || missing.length > 0 || !hasElevationResidual(route)) return diagnostics;
   const hasConnections = traversal.segments.some(/**
    * Evaluate the selection condition segment.kind === "connection".
@@ -53,4 +48,23 @@ export function validateGeometry(route, sourceMap) {
     hasConnections ? "Treat intermediate elevations as estimates; technical heights and directions are preserved."
       : "Correct the elevations or technical measurements; technical segments cannot absorb residual elevation."
   )];
+}
+
+/**
+ * Preserve absent-height diagnostics while locating explicit uncertainty on its authored value.
+ * @responsibility computation
+ * @param {Object} element - Normalized owner of a technical segment with null vertical delta.
+ * @param {Object|undefined} source - Optional parser source map for this element, including attribute spans.
+ * @param {Object|null} profile - Complete endpoint profile, or null when schematic output is permitted.
+ * @returns {Object} Geometry diagnostic; complete endpoint profiles require known technical heights.
+ */
+function unmeasuredHeightDiagnostic(element, source, profile) {
+  const explicit = element.attributes.height === "unknown";
+  return codedDiagnostic(
+    explicit ? "VRL_GEOMETRY_HEIGHT_UNKNOWN" : "VRL_GEOMETRY_HEIGHT_REQUIRED", "geometry", profile === null ? "warning" : "error",
+    explicit ? "Technical elevation is undetermined because height is explicitly unknown." : "Technical elevation is undetermined because height is missing.",
+    explicit ? fieldReference(source, "height", element.sourceLocation) : declarationReference(source, element.sourceLocation),
+    explicit ? "Retain unknown for schematic output; a complete elevation profile requires a measured height, never an inferred value."
+      : "Supply a height; without an elevation profile this feature is drawn schematically."
+  );
 }

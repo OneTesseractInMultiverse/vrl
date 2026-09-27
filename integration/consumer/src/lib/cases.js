@@ -1,4 +1,5 @@
 export const SOURCES = {
+  unknownHeight: 'route "Synthetic unknown height"\nrappel R1 height=unknown rope=20m anchor=bolts',
   unknownRope: 'route "Synthetic unknown rope"\nrappel R1 height=12m rope=unknown anchor=bolts',
   icons: 'route "Synthetic two-rappel canyon"\nstart "Entry"\nrappel R1 height=18m rope=40m anchor=bolts anchor_count=2 station=right\npool P1 type=unknown\nwalk W1 distance=120m\nrappel R2 height=12m rope=30m anchor=tree\nhazard H1 type=slippery note="Slippery landing"\nexit "Exit"',
   valid: 'route "Good route"\nstart\nrappel height=10m rope=20m\nexit',

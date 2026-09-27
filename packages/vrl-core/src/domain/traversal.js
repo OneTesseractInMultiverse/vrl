@@ -174,10 +174,11 @@ function createSegment(from, elementIndex, elements) {
 }
 
 /**
- * Convert a technical height into signed physical elevation change; missing height remains unknown.
+ * Convert a technical height into signed physical elevation change; absent or explicitly unknown height
+ * remains null and cannot be filled from rope declarations or diagram coordinates.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
- * @returns {null|number} Null when no matching value or problem exists. The result of the documented comparison or calculation.
+ * @returns {null|number} Signed measured elevation delta, or null for absent/explicitly unknown height.
  */
 export function technicalElevationDelta(element) {
   const meters = measurementMeters(element.attributes.height);
@@ -190,7 +191,7 @@ export function technicalElevationDelta(element) {
  * measurements.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
- * @returns {number} Height times inclination/100 in meters; missing height contributes zero only in this compatibility helper. Canonical traversal separately retains unknown height.
+ * @returns {number} Height times inclination/100 in meters; absent/explicitly unknown height contributes zero only in this compatibility helper. Canonical traversal separately retains null physical motion.
  */
 export function technicalVerticalMeters(element) {
   const meters = measurementMeters(element.attributes?.height);

@@ -82,6 +82,7 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_ROPE_SHORTER_THAN_HEIGHT` | Declared rope is shorter than height (warning) |
 | `VRL_REDIRECTION_OUTSIDE_HEIGHT` | Redirection at or beyond declared height |
 | `VRL_STAGE_TOTAL_MISMATCH` | Stage total differs from height (warning) |
+| `VRL_DETAIL_REQUIRES_KNOWN_HEIGHT` | Stages/redirections on an unknown-height rappel cannot be positioned (error on the detail value) |
 | `VRL_TOTAL_DISTANCE_BELOW_WALK_SUM` | Declared metadata total distance is below recorded walk distances (warning; both values preserved) |
 | `VRL_IDENTIFIER_INVALID` | Explicit identifier is not a nonblank string |
 | `VRL_IDENTIFIER_DUPLICATE` | Repeated explicit identifier |
@@ -89,6 +90,7 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_BOUNDARY_ORDER` | Start/exit does not enclose progression |
 | `VRL_GEOMETRY_NUMERIC_RANGE` | Unsupported number in a supplied normalized model |
 | `VRL_GEOMETRY_HEIGHT_REQUIRED` | Technical height is missing (warning or error according to profile) |
+| `VRL_GEOMETRY_HEIGHT_UNKNOWN` | Rappel height is explicitly unknown (warning for schematic output; error with complete endpoint elevations; located on the height value) |
 | `VRL_GEOMETRY_ELEVATIONS_ESTIMATED` | Intermediate elevations require schematic estimates (warning) |
 | `VRL_GEOMETRY_ELEVATIONS_INCONSISTENT` | Declared motion cannot satisfy endpoint elevations |
 | `VRL_LIMIT_MAX_SOURCE_BYTES` | Source byte budget exceeded |

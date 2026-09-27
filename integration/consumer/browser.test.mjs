@@ -108,6 +108,25 @@ describe("production framework consumers", /**
       });
     }
 
+    for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}]) {
+      test(`${surface} preserves unknown height in its hydrated accessible image: ${JSON.stringify(query)}`, /**
+       * Verify the packaged framework exposes the exact independent unknown-height description in Chromium.
+       * @responsibility coordinator
+       * @param {Object} t - Test context that owns browser cleanup.
+       * @returns {Promise<void>} Resolves after accessible facts, warning presence and client errors are checked.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"unknownHeight",true,query);
+        t.after(/**
+         * Close the browser context created for this single scenario.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves when the owned browser resources are released.
+         */ () => context.close());
+        const expectedText="Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. 1. Rappel R1. Movement: descent. Vertical change: unknown. Anchor type: bolts. Anchor count: unknown. Physical height: unknown. Declared rope: 20m.";
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.warning.includes("explicitly unknown"),context.errors],[[["Synthetic unknown height topo",expectedText]],true,[]]);
+      });
+    }
+
     for (const hydrated of [false,true]) for (const query of [{}, {style:"soft-terrain",symbols:"annotations"}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"minimal",theme:"dark",width:"736"}]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} exposes one named image with complete route facts: ${JSON.stringify(query)}`, /**
        * Inspect the real Chromium accessibility tree, requiring one image and an independently specified complete description.

@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "unknown height becomes zero descent", file: "packages/vrl-core/src/domain/traversal.js",
+    before: 'if (meters === null) return null;', after: 'if (meters === null) return 0;',
+    testFile: "tests/unknown-height.test.js", testName: "unknown rappel height preserves a null physical delta through JSON" },
   { name: "unknown rope counted as zero", file: "packages/vrl-core/src/domain/route-measurements.js",
     before: 'element.attributes[field] === "unknown" ? null : optionalMeters', after: 'element.attributes[field] === "unknown" ? 0 : optionalMeters',
     testFile: "tests/unknown-rope.test.js", testName: "all unknown ropes yield a null observed maximum and zero numeric declaration count" },

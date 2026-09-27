@@ -7,7 +7,7 @@ const corpus = JSON.parse(readFileSync(new URL("../docs/research/cases/davis-fir
 const invalid = [
   ["missing documentary measurements", "rappel R1 anchor=bolts anchor_count=2", ["VRL_FIELD_REQUIRED", "VRL_FIELD_REQUIRED"]],
   ["unsupported unit labels", "rappel R1 height=8ft rope=16ft", ["VRL_FIELD_MEASUREMENT_SYNTAX", "VRL_FIELD_MEASUREMENT_SYNTAX"]],
-  ["unknown height remains unsupported", "rappel R1 height=unknown rope=unknown", ["VRL_FIELD_MEASUREMENT_SYNTAX"]],
+  ["unknown climb height remains unsupported", "climb C1 height=unknown", ["VRL_FIELD_MEASUREMENT_SYNTAX"]],
   ["zero cannot substitute for unknown", "rappel R1 height=0m rope=0m", ["VRL_FIELD_MEASUREMENT_RANGE", "VRL_FIELD_MEASUREMENT_RANGE"]],
   ["contradictory count declarations", "rappel R1 height=8m rope=16m anchor_count=2 anchor_count=3", ["VRL_SYNTAX_DUPLICATE_ATTRIBUTE"]],
   ["unadopted movement keyword", "swim S2 distance=5m", ["VRL_SYNTAX_UNKNOWN_STATEMENT"]]

@@ -299,3 +299,5 @@ The [canyon visual specification](docs/visual-specification.md) and [complete el
 See the [canyon capability matrix](docs/canyon-capabilities.md) for supported semantics, explicit deferrals and representative executable cases.
 
 [Explicit unknown rappel ropes](docs/unknown-rope.md) preserve missing declarations without inventing lengths; model revision 2 requires typed readers to handle the sentinel.
+
+[Unknown rappel heights](docs/unknown-height.md) preserve unmeasured descents without inventing physical geometry; model revision 3 documents the supported schematic boundary.

@@ -1,4 +1,5 @@
 import { DETAIL_BADGE_TOKENS } from "./badge-style.js";
+import { softTerrainText } from "./soft-terrain-text.js";
 import { detailRecordsForElement, detailRecordText } from "./detail-content.js";
 export { anchorMarkCount, anchorSummary, anchorLabel } from "./anchor-presentation.js";
 import { technicalElementIndexesBetween, technicalVerticalMeters } from "@subvertic/vrl-core";
@@ -358,6 +359,7 @@ export function nextLabelTitleY(placement, detailRowCount) {
 
 /**
  * Choose boundary labels, technical identity/height text or empty titles for symbol-only element types.
+ * Explicit unknown heights retain localized wording in every style; numeric formatting stays strict.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to "en".
@@ -369,7 +371,7 @@ export function formatTopoLabel(element, language = "en") {
   }
 
   if (needsSegmentArrow(element)) {
-    return `${element.id}, ${formatMeasurement(element.attributes.height)}`;
+    return `${element.id}, ${element.attributes.height === "unknown" ? softTerrainText(language).heightUnknown : formatMeasurement(element.attributes.height)}`;
   }
 
   if (SYMBOL_ONLY_LABEL_TYPES.has(element.type)) {

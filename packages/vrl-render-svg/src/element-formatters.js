@@ -37,7 +37,7 @@ export function formatElementTitle(element, language = "en") {
 }
 
 /**
- * Format supplied element attributes as human-readable detail text.
+ * Format supplied element attributes as human-readable detail text, retaining explicit unknown height/rope.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to "en".
@@ -45,7 +45,7 @@ export function formatElementTitle(element, language = "en") {
  */
 export function formatElementDetail(element, language = "en") {
   if (element.type === "rappel") {
-    return [formatMeasurement(element.attributes.height), element.attributes.rope === "unknown" ? localizeDetailValue("unknown", language) : formatMeasurement(element.attributes.rope), localizeDetailValue(element.attributes.anchor, language)]
+    return [element.attributes.height === "unknown" ? localizeDetailValue("unknown", language) : formatMeasurement(element.attributes.height), element.attributes.rope === "unknown" ? localizeDetailValue("unknown", language) : formatMeasurement(element.attributes.rope), localizeDetailValue(element.attributes.anchor, language)]
       .filter(Boolean)
       .join(" / ");
   }
