@@ -302,6 +302,9 @@ Renderer options:
   legend: true | false,
   idPrefix: "route-overview",
   style: "classic" | "soft-terrain",
+  flow: "continuous" | "rows",
+  symbols: "classic" | "icons" | "annotations" | "minimal",
+  monochrome: false,
   theme: "light" | "dark",
   themeTokens: {
     background: "#eef6f8",
@@ -316,6 +319,8 @@ Renderer options:
 `style` defaults to `classic`. The optional `soft-terrain` style adds a neutral contour/wash, directed curves without rungs, symbolic pools, explicit uncertainty, and declared rope/anchor labels. It applies to complete diagrams, preserves model/layout facts, and rejects other values with `TypeError`. See the [style contract and visual examples](soft-terrain.md) for compatibility, failure and schematic limits.
 
 `idPrefix` gives each diagram occurrence a document-unique namespace for SVG definitions and references. It defaults to `vrl`; accepted strings are 1–64 ASCII letters/digits/underscores/hyphens starting with a letter. Non-strings throw `TypeError`; malformed strings throw `RangeError`. Every inline diagram on a page must use a distinct prefix, stable across SSR and hydration. Supplied diagram states preserve their existing SVG IDs. See [multiple inline diagrams](svg-identifiers.md) for ownership, duplicate-prefix behavior, fragments and migration.
+
+`monochrome: true` requires soft-terrain rows and forbids nonempty `themeTokens`. `describeRoute(model, options?)` returns complete ordered localized facts; `renderRouteText(model, options?)` serializes them into a visible native HTML alternative. The SVG itself owns the named image role and namespaced title/description; framework wrappers have no role by default. See the [accessibility API, fields, failures and print contract](accessible-output.md).
 
 Useful helper exports include `resolveTheme`, `symbolCode`, `resolveSymbolProfile`, `formatTopoLabel`, `formatTopoDetail`, and lower-level SVG rendering helpers for custom renderers.
 

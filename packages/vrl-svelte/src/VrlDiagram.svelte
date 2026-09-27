@@ -7,7 +7,7 @@
   export let diagram = null;
   export let className = "vrl-diagram";
   export let diagnosticsClassName = "vrl-diagram__diagnostics";
-  export let role = "img";
+  export let role = undefined;
   export let showWarnings = true;
   export let warningsClassName = "vrl-diagram__warnings";
   export let warningsLabel = "Route warnings";

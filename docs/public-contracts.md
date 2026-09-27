@@ -24,7 +24,7 @@ if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) 
 | Surface | Stable facade | Advanced extension points |
 | --- | --- | --- |
 | Core | `compileRoute`, `parseVrl`, `validateRoute`, `normalizeRoute`, `computeVerticalLayout`, `exportRouteJson`, diagnostic construction/formatting/blocking checks | Compiler composition/overrides, individual element/token helpers, traversal and geometry helpers, numerical guards |
-| SVG | `renderTopoSvg`, `resolveTheme`, `LIGHT_THEME`, `DARK_THEME`, `escapeXml` | `computeTopoScene`, presentation calculations, localization/symbol tables, individual SVG fragments and prepared drawing overrides |
+| SVG | `renderTopoSvg`, `describeRoute`, `renderRouteText`, `resolveTheme`, `LIGHT_THEME`, `DARK_THEME`, `escapeXml` | `computeTopoScene`, presentation calculations, localization/symbol tables, individual SVG fragments and prepared drawing overrides |
 | Diagram | `createDiagramState`, `diagramWarningText` | None |
 | React | Both state and component factories | None |
 | Svelte | State/markup factories and `VrlDiagram.svelte` | None |
@@ -268,4 +268,21 @@ if (scene.viewBox.width !== 320 || scene.rows.length !== 4
   throw new Error("Rows must preserve their exact width and paired continuation identity");
 }
 console.log(renderTopoSvg(result.model, result.layout, { style: "soft-terrain", flow: "rows", symbols: "annotations" }));
+```
+
+## Ordered descriptions and monochrome rows
+
+The next-minor renderer facade adds `describeRoute` and `renderRouteText`, with typed `RouteDescription`/`RouteDescriptionEntry` records. `RenderOptions.monochrome` requires soft-terrain rows; nonempty theme overrides fail. SVG metadata carries the complete projection, with namespaced title/description IDs; framework wrappers no longer default to an image role. Model/DSL revisions are unchanged. See [accessibility, external-image embedding and print limits](accessible-output.md).
+
+```ts
+import { compileRoute } from "@subvertic/vrl-core";
+import { describeRoute, renderRouteText, renderTopoSvg, type RouteDescription } from "@subvertic/vrl-render-svg";
+
+const result = compileRoute('route Canyon\nwalk W1 distance=120m', { layout: { width: 320 } });
+if (!result.ok) throw new Error("Invalid route");
+const description: RouteDescription = describeRoute(result.model);
+const html = renderRouteText(result.model, { idPrefix: "canyon" });
+const svg = renderTopoSvg(result.model, result.layout, { flow: "rows", style: "soft-terrain", monochrome: true, idPrefix: "canyon" });
+if (description.entries[0]?.facts[0] !== "Walking distance: 120m") throw new Error("Lost distance");
+if (!html.includes('id="canyon-text"') || !svg.includes('aria-describedby="canyon-description"')) throw new Error("Lost description relationship");
 ```

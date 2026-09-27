@@ -142,7 +142,7 @@ test("scene inspection carries the same resolved identifiers used by serializati
  * @responsibility coordinator
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
-  assert.deepEqual(computeTopoScene(compiled.model, compiled.layout, { idPrefix: "inspection" }).identifiers, { arrow: "inspection-arrow" });
+  assert.deepEqual(computeTopoScene(compiled.model, compiled.layout, { idPrefix: "inspection" }).identifiers, { arrow: "inspection-arrow", title: "inspection-title", description: "inspection-description", text: "inspection-text" });
 });
 test("each scene owns its identifier record independently of other render calls", /**
  * Verify each scene owns its identifier record independently of other render calls; arrange the scenario and
@@ -242,7 +242,7 @@ test("namespace selection changes no route facts, diagnostics, geometry, or JSON
  */ () => {
   const { svg: firstSvg, ...first } = createDiagramState(SOURCE, { idPrefix: "first" });
   const { svg: secondSvg, ...second } = createDiagramState(SOURCE, { idPrefix: "second" });
-  assert.deepEqual([first, firstSvg.replaceAll("first-arrow", "second-arrow")], [second, secondSvg]);
+  assert.deepEqual([first, firstSvg.replaceAll("first-", "second-")], [second, secondSvg]);
 });
 test("rendering leaves frozen caller options and input records unchanged", /**
  * Verify rendering leaves frozen caller options and input records unchanged; arrange the scenario and make its

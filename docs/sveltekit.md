@@ -82,3 +82,5 @@ Successful diagrams show a warning panel by default. `showWarnings` defaults to 
 ## Optional canyon style
 
 Use `options.style: "soft-terrain"` for a neutral ground wash, directed technical curves, symbolic pools and explicit rope/anchor information. Classic rendering remains the default. This renderer-owned option preserves the domain model and canonical traversal; framework adapters forward it. These are project schematic conventions, not a claim of federation approval. See the [style contract and visual gallery](soft-terrain.md) for examples, language/theme compatibility, failure behavior and limitations.
+
+The SvelteKit wrapper leaves the image role to the inner SVG, whose namespaced title/description include complete ordered route facts. Keep the wrapper role absent; use stable instance prefixes in server load data. See [accessible output and external-image alternatives](accessible-output.md).

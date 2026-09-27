@@ -153,8 +153,8 @@ for (const shape of SHAPES) {
   });
 
   for (const [language, expected] of [
-    ["en", "Vertical Route Language schematic for Technical survey. R1, 30m: Rope stages: 10m + 20m; Redirection anchor 5m L."],
-    ["es", "Esquema VRL para Technical survey. R1, 30m: Tramos de cuerda: 10m + 20m; Anclaje de desvio 5m izq."]
+    ["en", `Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel R1. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: unknown. Physical height: 30m. Redirection: 5m left. Declared rope: 60m. Technical shape: ${shape}. Rope stages: 10m; 20m.`],
+    ["es", `Ruta esquematica, sin escala. Lea los elementos en orden. Las cuerdas son longitudes declaradas, no requisitos de equipo.\n1. Rapel R1. Movimiento: descenso. Cambio vertical: -30m. Tipo de anclaje: desconocido. Cantidad de anclajes: desconocido. Altura fisica: 30m. Desviador: 5m izquierda. Cuerda declarada: 60m. Forma tecnica: ${shape}. Tramos de cuerda: 10m; 20m.`]
   ]) {
     test(`${shape}: ${language} top-level description exposes annotation values and their owner`, /**
      * Verify ${shape}: ${language} top-level description exposes annotation values and their owner; arrange the
@@ -495,7 +495,7 @@ test("accessible annotation description preserves feature order across connectio
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const document = render(`${source("direct")}\nwalk distance=1m\nclimb height=5m stages=2m+3m redirection=1m:right shape=slab`);
-  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Vertical Route Language schematic for Technical survey. R1, 30m: Rope stages: 10m + 20m; Redirection anchor 5m L. C1, 5m: Rope stages: 2m + 3m; Redirection anchor 1m R.");
+  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel R1. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: unknown. Physical height: 30m. Redirection: 5m left. Declared rope: 60m. Technical shape: direct. Rope stages: 10m; 20m.\n2. Walk W1. Walking distance: 1m.\n3. Climb C1. Movement: ascent. Vertical change: 5m. Physical height: 5m. Redirection: 1m right. Technical shape: slab. Rope stages: 2m; 3m.");
 });
 
 test("accessible descriptions retain explicit identifiers as escaped text", /**
@@ -505,7 +505,7 @@ test("accessible descriptions retain explicit identifiers as escaped text", /**
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const document = render('route "Survey"\nrappel "R<&>" height=30m rope=60m stages=10m+20m shape=direct');
-  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Vertical Route Language schematic for Survey. R<&>, 30m: Rope stages: 10m + 20m.");
+  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel R<&>. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: unknown. Physical height: 30m. Declared rope: 60m. Technical shape: direct. Rope stages: 10m; 20m.");
 });
 
 test("accessible descriptions omit an absent stage list while retaining redirections", /**
@@ -515,5 +515,5 @@ test("accessible descriptions omit an absent stage list while retaining redirect
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const document = render(source("slab", "height=30m rope=60m redirections=5m:left,25m:right"));
-  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Vertical Route Language schematic for Technical survey. R1, 30m: Redirection anchor 5m L; Redirection anchor 25m R.");
+  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel R1. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: unknown. Physical height: 30m. Redirections: 5m left; 25m right. Declared rope: 60m. Technical shape: slab.");
 });

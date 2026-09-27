@@ -1,10 +1,11 @@
+import { descriptionSide } from "./description-text.js";
 import { annotationIconId } from "./annotation-icons.js";
 import { resolveElementIconId } from "@subvertic/vrl-icons/semantics";
 import { detailRecordsForElement, detailRecordText } from "./detail-content.js";
 import { formatElementTitle, formatMeasurement } from "./element-formatters.js";
 import { elementAttribute } from "./route-data.js";
 import { localizeDetailValue } from "./locale.js";
-import { rappelStagesForElement, redirectionsForElement, redirectionLabel, redirectionSideSuffix, formatMeters } from "./presentation.js";
+import { rappelStagesForElement, redirectionsForElement, redirectionLabel, formatMeters } from "./presentation.js";
 
 const EN = Object.freeze({ intro: "Schematic, not to scale. Read sections top to bottom and match continuation letters.", section: "Section", next: "Continue to section", previous: "From section", drop: "Physical height", station: "Station", stage: "Stage", redirection: "Redirection", distance: "Walking distance compressed", elevation: "Elevation", delta: "Vertical change", unknown: "unknown", empty: "No route elements", legend: "Reading the rows", schematic: "Schematic sections, read top to bottom. Matching letter pairs continue the same route; row breaks are not route events. Curves and walking lengths are not to scale.", key: "Arrow: traversal direction. Short ticks: stage boundaries. Diamonds: redirections. Double ticks: station side. Zigzag: compressed walking distance. Text retains declared facts and counts." });
 const ES = Object.freeze({ intro: "Esquema sin escala. Lea los tramos de arriba abajo y siga las letras de continuacion.", section: "Tramo", next: "Continua al tramo", previous: "Desde el tramo", drop: "Altura fisica", station: "Reunion", stage: "Etapa", redirection: "Desviador", distance: "Distancia a pie comprimida", elevation: "Elevacion", delta: "Cambio vertical", unknown: "desconocido", empty: "Sin elementos", legend: "Lectura de las filas", schematic: "Tramos esquematicos, de arriba abajo. Las letras emparejadas continuan la misma ruta; los saltos de fila no son eventos. Curvas y distancias a pie no estan a escala.", key: "Flecha: sentido de progresion. Trazos cortos: limites de etapas. Rombos: desviadores. Trazos dobles: lado de reunion. Zigzag: distancia a pie comprimida. El texto conserva los datos y cantidades declarados." });
@@ -48,7 +49,7 @@ export function rowElementFacts(element, node, index, language, symbols) {
   if (["rappel", "downclimb", "climb"].includes(element.type)) result.push(rowFact(`${words.drop}: ${formatMeasurement(element.attributes.height) || words.unknown}`, index));
   const details = detailRecordsForElement(element, node, language, "soft-terrain");
   for (const [position, record] of details.entries()) result.push(rowFact(detailRecordText(record), index, false, element.type === "rappel" && position === 1 ? pilot : null));
-  if (element.attributes.station !== undefined) result.push(rowFact(`${words.station}: ${redirectionSideSuffix(element.attributes.station, language)}`, index));
+  if (element.attributes.station !== undefined) result.push(rowFact(`${words.station}: ${descriptionSide(element.attributes.station, language)}`, index));
   for (const [position, stage] of rappelStagesForElement(element).entries()) result.push(rowFact(`${words.stage} ${position + 1}: ${formatMeters(stage)}`, index));
   for (const [position, redirection] of redirectionsForElement(element).entries()) result.push(rowFact(`${words.redirection} ${position + 1}: ${redirectionLabel(redirection, language)}`, index));
   if (element.type === "walk") result.push(rowFact(`${words.distance}: ${formatMeasurement(element.attributes.distance) || words.unknown}`, index));

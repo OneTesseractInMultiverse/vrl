@@ -258,52 +258,6 @@ export function rappelStagesForElement(element) {
 }
 
 /**
- * Join accessible descriptions of every technical owner's stage and redirection facts in segment order.
- * @responsibility computation
- * @param {Object} layout - Positioned route geometry in drawing units, including nodes and canonical segments.
- * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
- * @returns {string} Space-separated accessible sentences retaining stage and redirection facts by technical owner.
- */
-export function technicalAnnotationDescription(layout, language) {
-  return layout.segments.filter(/**
-   * Evaluate the selection condition segment.element !== null.
-   * @responsibility computation
-   * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
-   * @returns {boolean} The result of the documented comparison or calculation.
-   */ (segment) => segment.element !== null)
-    .map(/**
-     * Apply elementAnnotationDescription to the supplied arguments; retain the callee's return and failure
-     * behavior.
-     * @responsibility computation
-     * @param {Object} input1 - Input record destructured into the separately documented members below.
-     * @param {Object} input1.element - Owning route element with its type, identity and declared attributes.
-     * @returns {unknown} The result returned by elementAnnotationDescription.
-     */ ({ element }) => elementAnnotationDescription(element, language)).filter(Boolean).join(" ");
-}
-
-/**
- * Describe supplied stage lengths and redirection sides for one owning technical element.
- * @responsibility computation
- * @param {Object} element - Owning route element with its type, identity and declared attributes.
- * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
- * @returns {string} Localized owned technical annotations, or empty text when none are supplied.
- */
-function elementAnnotationDescription(element, language) {
-  const text = diagramText(language);
-  const stages = rappelStagesForElement(element);
-  const details = [
-    ...(stages.length === 0 ? [] : [`${text.ropeStages}: ${stages.map(formatMeters).join(" + ")}`]),
-    ...redirectionsForElement(element).map(/**
-     * Format one declared redirection with localized anchor wording, metric distance and side.
-     * @responsibility computation
-     * @param {unknown} redirection - Typed metric distance and side for one declared redirection.
-     * @returns {string} Formatted text retaining the supplied values and ordering.
-     */ (redirection) => `${text.redirectionAnchor} ${redirectionLabel(redirection, language)}`)
-  ];
-  return details.length === 0 ? "" : `${formatTopoLabel(element, language)}: ${details.join("; ")}.`;
-}
-
-/**
  * Read a typed numeric height in meters, returning zero for compatible inputs without one.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.

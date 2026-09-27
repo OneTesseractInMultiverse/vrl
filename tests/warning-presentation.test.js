@@ -124,12 +124,7 @@ for (const [name, render] of ADAPTERS) {
    */ () => {
     const document = documentFor(render({ source: WARNING }));
     const panel = warningPanel(document);
-    const image = Array.from(document.getElementsByTagName("div")).find(/**
-     * Evaluate the selection condition element.getAttribute("role") === "img".
-     * @responsibility computation
-     * @param {Element} element - Parsed SVG DOM element observed independently of renderer internals.
-     * @returns {boolean} The result of the documented comparison or calculation.
-     */ (element) => element.getAttribute("role") === "img");
+    const image = document.getElementsByTagName("svg")[0].parentNode;
     assert.deepEqual([panel.getAttribute("aria-label"), panel.getAttribute("aria-live"), panel.getAttribute("aria-atomic"), panel.parentNode === image.parentNode, image.contains(panel)], ["Route warnings", "polite", "true", true, false]);
   });
   test(`${name}: long warning text can wrap`, /**

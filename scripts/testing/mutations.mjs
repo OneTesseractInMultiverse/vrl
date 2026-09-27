@@ -9,6 +9,21 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "lost pool uncertainty in description", file: "packages/vrl-render-svg/src/route-description.js",
+    before: '`${words.fields.depth}: ${words.unknown}`', after: '`${words.fields.depth}: 0m`',
+    testFile: "tests/accessible-output.test.js", testName: "ordered route description preserves independent facts: en" },
+  { name: "lost described anchor count", file: "packages/vrl-render-svg/src/route-description.js",
+    before: 'for (const key of Object.keys(fields).sort()) {', after: 'for (const key of Object.keys(fields).sort()) { if (key === "anchor_count") continue;',
+    testFile: "tests/accessible-output.test.js", testName: "ordered route description preserves independent facts: en" },
+  { name: "broken SVG description reference", file: "packages/vrl-render-svg/src/row-serializer.js",
+    before: 'aria-describedby="${svgAttribute(scene.identifiers.description)}"', after: 'aria-describedby="missing-description"',
+    testFile: "tests/accessible-output.test.js", testName: "SVG accessible references resolve locally and never hide the image" },
+  { name: "hidden route image", file: "packages/vrl-render-svg/src/row-serializer.js",
+    before: 'role="img" lang=', after: 'role="img" aria-hidden="true" lang=',
+    testFile: "tests/accessible-output.test.js", testName: "SVG accessible references resolve locally and never hide the image" },
+  { name: "lost non-color water cue", file: "packages/vrl-render-svg/src/row-geometry.js",
+    before: 'if (element.attributes.type !== "dry")', after: 'if (false)',
+    testFile: "tests/accessible-output.test.js", testName: "row non-color cues retain contours, water, directed rope, stations, hazards and continuations" },
   { name: "finite-number guard", file: "packages/vrl-core/src/domain/numeric-policy.js",
     before: "return Number.isFinite(value) && Math.abs(value) <= Number.MAX_SAFE_INTEGER;", after: "return true;",
     testFile: "tests/invariants-domain.test.js", testName: "nonfinite custom layout blocks export: NaN" },

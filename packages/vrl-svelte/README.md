@@ -79,7 +79,7 @@ import { renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 const html = renderVrlSvelteMarkup(
   source,
   { language: "es", symbology: "spanish" },
-  { className: "route-diagram", role: "img" }
+  { className: "route-diagram" }
 );
 ```
 
@@ -98,3 +98,5 @@ For multiple inline diagrams, set a stable, document-unique `options.idPrefix` p
 Pass `options={{ style: "soft-terrain", symbols: "annotations" }}` through the component or state helper for selective pictograms. Use `symbols: "minimal"` for the equivalent text layout. See the [annotation contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/annotation-icons.md) for supported modes and failures.
 
 For narrow displays, set `options` to `{ style: "soft-terrain", flow: "rows", layout: { width: 320 } }`. The same deterministic policy works in SSR and hydration. See [row layout and width constraints](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/row-layout.md).
+
+The wrapper has no image role by default; the inner SVG owns its accessible name and complete ordered description. Leave the wrapper role absent to preserve these semantics. See [accessible descriptions and monochrome rows](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/accessible-output.md).

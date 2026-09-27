@@ -1,4 +1,3 @@
-import { formatElementTitle } from "./element-formatters.js";
 import { diagramText } from "./locale.js";
 
 const MAX_ANCHOR_MARKS = 4;
@@ -89,24 +88,4 @@ export function anchorMarkPlacements(node, element, side = "left") {
       fontSize: 9, anchor: direction === -1 ? "end" : "start"
     } : null
   };
-}
-
-/**
- * Build accessible prose containing every declared anchor quantity and its owning element.
- * @responsibility computation
- * @param {Object} layout - Positioned route geometry in drawing units, including nodes and canonical segments.
- * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
- * @returns {string} Space-separated accessible sentences retaining each element's full anchor quantity.
- */
-export function anchorCountDescription(layout, language) {
-  return layout.nodes.flatMap(/**
-   * Describe one element's full anchor count, omitting the sentence when the count is unknown.
-   * @responsibility computation
-   * @param {Object} input1 - Input record destructured into the separately documented members below.
-   * @param {Object} input1.element - Owning route element with its type, identity and declared attributes.
-   * @returns {unknown} The selected result, including the documented absent-value fallback.
-   */ ({ element }) => {
-    const summary = anchorSummary(element, language);
-    return summary === "" ? [] : [`${formatElementTitle(element, language)}: ${summary}.`];
-  }).join(" ");
 }

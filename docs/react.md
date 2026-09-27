@@ -33,7 +33,7 @@ export function RoutePage() {
 }
 ```
 
-If parsing or validation fails, the component renders formatted diagnostics in a `<pre>` block. If the route is valid, it renders accessible SVG inside a `div` with `role="img"`.
+If parsing or validation fails, the component renders formatted diagnostics in a `<pre>` block. If the route is valid, it renders accessible SVG inside a `div` without a default role. The SVG owns the image name and complete description; leave the wrapper role absent to avoid nested image semantics. See [accessible output](accessible-output.md).
 
 For API-backed routes, load the source string in the parent component and pass it through the same `source` prop, or precompute diagram state with `createVrlReactDiagramState` when the parent owns memoization or caching. Rendering options are plain data, so they can be stored in application settings, CMS fields, or application-owned route records. They are not VRL DSL metadata fields.
 
@@ -47,7 +47,6 @@ For API-backed routes, load the source string in the parent component and pass i
   diagnosticsClassName="route-diagram-diagnostics"
   showWarnings={true}
   warningsLabel="Avisos de la ruta"
-  role="img"
   containerProps={{ "data-route": "quebrada-gata" }}
   diagnosticsProps={{ "aria-live": "polite" }}
 />

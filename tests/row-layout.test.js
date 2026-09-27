@@ -60,8 +60,8 @@ test("row width changes preserve the complete ordered fact inventory", /**
  */ () => {
   const narrow = textInventory(scene()), wide = textInventory(scene(source, 736));
   assert.deepEqual([narrow, wide], [
-    ["Start Entry [S1]", "Rappel R1Physical height: 18mdeclared rope: 40mbolts / 2 anchorsStation: RVertical change: -18m", "Pool P1pool depth unknown", "Walk W1120mWalking distance compressed: 120m", "Rappel R2Physical height: 12mdeclared rope: 30mtree / anchor count unknownHazard H1: slipperySlippery landingVertical change: -12m", "Exit Exit [E1]"],
-    ["Start Entry [S1]", "Rappel R1Physical height: 18mdeclared rope: 40mbolts / 2 anchorsStation: RVertical change: -18m", "Pool P1pool depth unknown", "Walk W1120mWalking distance compressed: 120m", "Rappel R2Physical height: 12mdeclared rope: 30mtree / anchor count unknownHazard H1: slipperySlippery landingVertical change: -12m", "Exit Exit [E1]"]
+    ["Start Entry [S1]", "Rappel R1Physical height: 18mdeclared rope: 40mbolts / 2 anchorsStation: rightVertical change: -18m", "Pool P1pool depth unknown", "Walk W1120mWalking distance compressed: 120m", "Rappel R2Physical height: 12mdeclared rope: 30mtree / anchor count unknownHazard H1: slipperySlippery landingVertical change: -12m", "Exit Exit [E1]"],
+    ["Start Entry [S1]", "Rappel R1Physical height: 18mdeclared rope: 40mbolts / 2 anchorsStation: rightVertical change: -18m", "Pool P1pool depth unknown", "Walk W1120mWalking distance compressed: 120m", "Rappel R2Physical height: 12mdeclared rope: 30mtree / anchor count unknownHazard H1: slipperySlippery landingVertical change: -12m", "Exit Exit [E1]"]
   ]);
 });
 test("continuation pairs are unique, complete and point forward in logical order", /**
@@ -337,7 +337,7 @@ test("contradictory physical point ownership is rejected", /**
    */ () => computeTopoScene(result.model,layout,defaults), /point ownership/);
 });
 
-for (const [language, labels] of [["en", ["Station: L", "Station: R"]], ["es", ["Reunion: izq", "Reunion: der"]]]) {
+for (const [language, labels] of [["en", ["Station: left", "Station: right"]], ["es", ["Reunion: izquierda", "Reunion: derecha"]]]) {
   test(`row stations retain localized sides and owning endpoints: ${language}`, /**
    * Verify left descent and right ascent marks stay beside their owning station and retain localized facts.
    * @responsibility coordinator

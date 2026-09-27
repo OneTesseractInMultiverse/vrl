@@ -35,7 +35,7 @@ exit "Exit"`;
 />
 ```
 
-If the source is invalid, the component renders formatted diagnostics in a `<pre>` block. If it is valid, it renders the SVG inside a `div` with `role="img"` by default.
+If the source is invalid, the component renders formatted diagnostics in a `<pre>` block. If it is valid, it renders the SVG inside a `div` without a default role. The SVG owns the image name and complete description; leave the wrapper role absent to avoid nested image semantics. See [accessible output](accessible-output.md).
 
 Compiler layout options live under `options.layout`, including `width`, `spineX`, `horizontalScale`, `marginY`, `marginBottom`, `pixelsPerMeter`, and `minNodeGap`. Renderer options such as `style`, `idPrefix`, `language`, `locale`, `symbology`, `legend`, `theme`, and `themeTokens` live at the top level. The diagram legend is enabled by default; set `legend: false` when the page provides its own explanation.
 
@@ -71,7 +71,7 @@ export function renderRouteHtml(source) {
   return renderVrlSvelteMarkup(
     source,
     { language: "es", symbology: "spanish" },
-    { className: "route-diagram", role: "img" }
+    { className: "route-diagram" }
   );
 }
 ```
@@ -88,7 +88,7 @@ export function renderRouteHtml(source) {
   showWarnings: boolean,
   warningsClassName: string,
   warningsLabel: string,
-  role: string
+  role: string | undefined
 }
 ```
 

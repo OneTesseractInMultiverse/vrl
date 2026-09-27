@@ -20,6 +20,9 @@ export function validateRenderOptions(options) {
   }
   if (options.flow !== undefined && options.flow !== "continuous" && options.flow !== "rows") throw new TypeError("Renderer flow must be continuous or rows.");
   if (options.flow === "rows" && options.style !== "soft-terrain") throw new TypeError("Row layout requires the soft-terrain style.");
+  if (options.monochrome !== undefined && typeof options.monochrome !== "boolean") throw new TypeError("Renderer monochrome must be a boolean.");
+  if (options.monochrome === true && (options.flow !== "rows" || options.style !== "soft-terrain")) throw new TypeError("Monochrome presentation requires soft-terrain rows.");
+  if (options.monochrome === true && options.themeTokens !== undefined && Object.keys(options.themeTokens).length > 0) throw new TypeError("Monochrome presentation does not accept custom theme tokens.");
   if (options.legend !== undefined && typeof options.legend !== "boolean") {
     throw new TypeError("Renderer option legend must be a boolean.");
   }

@@ -41,3 +41,5 @@ Standalone source files and quick-start copies have behavioral regression checks
 ## Readable rows
 
 Render the existing fictional canyon and annotated technical fixture with `flow: "rows"`, `style: "soft-terrain"` and `layout: { width: 320 }`. `npm run rows:build` produces the [320/736-unit comparisons](../docs/row-layout.md#reproducible-comparisons-and-evidence); `rows:check` verifies them.
+
+The [accessibility comparison gallery](../docs/assets/accessibility/index.html) pairs the fictional canyon with color, monochrome and visible HTML alternatives. Run `npm run accessibility:build` to regenerate it and `npm run accessibility:check` to verify it. See [browser print reproduction and limits](../docs/accessible-output.md#evidence-and-print-review).

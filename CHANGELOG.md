@@ -4,12 +4,17 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add complete ordered English/Spanish route descriptions and visible native HTML alternatives through `describeRoute` and `renderRouteText`. Preserve supplied facts, canonical movement/annotation ownership and explicit unknowns across visual modes.
+- Add controlled light/dark monochrome soft-terrain rows, dashed contours and full station words; non-lateral stations no longer acquire false left-side marks. Document contrast, intrinsic readability and print limits.
+- Give SVG sole default ownership of image semantics through namespaced title/description references and language attributes; framework wrappers no longer default to `role="img"`. Regenerate precomputed states to adopt the new metadata.
+- Verify independent bilingual facts, five semantic fault probes, actual browser accessibility trees and suppressed-background print cues. Add reproducible galleries and a browser PDF exporter; representative assistive-technology/practitioner review remains pending.
+
 - Add opt-in soft-terrain `flow: "rows"` with readable fixed-size text, intact technical sections, matched continuations and explicit walking-distance breaks. Preserve canonical facts, enforce width/resource constraints, and provide documented 320/736-unit exports.
 
 - Add the first-party `@subvertic/vrl-icons` package with original immutable geometry, typed public APIs, standalone SVG assets and deterministic generation checks. Release order and packed consumers include all seven workspaces.
 - Keep standalone and renderer icons transparent: remove the node-icon backing square and text halo, preserve original strokes and abbreviations, and demonstrate host-controlled light, dark and checkerboard backgrounds.
 - Add explicit `symbols: "icons"` node pictograms and soft-terrain `annotations`/`minimal` modes. Selected pilot icons sit beside factual labels with reserved stroke bounds, protected geometry clearance and equivalent text/coordinates when hidden. Default exports remain unchanged.
-- Document pilot mapping, unknown-value fallbacks, full counts, declared rope meaning, decorative accessibility, next-minor scene additions, and the reproducible light/dark gallery. Narrow continuation and complete accessible descriptions remain separate work.
+- Document pilot mapping, unknown-value fallbacks, full counts, declared rope meaning, decorative accessibility, next-minor scene additions, and the reproducible light/dark gallery. Narrow continuations and complete accessible descriptions are documented in their dedicated guides.
 
 
 - Document function responsibilities, parameters, outputs and failure/ownership contracts across packages, declarations, callbacks, tooling and tests; enforce coordinator/computation tags and complete signatures in the documentation quality gate.

@@ -1,13 +1,12 @@
+import { describeRoute } from "./route-description.js";
 import { computeRowScene } from "./row-scene.js";
 import { contourObstacles } from "./annotation-icons.js";
 import { prepareSoftTerrain, prepareSoftPools } from "./soft-terrain-geometry.js";
-import { softTerrainText } from "./soft-terrain-text.js";
 import { resolveSvgIdentifiers } from "./svg-identifiers.js";
-import { anchorCountDescription } from "./anchor-presentation.js";
 import { diagramText } from "./locale.js";
 import { validateRenderLayout, validateRenderOptions } from "./render-options.js";
 import { bounds, unionBounds, textBounds, fitSceneBounds } from "./scene-bounds.js";
-import { technicalAnnotationDescription, terrainProfilePath, resolveRenderLanguage } from "./presentation.js";
+import { terrainProfilePath, resolveRenderLanguage } from "./presentation.js";
 import { prepareNodes } from "./node-scene.js";
 import { prepareInfoBox, prepareLegend } from "./panel-scene.js";
 import { prepareRouteSegments, prepareWaterSegments, prepareSegmentLabels, prepareStationTicks } from "./segment-scene.js";
@@ -69,22 +68,9 @@ export function computeTopoScene(route, layout, options = {}) {
   const infoBox = prepareInfoBox(route, layout, language, contentBounds.minY - 160);
   const legend = options.legend === false ? null : prepareLegend({ ...layout, height: Math.max(layout.height, contentBounds.maxY + 12) }, language, options.symbology, style, options.symbols);
   const sceneBounds = unionBounds([contentBounds, infoBox.bounds, ...(legend === null ? [] : [legend.bounds])]);
-  return { style, terrain, pools, identifiers, language, title: `${route.name} ${diagramText(language).topo}`, description: sceneDescription(route, layout, language) + (style === "soft-terrain" ? ` ${softTerrainText(language).schematic}` : ""),
+  return { style, terrain, pools, identifiers, language, title: `${route.name} ${diagramText(language).topo}`, description: describeRoute(route, {language}).text,
     nodes, segments, segmentLabels, terrainPath: terrainProfilePath(layout), waterPaths: prepareWaterSegments(layout), stationTicks: prepareStationTicks(layout),
     infoBox, legend, contentBounds, bounds: sceneBounds, viewBox: fitSceneBounds(sceneBounds, layout.width, layout.height) };
-}
-
-/**
- * Combine the schematic caveat, route name, full anchor quantities and technical annotations into accessible
- * prose.
- * @responsibility computation
- * @param {Object} route - Normalized route view containing elements and optional metadata/traversal required by this operation.
- * @param {Object} layout - Positioned route geometry in drawing units, including nodes and canonical segments.
- * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
- * @returns {string} The projected records or text described above, retaining collection order and the documented empty-value behavior.
- */
-function sceneDescription(route, layout, language) {
-  return [`${diagramText(language).schematicDescription} ${route.name}.`, anchorCountDescription(layout, language), technicalAnnotationDescription(layout, language)].filter(Boolean).join(" ");
 }
 
 /**

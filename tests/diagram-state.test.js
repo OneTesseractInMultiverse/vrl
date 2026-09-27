@@ -369,7 +369,7 @@ for (const [name, source] of CASES.slice(0, 3)) {
     const Component = createVrlDiagramComponent(React);
     const state = expectedState(source);
     assert.deepEqual(Component({ source, showWarnings: false }), state.ok
-      ? { type: "div", props: { className: "vrl-diagram", role: "img", dangerouslySetInnerHTML: { __html: state.svg } }, child: undefined }
+      ? { type: "div", props: { className: "vrl-diagram", role: undefined, dangerouslySetInnerHTML: { __html: state.svg } }, child: undefined }
       : { type: "pre", props: { className: "vrl-diagram__diagnostics" }, child: state.diagnosticsText });
   });
 
@@ -383,7 +383,7 @@ for (const [name, source] of CASES.slice(0, 3)) {
     const document = documentFor(renderVrlSvelteMarkup(source, {}, { showWarnings: false }));
     const root = document.documentElement;
     assert.deepEqual([root.tagName, root.getAttribute("class"), root.getAttribute("role"), state.ok ? root.getElementsByTagName("svg")[0].toString() : root.textContent],
-      state.ok ? ["div", "vrl-diagram", "img", documentFor(state.svg).documentElement.toString()] : ["pre", "vrl-diagram__diagnostics", null, state.diagnosticsText]);
+      state.ok ? ["div", "vrl-diagram", null, documentFor(state.svg).documentElement.toString()] : ["pre", "vrl-diagram__diagnostics", null, state.diagnosticsText]);
   });
 }
 
@@ -405,7 +405,7 @@ test("a shared successful state bypasses compilation and rendering in React", /*
  */ () => {
   const Component = createVrlDiagramComponent(React);
   const diagram = Object.freeze(createDiagramState(VALID));
-  assert.deepEqual(Component({ source: null, options: null, diagram }), { type: "div", props: { className: "vrl-diagram", role: "img", dangerouslySetInnerHTML: { __html: diagram.svg } }, child: undefined });
+  assert.deepEqual(Component({ source: null, options: null, diagram }), { type: "div", props: { className: "vrl-diagram", role: undefined, dangerouslySetInnerHTML: { __html: diagram.svg } }, child: undefined });
 });
 
 test("a shared successful state bypasses compilation and rendering in Svelte markup", /**
@@ -415,7 +415,7 @@ test("a shared successful state bypasses compilation and rendering in Svelte mar
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const diagram = Object.freeze(createDiagramState(VALID));
-  assert.equal(renderVrlSvelteMarkup(null, null, { diagram }), `<div class="vrl-diagram" role="img">${diagram.svg}</div>`);
+  assert.equal(renderVrlSvelteMarkup(null, null, { diagram }), `<div class="vrl-diagram">${diagram.svg}</div>`);
 });
 
 test("injected failed state remains text in React without executing source/options", /**

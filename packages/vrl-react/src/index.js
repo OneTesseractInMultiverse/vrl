@@ -2,7 +2,7 @@ import { createDiagramState, diagramWarningText } from "@subvertic/vrl-diagram";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";
-const DEFAULT_ROLE = "img";
+const DEFAULT_ROLE = undefined;
 
 /**
  * Delegate compilation and rendering to the framework-neutral diagram state service.

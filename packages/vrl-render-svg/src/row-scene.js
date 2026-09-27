@@ -1,3 +1,4 @@
+import { describeRoute } from "./route-description.js";
 import { bounds, unionBounds, fitSceneBounds } from "./scene-bounds.js";
 import { validateRowPolicy, rowSections, continuationCode, validateRowExtent } from "./row-policy.js";
 import { rowVocabulary, rowFact, rowElementFacts } from "./row-facts.js";
@@ -41,7 +42,8 @@ export function computeRowScene(route, layout, options) {
   const complete = unionBounds(envelopes);
   const viewBox = fitSceneBounds(complete, layout.width, 0);
   validateRowExtent(viewBox, layout.width);
-  return { flow: "rows", style: "soft-terrain", title: route.name, description: words.schematic,
+  const description = describeRoute(route, {language});
+  return { flow: "rows", style: "soft-terrain", title: description.title, description: description.text,
     language, identifiers: resolveSvgIdentifiers(options.idPrefix), header, rows, legend,
     traversal, physicalPoints: layout.points, bounds: complete, viewBox };
 }

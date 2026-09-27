@@ -1663,7 +1663,7 @@ test("renderTopoSvg includes an accessible title", /**
  * @responsibility coordinator
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
-  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /<title>Rio Azul topo<\/title>/);
+  assert.match(svg.renderTopoSvg(validCompiled().model, validCompiled().layout), /<title id="vrl-title">Rio Azul topo<\/title>/);
 });
 
 test("renderTopoSvg uses explicit README-safe dimensions", /**

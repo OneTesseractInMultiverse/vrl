@@ -1,6 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="-12 -175 1486 1830" width="1486" height="1830" style="max-width: 100%; height: auto;">
-  <title>Quebrada Gata topo</title>
-  <desc>Esquema VRL para Quebrada Gata. Rapel R1: 2 anclajes. Rapel R2: 1 anclaje. Rapel R4: 2 anclajes. Rapel R5: 2 anclajes.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="es" xml:lang="es" aria-labelledby="vrl-title" aria-describedby="vrl-description" viewBox="-12 -175 1486 1830" width="1486" height="1830" style="max-width: 100%; height: auto;">
+  <title id="vrl-title">Quebrada Gata topo</title>
+  <desc id="vrl-description">Ruta esquematica, sin escala. Lea los elementos en orden. Las cuerdas son longitudes declaradas, no requisitos de equipo.
+Campo adicional &quot;approach_distance&quot;: 1900m
+Campo adicional &quot;country&quot;: Costa Rica
+Campo adicional &quot;descent_time&quot;: 5-7h
+Campo adicional &quot;difficulty&quot;: V3 A4 III
+Elevacion de entrada: 1300m
+Campo adicional &quot;exit_distance&quot;: 300m
+Elevacion de salida: 1100m
+Campo adicional &quot;longest_rappel&quot;: 30m
+Campo adicional &quot;region&quot;: Bajos del Toro
+Campo adicional &quot;rope_inventory&quot;: 1x60m
+Campo adicional &quot;season&quot;: December-May
+Descenso total declarado: 200m
+Distancia total declarada: 1300m
+1. Inicio S1 (Quebrada Pilas entrance).
+2. Aproximacion W1. Distancia a pie: 80m. Nota: Short creek walk after the hanging bridge; first slide can be bypassed on the right.
+3. Poza P1. Profundidad medida de poza: desconocido. Nota: Small pool below the first slide. Tipo: poco profunda.
+4. Rapel R1. Movimiento: descenso. Cambio vertical: -25.2m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Flujo: medio. Altura fisica: 28m. Inclinacion (100% = vertical): 90%. Llegada: poza. Nota: Salto del Tepescuintle. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
+5. Aproximacion W2. Distancia a pie: 80m. Nota: Progress to twin falls at the Quebrada Gata confluence.
+6. Rapel R2. Movimiento: descenso. Cambio vertical: -23.8m. Tipo de anclaje: arbol. Cantidad de anclajes: 1. Flujo: medio. Altura fisica: 28m. Inclinacion (100% = vertical): 85%. Llegada: poza. Nota: Natural tree anchor above the left side. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
+7. Aproximacion W3. Distancia a pie: 500m. Nota: Pools, occasional downclimbs, and several slides.
+8. Destrepe D1. Movimiento: descenso. Cambio vertical: -1.7999999999999998m. Exposicion: medio. Flujo: medio. Altura fisica: 3m. Inclinacion (100% = vertical): 60%. Llegada: poza. Nota: Representative small downclimbs in the middle section. Forma tecnica: ladder.
+9. Rapel R3. Movimiento: descenso. Cambio vertical: -3.5m. Tipo de anclaje: natural. Cantidad de anclajes: desconocido. Flujo: bajo. Altura fisica: 5m. Inclinacion (100% = vertical): 70%. Llegada: poza. Nota: Upper Catarata Celestial; sometimes treated as a slide. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
+10. Rapel R4. Movimiento: descenso. Cambio vertical: -18m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Flujo: medio. Altura fisica: 20m. Inclinacion (100% = vertical): 90%. Llegada: poza. Nota: Main Catarata Celestial drop. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
+11. Aproximacion W4. Distancia a pie: 350m. Nota: Small downclimbs and a jump before Hombre Muerto.
+12. Destrepe D2. Movimiento: descenso. Cambio vertical: -2.2m. Exposicion: medio. Flujo: medio. Altura fisica: 4m. Inclinacion (100% = vertical): 55%. Llegada: poza. Nota: Representative lower downclimb. Forma tecnica: ladder.
+13. Rapel R5. Movimiento: descenso. Cambio vertical: -18m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Flujo: alto. Altura fisica: 20m. Inclinacion (100% = vertical): 90%. Llegada: poza. Nota: Hombre Muerto; narrow pool can be pushy. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
+14. Peligro H1. Anotacion en limite de ruta: 14. Nota: Concentrated water and flash-flood exposure; dry-season weather window recommended. Severidad: alto. Tipo: agua activa.
+15. Peligro H2. Anotacion en limite de ruta: 14. Nota: Avoid the final dam pool; exit before the reservoir. Severidad: critico. Tipo: represa.
+16. Salida E1 (Old metal ladder).</desc>
   <defs>
     <marker id="vrl-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="#111111"/>
