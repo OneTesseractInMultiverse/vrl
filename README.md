@@ -295,3 +295,5 @@ Optional [selective canyon pictograms](docs/annotation-icons.md) use the first-p
 For narrow displays, [readable canyon rows](docs/row-layout.md) use `flow: "rows"` with soft terrain, fixed text sizes, complete technical sections and matched continuation labels.
 
 The [canyon visual specification](docs/visual-specification.md) and [complete element/state gallery](docs/assets/visual/index.html) pin optional presentation conventions and their evidence limits.
+
+See the [canyon capability matrix](docs/canyon-capabilities.md) for supported semantics, explicit deferrals and representative executable cases.

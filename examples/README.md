@@ -45,3 +45,7 @@ Render the existing fictional canyon and annotated technical fixture with `flow:
 The [accessibility comparison gallery](../docs/assets/accessibility/index.html) pairs the fictional canyon with color, monochrome and visible HTML alternatives. Run `npm run accessibility:build` to regenerate it and `npm run accessibility:check` to verify it. See [browser print reproduction and limits](../docs/accessible-output.md#evidence-and-print-review).
 
 Additional synthetic stress sources live under [tests/fixtures/visual](../tests/fixtures/visual) with independently reviewed expectations. The [visual specification](../docs/visual-specification.md) explains their scope and warnings.
+
+## Canyon scope examples
+
+The [capability matrix](../docs/canyon-capabilities.md) explains the synthetic [dry technical](canyon-dry.vrl), [aquatic notes](canyon-aquatic-notes.vrl) and [approach/return](canyon-approach-return.vrl) cases. All compile without warnings. Aquatic movements, phase membership and escape relationships remain descriptive text; these examples do not add unsupported domain semantics. Their source hashes, ordered IDs and facts are executable documentation contracts.

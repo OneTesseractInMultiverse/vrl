@@ -1,0 +1,8 @@
+# Synthetic observations; swimming, jumping and sliding are prose, not modeled movements.
+route "Synthetic aquatic observations"
+start "Entry"
+pool P1 type=swimmer note="Swimming described; traversal distance and measured pool depth unknown."
+note "Jump and slide alternatives are mentioned; choice, dimensions and applicability are unmodeled."
+rappel R1 height=10m rope=25m anchor=bolts anchor_count=2 landing=pool flow=low
+hazard H1 type=hydraulic severity=high note="Fictional water observation; date and current conditions unknown."
+exit "Exit"
