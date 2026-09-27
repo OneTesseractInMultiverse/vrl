@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add explicit unknown rappel height with null physical motion, schematic warnings and strict failure for complete elevation profiles or positioned stage/redirection details. Preserve localized uncertainty in visual/text output.
+- Introduce normalized-model revision 3 and `RappelHeightDeclaration`; readers must narrow before numeric access. Retain earlier revision fixtures and schedule this extension for the next minor release.
+
 - Add explicit `rope=unknown` for rappels with known height, a located warning and complete bilingual visual/text preservation. Numeric observation summaries exclude unknown ropes; known documents retain their previous behavior.
 - Introduce normalized-model contract revision 2 and `RopeDeclaration` typing (`Measurement | "unknown"`); consumers must narrow before numeric access. This union extension is scheduled for the next minor release, not a patch.
 

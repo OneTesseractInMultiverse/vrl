@@ -3,6 +3,7 @@ import { codedDiagnostic } from "../domain/diagnostics.js";
 import { attributeRelationshipProblems } from "../domain/field-relationships.js";
 
 const MESSAGES = {
+  unplaceableDetail: { code: "VRL_DETAIL_REQUIRES_KNOWN_HEIGHT", message: "Stages and redirections require a known physical height.", suggestion: "Supply a measured height or retain unpositioned documentary details in a note; do not derive height from them." },
   unknownRope: { code: "VRL_ROPE_LENGTH_UNKNOWN", message: "Rappel rope length is explicitly unknown.", suggestion: "Retain unknown until a rope length is supplied; do not derive it from height or stages." },
   rope: { code: "VRL_ROPE_SHORTER_THAN_HEIGHT", message: "Rope length is shorter than rappel height.", suggestion: "Check route rigging assumptions before publishing." },
   redirection: { code: "VRL_REDIRECTION_OUTSIDE_HEIGHT", message: 'Field "redirections" must be inside the rappel height.', suggestion: "Use distances greater than 0m and shorter than the rappel height." },

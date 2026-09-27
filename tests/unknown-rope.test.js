@@ -105,7 +105,7 @@ const invalid = [
   ['nonmetric rope', 'rappel R1 height=12m rope=40ft', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
   ['different sentinel case', 'rappel R1 height=12m rope=UNKNOWN', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
   ['padded sentinel', 'rappel R1 height=12m rope=" unknown "', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
-  ['unknown height', 'rappel R1 height=unknown rope=unknown', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
+  ['unknown height outside rappel', 'climb C1 height=unknown rope=10m', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
   ['unknown walk distance', 'walk W1 distance=unknown', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
   ['unknown metadata rope', 'metadata rope=unknown', 'VRL_FIELD_MEASUREMENT_SYNTAX'],
   ['unknown climb rope', 'climb C1 height=3m rope=unknown', 'VRL_FIELD_MEASUREMENT_SYNTAX'],

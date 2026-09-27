@@ -1,4 +1,4 @@
-/** Public model contract revision 2; other contracts retain revision 1. See docs/public-contracts.md. */
+/** Public model contract revision 3; other contracts retain revision 1. See docs/public-contracts.md. */
 export type ElementType = "start" | "exit" | "walk" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
 export type Direction = "up" | "down";
 /** One-based UTF-16 coordinates; end positions in spans are exclusive. */
@@ -52,6 +52,8 @@ export interface ParseResult<A extends RouteAst = ParsedRouteAst> { ast: A; diag
 export interface Measurement { value: number; unit: "m"; meters: number }
 /** Rappel rope declaration: a metric value or explicitly unknown, never an equipment requirement. */
 export type RopeDeclaration = Measurement | "unknown";
+/** Rappel physical height: a metric value or explicitly unknown; rope and pixel geometry never fill it. */
+export type RappelHeightDeclaration = Measurement | "unknown";
 export interface Inclination { value: number; unit: "%"; percent: number }
 /** Token conversion accepts arbitrary side text; semantic normalization restricts it. */
 export interface ParsedRedirection { distance: Measurement; side: string }
@@ -74,17 +76,22 @@ export interface TechnicalFields {
   station?: "left" | "right" | "center" | "floor" | "tree" | "natural" | "unknown";
   landing?: "pool" | "ledge" | "dry" | "chaos" | "gallery" | "trail" | "unknown";
 }
-export interface ElementFields extends Omit<CommonFields, "rope">, TechnicalFields {
+export interface ElementFields extends Omit<CommonFields, "rope" | "height">, TechnicalFields {
   rope?: RopeDeclaration;
+  height?: RappelHeightDeclaration;
   anchor?: "bolts" | "natural" | "tree" | "thread" | "removable" | "fixed" | "unknown" | "mixed";
   exposure?: Level;
   flow?: "dry" | Level;
   type?: "deep" | "shallow" | "swimmer" | "dry" | "unknown";
   severity?: Level | "critical";
 }
-type FieldsFor<T extends ElementType> = Omit<CommonFields, "rope"> & Pick<ElementFields, "flow">
-  & (T extends "rappel" ? TechnicalFields & Pick<ElementFields, "anchor"> & { height: Measurement; rope: RopeDeclaration }
-    : Pick<CommonFields, "rope"> & (T extends "climb" ? TechnicalFields & Pick<ElementFields, "exposure"> & { height: Measurement }
+/** Measured detail positions require a metric height; unknown heights retain no positioned details. */
+type RappelHeightFields = ({ height: Measurement } & Pick<CommonFields, "stages" | "redirection" | "redirections">)
+  | { height: "unknown"; stages?: never; redirection?: never; redirections?: never };
+type FieldsFor<T extends ElementType> = Pick<ElementFields, "flow">
+  & (T extends "rappel" ? Omit<CommonFields, "height" | "rope" | "stages" | "redirection" | "redirections">
+      & TechnicalFields & Pick<ElementFields, "anchor"> & { rope: RopeDeclaration } & RappelHeightFields
+    : CommonFields & (T extends "climb" ? TechnicalFields & Pick<ElementFields, "exposure"> & { height: Measurement }
       : T extends "downclimb" ? TechnicalFields & Pick<ElementFields, "exposure">
       : T extends "pool" ? Pick<ElementFields, "type">
       : T extends "hazard" ? Pick<ElementFields, "severity"> : {}));
@@ -109,7 +116,9 @@ export interface Traversal {
   annotations: { elementIndex: number; pointIndex: number | null }[];
 }
 export interface RouteSummary {
-  numberOfRappels: number; numberOfHazards: number; highestRappelMeters: number;
+  numberOfRappels: number; numberOfHazards: number;
+  /** Maximum known supplied rappel height, or legacy 0 when none is numeric; partial if any height is unknown. */
+  highestRappelMeters: number;
   /** @deprecated Maximum declared rappel rope, or 0 when absent; not an equipment requirement. Use summarizeRouteMeasurements. */
   requiredRopeMeters: number;
   /** @deprecated Sum of recorded walk distances only, or 0 when absent. Use summarizeRouteMeasurements. */

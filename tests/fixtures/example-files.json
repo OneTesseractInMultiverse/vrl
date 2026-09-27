@@ -168,5 +168,22 @@
       "/model/summary/requiredRopeMeters": 0
     },
     "sha256": "b4e283aa0cef7aa5a403aadd91f4279d52c2f39261490298df9ac308098ae5a6"
+  },
+  "canyon-unknown-height.vrl": {
+    "warnings": [
+      "VRL_GEOMETRY_HEIGHT_UNKNOWN"
+    ],
+    "ids": [
+      "R1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic unknown height",
+      "/model/elements/0/attributes/height": "unknown",
+      "/model/elements/0/attributes/rope/meters": 20,
+      "/model/elements/0/attributes/anchor": "bolts",
+      "/model/traversal/segments/0/verticalDeltaMeters": null,
+      "/model/summary/highestRappelMeters": 0
+    },
+    "sha256": "9fdd4fab0ddfc62d6c8ef78c0f415b6e2608d9f621cc2ab0c0ee996eaa4cd10a"
   }
 }

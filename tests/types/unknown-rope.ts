@@ -19,8 +19,8 @@ if (result.ok) {
 }
 // @ts-expect-error Required declarations still cannot be omitted.
 const missing: RouteElement = {type:"rappel",id:"R1",label:null,sourceLocation:undefined,extensions:{},attributes:{height:known}};
-// @ts-expect-error The sentinel belongs to rappel ropes, not to known height fields.
-const height: RouteElement = {type:"rappel",id:"R1",label:null,sourceLocation:undefined,extensions:{},attributes:{height:"unknown",rope:known}};
+// @ts-expect-error Null cannot substitute for a metric value or the explicit unknown sentinel.
+const height: RouteElement = {type:"rappel",id:"R1",label:null,sourceLocation:undefined,extensions:{},attributes:{height:null,rope:known}};
 // @ts-expect-error Unknown rope remains forbidden on other normalized element kinds.
 const walk: RouteElement = {type:"walk",id:"W1",label:null,sourceLocation:undefined,extensions:{},attributes:{rope:"unknown"}};
 // @ts-expect-error Metadata retains strict metric measurements.

@@ -137,3 +137,5 @@ For a readable narrow export, use `flow: "rows"` with `style: "soft-terrain"` an
 ## Complete route alternatives and monochrome
 
 `describeRoute(model, options?)` returns structured ordered facts and complete plain text independent of visual mode. `renderRouteText(model, options?)` creates an escaped visible HTML alternative for inline or external images. SVG uses namespaced title/description references and owns the image role. Opt into `monochrome: true` with `flow: "rows", style: "soft-terrain"`; use light mode for white-paper print and omit nonempty theme overrides. See [contracts, examples, contrast criteria, failure behavior and pending manual review](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/accessible-output.md).
+
+Model revision 3 also supports explicit unknown rappel height. Classic/soft-terrain titles, rows and complete text alternatives retain localized uncertainty; schematic pixel spacing never supplies a measured descent. See [unknown height](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/unknown-height.md).

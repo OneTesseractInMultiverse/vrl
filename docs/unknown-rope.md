@@ -9,7 +9,7 @@ rappel R1 height=12m rope=unknown anchor=bolts
 
 This compiles successfully with the located warning `VRL_ROPE_LENGTH_UNKNOWN`. The physical descent is −12 m, derived from the supplied height. Normalized attributes and JSON contain `rope: "unknown"`; neither height nor stages fill in a rope value. The same source is in [the executable example](../examples/canyon-unknown-rope.vrl).
 
-`rope` remains required. Omitting it, supplying an empty value, zero, a negative value, nonmetric units, `UNKNOWN` or padded text is still an error. The sentinel applies only to rappel `rope`: height, distances, stage entries, metadata rope and rope fields on other elements retain their numeric contracts. Quoted `"unknown"` decodes to the same exact sentinel. Unknown drop heights and automatic conversion of external documents remain outside this change.
+`rope` remains required. Omitting it, supplying an empty value, zero, a negative value, nonmetric units, `UNKNOWN` or padded text is still an error. The rope sentinel applies only to rappels; distances, stage entries, metadata rope and rope fields on other elements retain their numeric contracts. Rappel height separately supports [explicit unknown height under model revision 3](unknown-height.md). Quoted `"unknown"` decodes to the same exact sentinel. Unknown drop heights were outside this revision-2 change and are now supported separately; automatic conversion of external documents remains deferred.
 
 ## Meaning, summaries and warnings
 
@@ -23,9 +23,9 @@ The nonblocking warning points to the `unknown` source value. Existing successfu
 
 Classic and soft-terrain diagrams display explicit declared-rope/unknown text; narrow and monochrome modes retain it. English and Spanish accessible descriptions and adjacent HTML alternatives preserve the same fact. Changing style or hiding optional pictograms does not turn the unknown value into a measurement.
 
-The normalized-model contract is now revision **2**. Rappel `attributes.rope` changes from `Measurement` to `Measurement | "unknown"` (`RopeDeclaration`). AST values remain strings; model property names, known measurement records, traversal, layout and legacy summary fields are unchanged. The source grammar gains one scoped value, and diagnostic code `VRL_ROPE_LENGTH_UNKNOWN` is additive. Fully measured revision-1 fixtures retain their exact JSON and remain renderable.
+Normalized-model revision **2** introduced this rope contract; current revision **3** also permits explicit unknown rappel height. Rappel `attributes.rope` changes from `Measurement` to `Measurement | "unknown"` (`RopeDeclaration`). AST values remain strings; model property names, known measurement records, traversal, layout and legacy summary fields are unchanged. The source grammar gains one scoped value, and diagnostic code `VRL_ROPE_LENGTH_UNKNOWN` is additive. Fully measured revision-1 fixtures retain their exact JSON and remain renderable.
 
-Persist revision 2 in an application-owned envelope for newly compiled models. Retain the source. Readers must handle the sentinel explicitly; do not drop it, cast it to a number or feed revision-2 unknown ropes to a revision-1 reader. TypeScript consumers must narrow before accessing `.meters`. This union extension requires the next minor release before 1.0 and cannot be published as a patch. See [the public contract and migration](public-contracts.md#explicit-unknown-rope-model-revision-2).
+Persist the current model revision (3) in an application-owned envelope for newly compiled models. Retain the source. Readers must handle the sentinel explicitly; do not drop it, cast it to a number or feed revision-2 unknown ropes to a revision-1 reader. TypeScript consumers must narrow before accessing `.meters`. This union extension requires the next minor release before 1.0 and cannot be published as a patch. See [the public contract and migration](public-contracts.md#explicit-unknown-rope-model-revision-2).
 
 ## Decision and evidence
 

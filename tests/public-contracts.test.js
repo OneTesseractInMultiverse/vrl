@@ -12,7 +12,7 @@ import { createDiagramState } from "@subvertic/vrl-diagram";
  * @returns {unknown} The result returned by JSON.parse.
  */
 const readJson = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
-const contract = readJson("../docs/contracts/v2.json");
+const contract = readJson("../docs/contracts/v3.json");
 const fixture = readJson("./fixtures/model-v1.json");
 
 for (const [name, api] of Object.entries(contract.packages)) {
@@ -82,6 +82,25 @@ test("a persisted revision 1 model can still produce a complete SVG through publ
   const model = structuredClone(fixture.model);
   const svg = renderTopoSvg(model, core.computeVerticalLayout(model), { legend: false });
   assert.deepEqual([svg.startsWith('<svg '), svg.includes('pitch, 12m'), svg.includes('24m'), svg.includes('Check conditions'), svg.includes('Sample region')], [true, true, true, true, true]);
+});
+
+test("revision 2 unknown-rope JSON remains unchanged after unknown-height support", /**
+ * Compare current compilation with a saved model produced by the pinned revision-2 implementation.
+ * @responsibility coordinator
+ * @returns {void} Completes one assertion of every persisted field, technical owner and declaration.
+ */ () => {
+  const previous = readJson("./fixtures/model-v2.json");
+  assert.deepEqual(JSON.parse(core.compileRoute(previous.source).json), previous.model);
+});
+
+test("a persisted revision 2 model retains unknown rope and positioned details in SVG", /**
+ * Render the saved revision-2 artifact without recompilation and check independently selected visible facts.
+ * @responsibility coordinator
+ * @returns {void} Completes one assertion of uncertainty, measured height, stages and annotation retention.
+ */ () => {
+  const model = readJson("./fixtures/model-v2.json").model;
+  const svg = renderTopoSvg(model, core.computeVerticalLayout(model), { legend: false });
+  assert.deepEqual([svg.includes("R1, 12m"), svg.includes("declared rope: unknown"), svg.includes("5m"), svg.includes("7m"), svg.includes("Lower station")], [true,true,true,true,true]);
 });
 
 test("compiler failure retains diagnostics and exposes no derived outputs", /**

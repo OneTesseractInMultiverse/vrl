@@ -72,3 +72,10 @@ No participant has supplied results for this study. Familiarity, order, task tim
 ## Follow-up: explicit unknown rope (issue #78)
 
 Model revision 2 adopts `rope=unknown` for rappels with known height, preserving the sentinel and warning without contributing a numeric rope observation. The first scoped modeling gap is reduced; unknown height, unclear source measurement meaning and inferred anchor associations still prevent faithful physical import of this Davis fragment. The original baseline results above remain historical. The executable unknown-height probe now expects only the height syntax error because unknown rope is independently supported. This is a language/domain decision with correctness evidence, not a practitioner-comprehension result.
+
+
+## Follow-up: explicit unknown rappel height (issue #80)
+
+Model revision 3 adopts `height=unknown` for rappels. It reuses the existing null technical-delta contract: schematic output warns, complete endpoint profiles fail, and positioned stage/redirection details require known height. The exact unknown attribute survives JSON and bilingual visible/accessible output; no rope length or pixel distance fills it. This reduces the compulsory-height gap while leaving richer partial-detail/provenance contracts separate.
+
+The historical baseline above is unchanged. The former unknown-rappel-height failure is now a successful, explicitly unmeasured case; a climb-height probe retains the unchanged forbidden-scope boundary. The Davis fragment still requires confirmation of feature interpretation, measurement meaning and anchor association before a faithful structured conversion can be claimed. No automatic importer, source verification or practitioner results are introduced.

@@ -50,13 +50,13 @@ This has declared totals but no recorded walk or rope observations. Both observe
 
 ## Existing model and JSON compatibility
 
-`model.summary` and `summarizeRoute` retain every revision 1 key, numeric value and zero sentinel. Existing measured models, layouts and saved JSON remain compatible. Newly compiled unknown-rope models require revision-2 readers/renderers; see [the migration guide](unknown-rope.md). These legacy fields mean exactly the following:
+`model.summary` and `summarizeRoute` retain every revision 1 key, numeric value and zero sentinel. Existing measured models, layouts and saved JSON remain compatible. Unknown-rope models require revision-2 readers/renderers; unknown-height models require revision 3. See [height migration and partial maxima](unknown-height.md). These legacy fields mean exactly the following:
 
 | Legacy field | Meaning |
 | --- | --- |
 | `numberOfRappels` | Count of rappel elements |
 | `numberOfHazards` | Count of hazard annotations |
-| `highestRappelMeters` | Largest declared rappel height; `0` if none. Not necessarily its vertical component. |
+| `highestRappelMeters` | Largest known supplied rappel height; `0` if none is numeric. A partial maximum when any height is unknown, not necessarily its vertical component. |
 | `requiredRopeMeters` | Largest numeric rappel rope declaration; `0` if none is numeric. Despite the legacy name, not an equipment requirement. |
 | `totalDistanceMeters` | Sum of recorded walk distances only; `0` if none. Ignores metadata totals and other lengths. |
 | `entranceElevationMeters` | Declared entrance elevation, or `null` |
@@ -65,6 +65,6 @@ This has declared totals but no recorded walk or rope observations. Both observe
 
 The ambiguous rope and distance names are deprecated in the declarations. New consumers should use the explicit helper and handle nulls. Do not interpret the old zero sentinel as proof that no rope or walking is involved. A helper result may be serialized separately by an application; it is not automatically embedded in the route model.
 
-The additive export and warning are intended for the next minor package release. The summary shape retains its revision-1 behavior; the enclosing normalized model now uses revision 2 for explicit unknown ropes. Previously valid sources remain successful. A previously silent conflicting total now produces a warning and therefore may show the default framework warning panel. Consumers that match diagnostics should handle the new code; see [public contracts](public-contracts.md) and [warning presentation](warning-presentation.md).
+The additive export and warning are intended for the next minor package release. The summary shape retains its revision-1 behavior; the enclosing normalized model uses revision 3 for explicit unknown rappel height (revision 2 introduced unknown rope). Previously valid sources remain successful. A previously silent conflicting total now produces a warning and therefore may show the default framework warning panel. Consumers that match diagnostics should handle the new code; see [public contracts](public-contracts.md) and [warning presentation](warning-presentation.md).
 
 Domain computations own observed aggregates and the exact partial-total comparison. Validation translates the comparison into a located warning; compiler/application code only coordinates the existing ports. Renderers and framework adapters retain their existing data and presentation responsibilities.
