@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "collapsed external text alternative", file: "packages/vrl-render-svg/src/route-text-serializer.js",
+    before: 'id="${escapeXml(id)}"><h2>', after: 'id="${escapeXml(id)}" aria-label="${escapeXml(description.title)}"><h2>',
+    testFile: "tests/accessible-output.test.js", testName: "HTML alternative is visible, escaped and ordered with an independent namespace" },
   { name: "lost pool uncertainty in description", file: "packages/vrl-render-svg/src/route-description.js",
     before: '`${words.fields.depth}: ${words.unknown}`', after: '`${words.fields.depth}: 0m`',
     testFile: "tests/accessible-output.test.js", testName: "ordered route description preserves independent facts: en" },

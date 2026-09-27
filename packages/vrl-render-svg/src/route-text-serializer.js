@@ -15,5 +15,5 @@ export function serializeRouteText(description, id) {
     for (const fact of entry.facts) facts += `<li>${escapeXml(fact)}</li>`;
     entries += `<li><p>${escapeXml(entry.title)}</p><ul>${facts}</ul></li>`;
   }
-  return `<section lang="${escapeXml(description.language)}" id="${escapeXml(id)}" aria-label="${escapeXml(description.title)}"><p>${escapeXml(description.introduction)}</p><ul>${metadata}</ul><ol>${entries}</ol>${description.empty === null ? "" : `<p>${escapeXml(description.empty)}</p>`}</section>`;
+  return `<section lang="${escapeXml(description.language)}" id="${escapeXml(id)}"><h2>${escapeXml(description.title)}</h2><p>${escapeXml(description.introduction)}</p><ul>${metadata}</ul><ol>${entries}</ol>${description.empty === null ? "" : `<p>${escapeXml(description.empty)}</p>`}</section>`;
 }

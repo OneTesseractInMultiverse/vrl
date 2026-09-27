@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "node build-react.mjs && vite build",
-    "test": "node --test contracts.test.mjs browser.test.mjs"
+    "test": "node --test contracts.test.mjs browser.test.mjs export.test.mjs"
   },
   "dependencies": {
     "@subvertic/vrl-core": "file:tarballs/vrl-core.tgz",

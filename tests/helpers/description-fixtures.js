@@ -15,3 +15,6 @@ export const DESCRIPTION_ES = `Ruta esquematica, sin escala. Lea los elementos e
 5. Rapel R2. Movimiento: descenso. Cambio vertical: -12m. Tipo de anclaje: arbol. Cantidad de anclajes: desconocido. Altura fisica: 12m. Cuerda declarada: 30m.
 6. Peligro H1. Anotacion en limite de ruta: 6. Nota: Slippery landing. Tipo: slippery.
 7. Salida E1 (Exit).`;
+
+/** Independent native-HTML accessible description; list markers are not part of the image description. */
+export const DESCRIPTION_HTML_EN = "Synthetic two-rappel canyon topo Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. Start S1 (Entry) Rappel R1 Movement: descent Vertical change: -18m Anchor type: bolts Anchor count: 2 Physical height: 18m Declared rope: 40m Station: right Pool P1 Measured pool depth: unknown Type: unknown Walk W1 Walking distance: 120m Rappel R2 Movement: descent Vertical change: -12m Anchor type: tree Anchor count: unknown Physical height: 12m Declared rope: 30m Hazard H1 Annotation at route boundary: 6 Note: Slippery landing Type: slippery Exit E1 (Exit)";

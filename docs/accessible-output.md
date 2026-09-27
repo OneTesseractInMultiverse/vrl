@@ -54,7 +54,7 @@ Use a distinct stable `idPrefix` per occurrence. The namespace now covers `arrow
 
 ## External images and visible HTML
 
-Internal SVG metadata alone does not name or describe an external HTML image. Supply an appropriate `alt`, and include a visible alternative for the complete ordered facts. `renderRouteText(model, options?)` returns an escaped native HTML section with metadata, an ordered element list and each element's facts. It accepts language/locale/symbology selection and `idPrefix`; it has no layout dependency and does not hide content.
+Internal SVG metadata alone does not name or describe an external HTML image. Supply an appropriate `alt`, and include a visible alternative for the complete ordered facts. `renderRouteText(model, options?)` returns an escaped native HTML section with a visible heading, metadata, an ordered element list and each element's facts. It accepts language/locale/symbology selection and `idPrefix`; it has no layout dependency and does not hide content.
 
 ```js
 import { renderRouteText } from "@subvertic/vrl-render-svg";
@@ -66,7 +66,7 @@ const html = '<img src="canyon.svg" alt="Canyon topo" aria-describedby="external
   + alternative;
 ```
 
-`<prefix>-text` differs from the SVG description ID, allowing adjacent text and one inline diagram to share the same occurrence prefix. Repeated occurrences still need distinct prefixes. The HTML list remains useful independently of image support; applications may instead build their own native UI from `describeRoute`. Do not insert its raw plain-text values into HTML without encoding.
+`<prefix>-text` differs from the SVG description ID, allowing adjacent text and one inline diagram to share the same occurrence prefix. Repeated occurrences still need distinct prefixes. The section deliberately has no `aria-label`: naming a referenced container can cause browsers to use only that label as the image description, dropping its descendant route facts. The visible heading preserves the title without replacing the content alternative. Actual external-image accessibility-tree tests guard this behavior. The HTML list remains useful independently of image support; applications may instead build their own native UI from `describeRoute`. Do not insert its raw plain-text values into HTML without encoding.
 
 ## Evidence and print review
 
