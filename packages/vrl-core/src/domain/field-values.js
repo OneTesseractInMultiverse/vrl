@@ -12,13 +12,15 @@ const PARSERS = {
 };
 
 /**
- * Dispatch raw field text to the parser selected by its domain specification.
+ * Dispatch raw field text to its domain parser, preserving an explicit unknown sentinel only when the
+ * resolved scoped specification permits it. Generic metric token parsing remains strict.
  * @responsibility coordinator
  * @param {Object} specification - Immutable field contract defining parser, allowed range, vocabulary and applicability.
  * @param {string} raw - Unconverted field text exactly as supplied by the caller.
- * @returns {unknown} The result returned by PARSERS.specification.parser.
+ * @returns {Object} Successful typed value or the exact unknown string; otherwise a failed token result.
  */
 export function parseFieldValue(specification, raw) {
+  if (specification.acceptsUnknown && raw === "unknown") return { ok: true, value: "unknown" };
   return PARSERS[specification.parser](raw, specification);
 }
 
@@ -51,6 +53,7 @@ function parseEnum(raw, specification) {
  * @returns {unknown} The selected result, including the documented absent-value fallback. The result returned by value.filter((stage) => outsideRange(stage.meters, specification.range)).map. The result returned by value.flatMap. The ordered records or values assembled above.
  */
 export function fieldValueProblems(specification, value) {
+  if (specification.acceptsUnknown && value === "unknown") return [];
   switch (specification.parser) {
     case "measurement": return outsideRange(value.meters, specification.range) ? ["range"] : [];
     case "inclination": return outsideRange(value.percent, specification.range) ? ["range"] : [];

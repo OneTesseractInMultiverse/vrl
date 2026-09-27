@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "unknown rope counted as zero", file: "packages/vrl-core/src/domain/route-measurements.js",
+    before: 'element.attributes[field] === "unknown" ? null : optionalMeters', after: 'element.attributes[field] === "unknown" ? 0 : optionalMeters',
+    testFile: "tests/unknown-rope.test.js", testName: "all unknown ropes yield a null observed maximum and zero numeric declaration count" },
   { name: "collapsed external text alternative", file: "packages/vrl-render-svg/src/route-text-serializer.js",
     before: 'id="${escapeXml(id)}"><h2>', after: 'id="${escapeXml(id)}" aria-label="${escapeXml(description.title)}"><h2>',
     testFile: "tests/accessible-output.test.js", testName: "HTML alternative is visible, escaped and ordered with an independent namespace" },

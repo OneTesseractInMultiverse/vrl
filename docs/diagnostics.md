@@ -78,6 +78,7 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_FIELD_REDIRECTIONS_SYNTAX` | Invalid redirection list/measurement syntax |
 | `VRL_FIELD_STAGES_SYNTAX` | Invalid stage list/measurement syntax or cardinality |
 | `VRL_FIELD_UNSUPPORTED_VALUE` | Invalid enum/count, nonpositive list length, or unsupported redirection side |
+| `VRL_ROPE_LENGTH_UNKNOWN` | Rappel rope explicitly declared unknown (nonblocking warning at the value) |
 | `VRL_ROPE_SHORTER_THAN_HEIGHT` | Declared rope is shorter than height (warning) |
 | `VRL_REDIRECTION_OUTSIDE_HEIGHT` | Redirection at or beyond declared height |
 | `VRL_STAGE_TOTAL_MISMATCH` | Stage total differs from height (warning) |

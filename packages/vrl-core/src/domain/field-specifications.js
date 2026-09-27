@@ -53,6 +53,8 @@ const SPECIFICATIONS = Object.fromEntries(Object.entries(DEFINITIONS).map(/**
  * @returns {Array} The ordered records or values assembled above.
  */ ([name, definition]) => [name, freezeSpecification(definition)]));
 
+const RAPPEL_ROPE = freezeSpecification({ ...DEFINITIONS.rope, acceptsUnknown: true });
+
 /**
  * Freeze a field specification and its nested rule collections so callers cannot mutate shared domain policy.
  * @responsibility computation
@@ -86,6 +88,7 @@ export function fieldSpecification(fieldName) {
 export function applicableFieldSpecification(fieldName, scope) {
   const specification = fieldSpecification(fieldName);
   if (specification === null) return null;
+  if (fieldName === "rope" && scope === "rappel") return RAPPEL_ROPE;
   const { applicability } = specification;
   const applies = applicability === "all" || (applicability === "elements" ? scope !== "metadata" : applicability.includes(scope));
   return applies ? specification : null;

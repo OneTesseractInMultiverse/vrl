@@ -19,7 +19,7 @@ if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) 
 
 ## Stability classes
 
-[The revision 1 inventory](contracts/v1.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
+[The revision 2 inventory](contracts/v2.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
 
 | Surface | Stable facade | Advanced extension points |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ Use the facade for ordinary integrations. Advanced exports remain supported for 
 
 ## Contract revisions and releases
 
-Revision **1** names the existing AST, normalized model, traversal, layout, diagnostic, compiler result/port, and diagram-state contracts. The inventory records each revision separately. This documentation baseline adds no `schemaVersion` property and makes no change to existing JSON bytes or object fields.
+The current inventory is revision **2**: normalized model revision 2, with AST, traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1 inventory](contracts/v1.json) and measured-model fixtures remain available. No `schemaVersion` property is added to route JSON.
 
 Package versions and data-contract revisions have different purposes:
 
@@ -53,11 +53,30 @@ import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
-const envelope = { contract: "vrl/model", revision: 1, model: JSON.parse(result.json) };
+const envelope = { contract: "vrl/model", revision: 2, model: JSON.parse(result.json) };
 console.log(envelope.model.elements[1].id); // pitch
 ```
 
 This envelope is application-owned, not a new VRL import/export API. VRL has no general JSON deserializer/schema validator: `JSON.parse` and TypeScript annotations do not validate untrusted saved data. Retain source and recompile when adopting a new model revision; do not send a normalized model back through `normalizeRoute`. See the existing [extension-field migration](domain-model.md#failure-determinism-and-compatibility).
+
+## Explicit unknown rope: model revision 2
+
+A rappel may declare `rope=unknown` while retaining a positive measured height. Its normalized rope is the literal string `"unknown"`, with a located `VRL_ROPE_LENGTH_UNKNOWN` warning. Known measurements and revision-1 fixture JSON stay unchanged; new readers must handle the union and preserve unknowns through persistence and rendering. This is scheduled for the next minor release, not a patch. [Full semantics and migration](unknown-rope.md).
+
+```ts
+import { compileRoute, summarizeRouteMeasurements } from "@subvertic/vrl-core";
+import type { RopeDeclaration } from "@subvertic/vrl-core";
+
+const result = compileRoute('route Evidence\nrappel R1 height=12m rope=unknown');
+if (!result.ok) throw new Error("Invalid source");
+for (const element of result.model.elements) if (element.type === "rappel") {
+  const rope: RopeDeclaration = element.attributes.rope;
+  const meters: number | null = rope === "unknown" ? null : rope.meters;
+  if (meters !== null) throw new Error("Invented rope length");
+}
+const summary = summarizeRouteMeasurements(result.model.elements);
+if (summary.maximumDeclaredRopeMeters !== null || summary.declaredRopeCount !== 0) throw new Error("Lost uncertainty");
+```
 
 ## Typed records
 
@@ -66,7 +85,7 @@ Import types from the owning package root using `import type`. The declarations 
 | Owner | Types | Meaning and preconditions |
 | --- | --- | --- |
 | Core | `RouteAst`, `RouteElementAst`, `ParsedRouteAst`, `SourceMap`, `SourceSpan`, `LexToken` | Raw decoded strings and recovery syntax, not semantic validity. Parser ASTs always contain `source` and `sourceMap`; programmatic ASTs may omit them. Names may be null in recovery. [Syntax provenance](diagnostics.md) uses one-based UTF-16 coordinates and exclusive span ends. |
-| Core | `Measurement`, `Inclination`, `Redirection`, `RouteElement`, `RouteModel`, `RouteSummary` | Validated known fields, separate string extensions, meters/percent units, normalized identities. `RouteElement` narrows by type: a rappel requires height and rope, a climb requires height. `anchor_count` remains integer **text**. [Domain constraints](domain-model.md) still require runtime validation. |
+| Core | `Measurement`, `Inclination`, `Redirection`, `RouteElement`, `RouteModel`, `RouteSummary` | Validated known fields, separate string extensions, meters/percent units, normalized identities. `RouteElement` narrows by type: a rappel requires metric height and a `RopeDeclaration` (metric value or `"unknown"`), a climb requires height. `anchor_count` remains integer **text**. [Domain constraints](domain-model.md) still require runtime validation. |
 | Core | `Traversal`, `TraversalPoint`, `TraversalSegment` | Physical progression and explicit technical ownership, with annotations outside that progression. A connection has no element owner/direction and zero vertical delta; a technical segment has an owner, direction, and signed rise (positive for climbing) or null if unmeasured. |
 | Core | `RouteLayout`, `LayoutPoint`, `LayoutNode`, `LayoutSegment`, `LayoutOptions` | Positioned traversal plus one node per element. Implicit boundary points have null element/index/id. Technical pixel deltas are downward-positive, unlike domain elevation deltas. Elevation fields are optional. [Layout contracts](api-reference.md#technical-traversal-and-geometry-validation) describe geometry constraints. |
 | Core | `Diagnostic`, `BuiltinDiagnostic`, `RelatedLocation` | Error/warning severity, kind, message and positive source point; optional code/span/related locations. Built-in diagnostics include suggestion text. Custom ports may omit it and use their own kind/code strings. Use codes, not messages, for programmatic matching. |
@@ -182,9 +201,9 @@ if (diagramWarningText(diagram, false) !== "" || diagram.diagnostics.length !== 
 
 Warning-only output gains an outer wrapper around the existing image and new warning panel. Image props stay on the image container. Review CSS/root-element assumptions, or disable the panel when supplying your own warning UI. Custom implementations of the structural `ReactFactory` port must accept element children as well as text for the nested panel; React itself already supports both. Clean success, failure markup, and all revision 1 state/AST/model/layout/diagnostic records remain unchanged. Schedule this display change and additive API for the next minor package release; no persisted-data migration is needed. See the [full policy and verification limits](warning-presentation.md).
 
-## Verification and migration for contract revision 1
+## Verification and migration
 
-The revision baseline introduces declarations without changing persisted data shapes. Additions and display migrations are recorded above; existing entry points and state factory signatures remain available. No data migration is required. TypeScript consumers should handle the `ok` union and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
+The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values as described above; retain source and upgrade readers before storing unknown ropes. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok` and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 
@@ -192,7 +211,7 @@ Each behavioral test uses one assertion. Coverage remains a 100% target, supplem
 
 ## Explicit route measurements
 
-`summarizeRouteMeasurements(elements, metadata?)` is an additive advanced core export. `RouteMeasurementSummary` separates declared totals, observed rope/walk measurements, counts and null unknowns. Existing `RouteSummary`, model JSON and contract revision 1 remain unchanged. The new total-distance warning preserves successful compilation and both source quantities; it adds a diagnostic code without changing failure envelopes. See [summary meaning and provenance](route-summary.md) for migration from the ambiguous legacy names and the partial-total comparison policy.
+`summarizeRouteMeasurements(elements, metadata?)` is an additive advanced core export. `RouteMeasurementSummary` separates declared totals, observed rope/walk measurements, counts and null unknowns. Its summary shape and the legacy `RouteSummary` remain unchanged; revision-2 unknown ropes are excluded from numeric observations. The total-distance warning preserves successful compilation and both source quantities; it adds a diagnostic code without changing failure envelopes. See [summary meaning and provenance](route-summary.md) for migration from the ambiguous legacy names and the partial-total comparison policy.
 
 ```ts
 import { compileRoute, summarizeRouteMeasurements } from "@subvertic/vrl-core";

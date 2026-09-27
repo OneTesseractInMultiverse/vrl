@@ -38,7 +38,7 @@ if (result.ok) {
   }
   for (const element of model.elements) {
     if (element.type === "rappel") {
-      const rope: number = element.attributes.rope.meters;
+      const rope: number | null = element.attributes.rope === "unknown" ? null : element.attributes.rope.meters;
       const height: number = element.attributes.height.meters;
       void [rope, height];
     }

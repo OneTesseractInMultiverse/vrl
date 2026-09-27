@@ -1,0 +1,2 @@
+route "Synthetic unknown rope"
+rappel R1 height=12m rope=unknown anchor=bolts

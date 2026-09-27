@@ -19,8 +19,8 @@ export function attributeRelationshipProblems(attributes, scope) {
 }
 
 /**
- * Report a warning when a rappel's declared rope is shorter than its valid height; do not infer equipment
- * requirements.
+ * Report an explicitly unknown rappel rope or a numeric declaration shorter than its valid height;
+ * preserve uncertainty without inferring equipment requirements from height or stage lengths.
  * @responsibility computation
  * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
  * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
@@ -29,6 +29,7 @@ export function attributeRelationshipProblems(attributes, scope) {
  */
 function ropeProblems(attributes, scope, height) {
   if (scope !== "rappel" || !hasAttributeValue(attributes, "rope")) return [];
+  if (attributes.rope === "unknown") return [{ kind: "unknownRope", name: "rope", severity: "warning" }];
   const rope = parseMeasurementToken(attributes.rope);
   return rope.ok && rope.value.meters < height ? [{ kind: "rope", name: "rope", severity: "warning" }] : [];
 }

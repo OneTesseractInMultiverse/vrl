@@ -124,12 +124,13 @@ function landingDetail(value, language) {
 /**
  * Format supplied rope length, using explicit declared-rope wording for soft terrain.
  * @responsibility computation
- * @param {unknown} rope - Explicitly declared typed rope measurement; no equipment requirement is inferred.
+ * @param {unknown} rope - Typed rope measurement or explicit unknown sentinel; no equipment requirement is inferred.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
  * @param {string} style - Renderer style, classic or soft-terrain; does not alter route facts.
  * @returns {unknown} The selected result, including the documented absent-value fallback.
  */
 function ropeText(rope, language, style) {
+  if (rope === "unknown") return `${softTerrainText(language).rope}: ${localizeDetailValue("unknown", language)}`;
   const value = formatMeasurement(rope);
   return style === "soft-terrain" ? `${softTerrainText(language).rope}: ${value}` : value;
 }

@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add explicit `rope=unknown` for rappels with known height, a located warning and complete bilingual visual/text preservation. Numeric observation summaries exclude unknown ropes; known documents retain their previous behavior.
+- Introduce normalized-model contract revision 2 and `RopeDeclaration` typing (`Measurement | "unknown"`); consumers must narrow before numeric access. This union extension is scheduled for the next minor release, not a patch.
+
 - Publish the canyon capability matrix and executable dry, aquatic-observation and approach/return cases. Keep unmodeled movements, phase boundaries and escape relationships explicit; cave expansion remains deferred.
 
 - Record the first documentary-fidelity experiment with per-fact conversion losses and executable failure probes; preserve unresolved measurements and distinguish evidence carriage from technical route semantics.

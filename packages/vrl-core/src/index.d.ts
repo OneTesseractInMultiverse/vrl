@@ -1,4 +1,4 @@
-/** Public contract revision 1. See docs/public-contracts.md for stability and preconditions. */
+/** Public model contract revision 2; other contracts retain revision 1. See docs/public-contracts.md. */
 export type ElementType = "start" | "exit" | "walk" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
 export type Direction = "up" | "down";
 /** One-based UTF-16 coordinates; end positions in spans are exclusive. */
@@ -50,6 +50,8 @@ export interface Diagnostic {
 export interface BuiltinDiagnostic extends Diagnostic { suggestion: string }
 export interface ParseResult<A extends RouteAst = ParsedRouteAst> { ast: A; diagnostics: Diagnostic[] }
 export interface Measurement { value: number; unit: "m"; meters: number }
+/** Rappel rope declaration: a metric value or explicitly unknown, never an equipment requirement. */
+export type RopeDeclaration = Measurement | "unknown";
 export interface Inclination { value: number; unit: "%"; percent: number }
 /** Token conversion accepts arbitrary side text; semantic normalization restricts it. */
 export interface ParsedRedirection { distance: Measurement; side: string }
@@ -72,19 +74,20 @@ export interface TechnicalFields {
   station?: "left" | "right" | "center" | "floor" | "tree" | "natural" | "unknown";
   landing?: "pool" | "ledge" | "dry" | "chaos" | "gallery" | "trail" | "unknown";
 }
-export interface ElementFields extends CommonFields, TechnicalFields {
+export interface ElementFields extends Omit<CommonFields, "rope">, TechnicalFields {
+  rope?: RopeDeclaration;
   anchor?: "bolts" | "natural" | "tree" | "thread" | "removable" | "fixed" | "unknown" | "mixed";
   exposure?: Level;
   flow?: "dry" | Level;
   type?: "deep" | "shallow" | "swimmer" | "dry" | "unknown";
   severity?: Level | "critical";
 }
-type FieldsFor<T extends ElementType> = CommonFields & Pick<ElementFields, "flow">
-  & (T extends "rappel" ? TechnicalFields & Pick<ElementFields, "anchor"> & { height: Measurement; rope: Measurement }
-    : T extends "climb" ? TechnicalFields & Pick<ElementFields, "exposure"> & { height: Measurement }
-    : T extends "downclimb" ? TechnicalFields & Pick<ElementFields, "exposure">
-    : T extends "pool" ? Pick<ElementFields, "type">
-    : T extends "hazard" ? Pick<ElementFields, "severity"> : {});
+type FieldsFor<T extends ElementType> = Omit<CommonFields, "rope"> & Pick<ElementFields, "flow">
+  & (T extends "rappel" ? TechnicalFields & Pick<ElementFields, "anchor"> & { height: Measurement; rope: RopeDeclaration }
+    : Pick<CommonFields, "rope"> & (T extends "climb" ? TechnicalFields & Pick<ElementFields, "exposure"> & { height: Measurement }
+      : T extends "downclimb" ? TechnicalFields & Pick<ElementFields, "exposure">
+      : T extends "pool" ? Pick<ElementFields, "type">
+      : T extends "hazard" ? Pick<ElementFields, "severity"> : {}));
 /** Known fields live in attributes; unrecognized or inapplicable fields remain string extensions. */
 export type RouteElement = { [T in ElementType]: {
   type: T; id: string; label: string | null; attributes: FieldsFor<T>;
@@ -114,7 +117,7 @@ export interface RouteSummary {
   entranceElevationMeters: number | null; exitElevationMeters: number | null;
   totalElevationChangeMeters: number;
 }
-/** Explicit observations from normalized records; null means no measurement supplied. */
+/** Explicit numeric observations; unknown ropes do not contribute to declaredRopeCount or maxima. */
 export interface RouteMeasurementSummary {
   maximumDeclaredRopeMeters: number | null;
   declaredRopeCount: number;
