@@ -45,3 +45,5 @@ Function-level contracts, responsibility tags and the structural enforcement com
 The [visual specification and decision record](visual-specification.md) consolidates current element/state coverage, hierarchy, optional defaults and the reproducible [gallery](assets/visual/index.html).
 
 [Visual/export regression evidence](visual-regression.md) maps the synthetic cases to semantic oracles, browser layout/raster/accessibility checks, negative controls and print inspection.
+
+The [research corpus and protocol](research/README.md) separates source-backed evidence, synthetic fixtures, unresolved source meaning and pending practitioner evaluation.
