@@ -1,6 +1,6 @@
 # Canyon research corpus and protocol
 
-Research revision 1, prepared 2026-09-27. This is a versioned input to [#32](https://github.com/OneTesseractInMultiverse/vrl/issues/32), separate from the supported [language contract](../language-reference.md). Canyon routes come first; cave notation remains a later investigation.
+Research revision 1, prepared 2026-09-27. Follow the [research charter and experiment register](charter.md) for evidence categories, promotion decisions and delivery handoffs. This is a versioned input to [#32](https://github.com/OneTesseractInMultiverse/vrl/issues/32), separate from the supported [language contract](../language-reference.md). Canyon routes come first; cave notation remains a later investigation.
 
 ## Corpus inventory
 

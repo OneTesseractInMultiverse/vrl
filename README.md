@@ -1,6 +1,6 @@
 # Vertical Route Language
 
-Vertical Route Language (VRL) is a compact domain-specific language for technical vertical route documentation. It turns canyon route text into structured data and schematic diagrams. Canyon documentation is the current focus; cave and other vertical-route models remain research work.
+Vertical Route Language (VRL) is a compact domain-specific language for technical vertical route documentation. It turns canyon route text into structured data and schematic diagrams. Canyon documentation is the current focus; cave and other vertical-route models remain research work. The [research charter](docs/research/charter.md) defines how source evidence and experiments guide changes to the model, language and visual conventions.
 
 The implementation parses a compact VRL document, validates measurements and domain fields, normalizes route elements, computes a vertical layout, renders an SVG topo, exports JSON, and exposes thin React, Svelte, and SvelteKit adapters.
 
