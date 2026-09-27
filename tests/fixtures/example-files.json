@@ -87,5 +87,70 @@
       "/model/elements/4/attributes/type": "dry"
     },
     "sha256": "f26cd0d94ccc5a55e5bf599038a099ee22c0c654f1279eb594c90348c65e0c9f"
+  },
+  "canyon-dry.vrl": {
+    "warnings": [],
+    "ids": [
+      "S1",
+      "R1",
+      "W1",
+      "D1",
+      "E1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic dry technical canyon",
+      "/model/elements/1/attributes/height/meters": 12,
+      "/model/elements/1/attributes/rope/meters": 30,
+      "/model/elements/1/attributes/anchor_count": "2",
+      "/model/elements/1/attributes/flow": "dry",
+      "/model/elements/2/attributes/distance/meters": 25,
+      "/model/elements/3/attributes/height/meters": 3
+    },
+    "sha256": "bfec1c30ab272ab804bc436ce082ea789ba0685dc4374ec34abcc88233b2de47"
+  },
+  "canyon-aquatic-notes.vrl": {
+    "warnings": [],
+    "ids": [
+      "S1",
+      "P1",
+      "N1",
+      "R1",
+      "H1",
+      "E1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic aquatic observations",
+      "/model/elements/1/attributes/type": "swimmer",
+      "/model/elements/1/extensions/note": "Swimming described; traversal distance and measured pool depth unknown.",
+      "/model/elements/2/extensions/text": "Jump and slide alternatives are mentioned; choice, dimensions and applicability are unmodeled.",
+      "/model/elements/3/attributes/height/meters": 10,
+      "/model/elements/3/attributes/rope/meters": 25,
+      "/model/elements/4/extensions/note": "Fictional water observation; date and current conditions unknown."
+    },
+    "sha256": "f34ee32f7508cbe13b230be823033f68b7f0fb82595a4cb215cd47e842417b3f"
+  },
+  "canyon-approach-return.vrl": {
+    "warnings": [],
+    "ids": [
+      "S1",
+      "N1",
+      "W1",
+      "N2",
+      "R1",
+      "N3",
+      "W2",
+      "E1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic approach and return",
+      "/model/elements/1/extensions/text": "Approach begins; phase boundaries are descriptive only.",
+      "/model/elements/2/attributes/distance/meters": 100,
+      "/model/elements/3/extensions/text": "Canyon entry. Escape candidate near R1; destination and connection are unresolved.",
+      "/model/elements/4/attributes/height/meters": 8,
+      "/model/elements/4/attributes/rope/meters": 20,
+      "/model/elements/5/extensions/text": "Return begins; no alternative or escape edge is implied.",
+      "/model/elements/6/attributes/distance/meters": 50
+    },
+    "sha256": "a3c2e5d3f3acd91900f78c3d28160344060e074717b8daefa07fb346b60759a4"
   }
 }

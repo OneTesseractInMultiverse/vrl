@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Publish the canyon capability matrix and executable dry, aquatic-observation and approach/return cases. Keep unmodeled movements, phase boundaries and escape relationships explicit; cave expansion remains deferred.
+
 - Record the first documentary-fidelity experiment with per-fact conversion losses and executable failure probes; preserve unresolved measurements and distinguish evidence carriage from technical route semantics.
 
 - Publish the canyon research charter, bounded experiment register and evidence-to-delivery decision process; keep pending practitioner studies separate from implementation results.

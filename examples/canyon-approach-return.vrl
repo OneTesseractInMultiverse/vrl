@@ -1,0 +1,10 @@
+# Synthetic phases and escape reference remain prose; there is no branch traversal contract.
+route "Synthetic approach and return"
+start "Trailhead"
+note "Approach begins; phase boundaries are descriptive only."
+walk W1 distance=100m
+note "Canyon entry. Escape candidate near R1; destination and connection are unresolved."
+rappel R1 height=8m rope=20m anchor=natural
+note "Return begins; no alternative or escape edge is implied."
+walk W2 distance=50m
+exit "Trailhead return"

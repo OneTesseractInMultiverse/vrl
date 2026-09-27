@@ -49,3 +49,5 @@ The [visual specification and decision record](visual-specification.md) consolid
 [Visual/export regression evidence](visual-regression.md) maps the synthetic cases to semantic oracles, browser layout/raster/accessibility checks, negative controls and print inspection.
 
 The [research corpus and protocol](research/README.md) separates source-backed evidence, synthetic fixtures, unresolved source meaning and pending practitioner evaluation.
+
+The [canyon capability matrix](canyon-capabilities.md) maps grammar, normalized meaning, validation, output and explicit domain deferrals.

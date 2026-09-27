@@ -2,7 +2,7 @@
 export const TEST_SUITES = {
   domain: ["domain-model", "element-identifiers", "known-fields", "numeric-integrity", "invariants-domain", "summary-semantics"],
   parsing: ["lexer", "document-grammar", "source-diagnostics", "invariants-parsing"],
-  compilation: ["research-fidelity", "compiler-ports", "processing-limits", "public-contracts", "documentation-contracts", "documentation-assets", "vrl"],
+  compilation: ["canyon-scope", "research-fidelity", "compiler-ports", "processing-limits", "public-contracts", "documentation-contracts", "documentation-assets", "vrl"],
   layout: ["technical-segments", "route-boundaries", "invariants-layout"],
   serialization: ["visual-fixtures", "accessible-output", "row-layout", "icons", "annotation-icons", "anchor-counts", "soft-terrain", "svg-identifiers", "renderer-configuration", "renderer-scene", "scene-fitting", "technical-annotations", "xml-text", "render-defaults", "invariants-serialization"],
   adapters: ["diagram-package", "diagram-state", "warning-presentation"],

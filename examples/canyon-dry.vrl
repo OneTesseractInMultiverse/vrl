@@ -1,0 +1,7 @@
+# Synthetic dry technical canyon; supplied rope declarations are not equipment requirements.
+route "Synthetic dry technical canyon"
+start "Entry"
+rappel R1 height=12m rope=30m anchor=bolts anchor_count=2 station=right landing=dry flow=dry
+walk W1 distance=25m
+downclimb D1 height=3m exposure=low
+exit "Exit"
