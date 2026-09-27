@@ -1,3 +1,4 @@
+import { computeRowScene } from "./row-scene.js";
 import { contourObstacles } from "./annotation-icons.js";
 import { prepareSoftTerrain, prepareSoftPools } from "./soft-terrain-geometry.js";
 import { softTerrainText } from "./soft-terrain-text.js";
@@ -26,6 +27,7 @@ export function computeTopoScene(route, layout, options = {}) {
   validateRenderOptions(options);
   const identifiers = resolveSvgIdentifiers(options.idPrefix);
   validateRenderLayout(layout);
+  if (options.flow === "rows") return computeRowScene(route, layout, options);
   const language = resolveRenderLanguage(options);
   const style = options.style ?? "classic";
   const terrain = style === "soft-terrain" ? prepareSoftTerrain(layout) : null;

@@ -250,3 +250,22 @@ if (resolveAttributeIconId("anchor", "bolts") !== "bolt" || !Object.isFrozen(get
 }
 console.log(renderIcon("tree", { decorative: true, size: 24 }));
 ```
+
+## Readable row presentation
+
+`flow: "rows"` is an opt-in renderer policy, with exact supported widths, readable fixed fonts and intact technical sections. Domain records and interchange versions remain unchanged. Dynamic scene options return a `TopoScene | RowTopoScene` union; literal absent/continuous flow retains the existing type. See [row policy](row-layout.md).
+
+```ts
+import { compileRoute } from "@subvertic/vrl-core";
+import { computeTopoScene, renderTopoSvg } from "@subvertic/vrl-render-svg";
+
+const source = 'route Rows\nstart\nrappel R1 height=18m rope=40m anchor=bolts anchor_count=2\nwalk W1 distance=120m\nexit';
+const result = compileRoute(source, { layout: { width: 320 } });
+if (!result.ok) throw new Error("The row example must compile");
+const scene = computeTopoScene(result.model, result.layout, { style: "soft-terrain", flow: "rows" });
+if (scene.viewBox.width !== 320 || scene.rows.length !== 4
+    || scene.rows[0]?.outgoing?.code !== scene.rows[1]?.incoming?.code) {
+  throw new Error("Rows must preserve their exact width and paired continuation identity");
+}
+console.log(renderTopoSvg(result.model, result.layout, { style: "soft-terrain", flow: "rows", symbols: "annotations" }));
+```

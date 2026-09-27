@@ -346,7 +346,7 @@ The normalized `anchor_count` value and JSON representation are unchanged. The f
 
 ### Complete diagram bounds
 
-`renderTopoSvg` prepares the complete presentation before serializing SVG. Requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.
+`renderTopoSvg` prepares the complete presentation before serializing SVG. In continuous flow, requested `layout.width` and `layout.height` are minimum framing dimensions, not hard crop boundaries. The final canvas grows to include terrain, physical segments, arrowheads, symbols, anchor/station marks, labels, annotations, the route summary, and the optional legend. Its `viewBox` origin may be negative; physical route coordinates and elevation values are unchanged. Intrinsic SVG `width` and `height` match the fitted `viewBox` dimensions.
 
 The route summary occupies a separate row above the route content. The legend follows the lowest route or annotation label, and its columns expand for localized text. Classic detail rows wrap once using the requested width; soft-terrain rows may rewrap while moving right to clear symbols. In both styles, fitting does not feed the expanded width back into wrapping. Unbroken labels expand the canvas. This is deterministic growth, not pagination or a guarantee that all symbols remain separated when spacing is deliberately reduced.
 
@@ -380,7 +380,7 @@ See the [scene contract](rendering-scene.md) for detailed record shapes, example
 
 Treat these records as read-only snapshots and recompute them after model, layout, or option changes. Scene computation does not mutate its inputs. Core layout remains independent of SVG fonts and decoration sizes; its dimensions are provisional until the renderer prepares the presentation.
 
-Text uses a conservative envelope of 1.25 em per UTF-16 code unit, with vertical and stroke clearance. This intentionally reserves extra space for bold wide glyphs, Unicode, and fallback fonts without browser measurements, DOM access, or third-party runtime dependencies. External CSS that changes fonts, letter spacing, strokes, or transforms can invalidate the envelope and requires independent fitting by the embedding application. Canvas fitting addresses clipping; it does not redesign label spacing within individual detail rows.
+Continuous-flow text uses a conservative envelope of 1.25 em per UTF-16 code unit, with vertical and stroke clearance. This intentionally reserves extra space for bold wide glyphs, Unicode, and fallback fonts without browser measurements, DOM access, or third-party runtime dependencies. External CSS that changes fonts, letter spacing, strokes, or transforms can invalidate the envelope and requires independent fitting by the embedding application. Canvas fitting addresses clipping; it does not redesign label spacing within individual detail rows. The opt-in [row policy](row-layout.md) instead wraps fixed-size monospace text within an exact width and grows vertically, with explicit resource and extent guards.
 
 Both scene preparation and full rendering validate incoming layout/options, including plain node/element/attribute records and segment records/endpoints. Supply normalized inputs from core; these structural checks do not repeat DSL semantic validation. Nonfinite derived bounds, unsafe magnitudes, or a fitted span exceeding `Number.MAX_SAFE_INTEGER` throw `RangeError`, including combinations of individually valid dimensions that leave no room for padding. Invalid types follow the existing `TypeError` contract. Low-level fragment renderers do not fit a complete canvas. The compatibility helper `topoLegendHeight` still returns `156` or `0`; do not add it to core layout height to predict final SVG dimensions.
 
@@ -624,3 +624,7 @@ make publish OTP=123456
 ## Selective annotation icons
 
 `symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](annotation-icons.md).
+
+## Readable row flow
+
+`flow: "rows"` requires soft terrain and a canonical layout width from 320 to 2048 (integer). It keeps technical sections intact and grows vertically with fixed readable type. Omitted or `"continuous"` preserves existing behavior. See [row policy, errors, resource limits and scene overloads](row-layout.md).

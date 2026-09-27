@@ -37,3 +37,7 @@ Standalone source files and quick-start copies have behavioral regression checks
 ## Selective annotation icons
 
 `symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](../docs/annotation-icons.md).
+
+## Readable rows
+
+Render the existing fictional canyon and annotated technical fixture with `flow: "rows"`, `style: "soft-terrain"` and `layout: { width: 320 }`. `npm run rows:build` produces the [320/736-unit comparisons](../docs/row-layout.md#reproducible-comparisons-and-evidence); `rows:check` verifies them.

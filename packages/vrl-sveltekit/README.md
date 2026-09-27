@@ -112,3 +112,5 @@ MIT. Copyright (c) 2026 Pedro Guzmán.
 For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).
 
 Pass `options={{ style: "soft-terrain", symbols: "annotations" }}` through the component or state helper for selective pictograms. Use `symbols: "minimal"` for the equivalent text layout. See the [annotation contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/annotation-icons.md) for supported modes and failures.
+
+For readable narrow exports, pass `{ style: "soft-terrain", flow: "rows", layout: { width: 320 } }` as diagram options in either the server helper or component. The renderer does not inspect the viewport. See [row layout](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/row-layout.md).
