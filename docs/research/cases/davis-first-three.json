@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "id": "davis-first-three",
+  "kind": "source-backed-document-fragment",
+  "scope": "First three labeled rappels and their coordinate-associated anchor records; documentary evidence only, not a complete route or verified field observation.",
+  "preparedOn": "2026-09-27",
+  "sources": [
+    {
+      "id": "davis",
+      "attribution": "hcooper/CanyonTopo repository contributors; individual topo author not established.",
+      "url": "https://github.com/hcooper/CanyonTopo/blob/32990a441310856e3918aa4ad82ec1ab0f5dc47c/tests/fixtures/davis.yaml",
+      "revision": "32990a441310856e3918aa4ad82ec1ab0f5dc47c",
+      "commitDate": "2026-02-28T05:34:03Z",
+      "retrievedOn": "2026-09-27",
+      "sha256": "6468987c72008de7243bc41788e382c36cf941de631b43f0f303e6a06b2d919a",
+      "observationDate": null,
+      "reuse": "No license found at pinned repository root. Original factual inventory and brief labels only; full YAML/code/artwork not redistributed."
+    }
+  ],
+  "facts": [
+    {
+      "id": "label-15",
+      "subject": "feature-15",
+      "predicate": "rappel-description",
+      "value": "R1 R 8'\n(or DCL)",
+      "evidenceClass": "reported",
+      "source": "davis",
+      "locator": "features[id=15].description",
+      "qualification": "Literal documentary label; measurement meaning, units and side reference frame unresolved."
+    },
+    {
+      "id": "anchor-14",
+      "subject": "feature-14",
+      "predicate": "anchor-category-and-count",
+      "value": {
+        "category": "bolt",
+        "count": 2,
+        "name": null
+      },
+      "evidenceClass": "reported",
+      "source": "davis",
+      "locator": "features[id=14], lines 134 onward",
+      "qualification": "Source category retained; natural does not imply tree. Null name means no supplied name."
+    },
+    {
+      "id": "label-17",
+      "subject": "feature-17",
+      "predicate": "rappel-description",
+      "value": "R2 L 15'",
+      "evidenceClass": "reported",
+      "source": "davis",
+      "locator": "features[id=17].description",
+      "qualification": "Literal documentary label; measurement meaning, units and side reference frame unresolved."
+    },
+    {
+      "id": "anchor-16",
+      "subject": "feature-16",
+      "predicate": "anchor-category-and-count",
+      "value": {
+        "category": "natural",
+        "count": 1,
+        "name": "Log"
+      },
+      "evidenceClass": "reported",
+      "source": "davis",
+      "locator": "features[id=16], lines 157 onward",
+      "qualification": "Source category retained; natural does not imply tree. Null name means no supplied name."
+    },
+    {
+      "id": "label-19",
+      "subject": "feature-19",
+      "predicate": "rappel-description",
+      "value": "R3 R 10'\n(or DCR)",
+      "evidenceClass": "reported",
+      "source": "davis",
+      "locator": "features[id=19].description",
+      "qualification": "Literal documentary label; measurement meaning, units and side reference frame unresolved."
+    },
+    {
+      "id": "anchor-18",
+      "subject": "feature-18",
+      "predicate": "anchor-category-and-count",
+      "value": {
+        "category": "natural",
+        "count": 1,
+        "name": null
+      },
+      "evidenceClass": "reported",
+      "source": "davis",
+      "locator": "features[id=18], lines 180 onward",
+      "qualification": "Source category retained; natural does not imply tree. Null name means no supplied name."
+    },
+    {
+      "id": "physical-drop-heights",
+      "subject": "scoped-fragment",
+      "predicate": "physical-drop-heights",
+      "value": null,
+      "evidenceClass": "unknown",
+      "source": "davis",
+      "locator": "features 14–19 and source metadata",
+      "qualification": "Not independently established in this fragment; absence does not imply zero or absence of the feature."
+    },
+    {
+      "id": "declared-rope-lengths",
+      "subject": "scoped-fragment",
+      "predicate": "declared-rope-lengths",
+      "value": null,
+      "evidenceClass": "unknown",
+      "source": "davis",
+      "locator": "features 14–19 and source metadata",
+      "qualification": "Not independently established in this fragment; absence does not imply zero or absence of the feature."
+    },
+    {
+      "id": "measured-pool-depths",
+      "subject": "scoped-fragment",
+      "predicate": "measured-pool-depths",
+      "value": null,
+      "evidenceClass": "unknown",
+      "source": "davis",
+      "locator": "features 14–19 and source metadata",
+      "qualification": "Not independently established in this fragment; absence does not imply zero or absence of the feature."
+    },
+    {
+      "id": "observation-date",
+      "subject": "scoped-fragment",
+      "predicate": "observation-date",
+      "value": null,
+      "evidenceClass": "unknown",
+      "source": "davis",
+      "locator": "features 14–19 and source metadata",
+      "qualification": "Not independently established in this fragment; absence does not imply zero or absence of the feature."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "association-14-15",
+      "from": "feature-14",
+      "to": "feature-15",
+      "predicate": "candidate-anchor-association",
+      "evidenceClass": "inferred",
+      "source": "davis",
+      "locator": "features[id=14].connectionX/connectionY matches features[id=15].x/y",
+      "qualification": "Coordinate match in the drawing; source has no explicit target identifier. Requires confirmation before domain import."
+    },
+    {
+      "id": "association-16-17",
+      "from": "feature-16",
+      "to": "feature-17",
+      "predicate": "candidate-anchor-association",
+      "evidenceClass": "inferred",
+      "source": "davis",
+      "locator": "features[id=16].connectionX/connectionY matches features[id=17].x/y",
+      "qualification": "Coordinate match in the drawing; source has no explicit target identifier. Requires confirmation before domain import."
+    },
+    {
+      "id": "association-18-19",
+      "from": "feature-18",
+      "to": "feature-19",
+      "predicate": "candidate-anchor-association",
+      "evidenceClass": "inferred",
+      "source": "davis",
+      "locator": "features[id=18].connectionX/connectionY matches features[id=19].x/y",
+      "qualification": "Coordinate match in the drawing; source has no explicit target identifier. Requires confirmation before domain import."
+    }
+  ],
+  "uncertainties": [
+    {
+      "id": "measurement-meaning",
+      "affects": [
+        "label-15",
+        "label-17",
+        "label-19"
+      ],
+      "question": "Do the primed labels denote drop, rope or another distance, and which units/measurement method?"
+    },
+    {
+      "id": "side-and-alternative",
+      "affects": [
+        "label-15",
+        "label-17",
+        "label-19"
+      ],
+      "question": "What reference frame and meanings apply to R/L and DCL/DCR? No automatic expansion."
+    },
+    {
+      "id": "anchor-association",
+      "affects": [
+        "association-14-15",
+        "association-16-17",
+        "association-18-19"
+      ],
+      "question": "Do the matching drawing coordinates establish the intended anchor ownership?"
+    },
+    {
+      "id": "temporal-and-field-status",
+      "affects": [
+        "observation-date"
+      ],
+      "question": "Who recorded the topo, when, and which statements were observed or estimated?"
+    }
+  ],
+  "review": {
+    "documentaryExtraction": "Prepared from pinned source; not independently reviewed.",
+    "independentReview": "pending",
+    "practitionerReview": "pending",
+    "disagreements": [],
+    "reviewers": []
+  }
+}

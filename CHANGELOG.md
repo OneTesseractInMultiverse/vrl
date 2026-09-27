@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Establish the first source-backed canyon document inventory, reserved holdout and predeclared fidelity/reader evaluation protocol. Source uncertainty and pending practitioner review remain explicit.
+
 - Exercise standalone SVGs, external images and adjacent HTML descriptions in packed consumers, with independent bounds, row-text collision, local-reference, structural raster and malformed-output controls. Fix external descriptions collapsing to a section label by using a visible heading instead of `aria-label` on the referenced section.
 
 - Publish the canyon visual specification and a reproducible thirteen-view element/state gallery with pinned synthetic facts, explicit warnings and independent semantic checks. Keep optional styles and baseline acceptance distinct from pending practitioner research.

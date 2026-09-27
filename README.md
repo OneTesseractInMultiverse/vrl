@@ -57,6 +57,8 @@ npm install @subvertic/vrl-sveltekit @sveltejs/kit svelte
 
 ## Documentation
 
+- [Canyon research corpus and evaluation protocol](docs/research/README.md)
+
 - [Documentation index and current capability map](docs/README.md)
 - [Runnable examples and fixture purposes](examples/README.md)
 - [Soft-terrain style and visual gallery](docs/soft-terrain.md)
