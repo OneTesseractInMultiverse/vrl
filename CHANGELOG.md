@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Publish the canyon research charter, bounded experiment register and evidence-to-delivery decision process; keep pending practitioner studies separate from implementation results.
+
 - Establish the first source-backed canyon document inventory, reserved holdout and predeclared fidelity/reader evaluation protocol. Source uncertainty and pending practitioner review remain explicit.
 
 - Exercise standalone SVGs, external images and adjacent HTML descriptions in packed consumers, with independent bounds, row-text collision, local-reference, structural raster and malformed-output controls. Fix external descriptions collapsing to a section label by using a visible heading instead of `aria-label` on the referenced section.

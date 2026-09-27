@@ -28,6 +28,8 @@ All seven packages share a version; the repository's development runtime differs
 
 ## Scope and interpretation
 
+The [research charter](research/charter.md) tracks competing hypotheses, evidence requirements and experiment status. Research documentation distinguishes current implementation from unanswered domain and comprehension questions.
+
 Canyon routes are the initial domain. Generic climb/downclimb elements do not establish complete cave, structure or climbing-route models. Slides, jumps, alternative lines, equipment systems and other canyon concepts require explicit modeling decisions; no new DSL semantics should be inferred from an icon, contour or extension string.
 
 Soft terrain is optional. Its curves and pool silhouettes are schematic, and practitioner comprehension evaluation remains pending. Selective [annotation icons](annotation-icons.md) are implemented as an optional mode. Optional [narrow row layouts](row-layout.md) preserve technical sections and display order with matched continuations. [Complete text alternatives and monochrome rows](accessible-output.md) include automated browser accessibility-tree and print checks; representative assistive-technology review remains pending. Canyon-model completeness and research remain under [#31](https://github.com/OneTesseractInMultiverse/vrl/issues/31) and [#32](https://github.com/OneTesseractInMultiverse/vrl/issues/32).
