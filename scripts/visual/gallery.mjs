@@ -18,7 +18,7 @@ export function visualArtifacts(root) {
     const result = compileRoute(source, { layout: { width: item.width } });
     if (!result.ok) throw new Error(`Invalid visual fixture: ${item.id}`);
     const options = { ...item.render, idPrefix: item.id };
-    files.set(`${item.id}.svg`, renderTopoSvg(result.model, result.layout, options) + "\n");
+    files.set(`${item.id}.svg`, renderTopoSvg(result.model, result.layout, options).replace(/^[ \t]+$/gm, "") + "\n");
     const warnings = [];
     for (const diagnostic of result.diagnostics) warnings.push(`${diagnostic.code}: ${diagnostic.message}`);
     cards.push(galleryCard(item, fixture, renderRouteText(result.model, options), warnings));
