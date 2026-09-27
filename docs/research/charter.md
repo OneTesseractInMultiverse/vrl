@@ -51,3 +51,5 @@ The initial research cycle finishes only after a source-backed language/model co
 - [Pinned CanyonTopo source document](https://github.com/hcooper/CanyonTopo/blob/32990a441310856e3918aa4ad82ec1ab0f5dc47c/tests/fixtures/davis.yaml): diagram-oriented records and ambiguous text/measurement boundaries. See the corpus for attribution/reuse limits.
 - [Canyon Log Topo Builder](https://canyonlog.org/canyon-topo-builder/): reference for notes, drawings and vector-template workflows, accessed 2026-09-27. Its page is mutable; record a new access date/version for subsequent comparisons. No template or artwork is copied here.
 - [Current VRL language](../language-reference.md), [domain contracts](../domain-model.md) and [visual/export evidence](../visual-regression.md): implementation baseline and known limits, not evidence of comparative superiority.
+
+[Experiment 001](experiments/001-documentary-fidelity.md) records the first per-fact comparison, executable conversion failures and negative findings. Practitioner comprehension and authoring-time comparisons remain pending.
