@@ -1,0 +1,11 @@
+# Synthetic categories: no pool has a known measured depth.
+route "Synthetic pool and flow states"
+pool P1 type=deep flow=high
+pool P2 type=shallow flow=medium
+pool P3 type=swimmer flow=low
+pool P4 type=dry flow=dry
+pool P5 type=unknown
+hazard H1 type=slippery severity=low
+hazard H2 type=slippery severity=medium
+hazard H3 type=slippery severity=high
+hazard H4 type=slippery severity=critical

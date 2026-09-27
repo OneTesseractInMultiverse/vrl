@@ -291,3 +291,5 @@ Use `options.style: "soft-terrain"` for a neutral ground wash, directed technica
 Optional [selective canyon pictograms](docs/annotation-icons.md) use the first-party `@subvertic/vrl-icons` package, preserving exact geometry and explicit route facts. Compare the [icon and minimal gallery](docs/assets/canyoning-icons.html) before choosing `symbols: "annotations"` with soft terrain.
 
 For narrow displays, [readable canyon rows](docs/row-layout.md) use `flow: "rows"` with soft terrain, fixed text sizes, complete technical sections and matched continuation labels.
+
+The [canyon visual specification](docs/visual-specification.md) and [complete element/state gallery](docs/assets/visual/index.html) pin optional presentation conventions and their evidence limits.

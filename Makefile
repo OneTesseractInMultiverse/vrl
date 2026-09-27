@@ -45,6 +45,7 @@ render-assets:
 	npm run icons:build
 	npm run rows:build
 	npm run accessibility:build
+	npm run visual:build
 
 pack-dry-run:
 	npm run pack:dry-run

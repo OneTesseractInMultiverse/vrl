@@ -1,0 +1,332 @@
+{
+  "revision": 1,
+  "baselineCommit": "40b981848f6ca51590ee01d053ea87b068b7ce34",
+  "fixtureKind": "synthetic",
+  "review": "Automated and visual inspection only; practitioner review pending.",
+  "fixtures": {
+    "canyon": {
+      "source": "examples/soft-terrain-canyon.vrl",
+      "types": [
+        "start",
+        "rappel",
+        "pool",
+        "walk",
+        "rappel",
+        "hazard",
+        "exit"
+      ],
+      "deltas": [
+        -18,
+        -12
+      ],
+      "facts": [
+        "Physical height: 18m",
+        "Declared rope: 40m",
+        "Anchor count: 2",
+        "Measured pool depth: unknown",
+        "Walking distance: 120m",
+        "Physical height: 12m",
+        "Declared rope: 30m",
+        "Anchor type: tree",
+        "Note: Slippery landing"
+      ],
+      "sha256": "c7d4864f883f91ab7690705cb88b2aba25d4a6ca3d875253eba5b38c8b9239aa",
+      "warnings": []
+    },
+    "elements": {
+      "source": "tests/fixtures/visual/elements.vrl",
+      "types": [
+        "start",
+        "walk",
+        "rappel",
+        "pool",
+        "downclimb",
+        "climb",
+        "hazard",
+        "note",
+        "exit"
+      ],
+      "deltas": [
+        -18,
+        -3,
+        4
+      ],
+      "facts": [
+        "Movement: ascent",
+        "Vertical change: 4m",
+        "Type: snake",
+        "Text: Annotation preserves order without adding a physical segment"
+      ],
+      "sha256": "9761b20ef20cda7363aeead9ca33394581cd1db86230472381ca130b0d9e4259",
+      "warnings": []
+    },
+    "anchors": {
+      "source": "tests/fixtures/visual/anchors.vrl",
+      "types": [
+        "rappel",
+        "rappel",
+        "rappel",
+        "rappel",
+        "rappel",
+        "rappel",
+        "rappel",
+        "rappel"
+      ],
+      "deltas": [
+        -10,
+        -10,
+        -10,
+        -10,
+        -10,
+        -10,
+        -10,
+        -10
+      ],
+      "facts": [
+        "Anchor count: 7",
+        "Anchor count: unknown",
+        "Anchor type: mixed",
+        "Station: center",
+        "Station: floor",
+        "Station: tree",
+        "Station: natural",
+        "Station: unknown",
+        "Landing: pool",
+        "Landing: ledge",
+        "Landing: dry",
+        "Landing: chaos",
+        "Landing: gallery",
+        "Landing: trail",
+        "Landing: unknown"
+      ],
+      "sha256": "4f427e5b293b7799a4dca4763dbf8ce0c27fe99700f45544bbbf33cff621983b",
+      "warnings": []
+    },
+    "pools": {
+      "source": "tests/fixtures/visual/pools.vrl",
+      "types": [
+        "pool",
+        "pool",
+        "pool",
+        "pool",
+        "pool",
+        "hazard",
+        "hazard",
+        "hazard",
+        "hazard"
+      ],
+      "deltas": [],
+      "facts": [
+        "Type: deep",
+        "Type: shallow",
+        "Type: swimmer",
+        "Type: dry",
+        "Type: unknown",
+        "Severity: critical"
+      ],
+      "sha256": "3e871324a3030edfc0f514ee92fb894c61b800107571c83672e06649e3252bed",
+      "warnings": []
+    },
+    "shapes": {
+      "source": "tests/fixtures/visual/shapes.vrl",
+      "types": [
+        "rappel",
+        "climb",
+        "rappel",
+        "downclimb",
+        "rappel"
+      ],
+      "deltas": [
+        -12,
+        3,
+        -10,
+        -3,
+        -8
+      ],
+      "facts": [
+        "Rope stages: 4m; 8m",
+        "Redirections: 3m left; 9m right",
+        "Redirection: 5m center",
+        "Redirection: 4m unknown",
+        "Technical shape: slab"
+      ],
+      "sha256": "bf9003293e00ef7234b535bb6ffdb1541a2cab062f4ef5815bcd9ebb56022cd5",
+      "warnings": []
+    },
+    "long": {
+      "source": "tests/fixtures/visual/long.vrl",
+      "types": [
+        "start",
+        "rappel",
+        "climb",
+        "rappel",
+        "note",
+        "walk",
+        "rappel",
+        "pool",
+        "rappel",
+        "walk",
+        "rappel",
+        "hazard",
+        "walk",
+        "rappel",
+        "walk",
+        "rappel",
+        "walk",
+        "rappel",
+        "walk",
+        "downclimb",
+        "exit"
+      ],
+      "deltas": [
+        -12,
+        4,
+        -9,
+        -11,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        null
+      ],
+      "facts": [
+        "Walking distance: 610m",
+        "Vertical change: unknown",
+        "Text: 岩 — annotation conservée sans traduction ni mesure inventée",
+        "Note: Slippery landing — observation date unknown"
+      ],
+      "sha256": "1a1a8fecaf1b65662e7cea4ef76e1b25033d1c85af15ffa59b0a2ae8ff8b0bad",
+      "warnings": [
+        "VRL_GEOMETRY_HEIGHT_REQUIRED"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "canyon-color-320",
+      "fixture": "canyon",
+      "width": 320,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations"
+      }
+    },
+    {
+      "id": "canyon-minimal-320",
+      "fixture": "canyon",
+      "width": 320,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "minimal"
+      }
+    },
+    {
+      "id": "canyon-color-736",
+      "fixture": "canyon",
+      "width": 736,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations"
+      }
+    },
+    {
+      "id": "canyon-mono-320",
+      "fixture": "canyon",
+      "width": 320,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations",
+        "monochrome": true
+      }
+    },
+    {
+      "id": "canyon-mono-736",
+      "fixture": "canyon",
+      "width": 736,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "minimal",
+        "monochrome": true
+      }
+    },
+    {
+      "id": "elements-classic",
+      "fixture": "elements",
+      "width": 736,
+      "render": {}
+    },
+    {
+      "id": "elements-soft",
+      "fixture": "elements",
+      "width": 736,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations"
+      }
+    },
+    {
+      "id": "anchors-dark",
+      "fixture": "anchors",
+      "width": 736,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations",
+        "theme": "dark"
+      }
+    },
+    {
+      "id": "pools-light",
+      "fixture": "pools",
+      "width": 320,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations"
+      }
+    },
+    {
+      "id": "shapes-classic",
+      "fixture": "shapes",
+      "width": 900,
+      "render": {}
+    },
+    {
+      "id": "shapes-dark",
+      "fixture": "shapes",
+      "width": 900,
+      "render": {
+        "theme": "dark"
+      }
+    },
+    {
+      "id": "long-es-320",
+      "fixture": "long",
+      "width": 320,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "annotations",
+        "language": "es"
+      }
+    },
+    {
+      "id": "long-mono-736",
+      "fixture": "long",
+      "width": 736,
+      "render": {
+        "flow": "rows",
+        "style": "soft-terrain",
+        "symbols": "minimal",
+        "monochrome": true
+      }
+    }
+  ]
+}

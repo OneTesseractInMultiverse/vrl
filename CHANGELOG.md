@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Publish the canyon visual specification and a reproducible thirteen-view element/state gallery with pinned synthetic facts, explicit warnings and independent semantic checks. Keep optional styles and baseline acceptance distinct from pending practitioner research.
+
 - Add complete ordered English/Spanish route descriptions and visible native HTML alternatives through `describeRoute` and `renderRouteText`. Preserve supplied facts, canonical movement/annotation ownership and explicit unknowns across visual modes.
 - Add controlled light/dark monochrome soft-terrain rows, dashed contours and full station words; non-lateral stations no longer acquire false left-side marks. Document contrast, intrinsic readability and print limits.
 - Give SVG sole default ownership of image semantics through namespaced title/description references and language attributes; framework wrappers no longer default to `role="img"`. Regenerate precomputed states to adopt the new metadata.

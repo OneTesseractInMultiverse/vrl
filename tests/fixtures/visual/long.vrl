@@ -1,0 +1,23 @@
+# Synthetic multilingual dense/long stress case; no measured geography or current route observations.
+route "Cañón de prueba — etiquetas largas y límites de lectura"
+start S1
+rappel R1 height=12m rope=30m anchor=bolts anchor_count=5 station=left note="Reunión descrita con una etiqueta extensa para comprobar asociación y conservación de los datos originales"
+climb C1 height=4m shape=direct exposure=medium
+rappel R2 height=9m rope=25m anchor=tree station=right stages=4m+5m redirection=5m:center
+note "岩 — annotation conservée sans traduction ni mesure inventée"
+walk W1 distance=120m
+rappel R3 height=11m rope=30m station=center
+pool P1 type=unknown
+rappel R4 height=8m rope=20m station=floor
+walk W2 distance=240m
+rappel R5 height=7m rope=20m station=tree
+hazard H1 type=slippery note="Slippery landing — observation date unknown"
+walk W3 distance=350m
+rappel R6 height=6m rope=15m station=natural
+walk W4 distance=410m
+rappel R7 height=5m rope=15m station=unknown
+walk W5 distance=530m
+rappel R8 height=4m rope=12m
+walk W6 distance=610m
+downclimb D1
+exit E1

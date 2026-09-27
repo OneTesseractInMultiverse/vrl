@@ -1,0 +1,7 @@
+# Synthetic technical shapes; ladder is a legacy drawing choice, not a physical ladder assertion.
+route "Synthetic shape and direction inventory"
+rappel R1 height=12m rope=30m shape=ladder anchor=bolts anchor_count=7 stages=4m+8m redirections=3m:left,9m:right
+climb C1 height=6m shape=direct inclination=50% exposure=low
+rappel R2 height=10m rope=25m shape=direct anchor=tree stages=4m+6m redirection=5m:center
+downclimb D1 height=3m shape=slab exposure=high
+rappel R3 height=8m rope=20m shape=slab anchor=unknown stages=3m+5m redirection=4m:unknown
