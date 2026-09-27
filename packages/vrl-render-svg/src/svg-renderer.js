@@ -1,3 +1,4 @@
+import { monochromeTheme } from "./monochrome.js";
 import { serializeRowScene } from "./row-serializer.js";
 import { resolveSvgIdentifiers } from "./svg-identifiers.js";
 import { computeTopoScene } from "./topo-scene.js";
@@ -53,7 +54,8 @@ export {
  */
 export function renderTopoSvg(route, layout, options = {}) {
   validateRenderOptions(options);
-  const theme = resolveTheme(options.theme, options.themeTokens);
+  const colors = resolveTheme(options.theme, options.themeTokens);
+  const theme = options.monochrome === true ? monochromeTheme(colors, options.theme) : colors;
   const scene = computeTopoScene(route, layout, options);
   return scene.flow === "rows" ? serializeRowScene(scene, theme) : svg.serializeTopoScene(scene, theme);
 }

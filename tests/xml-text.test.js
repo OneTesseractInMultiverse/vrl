@@ -93,7 +93,7 @@ for (const [name, value, expected] of TITLES) {
     }, {
       heading: expected,
       title: `${value} topo`,
-      description: `Vertical Route Language schematic for ${value}.`
+      description: "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Start S1.\n2. Exit E1."
     });
   });
 }

@@ -3,7 +3,7 @@ import { escapeXml } from "@subvertic/vrl-render-svg";
 
 const DEFAULT_CLASS_NAME = "vrl-diagram";
 const DEFAULT_DIAGNOSTICS_CLASS_NAME = "vrl-diagram__diagnostics";
-const DEFAULT_ROLE = "img";
+const DEFAULT_ROLE = undefined;
 
 /**
  * Delegate compilation and rendering to the shared diagram state service for Svelte consumers.
@@ -36,7 +36,7 @@ export function renderVrlSvelteMarkup(source, options = {}, renderOptions = {}) 
     return `<pre class="${escapeXml(diagnosticsClassName)}">${escapeXml(state.diagnosticsText)}</pre>`;
   }
 
-  const image = `<div class="${escapeXml(className)}" role="${escapeXml(role)}">${state.svg}</div>`;
+  const image = `<div class="${escapeXml(className)}"${role === undefined ? "" : ` role="${escapeXml(role)}"`}>${state.svg}</div>`;
   return warnings === "" ? image : `<div>${image}${warningPanel(warnings, renderOptions)}</div>`;
 }
 

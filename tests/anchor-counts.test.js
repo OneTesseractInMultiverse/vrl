@@ -61,8 +61,8 @@ function helperDocument(count, side = "left") {
 
 for (const [count, marks, overflow] of COUNTS) {
   for (const [language, singular, plural, introduction, name] of [
-    ["en", "anchor", "anchors", "Vertical Route Language schematic for Anchor survey.", "Rappel R1"],
-    ["es", "anclaje", "anclajes", "Esquema VRL para Anchor survey.", "Rapel R1"]
+    ["en", "anchor", "anchors", "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.", "Rappel R1"],
+    ["es", "anclaje", "anclajes", "Ruta esquematica, sin escala. Lea los elementos en orden. Las cuerdas son longitudes declaradas, no requisitos de equipo.", "Rapel R1"]
   ]) {
     test(`${count} anchors in ${language}: factual text and accessibility retain the full count`, /**
      * Verify ${count} anchors in ${language}: factual text and accessibility retain the full count; arrange the
@@ -78,7 +78,7 @@ for (const [count, marks, overflow] of COUNTS) {
         visibleDetail: byClass(document, "vrl-detail-line")[0].textContent,
         label: byClass(document, "vrl-anchor-marks")[0].getAttribute("aria-label"),
         description: document.getElementsByTagName("desc")[0].textContent
-      }, { detail: `60m / ${expected}`, visibleDetail: `60m / ${expected}`, label: expected, description: `${introduction} ${name}: ${expected}.` });
+      }, { detail: `60m / ${expected}`, visibleDetail: `60m / ${expected}`, label: expected, description: language === "en" ? `${introduction}\n1. ${name}. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: ${count}. Physical height: 30m. Declared rope: 60m.` : `${introduction}\n1. ${name}. Movimiento: descenso. Cambio vertical: -30m. Tipo de anclaje: desconocido. Cantidad de anclajes: ${count}. Altura fisica: 30m. Cuerda declarada: 60m.` });
     });
   }
 
@@ -178,7 +178,7 @@ test("missing count remains unknown even when the anchor type is specified", /**
  */ () => {
   const result = compileRoute(`${source()} anchor=bolts`);
   const document = documentFor(renderTopoSvg(result.model, result.layout));
-  assert.deepEqual([byClass(document, "vrl-anchor-marks").length, byClass(document, "vrl-anchor-overflow").length, byClass(document, "vrl-detail-line")[0].textContent, document.getElementsByTagName("desc")[0].textContent], [0, 0, "60m", "Vertical Route Language schematic for Anchor survey."]);
+  assert.deepEqual([byClass(document, "vrl-anchor-marks").length, byClass(document, "vrl-anchor-overflow").length, byClass(document, "vrl-detail-line")[0].textContent, document.getElementsByTagName("desc")[0].textContent], [0, 0, "60m", "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel R1. Movement: descent. Vertical change: -30m. Anchor type: bolts. Anchor count: unknown. Physical height: 30m. Declared rope: 60m."]);
 });
 
 for (const value of ["0", "-1", "1.5", "01", "1e2", "9007199254740992", "9007199254740993", "Infinity", "NaN", '""', '"5 anchors"', "true"]) {
@@ -208,7 +208,7 @@ for (const shape of ["ladder", "direct", "slab"]) {
    */ () => {
     const result = compileRoute(`${source(5)} shape=${shape} stages=10m+20m redirection=5m:left`);
     const document = documentFor(renderTopoSvg(result.model, result.layout));
-    assert.equal(document.getElementsByTagName("desc")[0].textContent, "Vertical Route Language schematic for Anchor survey. Rappel R1: 5 anchors. R1, 30m: Rope stages: 10m + 20m; Redirection anchor 5m L.");
+    assert.equal(document.getElementsByTagName("desc")[0].textContent, `Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel R1. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: 5. Physical height: 30m. Redirection: 5m left. Declared rope: 60m. Technical shape: ${shape}. Rope stages: 10m; 20m.`);
   });
 }
 
@@ -220,7 +220,7 @@ test("counts retain their owning element in source order, including annotations"
  */ () => {
   const result = compileRoute('route "Owners"\nhazard H anchor_count=9\nrappel A height=30m rope=60m anchor_count=5\nclimb B height=5m anchor_count=1');
   const document = documentFor(renderTopoSvg(result.model, result.layout));
-  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Vertical Route Language schematic for Owners. Hazard H: 9 anchors. Rappel A: 5 anchors. Climb B: 1 anchor.");
+  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Hazard H. Annotation at route boundary: 1. Anchor count: 9.\n2. Rappel A. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: 5. Physical height: 30m. Declared rope: 60m.\n3. Climb B. Movement: ascent. Vertical change: 5m. Anchor count: 1. Physical height: 5m.");
 });
 
 test("overflow on an annotation-only route retains its true accessible count", /**
@@ -231,7 +231,7 @@ test("overflow on an annotation-only route retains its true accessible count", /
  */ () => {
   const result = compileRoute('route "Annotation"\nhazard anchor_count=5');
   const document = documentFor(renderTopoSvg(result.model, result.layout));
-  assert.deepEqual([byClass(document, "vrl-anchor-overflow")[0].textContent, document.getElementsByTagName("desc")[0].textContent], ["+1", "Vertical Route Language schematic for Annotation. Hazard H1: 5 anchors."]);
+  assert.deepEqual([byClass(document, "vrl-anchor-overflow")[0].textContent, document.getElementsByTagName("desc")[0].textContent], ["+1", "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Hazard H1. No physical boundary. Anchor count: 5."]);
 });
 
 test("accessible counts preserve markup-looking owner IDs as ordinary text", /**
@@ -242,7 +242,7 @@ test("accessible counts preserve markup-looking owner IDs as ordinary text", /**
  */ () => {
   const result = compileRoute('route "Survey"\nrappel "A<&>" height=30m rope=60m anchor_count=5');
   const document = documentFor(renderTopoSvg(result.model, result.layout));
-  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Vertical Route Language schematic for Survey. Rappel A<&>: 5 anchors.");
+  assert.equal(document.getElementsByTagName("desc")[0].textContent, "Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.\n1. Rappel A<&>. Movement: descent. Vertical change: -30m. Anchor type: unknown. Anchor count: 5. Physical height: 30m. Declared rope: 60m.");
 });
 
 for (const [language, theme] of [["en", "light"], ["es", "dark"]]) {

@@ -1,3 +1,4 @@
+import { DESCRIPTION_EN } from "./description-fixtures.js";
 import assert from "node:assert/strict";
 import test, { before, after, describe } from "node:test";
 import { chromium } from "playwright";
@@ -37,7 +38,74 @@ describe("production framework consumers", /**
       warning: state.ok ? state.diagnosticsText : "", diagnostics: state.ok ? [] : [state.diagnosticsText] };
   }
 
+  test("hidden SVG negative control removes the image from the accessibility tree", /**
+   * Demonstrate that the browser oracle detects hidden essential content instead of only inspecting metadata strings.
+   * @responsibility coordinator
+   * @param {Object} t - Test context owning cleanup.
+   * @returns {Promise<void>} Resolves after hiding the image changes actual accessible exposure.
+   */ async t => {
+    const context=await openPage(browser,application.origin,"react","icons",true);
+    t.after(/**
+     * Close the controlled browser context.
+     * @responsibility coordinator
+     * @returns {Promise<void>} Resolves after cleanup.
+     */ () => context.close());
+    const before=await accessibleImages(context.page);
+    await context.page.locator("#diagram svg").evaluate(/**
+     * Inject the deliberately hidden-image failure into this owned test page.
+     * @responsibility coordinator
+     * @param {SVGElement} svg - Mounted test image.
+     * @returns {void} Completes after visibility metadata is changed.
+     */ svg => svg.setAttribute("aria-hidden","true"));
+    assert.deepEqual([before.length,(await accessibleImages(context.page)).length],[1,0]);
+  });
+  test("monochrome print retains essential cues with background fills suppressed", /**
+   * Exercise print media and disabled decorative fills while observing actual visible strokes and route description.
+   * @responsibility coordinator
+   * @param {Object} t - Test context owning cleanup.
+   * @returns {Promise<void>} Resolves after independent cue and accessibility checks in print media.
+   */ async t => {
+    const context=await openPage(browser,application.origin,"react","icons",true,{flow:"rows",style:"soft-terrain",monochrome:"true",width:"736",symbols:"minimal"});
+    t.after(/**
+     * Close the controlled print fixture context.
+     * @responsibility coordinator
+     * @returns {Promise<void>} Resolves after cleanup.
+     */ () => context.close());
+    await context.page.emulateMedia({media:"print"});
+    await context.page.addStyleTag({content:"svg > rect, .vrl-row-wash { fill: none !important; }"});
+    const cues=await context.page.locator("#diagram svg").evaluate(/**
+     * Inspect non-color path strokes after print styles suppress background fills.
+     * @responsibility computation
+     * @param {SVGElement} svg - Mounted monochrome row document.
+     * @returns {Object} Visible cue counts and the retained slippery hazard wording.
+     */ svg => {
+      const counts={};
+      for(const kind of ["water","pool","station","distance-break","technical","contour"]) {
+        counts[kind]=0;
+        for(const path of svg.querySelectorAll(`.vrl-row-${kind}`)) if(getComputedStyle(path).stroke!=="none" && parseFloat(getComputedStyle(path).strokeWidth)>=2) counts[kind]++;
+      }
+      return {counts,hazard:svg.textContent.includes("Slippery landing")};
+    });
+    assert.deepEqual([cues,await accessibleImages(context.page)],[{counts:{water:1,pool:1,station:2,"distance-break":1,technical:2,contour:2},hazard:true},[["Synthetic two-rappel canyon topo",DESCRIPTION_EN.replace(/\s+/g," ")]]]);
+  });
   for (const surface of ["react", "svelte", "sveltekit"]) {
+    for (const hydrated of [false,true]) for (const query of [{}, {style:"soft-terrain",symbols:"annotations"}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"minimal",theme:"dark",width:"736"}]) {
+      test(`${surface} ${hydrated ? "hydrated" : "SSR"} exposes one named image with complete route facts: ${JSON.stringify(query)}`, /**
+       * Inspect the real Chromium accessibility tree, requiring one image and an independently specified complete description.
+       * @responsibility coordinator
+       * @param {Object} t - Test context owning cleanup of the isolated consumer page.
+       * @returns {Promise<void>} Resolves after accessible name, description and absence of duplicate image roles are verified.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"icons",hydrated,query);
+        t.after(/**
+         * Release the isolated consumer browser context after accessibility inspection.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves when browser resources are released.
+         */ () => context.close());
+        assert.deepEqual([await accessibleImages(context.page),context.errors],[[["Synthetic two-rappel canyon topo",DESCRIPTION_EN.replace(/\s+/g," ")]],[]]);
+      });
+    }
+
     for (const width of [320, 736]) for (const hydrated of [false, true]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} row flow keeps readable text and paired continuations at ${width}`, /**
        * Inspect actual browser bounds, fonts and logical continuation ordering from each packed framework consumer.
@@ -126,10 +194,10 @@ describe("production framework consumers", /**
          * @returns {unknown} The result returned by context.close.
          */ () => context.close());
         const retained = hydrated ? await context.page.evaluate(/**
-         * Compute window.ssrImage === document.querySelector('[role="img"]').
+         * Compute (window.ssrContainer === document.querySelector(".vrl-diagram") && window.ssrSvgMarkup === document.querySelector("#diagram svg")?.outerHTML).
          * @responsibility computation
          * @returns {boolean} The result of the documented comparison or calculation.
-         */ () => window.ssrImage === document.querySelector('[role="img"]')) : true;
+         */ () => (window.ssrContainer === document.querySelector(".vrl-diagram") && window.ssrSvgMarkup === document.querySelector("#diagram svg")?.outerHTML)) : true;
         assert.deepEqual([await styleSnapshot(context.page), context.errors, retained], [
           ["Good route topo", 1, 1, 0, ["R1"], true, true], [], true
         ]);
@@ -198,7 +266,7 @@ describe("production framework consumers", /**
            * @param {unknown} marker - Prepared or parsed symbol/marker record.
            * @returns {unknown} The marker.id value selected or validated above.
            */ marker => marker.id)) &&
-          window.ssrImage === document.querySelector('[role="img"]')) : true;
+          (window.ssrContainer === document.querySelector(".vrl-diagram") && window.ssrSvgMarkup === document.querySelector("#diagram svg")?.outerHTML)) : true;
         assert.deepEqual([output, context.errors, retained], [[
           ["left-arrow", "#111111", "rgb(17, 17, 17)", 1, true],
           ["right-arrow", "#c3ccd4", "rgb(195, 204, 212)", 1, true]
@@ -278,10 +346,10 @@ describe("production framework consumers", /**
            * @returns {unknown} The result returned by context.close.
            */ () => context.close());
           const retained = hydrated ? await context.page.evaluate(/**
-           * Compute window.ssrImage === document.querySelector('[role="img"]').
+           * Compute (window.ssrContainer === document.querySelector(".vrl-diagram") && window.ssrSvgMarkup === document.querySelector("#diagram svg")?.outerHTML).
            * @responsibility computation
            * @returns {boolean} The result of the documented comparison or calculation.
-           */ () => window.ssrImage === document.querySelector('[role="img"]')) : true;
+           */ () => (window.ssrContainer === document.querySelector(".vrl-diagram") && window.ssrSvgMarkup === document.querySelector("#diagram svg")?.outerHTML)) : true;
           assert.deepEqual([await snapshot(context.page), context.errors, retained], [expected(name), [], true]);
         });
       }
@@ -334,7 +402,7 @@ describe("production framework consumers", /**
        * @responsibility computation
        * @returns {Array} The ordered records or values assembled above.
        */ () => [document.querySelector("#diagram svg desc").textContent, document.querySelector("#diagram svg > rect").getAttribute("fill")]);
-      assert.deepEqual([presentation, context.errors], [["Esquema VRL para Good route.", "#14171a"], []]);
+      assert.deepEqual([presentation, context.errors], [["Ruta esquematica, sin escala. Lea los elementos en orden. Las cuerdas son longitudes declaradas, no requisitos de equipo.\n1. Inicio S1.\n2. Rapel R1. Movimiento: descenso. Cambio vertical: -10m. Tipo de anclaje: desconocido. Cantidad de anclajes: desconocido. Altura fisica: 10m. Cuerda declarada: 20m.\n3. Salida E1.", "#14171a"], []]);
     });
     test(`${surface} toggles warning presentation without losing the SVG`, /**
      * Verify ${surface} toggles warning presentation without losing the SVG; arrange the scenario and make its
@@ -568,4 +636,19 @@ async function rowSnapshot(page) {
     const walk=svg.querySelectorAll(".vrl-row")[3].textContent.replace(/\s+/g," ").includes("120m") && svg.querySelectorAll(".vrl-row-distance-break").length===1;
     return {width:outer.width,minFont,clipped,pairs,walk,owners};
   });
+}
+
+/**
+ * Read Chromium's accessibility tree rather than approximating accessible semantics from DOM attributes.
+ * @responsibility coordinator
+ * @param {Object} page - Owned real browser consumer page.
+ * @returns {Promise<Array>} Exposed image names and complete normalized descriptions, in tree order.
+ */
+async function accessibleImages(page) {
+  const session=await page.context().newCDPSession(page);
+  try {
+    const tree=await session.send("Accessibility.getFullAXTree"), images=[];
+    for(const node of tree.nodes) if(!node.ignored && node.role?.value==="image") images.push([node.name?.value,node.description?.value?.replace(/\s+/g," ")]);
+    return images;
+  } finally { await session.detach(); }
 }

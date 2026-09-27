@@ -37,7 +37,7 @@
   "scripts": {
     "test": "node scripts/run-tests.mjs",
     "coverage": "node scripts/run-tests.mjs --coverage",
-    "check": "npm run check:function-docs && npm run icons:check && npm run rows:check && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
+    "check": "npm run check:function-docs && npm run icons:check && npm run rows:check && npm run accessibility:check && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
     "example": "node scripts/render-example.mjs",
     "example:svg": "node scripts/render-example.mjs docs/assets/quebrada-gata.svg",
     "pack:dry-run": "npm pack --workspaces --dry-run",
@@ -54,7 +54,9 @@
     "icons:build": "node scripts/build-icons.mjs",
     "icons:check": "node scripts/build-icons.mjs --check",
     "rows:build": "node scripts/render-row-gallery.mjs",
-    "rows:check": "node scripts/render-row-gallery.mjs --check"
+    "rows:check": "node scripts/render-row-gallery.mjs --check",
+    "accessibility:build": "node scripts/render-accessibility-gallery.mjs",
+    "accessibility:check": "node scripts/render-accessibility-gallery.mjs --check"
   },
   "engines": {
     "node": ">=25.0.0"

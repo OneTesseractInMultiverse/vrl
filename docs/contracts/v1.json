@@ -75,7 +75,9 @@
         "LIGHT_THEME",
         "escapeXml",
         "renderTopoSvg",
-        "resolveTheme"
+        "resolveTheme",
+        "describeRoute",
+        "renderRouteText"
       ],
       "advanced": [
         "anchorMarkCount",

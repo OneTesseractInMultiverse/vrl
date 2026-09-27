@@ -50,7 +50,7 @@ The continuous scene retains `language`, `nodes`, `infoBox`, `legend`, `contentB
 | Field | Contents |
 | --- | --- |
 | `style`, `terrain`, `pools` | Selected `classic` or `soft-terrain` style; soft contour/fill/bounds or `null`; symbolic pool records (owner, dry state, basin, optional wave, bounds) or an empty array. |
-| `title`, `description` | Localized accessible strings, before XML escaping. |
+| `title`, `description` | Localized name and complete ordered route description, before XML escaping. |
 | `terrainPath`, `waterPaths` | Prepared terrain and water path data. |
 | `segments` | Connection paths or technical records with `ownerId`, display `shape`, `geometry`, `paths`, `rungs`, `stages`, and `redirections`. |
 | `segmentLabels` | Placed traversal labels: `text`, `x`, `y`. |
@@ -105,3 +105,5 @@ Tests inspect pure rung, stage, redirection, text, badge, symbol, and panel plac
 ## Row scene variant
 
 Explicit `flow: "rows"` produces `RowTopoScene`, retaining original physical points, canonical segments and annotation ownership alongside independent row coordinates. Default/continuous calls retain `TopoScene`. Dynamic options require narrowing with `"rows" in scene`. [The row guide](row-layout.md) specifies bounds, readable fonts and failure limits.
+
+Both scene variants carry `identifiers: { arrow, title, description, text }`. `describeRoute` supplies the logical description independently of scene coordinates, themes and symbols. SVG title/description references and optional adjacent HTML share the [namespace contract](svg-identifiers.md); [monochrome policy](accessible-output.md) resolves achromatic paints before row preparation.

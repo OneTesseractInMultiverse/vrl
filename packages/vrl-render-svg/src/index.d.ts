@@ -12,6 +12,8 @@ export interface Theme {
 }
 export type SymbolPresentation = "classic" | "icons" | "annotations" | "minimal";
 export interface RenderOptions {
+  /** Achromatic high-contrast presentation; requires soft-terrain rows and forbids custom theme tokens. */
+  monochrome?: boolean | undefined;
   /** Explicit bounded-width sections; rows require soft terrain and a 320–2048 integer layout width. */
   flow?: "continuous" | "rows" | undefined;
   /** Annotation and minimal modes require soft terrain and reserve identical icon slots. */
@@ -676,3 +678,28 @@ export function routeSegmentPath(previous: ElementPosition, node: Position, elem
  * @returns {string} Formatted text retaining the supplied values and ordering.
  */
 export function routeSegmentPath(previous: Position, node: Position, element: ElementView): string;
+
+export interface RouteDescriptionEntry {
+  elementIndex: number; id: string | null; type: ElementType; pointIndex: number | null;
+  title: string; facts: string[];
+}
+export interface RouteDescription {
+  title: string; language: "en" | "es"; introduction: string; metadata: string[];
+  entries: RouteDescriptionEntry[]; empty: string | null; text: string;
+}
+/**
+ * Project every normalized route element into localized ordered facts, preserving uncertainty independently of display options.
+ * @responsibility coordinator
+ * @param {RouteView} route - Valid normalized route or compatible view owned by the caller.
+ * @param {RenderOptions} [options] - Shared language/locale selection; other rendering options do not affect logical facts.
+ * @returns {RouteDescription} Owned presentation records and plain-text description without markup or layout coordinates.
+ */
+export function describeRoute(route: RouteView, options?: RenderOptions): RouteDescription;
+/**
+ * Produce a visible ordered HTML alternative from the same route facts used by standalone SVG descriptions.
+ * @responsibility coordinator
+ * @param {RouteView} route - Valid normalized route or compatible view owned by the caller.
+ * @param {RenderOptions} [options] - Language/locale and document-unique idPrefix for the adjacent text section.
+ * @returns {string} Escaped HTML with native list semantics and an idPrefix-text ID.
+ */
+export function renderRouteText(route: RouteView, options?: RenderOptions): string;

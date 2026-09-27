@@ -18,6 +18,8 @@ export function requestProps(url) {
   const name = url.searchParams.get("case") ?? "valid";
   if (!Object.hasOwn(SOURCES, name)) throw new Error(`Unknown route case: ${name}`);
   const props = { source: SOURCES[name], options: { legend: false }, showWarnings: url.searchParams.get("warnings") !== "hide" };
+  if (url.searchParams.has("monochrome")) props.options.monochrome = url.searchParams.get("monochrome") === "true";
+  if (url.searchParams.has("theme")) props.options.theme = url.searchParams.get("theme");
   if (url.searchParams.has("flow")) props.options.flow = url.searchParams.get("flow");
   if (url.searchParams.has("symbols")) props.options.symbols = url.searchParams.get("symbols");
   if (url.searchParams.has("width")) props.options.layout = { width: Number(url.searchParams.get("width")) };

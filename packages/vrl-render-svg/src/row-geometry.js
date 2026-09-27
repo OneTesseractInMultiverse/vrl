@@ -48,14 +48,14 @@ export function rowGeometry(technical, element, width, top) {
   if (technical !== null) {
     const g = technical.geometry;
     paths.push({ kind: "wash", token: "terrain", path: scenePath`M 32 ${g.startY + 14} L ${g.dropX} ${g.startY + 14} L ${g.bottomX} ${g.bottomY + 14} L ${width} ${g.bottomY + 14} L ${width} ${top + 172} L 32 ${top + 172} Z`, arrow: false });
-    paths.push({ kind: "contour", token: "terrain", path: scenePath`M 32 ${g.startY + 14} L ${g.dropX} ${g.startY + 14} L ${g.bottomX} ${g.bottomY + 14} L ${width} ${g.bottomY + 14}`, arrow: false });
+    paths.push({ kind: "contour", token: "mutedText", path: scenePath`M 32 ${g.startY + 14} L ${g.dropX} ${g.startY + 14} L ${g.bottomX} ${g.bottomY + 14} L ${width} ${g.bottomY + 14}`, arrow: false });
     paths.push({ kind: "technical", token: "routeLine", path: technical.path, arrow: true });
     for (const stage of technical.stages) if (stage.boundary !== null) {
       const b = stage.boundary;
       paths.push({ kind: "stage", token: "routeLine", path: scenePath`M ${b.x1} ${b.y1} L ${b.x2} ${b.y2}`, arrow: false });
     }
     for (const mark of technical.redirections) paths.push({ kind: "redirection", token: "anchor", path: mark.path, arrow: false });
-    if (element.attributes.station !== undefined) {
+    if (element.attributes.station === "left" || element.attributes.station === "right") {
       const x = technical.segment.direction === "up" ? g.bottomX : g.dropX;
       const y = technical.segment.direction === "up" ? g.bottomY : g.startY;
       const side = element.attributes.station === "right" ? 1 : -1;

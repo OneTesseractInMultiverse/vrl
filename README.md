@@ -60,6 +60,7 @@ npm install @subvertic/vrl-sveltekit @sveltejs/kit svelte
 - [Documentation index and current capability map](docs/README.md)
 - [Runnable examples and fixture purposes](examples/README.md)
 - [Soft-terrain style and visual gallery](docs/soft-terrain.md)
+- [Accessible descriptions and monochrome rows](docs/accessible-output.md)
 - [SVG namespaces for multiple diagrams](docs/svg-identifiers.md)
 
 - [Public API stability, types, and contract revisions](docs/public-contracts.md)
@@ -160,6 +161,7 @@ Element identifiers are case-sensitive and unique across all element types in on
 `@subvertic/vrl-render-svg` exports:
 
 - `renderTopoSvg(model, layout, options)` for SVG topo output with an optional localized legend.
+- `describeRoute(model, options)` and `renderRouteText(model, options)` for complete ordered route facts and a visible HTML alternative.
 - `computeTopoScene(model, layout, options)` for prepared presentation records and complete canvas bounds.
 - `resolveTheme(theme, overrides)` plus light and dark theme tokens.
 - `symbolCode(element, profile)` and `resolveSymbolProfile(profile)` for federation-oriented canyon topo abbreviations.

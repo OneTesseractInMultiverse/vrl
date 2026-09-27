@@ -134,3 +134,7 @@ Annotation mapping, protected-geometry clearance, node/detail placement and lege
 ## Row presentation ownership
 
 The renderer owns the optional `flow: "rows"` policy. Canonical traversal and physical layout remain core-owned; row grouping, fact projection, fixed-font wrapping, bounded schematic geometry, scene coordination and SVG serialization have separate modules. Both presentations use the shared bounds owner. No DOM, framework or icon dependency enters core. See [row contracts](row-layout.md#scene-and-architectural-contracts).
+
+## Text alternatives and monochrome presentation
+
+`route-description.js` projects normalized source fields and domain-owned traversal into ordered presentation facts; `description-text.js` owns localized vocabulary/value formatting. `route-text.js` coordinates projection and namespace resolution, and `route-text-serializer.js` only encodes the prepared records as native HTML. SVG scenes reuse the same description and serializers emit its namespaced relationships. `monochrome.js` computes a fresh achromatic theme after renderer-owned option validation; domain/compiler layers do not depend on it. Framework wrappers leave the image role to SVG. These boundaries add no domain model, browser dependency or runtime library. See [contracts and evidence](accessible-output.md).

@@ -37,7 +37,7 @@ Walking lengths are compressed schematically and carry an explicit zigzag plus t
 
 Text grows vertically and long unbroken labels wrap. The scene includes complete text, icon, stroke, arrow, continuation and legend bounds using the same rectangle union and fitting owner as continuous diagrams. Row labels sit below their diagrams, so leader lines are unnecessary. `symbols: "annotations"` and `symbols: "minimal"` keep identical coordinates and text; the latter hides decorative pictograms. `symbols: "icons"` selects primary pictograms alongside the explicit element heading. All icon backgrounds remain transparent.
 
-This policy prioritizes readable facts over short document height. It does not paginate for printers, optimize the number of sections, or establish practitioner comprehension. Complete accessible route descriptions and monochrome interpretation remain in [#38](https://github.com/OneTesseractInMultiverse/vrl/issues/38); human comparison remains in [#34](https://github.com/OneTesseractInMultiverse/vrl/issues/34).
+This policy prioritizes readable facts over short document height. It does not paginate for printers, optimize the number of sections, or establish practitioner comprehension. Complete ordered descriptions and optional monochrome presentation are documented in [accessible output](accessible-output.md); human comparison remains in [#34](https://github.com/OneTesseractInMultiverse/vrl/issues/34).
 
 ## Scene and architectural contracts
 
@@ -57,3 +57,5 @@ The core continues to own traversal, technical ownership, physical measurements 
 | Stages, redirections and ascent, 320 units | [SVG](assets/rows/technical-320.svg) |
 
 The [fictional canyon](../examples/soft-terrain-canyon.vrl) and [technical example](../examples/soft-terrain-annotated.vrl) remain ordinary supported VRL. Tests specify the complete ordered fact inventory and exact continuation pairs independently, inspect emitted primitive bounds, preserve Unicode and fixed font sizes, retain canonical points/deltas, and exercise malformed constraints and resource exhaustion. Controlled missing partners, duplicate codes, reversed sections, clipped text and lost compressed distance must fail their intended correctness assertions. Packed framework tests inspect actual text/icon bounds, font sizes, source order and continuation pairs in SSR and hydrated browser output at both widths.
+
+Contour strokes are dashed to distinguish them from solid directed ropes without color. Station text retains all supported values; lateral ticks represent only explicit left/right stations. Center, floor, tree, natural and unknown values do not invent a lateral side.

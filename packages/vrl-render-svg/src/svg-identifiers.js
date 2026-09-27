@@ -3,12 +3,12 @@
  * links. Resolve document-scoped SVG identifiers without global state or markup encoding.
  * @responsibility computation
  * @param {string} idPrefix - Caller-owned unique SVG namespace; defaults retain standalone-document compatibility; defaults to "vrl".
- * @returns {Object} A record containing arrow.
+ * @returns {Object} Owned arrow, title, description and adjacent-text IDs within the caller namespace.
  */
 
 export function resolveSvgIdentifiers(idPrefix = "vrl") {
   validateIdPrefix(idPrefix);
-  return { arrow: `${idPrefix}-arrow` };
+  return { arrow: `${idPrefix}-arrow`, title: `${idPrefix}-title`, description: `${idPrefix}-description`, text: `${idPrefix}-text` };
 }
 
 /**

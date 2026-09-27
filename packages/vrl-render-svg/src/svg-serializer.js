@@ -33,9 +33,9 @@ export function serializeTopoScene(scene, theme) {
    */ (item) => serializeStationTick(item, theme)).join("");
   const infoBox = serializeInfoBox(scene.infoBox, theme, scene.style === "soft-terrain");
   const legend = scene.legend === null ? "" : serializeLegend(scene.legend, theme);
-  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
-  <title>${escapeXml(scene.title)}</title>
-  <desc>${escapeXml(scene.description)}</desc>
+  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="${svgAttribute(scene.language)}" xml:lang="${svgAttribute(scene.language)}" aria-labelledby="${svgAttribute(scene.identifiers.title)}" aria-describedby="${svgAttribute(scene.identifiers.description)}" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
+  <title id="${svgAttribute(scene.identifiers.title)}">${escapeXml(scene.title)}</title>
+  <desc id="${svgAttribute(scene.identifiers.description)}">${escapeXml(scene.description)}</desc>
   <defs>
     <marker id="${svgAttribute(scene.identifiers.arrow)}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="${svgPaint(theme.routeLine)}"/>

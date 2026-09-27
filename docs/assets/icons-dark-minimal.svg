@@ -1,6 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="-14 -99 1171 883" width="1171" height="883" style="max-width: 100%; height: auto;">
-  <title>Synthetic two-rappel canyon topo</title>
-  <desc>Vertical Route Language schematic for Synthetic two-rappel canyon. Rappel R1: 2 anchors. Terrain and technical curves are schematic; pool outlines do not measure depth or require swimming.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="en" xml:lang="en" aria-labelledby="dark-minimal-title" aria-describedby="dark-minimal-description" viewBox="-14 -99 1171 883" width="1171" height="883" style="max-width: 100%; height: auto;">
+  <title id="dark-minimal-title">Synthetic two-rappel canyon topo</title>
+  <desc id="dark-minimal-description">Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements.
+1. Start S1 (Entry).
+2. Rappel R1. Movement: descent. Vertical change: -18m. Anchor type: bolts. Anchor count: 2. Physical height: 18m. Declared rope: 40m. Station: right.
+3. Pool P1. Measured pool depth: unknown. Type: unknown.
+4. Walk W1. Walking distance: 120m.
+5. Rappel R2. Movement: descent. Vertical change: -12m. Anchor type: tree. Anchor count: unknown. Physical height: 12m. Declared rope: 30m.
+6. Hazard H1. Annotation at route boundary: 6. Note: Slippery landing. Type: slippery.
+7. Exit E1 (Exit).</desc>
   <defs>
     <marker id="dark-minimal-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="#c3ccd4"/>

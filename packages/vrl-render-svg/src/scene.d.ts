@@ -68,7 +68,7 @@ export interface SoftTerrain { contourPoints: Position[]; contour: string; fill:
 export interface SoftPool { ownerId: string; dry: boolean; basin: string; surface: string | null; bounds: Bounds }
 export interface TopoScene {
   style: "classic" | "soft-terrain"; terrain: SoftTerrain | null; pools: SoftPool[];
-  identifiers: { arrow: string };
+  identifiers: { arrow: string; title: string; description: string; text: string };
   language: "en" | "es"; title: string; description: string;
   nodes: PreparedNode[]; segments: PreparedSegment[]; segmentLabels: (Position & { text: string })[];
   terrainPath: string; waterPaths: string[]; stationTicks: Line[][];
@@ -93,6 +93,6 @@ export interface RowSection {
 }
 export interface RowTopoScene {
   flow: "rows"; style: "soft-terrain"; title: string; description: string; language: "en" | "es";
-  identifiers: { arrow: string }; header: RowTextBlock; rows: RowSection[]; legend: RowTextBlock | null;
+  identifiers: { arrow: string; title: string; description: string; text: string }; header: RowTextBlock; rows: RowSection[]; legend: RowTextBlock | null;
   traversal: Traversal; physicalPoints: LayoutPoint[]; bounds: Bounds; viewBox: Rectangle;
 }

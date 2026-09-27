@@ -1,6 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="-14 -99 1272 751" width="1272" height="751" style="max-width: 100%; height: auto;">
-  <title>Synthetic annotated canyon topo</title>
-  <desc>Esquema VRL para Synthetic annotated canyon. Rapel R1: 7 anclajes. R1, 18m: Tramos de cuerda: 6m + 12m; Anclaje de desvio 9m der. El terreno y las curvas tecnicas son esquematicos; las pozas no indican profundidad ni obligan a nadar.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="es" xml:lang="es" aria-labelledby="vrl-title" aria-describedby="vrl-description" viewBox="-14 -99 1272 751" width="1272" height="751" style="max-width: 100%; height: auto;">
+  <title id="vrl-title">Synthetic annotated canyon topo</title>
+  <desc id="vrl-description">Ruta esquematica, sin escala. Lea los elementos en orden. Las cuerdas son longitudes declaradas, no requisitos de equipo.
+1. Inicio S1.
+2. Rapel R1. Movimiento: descenso. Cambio vertical: -18m. Tipo de anclaje: parabolts. Cantidad de anclajes: 7. Altura fisica: 18m. Nota: Check station. Desviador: 9m derecha. Cuerda declarada: 40m. Tramos de cuerda: 6m; 12m.
+3. Escalada C1. Movimiento: ascenso. Cambio vertical: 6m. Exposicion: alto. Altura fisica: 6m. Nota: Shared boundary.
+4. Destrepe D1. Movimiento: descenso. Cambio vertical: desconocido. Altura fisica: desconocido.
+5. Poza P1. Profundidad medida de poza: desconocido. Tipo: seco.
+6. Salida E1.</desc>
   <defs>
     <marker id="vrl-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L7,3 z" fill="#111111"/>

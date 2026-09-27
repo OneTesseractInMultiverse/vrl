@@ -392,7 +392,7 @@ for (const language of ["en", "es"]) for (const theme of ["light", "dark"]) {
    */ () => {
     const document = documentFor(svg(SOURCE, { language, theme }));
     assert.deepEqual([byClass(document, "vrl-terrain-contour").length, byClass(document, "vrl-terrain-wash")[0].getAttribute("fill-opacity"), byClass(document, "vrl-pool-surface").length,
-      document.getElementsByTagName("desc")[0].textContent.includes(language === "en" ? "do not measure depth" : "no indican profundidad"),
+      document.getElementsByTagName("desc")[0].textContent.includes(language === "en" ? "not to scale" : "sin escala"),
       document.documentElement.textContent.includes(language === "en" ? "Pool outline: symbolic" : "Poza: tamano simbolico")], [1, "0.45", 1, true, true]);
   });
 }
