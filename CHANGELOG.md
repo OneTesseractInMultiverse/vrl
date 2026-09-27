@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Exercise standalone SVGs, external images and adjacent HTML descriptions in packed consumers, with independent bounds, row-text collision, local-reference, structural raster and malformed-output controls. Fix external descriptions collapsing to a section label by using a visible heading instead of `aria-label` on the referenced section.
+
 - Publish the canyon visual specification and a reproducible thirteen-view element/state gallery with pinned synthetic facts, explicit warnings and independent semantic checks. Keep optional styles and baseline acceptance distinct from pending practitioner research.
 
 - Add complete ordered English/Spanish route descriptions and visible native HTML alternatives through `describeRoute` and `renderRouteText`. Preserve supplied facts, canonical movement/annotation ownership and explicit unknowns across visual modes.

@@ -56,7 +56,7 @@ test("HTML alternative is visible, escaped and ordered with an independent names
  */ () => {
   const document=documentFor(renderRouteText(compiled.model,{idPrefix:"external"})), root=document.documentElement, titles=[];
   for(const p of document.getElementsByTagName("p")) titles.push(p.textContent);
-  assert.deepEqual([root.getAttribute("id"),root.getAttribute("aria-hidden"),root.getAttribute("hidden"),root.getAttribute("aria-label"),titles], ["external-text",null,null,"Synthetic two-rappel canyon topo",[DESCRIPTION_EN.split("\n")[0],"Start S1 (Entry)","Rappel R1","Pool P1","Walk W1","Rappel R2","Hazard H1","Exit E1 (Exit)"]]);
+  assert.deepEqual([root.getAttribute("id"),root.getAttribute("aria-hidden"),root.getAttribute("hidden"),root.getAttribute("aria-label"),document.getElementsByTagName("h2")[0]?.textContent,titles], ["external-text",null,null,null,"Synthetic two-rappel canyon topo",[DESCRIPTION_EN.split("\n")[0],"Start S1 (Entry)","Rappel R1","Pool P1","Walk W1","Rappel R2","Hazard H1","Exit E1 (Exit)"]]);
 });
 test("empty routes have an explicit empty alternative without invented entries", /**
  * Preserve absence of progression and state it once in adjacent HTML.

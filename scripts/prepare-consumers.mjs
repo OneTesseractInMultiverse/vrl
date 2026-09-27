@@ -14,6 +14,8 @@ rmSync(directory, { recursive: true, force: true });
 mkdirSync(join(directory, "tarballs"), { recursive: true });
 cpSync(join(root, "integration", "consumer"), directory, { recursive: true });
 cpSync(join(root, "tests", "helpers", "description-fixtures.js"), join(directory, "description-fixtures.js"));
+cpSync(join(root, "tests", "fixtures", "visual"), join(directory, "visual-fixtures"), { recursive: true });
+cpSync(join(root, "docs", "assets", "visual"), join(directory, "static", "visual"), { recursive: true });
 const manifest = JSON.parse(readFileSync(join(fixture, "package.json"), "utf8"));
 writeFileSync(join(directory, "package.json"), JSON.stringify(manifest, null, 2) + "\n");
 const packages = JSON.parse(run(["pack", "--workspaces", "--json", "--pack-destination", join(directory, "tarballs")], root));
