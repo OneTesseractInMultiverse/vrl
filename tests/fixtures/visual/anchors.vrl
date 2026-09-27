@@ -1,0 +1,10 @@
+# Synthetic categorical inventory; counts are declarations, never inferred from anchor types.
+route "Synthetic anchor and station states"
+rappel R1 height=10m rope=20m anchor=bolts anchor_count=1 station=left landing=pool
+rappel R2 height=10m rope=20m anchor=natural anchor_count=2 station=right landing=ledge
+rappel R3 height=10m rope=20m anchor=tree anchor_count=3 station=center landing=dry
+rappel R4 height=10m rope=20m anchor=thread anchor_count=4 station=floor landing=chaos
+rappel R5 height=10m rope=20m anchor=removable anchor_count=5 station=tree landing=gallery
+rappel R6 height=10m rope=20m anchor=fixed anchor_count=6 station=natural landing=trail
+rappel R7 height=10m rope=20m anchor=unknown anchor_count=7 station=unknown landing=unknown
+rappel R8 height=10m rope=20m anchor=mixed

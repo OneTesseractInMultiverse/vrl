@@ -64,3 +64,5 @@ Use `options.style: "soft-terrain"` for a neutral ground wash, directed technica
 Row flow adds paired continuation letters with explicit source/target section numbers, and a zigzag beside compressed walking distances. These are schematic reading cues, not additional route events. Stage ticks, redirection diamonds and station marks remain attached to one complete section with explicit technical text. See [readable rows](row-layout.md).
 
 [Monochrome rows](accessible-output.md) use dashed contours, solid directed ropes, outlined/waved pools and explicit text for stations, anchors and hazards. Meaning does not depend on hue or the decorative terrain wash. These are project conventions, not federation-standard or certified accessibility symbols. Full ordered descriptions remain identical across icon/minimal and color/monochrome choices.
+
+The [revision 1 canyon visual specification](visual-specification.md) defines hierarchy, states, technical shapes, convention sources and deferred defaults; its gallery covers every current element kind and representative dense combinations.

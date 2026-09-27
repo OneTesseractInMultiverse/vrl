@@ -1,0 +1,11 @@
+# Synthetic inventory: every currently supported element kind, not a field survey.
+route "Synthetic element inventory"
+start S1
+walk W1 distance=40m
+rappel R1 height=18m rope=40m anchor=bolts anchor_count=2 station=right
+pool P1 type=unknown
+downclimb D1 height=3m exposure=medium
+climb C1 height=5m inclination=80% exposure=high
+hazard H1 type=snake severity=high note="Reported hazard; current conditions unknown"
+note "Annotation preserves order without adding a physical segment"
+exit E1

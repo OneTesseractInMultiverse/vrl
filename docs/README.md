@@ -41,3 +41,5 @@ Update the owning guide, package README, working example and expected behavior w
 Contributor and project guidance: [contributing](contributing.md), [open source practices](open-source.md), [governance](../GOVERNANCE.md), [security](../SECURITY.md).
 
 Function-level contracts, responsibility tags and the structural enforcement command are documented in [internal documentation](internal-documentation.md).
+
+The [visual specification and decision record](visual-specification.md) consolidates current element/state coverage, hierarchy, optional defaults and the reproducible [gallery](assets/visual/index.html).

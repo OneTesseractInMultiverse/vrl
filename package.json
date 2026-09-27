@@ -6,11 +6,11 @@
   "description": "Vertical Route Language monorepo for parsing, validating, normalizing, and rendering technical route documents.",
   "license": "MIT",
   "author": {
-    "name": "Pedro Guzmán"
+    "name": "Pedro Guzm\u00e1n"
   },
   "maintainers": [
     {
-      "name": "Pedro Guzmán"
+      "name": "Pedro Guzm\u00e1n"
     }
   ],
   "homepage": "https://github.com/OneTesseractInMultiverse/vrl#readme",
@@ -37,7 +37,7 @@
   "scripts": {
     "test": "node scripts/run-tests.mjs",
     "coverage": "node scripts/run-tests.mjs --coverage",
-    "check": "npm run check:function-docs && npm run icons:check && npm run rows:check && npm run accessibility:check && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
+    "check": "npm run check:function-docs && npm run icons:check && npm run rows:check && npm run accessibility:check && npm run visual:check && npm run check:tests && npm run check:types && npm run coverage && npm run check:mutations && npm run pack:dry-run && npm run check:packed",
     "example": "node scripts/render-example.mjs",
     "example:svg": "node scripts/render-example.mjs docs/assets/quebrada-gata.svg",
     "pack:dry-run": "npm pack --workspaces --dry-run",
@@ -56,7 +56,9 @@
     "rows:build": "node scripts/render-row-gallery.mjs",
     "rows:check": "node scripts/render-row-gallery.mjs --check",
     "accessibility:build": "node scripts/render-accessibility-gallery.mjs",
-    "accessibility:check": "node scripts/render-accessibility-gallery.mjs --check"
+    "accessibility:check": "node scripts/render-accessibility-gallery.mjs --check",
+    "visual:build": "node scripts/render-visual-gallery.mjs",
+    "visual:check": "node scripts/render-visual-gallery.mjs --check"
   },
   "engines": {
     "node": ">=25.0.0"
