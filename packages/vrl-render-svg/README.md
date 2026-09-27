@@ -129,3 +129,5 @@ Use the complete renderer for this style; standalone fragment helpers retain the
 ## Selective annotation icons
 
 `symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/annotation-icons.md).
+
+For a readable narrow export, use `flow: "rows"` with `style: "soft-terrain"` and a canonical layout width from 320 to 2048. Text stays at 14/16 units, technical sections remain intact and matched continuations retain reading order. [Row layout documentation](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/row-layout.md) covers types, exact-width bounds and failure/resource limits.

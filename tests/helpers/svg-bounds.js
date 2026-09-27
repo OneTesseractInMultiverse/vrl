@@ -70,7 +70,11 @@ export function emittedBounds(element) {
   } else {
     const font = inheritedNumber(element, "font-size", 16);
     const text = element.textContent.replace(/\s+/g, " ").trim();
-    const width = text.length * font * 1.1;
+    let width = text.length * font * 1.1;
+    if (element.getAttribute("font-family") === "ui-monospace, monospace") {
+      width = 0;
+      for (const character of text) width += font * (/^[\x20-\x7e]$/.test(character) ? 0.7 : character.length * 1.1);
+    }
     const anchor = element.getAttribute("text-anchor");
     x1 = value("x") - (anchor === "middle" ? width / 2 : anchor === "end" ? width : 0);
     x2 = x1 + width; y1 = value("y") - font; y2 = value("y") + font / 2;

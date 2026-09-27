@@ -13,7 +13,7 @@ createVrlSvelteDiagramState(source, options);
 createVrlSvelteKitLoad({ source, options });
 const result = compileRoute(source);
 if (result.ok) {
-  const scene = computeTopoScene(result.model, result.layout, options);
+  const scene = computeTopoScene(result.model, result.layout, { ...options, flow: "continuous" });
   const contour: string | undefined = scene.terrain?.contour;
   const dry: boolean | undefined = scene.pools[0]?.dry;
   renderTopoSvg(result.model, result.layout, { style: "classic" });

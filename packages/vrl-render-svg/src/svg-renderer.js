@@ -1,3 +1,4 @@
+import { serializeRowScene } from "./row-serializer.js";
 import { resolveSvgIdentifiers } from "./svg-identifiers.js";
 import { computeTopoScene } from "./topo-scene.js";
 import { prepareNodes, prepareNode, labelLeaderPath, prepareAnchorMarks, symbolPlacement } from "./node-scene.js";
@@ -53,7 +54,8 @@ export {
 export function renderTopoSvg(route, layout, options = {}) {
   validateRenderOptions(options);
   const theme = resolveTheme(options.theme, options.themeTokens);
-  return svg.serializeTopoScene(computeTopoScene(route, layout, options), theme);
+  const scene = computeTopoScene(route, layout, options);
+  return scene.flow === "rows" ? serializeRowScene(scene, theme) : svg.serializeTopoScene(scene, theme);
 }
 
 /**

@@ -60,3 +60,5 @@ Use `options.style: "soft-terrain"` for a neutral ground wash, directed technica
 ## Selective annotation icons
 
 `symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](annotation-icons.md).
+
+Row flow adds paired continuation letters with explicit source/target section numbers, and a zigzag beside compressed walking distances. These are schematic reading cues, not additional route events. Stage ticks, redirection diamonds and station marks remain attached to one complete section with explicit technical text. See [readable rows](row-layout.md).

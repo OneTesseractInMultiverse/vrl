@@ -1,5 +1,5 @@
 import type { ElementType, ElementView, LayoutNode, LayoutPoint, Measurement, Position, Redirection, RouteLayout, RouteView } from "@subvertic/vrl-core";
-import type { BadgeCategory, InfoBox, LabelPlacement, LadderGeometry, Legend, LegendRow, NodeRenderOptions, PreparedNode, SymbolEntry, TopoScene } from "./scene.js";
+import type { BadgeCategory, InfoBox, LabelPlacement, LadderGeometry, Legend, LegendRow, NodeRenderOptions, PreparedNode, SymbolEntry, TopoScene, RowTopoScene } from "./scene.js";
 export type * from "./scene.js";
 
 /** Public contract revision 1. Only paint values accepted by the renderer are valid tokens. */
@@ -12,6 +12,8 @@ export interface Theme {
 }
 export type SymbolPresentation = "classic" | "icons" | "annotations" | "minimal";
 export interface RenderOptions {
+  /** Explicit bounded-width sections; rows require soft terrain and a 320–2048 integer layout width. */
+  flow?: "continuous" | "rows" | undefined;
   /** Annotation and minimal modes require soft terrain and reserve identical icon slots. */
   symbols?: SymbolPresentation | undefined;
   /** Optional schematic presentation; classic preserves historical output. */
@@ -52,10 +54,28 @@ export function renderTopoSvg(route: RouteView, layout: RenderLayout, options?: 
  * @responsibility coordinator
  * @param {RouteView} route - Normalized route or compatible route view used by this operation.
  * @param {RenderLayout} layout - Positioned route geometry in drawing units, including nodes and canonical segments.
- * @param {RenderOptions} [options] - Operation-specific option record; defaults to an empty record. Carries renderer configuration or the internal placement overrides consumed below.
- * @returns {TopoScene} Renderer-owned scene containing style, identifiers, layers, panels, conservative bounds and fitted viewBox.
+ * @param {RenderOptions} options - Explicit row flow with soft-terrain style and optional rendering configuration.
+ * @returns {RowTopoScene} Renderer-owned sections, continuation pairs, preserved physical records and complete fitted bounds.
  */
-export function computeTopoScene(route: RouteView, layout: RenderLayout, options?: RenderOptions): TopoScene;
+export function computeTopoScene(route: RouteView, layout: RenderLayout, options: RenderOptions & { flow: "rows" }): RowTopoScene;
+/**
+ * Prepare the historical continuous scene when row layout is not requested.
+ * @responsibility coordinator
+ * @param {RouteView} route - Normalized route to represent.
+ * @param {RenderLayout} layout - Positioned canonical route layout.
+ * @param {RenderOptions} [options] - Continuous rendering configuration.
+ * @returns {TopoScene} Continuous presentation records with complete bounds.
+ */
+export function computeTopoScene(route: RouteView, layout: RenderLayout, options?: RenderOptions & { flow?: "continuous" | undefined }): TopoScene;
+/**
+ * Prepare the scene selected by a dynamically configured flow policy.
+ * @responsibility coordinator
+ * @param {RouteView} route - Normalized route to represent.
+ * @param {RenderLayout} layout - Positioned canonical route layout.
+ * @param {RenderOptions} options - Validated runtime rendering configuration.
+ * @returns {TopoScene|RowTopoScene} Narrow with the presence of rows before accessing flow-specific records.
+ */
+export function computeTopoScene(route: RouteView, layout: RenderLayout, options: RenderOptions): TopoScene | RowTopoScene;
 /**
  * Convert a value to text, reject invalid XML 1.0 characters and encode reserved characters and carriage returns.
  * @responsibility coordinator

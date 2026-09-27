@@ -1,9 +1,9 @@
 import { assertFiniteNumber, assertOptionsRecord } from "@subvertic/vrl-core";
 
 /**
- * Require a plain options record and supported style and boolean legend settings.
+ * Require a plain options record, compatible style/symbol/flow choices and a boolean legend setting.
  * @responsibility computation
- * @param {Object} options - Renderer settings: style, theme/tokens, language/locale, symbology, legend and caller-owned idPrefix.
+ * @param {Object} options - Renderer settings: style, symbols, flow, theme/tokens, language/locale, symbology, legend and caller-owned idPrefix.
  * @returns {void} Returns normally for supported option shape, style and legend flag; otherwise throws.
  * @throws {TypeError} An input does not satisfy the required type or shape.
  */
@@ -18,6 +18,8 @@ export function validateRenderOptions(options) {
   if ((options.symbols === "annotations" || options.symbols === "minimal") && options.style !== "soft-terrain") {
     throw new TypeError("Annotation and minimal symbols require the soft-terrain style.");
   }
+  if (options.flow !== undefined && options.flow !== "continuous" && options.flow !== "rows") throw new TypeError("Renderer flow must be continuous or rows.");
+  if (options.flow === "rows" && options.style !== "soft-terrain") throw new TypeError("Row layout requires the soft-terrain style.");
   if (options.legend !== undefined && typeof options.legend !== "boolean") {
     throw new TypeError("Renderer option legend must be a boolean.");
   }

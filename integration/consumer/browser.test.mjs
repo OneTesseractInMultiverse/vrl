@@ -39,6 +39,22 @@ describe("production framework consumers", /**
 
   for (const surface of ["react", "svelte", "sveltekit"]) {
     for (const width of [320, 736]) for (const hydrated of [false, true]) {
+      test(`${surface} ${hydrated ? "hydrated" : "SSR"} row flow keeps readable text and paired continuations at ${width}`, /**
+       * Inspect actual browser bounds, fonts and logical continuation ordering from each packed framework consumer.
+       * @responsibility coordinator
+       * @param {Object} t - Test context owning cleanup for its isolated browser context.
+       * @returns {Promise<void>} Resolves after the single browser behavior assertion succeeds.
+       */ async t => {
+        const context = await openPage(browser, application.origin, surface, "icons", hydrated, { style:"soft-terrain", flow:"rows", symbols:"annotations", width:String(width) });
+        t.after(/**
+         * Release the isolated pages and browser resources after this scenario.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves after context closure.
+         */ () => context.close());
+        assert.deepEqual([await rowSnapshot(context.page), context.errors], [{ width, minFont:14, clipped:[], pairs:["A:out:2","A:in:1","B:out:3","B:in:2","C:out:4","C:in:3","D:out:5","D:in:4","E:out:6","E:in:5"], walk:true, owners:["0","1","2","3","4,5","6"] }, []]);
+      });
+    }
+    for (const width of [320, 736]) for (const hydrated of [false, true]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} selective icons preserve meaning and clearance at ${width}`, /**
        * Verify the current fixture the current fixture selective icons preserve meaning and clearance at the current fixture using explicit fixture expectations; setup and assertion failures propagate to the runner.
        * @responsibility coordinator
@@ -524,5 +540,32 @@ async function annotationSnapshot(page) {
        * @param {unknown} fact - Supplied fixture or presentation value consumed by the documented operation.
        * @returns {unknown} Projected fixture result used by the enclosing computation or assertion.
        */ fact => text.includes(fact)) };
+  });
+}
+
+/**
+ * Observe actual emitted row text/icon bounds, font sizes and continuation ownership in the browser.
+ * @responsibility coordinator
+ * @param {Object} page - Playwright page for a real packed framework consumer.
+ * @returns {Promise<Object>} Independently observed browser contract values.
+ */
+async function rowSnapshot(page) {
+  return page.locator("#diagram svg").evaluate(/**
+   * Project rendered geometry and explicit pairing attributes without invoking production layout helpers.
+   * @responsibility computation
+   * @param {SVGElement} svg - The mounted row SVG root.
+   * @returns {Object} Width, minimum font, escaped primitives, exact pairs, distance and source order.
+   */ svg => {
+    const outer=svg.getBoundingClientRect(), clipped=[], pairs=[], owners=[];
+    let minFont=Infinity;
+    for(const text of svg.querySelectorAll("text")) minFont=Math.min(minFont,parseFloat(getComputedStyle(text).fontSize));
+    for(const item of svg.querySelectorAll("text,.vrl-annotation-icon,path:not(defs path)")) {
+      const box=item.getBoundingClientRect();
+      if(box.left<outer.left-0.1 || box.right>outer.right+0.1 || box.top<outer.top-0.1 || box.bottom>outer.bottom+0.1) clipped.push(item.tagName);
+    }
+    for(const marker of svg.querySelectorAll(".vrl-continuation")) pairs.push(`${marker.dataset.code}:${marker.dataset.role}:${marker.dataset.section}`);
+    for(const row of svg.querySelectorAll(".vrl-row")) owners.push(row.dataset.elements);
+    const walk=svg.querySelectorAll(".vrl-row")[3].textContent.replace(/\s+/g," ").includes("120m") && svg.querySelectorAll(".vrl-row-distance-break").length===1;
+    return {width:outer.width,minFont,clipped,pairs,walk,owners};
   });
 }

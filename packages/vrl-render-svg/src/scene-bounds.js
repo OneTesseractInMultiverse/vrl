@@ -36,16 +36,19 @@ export function unionBounds(items) {
 }
 
 /**
- * Reserve 1.25 em per UTF-16 unit as a conservative envelope for wide glyphs and fallback fonts. Reserve 1.25
- * em per UTF-16 unit for bold wide glyphs and font fallback.
+ * Reserve a conservative text envelope for system fonts or the narrower fixed-cell row policy, including wide fallback glyphs.
  * @responsibility computation
  * @param {unknown} value - Candidate value; accepted shape, missing-value behavior and rejection rules are described above.
  * @param {number} fontSize - Text size in drawing units used for width estimation and placement.
+ * @param {string} family - Font policy: system uses the historical envelope; monospace reserves 0.75 em per ASCII cell and 1.25 em per other UTF-16 unit.
  * @returns {number} Conservative text-envelope width in drawing units, with no browser font lookup.
  */
 
-export function textEnvelopeWidth(value, fontSize) {
-  return String(value).length * fontSize * 1.25;
+export function textEnvelopeWidth(value, fontSize, family = "system") {
+  if (family !== "monospace") return String(value).length * fontSize * 1.25;
+  let units = 0;
+  for (const character of String(value)) units += /^[\x20-\x7e]$/.test(character) ? 0.75 : character.length * 1.25;
+  return units * fontSize;
 }
 
 /**
@@ -56,10 +59,11 @@ export function textEnvelopeWidth(value, fontSize) {
  * @param {number} y - Vertical position in SVG drawing units.
  * @param {number} fontSize - Text size in drawing units used for width estimation and placement.
  * @param {unknown} anchor - SVG text alignment: start, middle or end; defaults to "start".
+ * @param {string} family - Fixed font policy passed to the shared envelope computation; defaults to system.
  * @returns {Object} Finite conservative text rectangle including anchor alignment and clearance padding.
  */
-export function textBounds(value, x, y, fontSize, anchor = "start") {
-  const width = textEnvelopeWidth(value, fontSize);
+export function textBounds(value, x, y, fontSize, anchor = "start", family = "system") {
+  const width = textEnvelopeWidth(value, fontSize, family);
   const left = anchor === "middle" ? x - width / 2 : anchor === "end" ? x - width : x;
   return bounds(left, y - fontSize * 1.5, left + width, y + fontSize * 0.75, 3);
 }

@@ -10,7 +10,7 @@ Core owns route validation, technical segment ownership, traversal direction, an
 
 `svg-identifiers.js` validates a caller-owned `idPrefix` and computes an owned identifier record. `topo-scene.js` carries it as `scene.identifiers`; serialization uses the same resolved ID in definitions and references. Allocation across diagram instances stays with the embedding application. See [multiple inline diagrams](svg-identifiers.md).
 
-The adapter has three stages:
+The default continuous adapter has three stages:
 
 1. `detail-content.js` selects display facts from normalized fields. It assigns badge categories before localization and keeps descriptive text as text.
 2. `node-scene.js`, `segment-scene.js`, `panel-scene.js`, and `detail-layout.js` compute positions, wrapping, symbols, annotation geometry, and panel records. `topo-scene.js` coordinates these computations and fits the canvas using prepared detail and annotation positions. `scene-bounds.js` handles envelopes; `scene-path.js` requires finite numeric coordinates before building path data.
@@ -45,7 +45,7 @@ const svg = renderTopoSvg(result.model, result.layout, options);
 // The note remains literal text; it does not acquire badges.
 ```
 
-The scene retains `language`, `nodes`, `infoBox`, `legend`, `contentBounds`, `bounds`, and `viewBox`. It additionally contains:
+The continuous scene retains `language`, `nodes`, `infoBox`, `legend`, `contentBounds`, `bounds`, and `viewBox`. It additionally contains:
 
 | Field | Contents |
 | --- | --- |
@@ -101,3 +101,7 @@ Tests inspect pure rung, stage, redirection, text, badge, symbol, and panel plac
 ## Selective annotation icons
 
 `symbols: "annotations"` with `style: "soft-terrain"` adds selected start, finish, bolt, tree and slippery pictograms beside explicit labels. `symbols: "minimal"` preserves identical placement and facts without pictograms; `symbols: "icons"` retains primary node pictograms. Omission preserves classic symbols. See the [mapping, compatibility, failures and gallery](annotation-icons.md).
+
+## Row scene variant
+
+Explicit `flow: "rows"` produces `RowTopoScene`, retaining original physical points, canonical segments and annotation ownership alongside independent row coordinates. Default/continuous calls retain `TopoScene`. Dynamic options require narrowing with `"rows" in scene`. [The row guide](row-layout.md) specifies bounds, readable fonts and failure limits.

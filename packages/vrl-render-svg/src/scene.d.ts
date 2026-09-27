@@ -1,4 +1,4 @@
-import type { ElementType, LayoutNode, LayoutPoint, Position } from "@subvertic/vrl-core";
+import type { ElementType, LayoutSegment, Traversal, LayoutNode, LayoutPoint, Position } from "@subvertic/vrl-core";
 import type { Theme, SymbolPresentation } from "./index.js";
 
 /** Advanced presentation contracts, revision 1; these are not route data interchange schemas. */
@@ -73,4 +73,26 @@ export interface TopoScene {
   nodes: PreparedNode[]; segments: PreparedSegment[]; segmentLabels: (Position & { text: string })[];
   terrainPath: string; waterPaths: string[]; stationTicks: Line[][];
   infoBox: InfoBox; legend: Legend | null; contentBounds: Bounds; bounds: Bounds; viewBox: Rectangle;
+}
+
+/** Row flow keeps canonical references separate from absolute presentation coordinates. */
+export interface RowTextBlock {
+  lines: (Position & { text: string; fontSize: number; heading: boolean; elementIndex: number | null })[];
+  icons: AnnotationIcon[]; bounds: Bounds; bottom: number;
+}
+export interface RowContinuation { code: string; role: "in" | "out"; sectionNumber: number; block: RowTextBlock }
+export interface RowSection {
+  index: number; owner: number | null; elementIndexes: number[]; segmentIndexes: number[];
+  annotations: { elementIndex: number; pointIndex: number | null }[];
+  segments: LayoutSegment[];
+  technical: { segment: LayoutSegment; geometry: Required<LadderGeometry>; path: string; stages: StagePlacement[]; redirections: RedirectionPlacement[] } | null;
+  incoming: RowContinuation | null; outgoing: RowContinuation | null;
+  caption: RowTextBlock; details: RowTextBlock;
+  geometry: { paths: { kind: string; token: keyof Theme; path: string; arrow: boolean }[]; bounds: Bounds };
+  bounds: Bounds;
+}
+export interface RowTopoScene {
+  flow: "rows"; style: "soft-terrain"; title: string; description: string; language: "en" | "es";
+  identifiers: { arrow: string }; header: RowTextBlock; rows: RowSection[]; legend: RowTextBlock | null;
+  traversal: Traversal; physicalPoints: LayoutPoint[]; bounds: Bounds; viewBox: Rectangle;
 }

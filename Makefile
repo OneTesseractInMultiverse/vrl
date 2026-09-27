@@ -42,6 +42,8 @@ run:
 render-assets:
 	npm run example:svg
 	node scripts/render-style-gallery.mjs
+	npm run icons:build
+	npm run rows:build
 
 pack-dry-run:
 	npm run pack:dry-run
