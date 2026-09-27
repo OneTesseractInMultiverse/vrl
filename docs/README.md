@@ -51,3 +51,5 @@ The [visual specification and decision record](visual-specification.md) consolid
 The [research corpus and protocol](research/README.md) separates source-backed evidence, synthetic fixtures, unresolved source meaning and pending practitioner evaluation.
 
 The [canyon capability matrix](canyon-capabilities.md) maps grammar, normalized meaning, validation, output and explicit domain deferrals.
+
+[Unknown rope declarations](unknown-rope.md) document the scoped language addition, warning, summary behavior and model-revision-2 migration.

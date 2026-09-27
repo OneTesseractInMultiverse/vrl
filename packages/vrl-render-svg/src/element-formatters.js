@@ -45,7 +45,7 @@ export function formatElementTitle(element, language = "en") {
  */
 export function formatElementDetail(element, language = "en") {
   if (element.type === "rappel") {
-    return [formatMeasurement(element.attributes.height), formatMeasurement(element.attributes.rope), localizeDetailValue(element.attributes.anchor, language)]
+    return [formatMeasurement(element.attributes.height), element.attributes.rope === "unknown" ? localizeDetailValue("unknown", language) : formatMeasurement(element.attributes.rope), localizeDetailValue(element.attributes.anchor, language)]
       .filter(Boolean)
       .join(" / ");
   }

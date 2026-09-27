@@ -47,8 +47,8 @@ for (const name of ["svelte", "sveltekit"]) {
 }
 for (const [name, source] of Object.entries(SOURCES)) {
   test(`packed state returns correct success/failure fields for ${name}`, /**
-   * Verify packed state returns correct success/failure fields for ${name}; arrange the scenario and make its
-   * single direct assertion. Assertion and setup failures propagate to the test runner.
+   * Verify the independently expected success, warning or blocking-failure state for each packed source case.
+   * Preserve both short numeric rope and explicit unknown rope as successful warning states.
    * @responsibility coordinator
    * @returns {void} Completes the documented operation; no return value is consumed.
    */ () => {
@@ -59,7 +59,7 @@ for (const [name, source] of Object.entries(SOURCES)) {
      * @param {unknown} item - Current prepared record or test case.
      * @returns {unknown} The item.severity value selected or validated above.
      */ item => item.severity), state.svg.startsWith("<svg "), state.model === null],
-      name === "invalid" ? [false, ["error"], false, true] : [true, name === "warning" ? ["warning"] : [], true, false]);
+      name === "invalid" ? [false, ["error"], false, true] : [true, ["warning", "unknownRope"].includes(name) ? ["warning"] : [], true, false]);
   });
 }
 test("caller configuration errors propagate from packed state", /**

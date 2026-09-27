@@ -1,6 +1,8 @@
 # @subvertic/vrl-render-svg
 
-Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points and serialized output are unchanged.
+Bundled declarations cover every public export. See the [API stability, typed contracts, and revision policy](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/public-contracts.md). Runtime entry points remain available.
+
+Model revision 2 permits explicit `rope=unknown` on rappels with known height. Classic and soft-terrain output retain localized declared-rope/unknown wording in visible details and accessible alternatives, including narrow monochrome rows. Numeric drawing geometry continues to use height, never an invented rope length. See [semantics and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/unknown-rope.md); this behavior is intended for the next minor release.
 
 Shared themes, symbol profiles, and localization dictionaries (including nested labels/values) are frozen and typed read-only. Strict-mode writes throw `TypeError`. Customize each render through `themeTokens`, `theme`, `language`/`locale`, and the registered `symbology` profiles. `resolveTheme` returns an owned mutable copy without changing defaults; custom symbol/localization dictionaries are not renderer options. Unknown selectors, including prototype-property names, use the documented fallback. See [mutation behavior and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#shared-rendering-definitions-and-customization).
 

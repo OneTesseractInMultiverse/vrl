@@ -89,6 +89,25 @@ describe("production framework consumers", /**
     assert.deepEqual([cues,await accessibleImages(context.page)],[{counts:{water:1,pool:1,station:2,"distance-break":1,technical:2,contour:2},hazard:true},[["Synthetic two-rappel canyon topo",DESCRIPTION_EN.replace(/\s+/g," ")]]]);
   });
   for (const surface of ["react", "svelte", "sveltekit"]) {
+    for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}]) {
+      test(`${surface} preserves unknown rope in its hydrated accessible image: ${JSON.stringify(query)}`, /**
+       * Verify the packaged framework exposes the exact independent unknown-rope description in Chromium.
+       * @responsibility coordinator
+       * @param {Object} t - Test context that owns browser cleanup.
+       * @returns {Promise<void>} Resolves after accessible facts, warning presence and client errors are checked.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"unknownRope",true,query);
+        t.after(/**
+         * Close the browser context created for this single scenario.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves when the owned browser resources are released.
+         */ () => context.close());
+        const expectedText="Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. 1. Rappel R1. Movement: descent. Vertical change: -12m. Anchor type: bolts. Anchor count: unknown. Physical height: 12m. Declared rope: unknown.";
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.warning.includes("explicitly unknown"),context.errors],[[["Synthetic unknown rope topo",expectedText]],true,[]]);
+      });
+    }
+
     for (const hydrated of [false,true]) for (const query of [{}, {style:"soft-terrain",symbols:"annotations"}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"minimal",theme:"dark",width:"736"}]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} exposes one named image with complete route facts: ${JSON.stringify(query)}`, /**
        * Inspect the real Chromium accessibility tree, requiring one image and an independently specified complete description.

@@ -5,10 +5,10 @@ import { requireNumericData, requireSupportedNumber } from "./numeric-policy.js"
  * Results are independently owned; inputs and legacy model summaries remain unchanged.
  * Rope maxima are declarations, not equipment requirements, and walk sums remain partial distances.
  * @responsibility computation
- * @param {readonly Object[]} elements - Compatible normalized elements; rappel ropes and walk distances contribute only to their respective aggregates.
+ * @param {readonly Object[]} elements - Compatible normalized elements; numeric rappel ropes and walk distances contribute only to their respective aggregates. Explicit unknown ropes remain in rappelCount only.
  * @param {Object} [metadata] - Normalized metric metadata, defaulting to {}; absent measurements remain unknown.
  * @returns {Object} Nullable declared/observed meter values and observation counts; endpoint change is entrance minus exit.
- * @throws {TypeError} A present measurement is null or a primitive instead of a normalized record.
+ * @throws {TypeError} A measurement is malformed; only a selected rappel rope permits the explicit unknown string.
  * @throws {RangeError} A measurement or computed aggregate is nonfinite or exceeds the supported numeric magnitude.
  */
 export function summarizeRouteMeasurements(elements, metadata = {}) {
@@ -58,7 +58,7 @@ export function summarizeRouteMeasurements(elements, metadata = {}) {
  * @responsibility computation
  * @param {readonly Object[]} elements - Compatible normalized elements with attribute records.
  * @param {string} field - Measurement attribute to inspect, such as rope or distance.
- * @returns {number[]} New ordered array of supported meter values; absent observations are omitted.
+ * @returns {number[]} New ordered array of supported meter values; absent observations and explicit unknown ropes are omitted.
  * @throws {TypeError} A present attribute is not a normalized record.
  * @throws {RangeError} A present record contains an unsupported meter value.
  */
@@ -67,8 +67,8 @@ function recordedMeasurements(elements, field) {
    * Read the selected measurement on one owner without modifying its attributes.
    * @responsibility computation
    * @param {Object} element - Compatible normalized element with attributes.
-   * @returns {number|null} Supported meters or null for absence; malformed measurement errors propagate.
-   */ element => optionalMeters(element.attributes[field])).filter(/**
+   * @returns {number|null} Supported meters or null for absence/unknown rope; malformed values in other fields still throw.
+   */ element => field === "rope" && element.attributes[field] === "unknown" ? null : optionalMeters(element.attributes[field])).filter(/**
    * Retain known observations while excluding only the missing-value sentinel.
    * @responsibility computation
    * @param {number|null} meters - Projected measurement or null for absence.

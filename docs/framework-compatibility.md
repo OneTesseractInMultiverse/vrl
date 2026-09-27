@@ -24,6 +24,7 @@ Each consumer builds a real SvelteKit application with the Node adapter and a Re
 The checks establish:
 
 - Valid, warning, invalid and escaped-title output through React, the direct Svelte component, and the SvelteKit wrapper; blocking failures retain diagnostics and suppress SVG.
+- Explicit unknown rappel rope remains a successful warning state through SSR and hydration. Hydrated classic and narrow monochrome rows expose the independently specified unknown-rope fact in the browser accessibility tree for all three frameworks.
 - Hydration retains the server diagram container and equivalent SVG markup, reports no browser errors or hydration warnings, and updates source through warning, failure and recovery states.
 - Optional soft terrain retains its contour, directed owners, exact technical labels and diagram container/markup through SSR/hydration; changing back to classic restores rungs and changing back preserves facts.
 - Narrow rows at 320 and 736 units retain exact width, readable fonts, full text/icon/path bounds, ordered source ownership, paired continuations and the explicit 120m walking break across SSR and hydration.

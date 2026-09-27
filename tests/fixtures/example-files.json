@@ -152,5 +152,21 @@
       "/model/elements/6/attributes/distance/meters": 50
     },
     "sha256": "a3c2e5d3f3acd91900f78c3d28160344060e074717b8daefa07fb346b60759a4"
+  },
+  "canyon-unknown-rope.vrl": {
+    "warnings": [
+      "VRL_ROPE_LENGTH_UNKNOWN"
+    ],
+    "ids": [
+      "R1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic unknown rope",
+      "/model/elements/0/attributes/height/meters": 12,
+      "/model/elements/0/attributes/rope": "unknown",
+      "/model/elements/0/attributes/anchor": "bolts",
+      "/model/summary/requiredRopeMeters": 0
+    },
+    "sha256": "b4e283aa0cef7aa5a403aadd91f4279d52c2f39261490298df9ac308098ae5a6"
   }
 }

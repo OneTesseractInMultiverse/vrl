@@ -49,3 +49,5 @@ Additional synthetic stress sources live under [tests/fixtures/visual](../tests/
 ## Canyon scope examples
 
 The [capability matrix](../docs/canyon-capabilities.md) explains the synthetic [dry technical](canyon-dry.vrl), [aquatic notes](canyon-aquatic-notes.vrl) and [approach/return](canyon-approach-return.vrl) cases. All compile without warnings. Aquatic movements, phase membership and escape relationships remain descriptive text; these examples do not add unsupported domain semantics. Their source hashes, ordered IDs and facts are executable documentation contracts.
+
+[canyon-unknown-rope.vrl](canyon-unknown-rope.vrl) is a synthetic measured drop with `rope=unknown`. It succeeds with `VRL_ROPE_LENGTH_UNKNOWN`; JSON and visible/accessible output preserve uncertainty. This does not add unknown-height support.
