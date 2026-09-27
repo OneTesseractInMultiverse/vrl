@@ -4,6 +4,8 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Record the first documentary-fidelity experiment with per-fact conversion losses and executable failure probes; preserve unresolved measurements and distinguish evidence carriage from technical route semantics.
+
 - Publish the canyon research charter, bounded experiment register and evidence-to-delivery decision process; keep pending practitioner studies separate from implementation results.
 
 - Establish the first source-backed canyon document inventory, reserved holdout and predeclared fidelity/reader evaluation protocol. Source uncertainty and pending practitioner review remain explicit.
