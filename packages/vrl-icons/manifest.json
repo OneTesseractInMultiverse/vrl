@@ -1075,6 +1075,7 @@
       "start": "start",
       "exit": "finish",
       "walk": "walk",
+      "swim": "swim",
       "rappel": "rappel",
       "downclimb": "downclimb",
       "climb": "climb",

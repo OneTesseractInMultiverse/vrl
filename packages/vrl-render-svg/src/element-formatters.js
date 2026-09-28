@@ -6,6 +6,7 @@ const ELEMENT_COLOR_TOKENS = {
   start: "exit",
   exit: "exit",
   walk: "routeLine",
+  swim: "water",
   rappel: "rappel",
   downclimb: "anchor",
   climb: "anchor",
@@ -54,6 +55,10 @@ export function formatElementDetail(element, language = "en") {
 
   if (element.type === "walk") {
     return formatMeasurement(element.attributes.distance);
+  }
+
+  if (element.type === "swim") {
+    return labeledDetail(diagramText(language).swimDistance, formatMeasurement(element.attributes.distance) || localizeDetailValue("unknown", language));
   }
 
   if (element.type === "pool" && element.attributes.depth !== undefined) {

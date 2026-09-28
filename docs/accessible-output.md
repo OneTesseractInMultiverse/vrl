@@ -28,7 +28,7 @@ Light monochrome uses dark ink on white paper. Dark monochrome uses light ink on
 | Station | Left/right tick and full station word; center, floor, tree, natural and unknown remain words without invented lateral ticks |
 | Anchors | Anchor type and complete count in text, including unknown count |
 | Hazard/note | Literal type and note at its owning row/boundary; pictograms are redundant |
-| Continuation/compressed walking | Matched continuation codes, direction and explicit walking distance/break |
+| Continuation/compressed walking or swimming | Matched continuation codes, direction and explicitly labeled walking/swimming distance/break |
 
 The supported row widths are 320–2048 integer layout units. Default row body text is at least 14 units, headings 16, icon slots 24 and essential row strokes 2. The SVG's intrinsic minimum width prevents automatic text shrinkage: allow overflow or request a supported smaller layout. External images and caller CSS can still scale or override these dimensions. These criteria do not apply to a continuous profile squeezed into a narrow host.
 
@@ -91,3 +91,5 @@ The print command creates ignored `.consumers/minimum/monochrome-print.pdf` from
 `describeRoute`, `renderRouteText`, their declaration records and `RenderOptions.monochrome` are additive next-minor presentation APIs. Scenes now carry the complete description and the four namespace IDs. Accessible SVG bytes/title metadata and default wrapper roles change intentionally; application selectors should use wrapper classes for container identity and SVG `role` for the image. Svelte may recreate inner SVG nodes during hydration; container preservation and equivalent markup are tested, not inner-node identity.
 
 Domain rules remain in core. Renderer computation owns text/monochrome policy; SVG and HTML serializers only encode prepared facts. Framework adapters own wrapper composition. No third-party runtime dependencies, compiler ports, persisted model fields or DSL semantics are added.
+
+Explicit swimming produces a localized movement fact and swimming-distance fact, including unknown when absent. It is never labeled walking distance or measured pool depth. Flow and notes follow in stable field order. The same facts appear in SVG and HTML; see [swimming](swimming.md).

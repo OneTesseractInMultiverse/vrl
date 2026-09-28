@@ -205,5 +205,31 @@
       "/model/traversal/segments/1/verticalDeltaMeters": 0
     },
     "sha256": "cab263a284e1b120d81f8c2a9b663adfefb3aa83535cde1747527950667d320a"
+  },
+  "canyon-swim.vrl": {
+    "warnings": [],
+    "ids": [
+      "S1",
+      "P1",
+      "SW1",
+      "H1",
+      "R1",
+      "W1",
+      "SW2",
+      "E1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic aquatic itinerary",
+      "/model/elements/1/attributes/depth/meters": 2.5,
+      "/model/elements/2/type": "swim",
+      "/model/elements/2/attributes/distance/meters": 12,
+      "/model/elements/2/attributes/flow": "low",
+      "/model/elements/2/extensions/note": "Supplied example",
+      "/model/elements/6/id": "SW2",
+      "/model/elements/6/attributes": {},
+      "/model/summary/totalDistanceMeters": 6,
+      "/model/traversal/segments/3/verticalDeltaMeters": -4
+    },
+    "sha256": "6d2237f5705dff4b374da5f95247ebb13ab56f719ab76b5c4e8397cd26821e22"
   }
 }

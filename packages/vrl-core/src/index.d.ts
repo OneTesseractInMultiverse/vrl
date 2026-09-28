@@ -1,5 +1,5 @@
-/** Public model contract revision 4; other contracts retain revision 1. See docs/public-contracts.md. */
-export type ElementType = "start" | "exit" | "walk" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
+/** Public AST revision 2 and model revision 5; other contracts retain revision 1. See docs/public-contracts.md. */
+export type ElementType = "start" | "exit" | "walk" | "swim" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
 export type Direction = "up" | "down";
 /** One-based UTF-16 coordinates; end positions in spans are exclusive. */
 export interface SourceLocation { line: number; column: number }

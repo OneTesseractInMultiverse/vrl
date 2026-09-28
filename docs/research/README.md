@@ -71,3 +71,5 @@ Follow-up work: independent source review; additional source permissions and cas
 [Experiment 001](experiments/001-documentary-fidelity.md) records the first per-fact comparison, executable conversion failures and negative findings. Practitioner comprehension and authoring-time comparisons remain pending.
 
 The [pool-depth engineering decision](../pool-depth.md#evidence-and-research-boundary) adopts a bounded optional metric/unknown field using synthetic fidelity and failure checks. It adds no measured claim to the source-backed corpus, category threshold or practitioner result. Spatial coverage, dates, conflicting depths and swimming remain research questions.
+
+The [explicit-swimming decision](../swimming.md#evidence-alternatives-and-limits) adopts a distinct optional-distance itinerary element using federation vocabulary and synthetic fidelity/failure evidence. It adds no real-canyon measurement or practitioner result. Aquatic source cases and typed feature association remain research work.

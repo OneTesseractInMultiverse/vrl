@@ -29,7 +29,7 @@ Optional unknown depth does not produce a warning. Its absence does not block a 
 
 Revision 4 introduces `PoolDepthDeclaration = Measurement | "unknown"` on optional depth attributes of pool `RouteElement` records. Narrow both absence and unknown before reading `.meters`; see the [typed example](public-contracts.md#pool-depth-model-revision-4). The runtime exports and all other contract revisions stay unchanged. Package versions are not changed or published by this implementation.
 
-Saved revision-1/2/3 models remain supported. Historical `extensions.depth` stays literal when rendered, even if its text looks numeric; it cannot silently become a measurement. The revision-3 fixture records that behavior alongside unknown rappel height/rope. Retain source and record revision 4 in an application-owned envelope for newly compiled models.
+Saved revision-1/2/3 models remain supported. Historical `extensions.depth` stays literal when rendered, even if its text looks numeric; it cannot silently become a measurement. The revision-3 fixture records that behavior alongside unknown rappel height/rope. Retain source and record the current model revision (now 5 for [swimming](swimming.md)) in an application-owned envelope for newly compiled models.
 
 Recompiling old pool source `depth=2m` now moves the value from extensions into typed attributes. Previously arbitrary pool prose such as `depth="variable"` fails; move that text to `depth_note="variable"` or `note`. Review migration before replacing saved data. The advanced, unscoped `normalizeAttributes` helper can convert recognized depth tokens but cannot establish pool ownership or model validity; use scoped normalization or compilation for route records.
 

@@ -134,6 +134,8 @@
       <tspan font-weight="800" fill="#111111">V</tspan><tspan> = Pool</tspan>
     </text><text class="vrl-legend-symbol-entry" x="249" y="595" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">!</tspan><tspan> = Hazard</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="319" y="595" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
+      <tspan font-weight="800" fill="#111111">SW</tspan><tspan> = Swim</tspan>
     </text></g><text class="vrl-legend-row" x="38" y="617" font-family="system-ui, sans-serif" font-size="9" fill="#303030">Rappel: rope / anchors / landing / flow / inclination</text><text class="vrl-legend-row" x="38" y="633" font-family="system-ui, sans-serif" font-size="9" fill="#303030">Downclimb/climb: height / exposure / landing / inclination</text><text x="38" y="649" font-family="system-ui, sans-serif" font-size="9" fill="#303030" stroke="#f6f8fa" stroke-width="3" stroke-linejoin="round" paint-order="stroke">flow:</text><g class="vrl-level-badge vrl-level-badge-dry vrl-detail-badge vrl-detail-badge-flow">
     <rect x="68" y="636" width="28" height="14" rx="3" fill="#1479a6"/>
     <text x="82" y="645" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#ffffff">dry</text>

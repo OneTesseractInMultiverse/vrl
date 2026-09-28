@@ -1,4 +1,5 @@
 export const SOURCES = {
+  swim: 'route "Synthetic swim"\nswim SW1 distance=12m flow=low note="Supplied example"\nswim SW2',
   poolDepth: 'route "Synthetic pool depth"\npool P1 depth=2.5m',
   unknownHeight: 'route "Synthetic unknown height"\nrappel R1 height=unknown rope=20m anchor=bolts',
   unknownRope: 'route "Synthetic unknown rope"\nrappel R1 height=12m rope=unknown anchor=bolts',

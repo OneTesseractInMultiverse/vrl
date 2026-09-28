@@ -10,7 +10,7 @@ const invalid = [
   ["unknown climb height remains unsupported", "climb C1 height=unknown", ["VRL_FIELD_MEASUREMENT_SYNTAX"]],
   ["zero cannot substitute for unknown", "rappel R1 height=0m rope=0m", ["VRL_FIELD_MEASUREMENT_RANGE", "VRL_FIELD_MEASUREMENT_RANGE"]],
   ["contradictory count declarations", "rappel R1 height=8m rope=16m anchor_count=2 anchor_count=3", ["VRL_SYNTAX_DUPLICATE_ATTRIBUTE"]],
-  ["unadopted movement keyword", "swim S2 distance=5m", ["VRL_SYNTAX_UNKNOWN_STATEMENT"]]
+  ["unadopted movement keyword", "slide SL2 distance=5m", ["VRL_SYNTAX_UNKNOWN_STATEMENT"]]
 ];
 for (const [name, statement, codes] of invalid) {
   test(`research conversion boundary rejects ${name} without downstream output`, /**

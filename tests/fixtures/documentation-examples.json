@@ -1571,5 +1571,58 @@
         ]
       }
     }
+  },
+  "explicit-swimming": {
+    "kind": "document",
+    "sha256": "0e7ddf2999c03f514dc38e3ed1b2978c252a8f121f50dc1bc65036866df5bd88",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Synthetic aquatic itinerary",
+        "/model/elements/1/attributes/depth/meters": 2.5,
+        "/model/elements/2/type": "swim",
+        "/model/elements/2/attributes/distance/meters": 12,
+        "/model/elements/2/attributes/flow": "low",
+        "/model/elements/2/extensions/note": "Supplied example",
+        "/model/elements/6/id": "SW2",
+        "/model/elements/6/attributes": {},
+        "/model/summary/totalDistanceMeters": 6,
+        "/model/traversal/segments/3/verticalDeltaMeters": -4
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "P1",
+          "SW1",
+          "R1",
+          "W1",
+          "SW2",
+          "E1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -4
+          ]
+        ],
+        "annotations": [
+          [
+            "H1",
+            2
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
   }
 }

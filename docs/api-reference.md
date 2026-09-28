@@ -635,3 +635,5 @@ make publish OTP=123456
 `flow: "rows"` requires soft terrain and a canonical layout width from 320 to 2048 (integer). It keeps technical sections intact and grows vertically with fixed readable type. Omitted or `"continuous"` preserves existing behavior. See [row policy, errors, resource limits and scene overloads](row-layout.md).
 
 Model revision 4 adds optional pool-only `PoolDepthDeclaration` (`Measurement | "unknown"`); narrow absence and unknown before numeric access. Zero is valid. Unscoped `normalizeAttributes` can convert depth tokens but does not validate ownership/ranges; use strict route normalization for pool scope and extension separation. See [semantics and migration](pool-depth.md).
+
+AST revision 2 / model revision 5 adds `"swim"` to `ElementType`. Its optional `Measurement` distance remains absent when unknown; summaries still count only walks. See [swimming semantics, traversal limitations and typed migration](swimming.md).

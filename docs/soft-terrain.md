@@ -13,7 +13,7 @@ The style is an optional next-minor addition. It preserves the source, normalize
 | Technical labels | Element ID and declared height first; declared rope, anchor type and complete anchor count follow. Missing anchor type/count remains unknown; an unmeasured downclimb is labeled with unknown height. Rope values are supplied declarations, not calculated equipment requirements. |
 | Stages and redirections | Exact supplied labels follow the same curve. Stage positions use the declared stage total; redirections use distance/height. Existing 5–95% endpoint clearance and compiler warnings remain. |
 | Pool outline, light fill and wave cue | Fixed symbolic basin size, independent of depth/type. Missing or explicit unknown type is labeled as unknown depth. Waves indicate water, not current, measured depth or mandatory swimming. Explicit dry type/flow removes fill and waves but retains the outline and condition text. |
-| Notes and hazards | Technical, pool and walk notes remain attached to their owning elements; hazard notes retain their annotation position. Anchor overflow still shows the full count plus the existing capped marks. |
+| Notes and hazards | Technical, pool, walk and swim notes remain attached to their owning elements; hazard notes retain their annotation position. Anchor overflow still shows the full count plus the existing capped marks. |
 
 All technical shapes (`ladder`, `direct`, `slab`) use the directed curve in this style. These source hints remain in the model. The classic style still honors their historical presentation. Soft terrain has no ladder rungs; a shape hint is not a statement that a physical ladder exists.
 

@@ -1,5 +1,5 @@
 {
-  "revision": 1,
+  "revision": 2,
   "baselineCommit": "40b981848f6ca51590ee01d053ea87b068b7ce34",
   "fixtureKind": "synthetic",
   "review": "Automated and visual inspection only; practitioner review pending.",
@@ -200,6 +200,33 @@
       "warnings": [
         "VRL_GEOMETRY_HEIGHT_REQUIRED"
       ]
+    },
+    "swim": {
+      "source": "examples/canyon-swim.vrl",
+      "types": [
+        "start",
+        "pool",
+        "swim",
+        "hazard",
+        "rappel",
+        "walk",
+        "swim",
+        "exit"
+      ],
+      "deltas": [
+        -4
+      ],
+      "facts": [
+        "Measured pool depth: 2.5m",
+        "Movement: swimming",
+        "Swimming distance: 12m",
+        "Swimming distance: unknown",
+        "Walking distance: 6m",
+        "Vertical change: -4m",
+        "Note: Supplied example"
+      ],
+      "sha256": "6d2237f5705dff4b374da5f95247ebb13ab56f719ab76b5c4e8397cd26821e22",
+      "warnings": []
     }
   },
   "cases": [
@@ -326,6 +353,28 @@
         "style": "soft-terrain",
         "symbols": "minimal",
         "monochrome": true
+      }
+    },
+    {
+      "id": "swim-icons-320",
+      "fixture": "swim",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "icons"
+      }
+    },
+    {
+      "id": "swim-mono-es-320",
+      "fixture": "swim",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal",
+        "monochrome": true,
+        "language": "es"
       }
     }
   ]

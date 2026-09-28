@@ -55,3 +55,5 @@ The [capability matrix](../docs/canyon-capabilities.md) explains the synthetic [
 [`canyon-unknown-height.vrl`](canyon-unknown-height.vrl) is a synthetic unmeasured rappel with an independent rope declaration; it warns and renders schematically without a physical delta.
 
 [`canyon-pool-depth.vrl`](canyon-pool-depth.vrl) retains synthetic 2.5 m, zero and unknown pool depths without warnings or technical motion. Category, flow and note remain independent; see [meaning and migration](../docs/pool-depth.md).
+
+[`canyon-swim.vrl`](canyon-swim.vrl) records a pool, measured and unmeasured swims, a rappel and a walk. It has no warnings; walking totals remain 6 m and the sole technical delta is −4 m. See [swimming semantics](../docs/swimming.md).

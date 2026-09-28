@@ -19,7 +19,7 @@ if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) 
 
 ## Stability classes
 
-[The revision 4 inventory](contracts/v4.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
+[The revision 5 inventory](contracts/v5.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
 
 | Surface | Stable facade | Advanced extension points |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ Use the facade for ordinary integrations. Advanced exports remain supported for 
 
 ## Contract revisions and releases
 
-The current inventory is revision **4**: normalized model revision 4, with AST, traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json) and [revision 3](contracts/v3.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
+The current inventory is revision **5**: AST revision 2 and normalized model revision 5, with traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json) [revision 3](contracts/v3.json) and [revision 4](contracts/v4.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
 
 Package versions and data-contract revisions have different purposes:
 
@@ -53,7 +53,7 @@ import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
-const envelope = { contract: "vrl/model", revision: 4, model: JSON.parse(result.json) };
+const envelope = { contract: "vrl/model", revision: 5, model: JSON.parse(result.json) };
 console.log(envelope.model.elements[1].id); // pitch
 ```
 
@@ -112,6 +112,21 @@ for (const element of result.model.elements) if (element.type === "pool") {
   if (meters !== 0) throw new Error("Lost explicit zero depth");
 }
 if (result.model.traversal.segments.length !== 0) throw new Error("Invented movement");
+```
+
+## Explicit swimming: AST revision 2 and model revision 5
+
+`ElementType` includes `"swim"` with optional metric distance. Update exhaustive switches and element maps; older readers must be upgraded before reading swimming documents. Existing models retain meaning and earlier inventories remain available. Walking-only summaries exclude swim distances. See [semantics, profile limitations and migration](swimming.md).
+
+```ts
+import { compileRoute } from "@subvertic/vrl-core";
+import type { ElementType } from "@subvertic/vrl-core";
+const swimming: ElementType = "swim";
+const result = compileRoute('route Evidence\nswim SW1 distance=12m');
+if (!result.ok) throw new Error("Invalid source");
+const element = result.model.elements[0];
+if (element?.type !== swimming || element.attributes.distance?.meters !== 12) throw new Error("Lost swimming fact");
+if (result.model.summary.totalDistanceMeters !== 0) throw new Error("Swimming counted as walking");
 ```
 
 ## Typed records
@@ -239,7 +254,7 @@ Warning-only output gains an outer wrapper around the existing image and new war
 
 ## Verification and migration
 
-The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, and revision 4 promotes pool depth into a scoped known field as described above; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
+The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, revision 4 promotes pool depth into a scoped known field, and revision 5 adds explicit swimming (AST revision 2) as described above; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 
