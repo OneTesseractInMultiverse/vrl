@@ -51,3 +51,5 @@ These are project pictograms, not federation-certified symbols. Counts, grades, 
 `src/catalog.js` is the sole geometry/mapping authoring source. Registry initialization freezes it recursively. Run `npm run icons:build` from the repository root to regenerate the 63 standalone SVGs, manifest and light/dark comparison gallery. `npm run icons:check` rejects drift and unexpected assets; it never silently deletes files. Keep generated output and source together, run `make check`, and review the gallery at 24, 32 and 48 pixels.
 
 The package shares the workspace version and publishes before its renderer consumer. Its npm identity and trusted publisher must be configured before the next release; generation and verification never publish packages. MIT. Copyright (c) 2026 Pedro Guzmán; see LICENSE.
+
+The explicit VRL `swim` element now maps to the existing `swim` pictogram without artwork changes. The older `pool type=swimmer` mapping remains categorical and does not imply a swimming movement; full labels retain that distinction.

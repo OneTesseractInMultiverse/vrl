@@ -93,7 +93,7 @@ The metadata example above is a header fragment following a route declaration. I
 
 ## Elements
 
-VRL supports these ordered elements: `start`, `exit`, `walk`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
+VRL supports these ordered elements: `start`, `exit`, `walk`, `swim`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
 
 ```vrl example=element-catalog kind=fragment
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
@@ -114,7 +114,7 @@ Measurements must use meters in the first release. Values such as `35m`, `120m`,
 
 Normalized element IDs are unique across **all element types in one route**, including start, exit, and annotations. Different routes have independent namespaces; these IDs are not globally unique or SVG document IDs. IDs use exact, case-sensitive comparison after the usual text decoding: `R1` and `r1` differ, as do Unicode strings with different code-unit spellings. Explicit IDs must contain at least one non-whitespace character. Valid text is preserved without trimming or Unicode normalization.
 
-Text before the first attribute on `walk`, `rappel`, `downclimb`, `climb`, `pool`, or `hazard` declares its ID. For example, `rappel "survey-drop" height=5m rope=10m` uses `survey-drop`. Omit that text to request generation. Text on `start`/`exit` is a label, and `note` text is content; neither reserves an ID. An `id=...` attribute is ordinary extension data and does not set the element ID. Programmatic AST consumers can set explicit `element.id` on any element type under the same uniqueness rule.
+Text before the first attribute on `walk`, `swim`, `rappel`, `downclimb`, `climb`, `pool`, or `hazard` declares its ID. For example, `rappel "survey-drop" height=5m rope=10m` uses `survey-drop`. Omit that text to request generation. Text on `start`/`exit` is a label, and `note` text is content; neither reserves an ID. An `id=...` attribute is ordinary extension data and does not set the element ID. Programmatic AST consumers can set explicit `element.id` on any element type under the same uniqueness rule.
 
 All explicit IDs are reserved before any generated ID is allocated, even when the declaration occurs later or uses another type’s prefix. Repeated explicit IDs are semantic errors, including repetitions across types or differently quoted spellings that decode to the same text. Compilation returns no model, layout, or JSON; diagnostics highlight the offending explicit identifier and the first declaration. An explicit blank ID is an error, not a request for numbering.
 
@@ -126,6 +126,7 @@ Generated IDs use these prefixes:
 | `start` | `S` |
 | `exit` | `E` |
 | `walk` | `W` |
+| `swim` | `SW` |
 | `rappel` | `R` |
 | `downclimb` | `D` |
 | `climb` | `C` |
@@ -353,3 +354,7 @@ Accepted source is data, not HTML. Rendering escapes valid XML text and rejects 
 ## Future Block Syntax
 
 The target language also includes richer block syntax for routes, sections, access, rescue notes, and organization-specific custom attributes. The first parser tolerates only the cosmetic tokens specified in [provisional brace handling](#provisional-brace-handling); nested section semantics are a future milestone.
+
+## Explicit swimming
+
+`swim` adds an ordered nontechnical progression entry with optional positive metric `distance`. Omission remains absent/unknown; `distance=unknown` and zero are invalid. Its SW identity, flow and literal notes follow existing rules. Pool depth/type, swimming choice and walking totals remain independent. See [the complete contract and executable example](swimming.md).

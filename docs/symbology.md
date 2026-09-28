@@ -66,3 +66,5 @@ Row flow adds paired continuation letters with explicit source/target section nu
 [Monochrome rows](accessible-output.md) use dashed contours, solid directed ropes, outlined/waved pools and explicit text for stations, anchors and hazards. Meaning does not depend on hue or the decorative terrain wash. These are project conventions, not federation-standard or certified accessibility symbols. Full ordered descriptions remain identical across icon/minimal and color/monochrome choices.
 
 The [revision 1 canyon visual specification](visual-specification.md) defines hierarchy, states, technical shapes, convention sources and deferred defaults; its gallery covers every current element kind and representative dense combinations.
+
+Explicit `swim` uses the project abbreviation `SW` in every profile and a localized legend entry. `symbols: "icons"` uses the existing transparent swim pictogram. This is not standardized federation notation; the older pool `type=swimmer` pictogram mapping stays categorical, so retained text distinguishes a pool feature from movement. See [the bounded decision](swimming.md).

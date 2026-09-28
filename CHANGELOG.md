@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add explicit `swim` itinerary elements with optional metric distance, separate from pool features and walking totals. Preserve unknown distance, flow, notes, bilingual text and compressed/icon/monochrome output.
+- Introduce AST revision 2 / model revision 5 for the expanded element union; retain prior fixtures and document exhaustive-reader migration. Reuse the existing swim icon, update legends and add two aquatic gallery views. Intended for the next minor release, without publication here.
+
 - Add optional pool-only `depth` as nonnegative metric or explicit unknown, with bilingual visible/text facts and no movement, category, geometry or summary inference.
 - Introduce model revision 4 and `PoolDepthDeclaration`; retain historical extension-depth rendering and document source migration from arbitrary depth prose. Intended for the next minor release; packages remain unpublished.
 

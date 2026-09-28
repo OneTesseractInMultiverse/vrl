@@ -85,7 +85,8 @@ export function legendSymbolRows(language = "en", symbology = "federation") {
     [profile.downclimb, text.elements.downclimb],
     [profile.climb, text.elements.climb],
     [profile.pool, text.elements.pool],
-    [profile.hazard, text.elements.hazard]
+    [profile.hazard, text.elements.hazard],
+    [profile.swim, text.elements.swim]
   ];
 
   return [entries.slice(0, 4), entries.slice(4)];

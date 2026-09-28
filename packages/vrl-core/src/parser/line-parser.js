@@ -67,7 +67,7 @@ function parseDocumentLine(context, rawLine, line) {
   const location = tokens[0].span.start;
   if (keyword !== "route" && keyword !== "metadata" && !isElementType(keyword)) {
     context.diagnostics.push(codedDiagnostic("VRL_SYNTAX_UNKNOWN_STATEMENT", "syntax", "error", `Unknown VRL statement "${keyword}"`, { location, span: tokens[0].span },
-      "Use route, metadata, start, exit, walk, rappel, downclimb, climb, pool, hazard, or note."));
+      "Use route, metadata, start, exit, walk, swim, rappel, downclimb, climb, pool, hazard, or note."));
     return;
   }
   const ordered = advanceDocumentOrder(context.order, keyword, location, tokens[0].span);

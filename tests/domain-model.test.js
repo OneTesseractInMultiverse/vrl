@@ -117,7 +117,7 @@ test("summaries use validated physical values and ignore similarly named extensi
   assert.deepEqual(model.summary, { numberOfRappels: 1, numberOfHazards: 1, highestRappelMeters: 5, requiredRopeMeters: 10, totalDistanceMeters: 3, entranceElevationMeters: 10, exitElevationMeters: 6, totalElevationChangeMeters: 4 });
 });
 
-for (const type of ["start", "exit", "walk", "rappel", "downclimb", "climb", "pool", "hazard", "note"]) {
+for (const type of ["start", "exit", "walk", "swim", "rappel", "downclimb", "climb", "pool", "hazard", "note"]) {
   test(`${type} separates extension keys without losing own-property names`, /**
    * Verify ${type} separates extension keys without losing own-property names; arrange the scenario and make its
    * single direct assertion. Assertion and setup failures propagate to the test runner.

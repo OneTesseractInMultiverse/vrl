@@ -141,3 +141,5 @@ For a readable narrow export, use `flow: "rows"` with `style: "soft-terrain"` an
 Model revision 3 also supports explicit unknown rappel height. Classic/soft-terrain titles, rows and complete text alternatives retain localized uncertainty; schematic pixel spacing never supplies a measured descent. See [unknown height](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/unknown-height.md).
 
 Model revision 4 renders typed pool depth as a localized metric/zero/unknown label in classic, soft-terrain and monochrome rows, retaining category, flow and note. Complete descriptions include exactly one depth fact. Historical extension depth stays literal and symbolic silhouettes remain unscaled. See [pool depth](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/pool-depth.md).
+
+Explicit swimming receives localized swimming-distance/unknown wording, flow and notes, SW legend notation and directed row compression. Icon mode reuses the transparent swim pictogram; complete descriptions distinguish movement from pool depth. See [swimming output](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/swimming.md).

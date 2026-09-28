@@ -5,7 +5,7 @@ import { createVrlReactDiagramState } from "@subvertic/vrl-react";
 import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
 import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
 
-const ELEMENTS = ["start", "exit", "walk distance=1m", "rappel height=30m rope=60m", "downclimb height=2m", "climb height=2m", "pool type=deep", 'hazard type=snake', 'note "Notice"'];
+const ELEMENTS = ["start", "exit", "walk distance=1m", "swim distance=1m", "rappel height=30m rope=60m", "downclimb height=2m", "climb height=2m", "pool type=deep", 'hazard type=snake', 'note "Notice"'];
 const INVALID_DOCUMENTS = [
   ["repeated route", 'route "First"\nroute "Second"'],
   ["equal repeated route", 'route "First"\nroute "First"'],

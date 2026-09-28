@@ -146,6 +146,25 @@ describe("production framework consumers", /**
       });
     }
 
+    for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"icons",width:"320"}]) {
+      test(`${surface} preserves swimming and absent distance in its hydrated accessible image: ${JSON.stringify(query)}`, /**
+       * Observe independent movement/distance facts from both measured and unmeasured swimming entries.
+       * @responsibility coordinator
+       * @param {Object} t - Test context owning the isolated browser resources.
+       * @returns {Promise<void>} Resolves after exact accessible facts, empty warnings and client errors are checked.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"swim",true,query);
+        t.after(/**
+         * Close this swimming scenario's owned browser context.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves after browser resource cleanup.
+         */ () => context.close());
+        const expectedText="Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. 1. Swim SW1. Movement: swimming. Swimming distance: 12m. Flow: low. Note: Supplied example. 2. Swim SW2. Movement: swimming. Swimming distance: unknown.";
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.warning,context.errors],[[["Synthetic swim topo",expectedText]],"",[]]);
+      });
+    }
+
     for (const hydrated of [false,true]) for (const query of [{}, {style:"soft-terrain",symbols:"annotations"}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"minimal",theme:"dark",width:"736"}]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} exposes one named image with complete route facts: ${JSON.stringify(query)}`, /**
        * Inspect the real Chromium accessibility tree, requiring one image and an independently specified complete description.

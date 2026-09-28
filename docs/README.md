@@ -17,7 +17,7 @@ These guides describe the implementation in this checkout, including unreleased 
 | Physical traversal | Canonical owners, adjacent descents/ascents, implicit boundaries, attached notes/hazards, elevation validation and measured technical deltas | [Traversal API](api-reference.md#technical-traversal-and-geometry-validation) |
 | Route measurements | Separate declared totals, observed rope/walk measurements, counts and null unknowns; located warnings for totals below recorded walk sums | [Summary provenance](route-summary.md) |
 | SVG | Classic default; optional soft terrain; complete fitted bounds; light/dark themes; English/Spanish text; three text-symbol profiles; stages, redirections and full anchor counts | [Scenes](rendering-scene.md), [soft terrain/gallery](soft-terrain.md), [symbology](symbology.md) |
-| Narrow layouts | Optional fixed-width sections, readable text, paired continuations and explicit walking-distance breaks | [Row layout and gallery](row-layout.md) |
+| Narrow layouts | Optional fixed-width sections, readable text, paired continuations and explicit walking/swimming-distance breaks | [Row layout and gallery](row-layout.md) |
 | Pictograms | Original immutable icon package; optional node icons or selected icons beside factual labels; equivalent minimal layout | [Annotation guide and gallery](annotation-icons.md) |
 | Embedding | Caller-owned marker/title/description namespaces; shared diagram state; successful-state warnings; explicit precomputed-state trust and precedence | [SVG identifiers](svg-identifiers.md), [state](diagram-state.md), [warnings](warning-presentation.md) |
 | Frameworks | React factory, Svelte component/markup, SvelteKit data/load/component; packed SSR, hydration and update checks | [React](react.md), [Svelte](svelte.md), [SvelteKit](sveltekit.md), [tested matrix](framework-compatibility.md) |
@@ -57,3 +57,5 @@ The [canyon capability matrix](canyon-capabilities.md) maps grammar, normalized 
 [Unknown height declarations](unknown-height.md) define schematic motion, profile/detail failure rules and revision-3 migration.
 
 [Explicit pool depth](pool-depth.md) defines metric/zero/unknown meaning, pool-only scope, presentation and revision-4 migration.
+
+[Explicit swimming](swimming.md) adds a distinct optional-distance movement with bilingual visual/text output and an executable aquatic itinerary.

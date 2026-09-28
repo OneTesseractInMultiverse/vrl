@@ -35,7 +35,7 @@ function rowTechnicalGeometry(direction, width, top) {
 }
 
 /**
- * Construct a section's schematic strokes, retaining technical boundaries and marking compressed walks explicitly.
+ * Construct a section's schematic strokes, retaining technical boundaries and marking compressed walking/swimming lengths explicitly; strokes do not define physical distance.
  * @responsibility computation
  * @param {Object|null} technical - Prepared complete technical section, or null for nontechnical progression.
  * @param {Object|null} element - Progression owner, absent for annotation-only documents.
@@ -61,9 +61,9 @@ export function rowGeometry(technical, element, width, top) {
       const side = element.attributes.station === "right" ? 1 : -1;
       for (const offset of [8, 12]) paths.push({ kind: "station", token: "anchor", path: scenePath`M ${x + side * offset} ${y - 7} L ${x + side * offset} ${y + 7}`, arrow: false });
     }
-  } else if (element?.type === "walk") {
+  } else if (element?.type === "walk" || element?.type === "swim") {
     const middle = width / 2;
-    paths.push({ kind: "distance-break", token: "routeLine", path: scenePath`M 48 ${top + 64} L ${middle - 18} ${top + 64} L ${middle - 9} ${top + 55} L ${middle} ${top + 73} L ${middle + 9} ${top + 55} L ${middle + 18} ${top + 64} L ${width - 32} ${top + 64}`, arrow: true });
+    paths.push({ kind: "distance-break", token: element.type === "swim" ? "water" : "routeLine", path: scenePath`M 48 ${top + 64} L ${middle - 18} ${top + 64} L ${middle - 9} ${top + 55} L ${middle} ${top + 73} L ${middle + 9} ${top + 55} L ${middle + 18} ${top + 64} L ${width - 32} ${top + 64}`, arrow: true });
   } else if (element?.type === "pool") {
     paths.push({ kind: "pool", token: "water", path: scenePath`M 48 ${top + 45} C 72 ${top + 85} ${width - 56} ${top + 85} ${width - 32} ${top + 45}`, arrow: false });
     if (element.attributes.type !== "dry") paths.push({ kind: "water", token: "water", path: scenePath`M 60 ${top + 48} C 88 ${top + 58} ${width - 72} ${top + 38} ${width - 44} ${top + 48}`, arrow: false });

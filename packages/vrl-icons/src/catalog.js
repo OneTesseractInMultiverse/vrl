@@ -161,7 +161,7 @@ export const icons = groups.flatMap(/**
 
 // Exact values only: the presentation layer never infers hazards or anchor safety.
 export const semanticMappings = {
-  elements: { start: "start", exit: "finish", walk: "walk", rappel: "rappel", downclimb: "downclimb", climb: "climb", pool: "pool", hazard: "warning", note: "note" },
+  elements: { start: "start", exit: "finish", walk: "walk", swim: "swim", rappel: "rappel", downclimb: "downclimb", climb: "climb", pool: "pool", hazard: "warning", note: "note" },
   subtypes: {
     pool: { deep: "deep-pool", shallow: "shallow-pool", swimmer: "swim", dry: "dry-pool", unknown: "pool" },
     hazard: {

@@ -1,0 +1,9 @@
+route "Synthetic aquatic itinerary"
+start S1
+pool P1 depth=2.5m type=deep
+swim SW1 distance=12m flow=low note="Supplied example"
+hazard H1 type=slippery
+rappel R1 height=4m rope=8m
+walk W1 distance=6m
+swim
+exit E1

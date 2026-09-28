@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "swimming distance is mislabeled as walking", file: "packages/vrl-render-svg/src/description-text.js",
+    before: 'swimDistance: "Swimming distance"', after: 'swimDistance: "Walking distance"',
+    testFile: "tests/swim.test.js", testName: "swimming has exact movement and distance facts independent of pools" },
   { name: "known pool depth is lost from the complete description", file: "packages/vrl-render-svg/src/route-description.js",
     before: 'const attributes = { ...element.attributes };', after: 'const attributes = { ...element.attributes }; delete attributes.depth;',
     testFile: "tests/pool-depth.test.js", testName: "known pool depth has one exact accessible fact without an unknown placeholder" },

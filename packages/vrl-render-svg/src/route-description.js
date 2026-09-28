@@ -61,6 +61,10 @@ function describeElement(element, elementIndex, technical, pointIndex, language)
   }
   if (element.type === "rappel") for (const field of ["rope", "anchor", "anchor_count"]) if (attributes[field] === undefined) attributes[field] = null;
   if (element.type === "walk" && attributes.distance === undefined) attributes.distance = null;
+  if (element.type === "swim") {
+    facts.push(`${words.fields.direction}: ${words.swim}`, `${words.swimDistance}: ${descriptionValue(attributes.distance, language)}`);
+    delete attributes.distance;
+  }
   if (element.type === "pool" && attributes.depth === undefined) facts.push(`${words.fields.depth}: ${words.unknown}`);
   if (pointIndex !== undefined) facts.push(pointIndex === null ? words.unattached : `${words.boundary}: ${pointIndex + 1}`);
   for (const fact of describeFields(attributes, element.extensions, language)) facts.push(fact);

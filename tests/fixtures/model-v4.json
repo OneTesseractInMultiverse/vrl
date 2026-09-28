@@ -1,0 +1,103 @@
+{
+  "contract": "vrl/model",
+  "revision": 4,
+  "sourceCommit": "419838ef0f9ea0d9bc86a4632f9dac76a333ae9e",
+  "source": "route \"Saved pool declarations\"\npool P1 depth=2.5m type=deep\npool P2 depth=0m\npool P3 depth=unknown",
+  "model": {
+    "name": "Saved pool declarations",
+    "metadata": {},
+    "extensions": {},
+    "elements": [
+      {
+        "type": "pool",
+        "id": "P1",
+        "label": null,
+        "attributes": {
+          "depth": {
+            "value": 2.5,
+            "unit": "m",
+            "meters": 2.5
+          },
+          "type": "deep"
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 2,
+          "column": 1
+        }
+      },
+      {
+        "type": "pool",
+        "id": "P2",
+        "label": null,
+        "attributes": {
+          "depth": {
+            "value": 0,
+            "unit": "m",
+            "meters": 0
+          }
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 3,
+          "column": 1
+        }
+      },
+      {
+        "type": "pool",
+        "id": "P3",
+        "label": null,
+        "attributes": {
+          "depth": "unknown"
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 4,
+          "column": 1
+        }
+      }
+    ],
+    "traversal": {
+      "points": [
+        {
+          "elementIndex": 0
+        },
+        {
+          "elementIndex": 1
+        },
+        {
+          "elementIndex": 2
+        }
+      ],
+      "segments": [
+        {
+          "from": 0,
+          "to": 1,
+          "elementIndex": null,
+          "kind": "connection",
+          "direction": null,
+          "verticalDeltaMeters": 0
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "elementIndex": null,
+          "kind": "connection",
+          "direction": null,
+          "verticalDeltaMeters": 0
+        }
+      ],
+      "annotations": []
+    },
+    "summary": {
+      "numberOfRappels": 0,
+      "numberOfHazards": 0,
+      "highestRappelMeters": 0,
+      "requiredRopeMeters": 0,
+      "totalDistanceMeters": 0,
+      "entranceElevationMeters": null,
+      "exitElevationMeters": null,
+      "totalElevationChangeMeters": 0
+    }
+  }
+}

@@ -34,6 +34,10 @@ export function detailRecordsForElement(element, node = null, language = "en", s
       landingDetail(attributes.landing, language), inclinationDetail(attributes.inclination), styleNote(element, style)
     ]);
   }
+  if (element.type === "swim") {
+    return compactDetails([plainDetail(formatElementDetail(element, language)),
+      levelDetail("flow", attributes.flow, text.flow, language), plainDetail(elementAttribute(element, "note") ?? "")]);
+  }
   if (element.type === "pool" && attributes.depth !== undefined) {
     return compactDetails([plainDetail(formatElementDetail(element, language)), levelDetail("flow", attributes.flow, text.flow, language)]);
   }

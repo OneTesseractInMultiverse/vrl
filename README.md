@@ -200,7 +200,7 @@ This compact line-oriented overview uses preferred quoted text spellings; the le
 document        := route metadata* element*
 route           := "route" quoted_text
 metadata        := "metadata" attribute*
-element         := start | exit | walk | rappel | downclimb | climb | pool | hazard | note
+element         := start | exit | walk | swim | rappel | downclimb | climb | pool | hazard | note
 start           := "start" quoted_text? attribute*
 exit            := "exit" quoted_text? attribute*
 walk            := "walk" quoted_id? attribute*
@@ -303,3 +303,5 @@ See the [canyon capability matrix](docs/canyon-capabilities.md) for supported se
 [Unknown rappel heights](docs/unknown-height.md) preserve unmeasured descents without inventing physical geometry; model revision 3 documents the supported schematic boundary.
 
 [Explicit pool depth](docs/pool-depth.md) preserves supplied metric values, zero and unknown without inferring movement or rescaling symbolic pools; model revision 4 documents the scoped-field migration.
+
+[Explicit swimming](docs/swimming.md) records supplied swimming distances separately from pools and walking totals; AST revision 2 / model revision 5 document the new element and migration.

@@ -135,6 +135,8 @@
       <tspan font-weight="800" fill="#111111">P</tspan><tspan> = Poza</tspan>
     </text><text class="vrl-legend-symbol-entry" x="258" y="533" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">!</tspan><tspan> = Peligro</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="333" y="533" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
+      <tspan font-weight="800" fill="#111111">SW</tspan><tspan> = Nado</tspan>
     </text></g><text class="vrl-legend-row" x="38" y="555" font-family="system-ui, sans-serif" font-size="9" fill="#303030">Rapel: cuerda / anclajes / llegada / flujo / inclinacion</text><text class="vrl-legend-row" x="38" y="571" font-family="system-ui, sans-serif" font-size="9" fill="#303030">Destrepe/escalada: altura / exposicion / llegada / inclinacion</text><text x="38" y="587" font-family="system-ui, sans-serif" font-size="9" fill="#303030" stroke="#f6f8fa" stroke-width="3" stroke-linejoin="round" paint-order="stroke">flujo:</text><g class="vrl-level-badge vrl-level-badge-dry vrl-detail-badge vrl-detail-badge-flow">
     <rect x="73" y="574" width="34" height="14" rx="3" fill="#1479a6"/>
     <text x="90" y="583" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#ffffff">seco</text>
