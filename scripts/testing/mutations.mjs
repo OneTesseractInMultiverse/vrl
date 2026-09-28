@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "known pool depth is lost from the complete description", file: "packages/vrl-render-svg/src/route-description.js",
+    before: 'const attributes = { ...element.attributes };', after: 'const attributes = { ...element.attributes }; delete attributes.depth;',
+    testFile: "tests/pool-depth.test.js", testName: "known pool depth has one exact accessible fact without an unknown placeholder" },
   { name: "unknown height becomes zero descent", file: "packages/vrl-core/src/domain/traversal.js",
     before: 'if (meters === null) return null;', after: 'if (meters === null) return 0;',
     testFile: "tests/unknown-height.test.js", testName: "unknown rappel height preserves a null physical delta through JSON" },

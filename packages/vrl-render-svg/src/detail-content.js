@@ -34,6 +34,9 @@ export function detailRecordsForElement(element, node = null, language = "en", s
       landingDetail(attributes.landing, language), inclinationDetail(attributes.inclination), styleNote(element, style)
     ]);
   }
+  if (element.type === "pool" && attributes.depth !== undefined) {
+    return compactDetails([plainDetail(formatElementDetail(element, language)), levelDetail("flow", attributes.flow, text.flow, language)]);
+  }
   if (element.type === "pool" && style === "soft-terrain") {
     return compactDetails([plainDetail(attributes.type === undefined || attributes.type === "unknown"
       ? softTerrainText(language).poolUnknown : localizeDetailValue(attributes.type, language)),

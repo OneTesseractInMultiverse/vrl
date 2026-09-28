@@ -45,3 +45,5 @@ Generate from the reviewed [profiles](../examples/style-gallery.json) with `node
 Behavioral tests compare independent facts, exact labels, canonical motion, complete primitive bounds, option failures and deterministic output. Selected mutations must detect reversed curves, missing stages, changed anchor counts and invented pool depth. Packed React, Svelte and SvelteKit consumers verify SSR, hydration and style changes.
 
 This implements the preferred direction in [#35](https://github.com/OneTesseractInMultiverse/vrl/issues/35), contributing fixtures to [#29](https://github.com/OneTesseractInMultiverse/vrl/issues/29). Practitioner comprehension testing under [#34](https://github.com/OneTesseractInMultiverse/vrl/issues/34) remains pending. The style is not a validated canyoning standard, and adopting it as the default requires a separate decision.
+
+Model revision 4 supports [explicit pool depth](pool-depth.md). Metric/zero/unknown labels replace only the default unknown-depth wording; category, flow and note remain visible, and depth never rescales the symbolic pool or changes traversal.

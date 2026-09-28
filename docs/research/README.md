@@ -69,3 +69,5 @@ The first inventory supports three requirements for candidate importers: preserv
 Follow-up work: independent source review; additional source permissions and cases; holdout extraction; actual practitioner tasks; then bounded implementation decisions. Domain claims and validation remain separate from acquisition, storage and presentation adapters. Any executable research tool must have documented coordinator/computation responsibilities, focused single-assert correctness/failure tests and no new production runtime dependency.
 
 [Experiment 001](experiments/001-documentary-fidelity.md) records the first per-fact comparison, executable conversion failures and negative findings. Practitioner comprehension and authoring-time comparisons remain pending.
+
+The [pool-depth engineering decision](../pool-depth.md#evidence-and-research-boundary) adopts a bounded optional metric/unknown field using synthetic fidelity and failure checks. It adds no measured claim to the source-backed corpus, category threshold or practitioner result. Spatial coverage, dates, conflicting depths and swimming remain research questions.

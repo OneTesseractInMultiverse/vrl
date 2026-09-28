@@ -159,12 +159,13 @@ Source measurements use ordinary decimal notation with at most six fractional di
 | --- | --- |
 | `entrance_elevation`, `exit_elevation` | From `-1000000000m` to `1000000000m`, including zero |
 | `distance`, `height`, `rope`, `traverse`, `total_distance`, `total_descent`, `vertical_gain`, `descent` | Greater than zero, up to `1000000000m` |
+| `depth` (pool only) | From `0m` to `1000000000m`, including zero |
 | `inclination` | Greater than `0%` and at most `100%`, with up to 6 fractional digits; `%` may be omitted |
 | `anchor_count` | Decimal integer from `1` to `9007199254740991`, without leading zeros |
 | `stages`, `redirection`, `redirections` | Each contained measurement follows the same magnitude, precision, and positive-length rules |
 <!-- /vrl-table:numeric-ranges -->
 
-Recognized numeric declarations follow these rules in metadata and on every element. Rappel `rope` and `height` also accept the exact `unknown` sentinel, as described below. Both redirection aliases are checked if both are supplied. Existing stage/height and redirection-position checks still apply. Empty numeric fields are invalid; omit an optional field when unknown. Negative zero in a parsed measurement or percentage is normalized to positive zero, so JSON preserves its numeric meaning.
+Except pool-only `depth`, recognized numeric declarations follow these rules in metadata and on every element. Pool `depth` accepts nonnegative metrics or exact `unknown`; elsewhere it stays literal extension text. Rappel `rope` and `height` also accept the exact `unknown` sentinel, as described below. Both redirection aliases are checked if both are supplied. Existing stage/height and redirection-position checks still apply. Empty numeric fields are invalid; omit an optional field when unknown. Negative zero in a parsed measurement or percentage is normalized to positive zero, so JSON preserves its numeric meaning.
 
 Unrecognized metadata remains text. Use `rope_inventory="1x60m"` for an inventory description; `rope=60m` is a metric measurement. The example route now uses `rope_inventory` to preserve its original description without overloading a numeric field.
 
@@ -174,7 +175,7 @@ Normalized values and calculations use standard binary floating-point arithmetic
 
 ## Known Fields and Extensions
 
-Core has one domain-owned field specification for applicability, required fields, token parsers, units, ranges, list cardinality, and enum vocabularies. All numeric names in the table above are reserved numeric fields in metadata and on every element. `height` is required on rappels and climbs; `rope` is required on rappels. Rappel `rope` and `height` additionally accept the exact `unknown` sentinel; every numeric declaration still follows the metric rules. See [unknown rope semantics](unknown-rope.md) and [unknown height/model revision 3](unknown-height.md). Unknown height permits schematic output, but blocks complete elevation profiles and positioned stages/redirections. Other fields are optional unless a later geometry check needs them, such as downclimb height for a measured endpoint profile.
+Core has one domain-owned field specification for applicability, required fields, token parsers, units, ranges, list cardinality, and enum vocabularies. All numeric names in the table above except pool-only `depth` are reserved numeric fields in metadata and on every element. Optional pool depth retains zero, explicit unknown or absence independently of category and movement; see [depth semantics and revision-4 migration](pool-depth.md). `height` is required on rappels and climbs; `rope` is required on rappels. Rappel `rope` and `height` additionally accept the exact `unknown` sentinel; every numeric declaration still follows the metric rules. See [unknown rope semantics](unknown-rope.md) and [unknown height/model revision 3](unknown-height.md). Unknown height permits schematic output, but blocks complete elevation profiles and positioned stages/redirections. Other fields are optional unless a later geometry check needs them, such as downclimb height for a measured endpoint profile.
 
 Categorical fields apply in the following contexts:
 

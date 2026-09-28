@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add optional pool-only `depth` as nonnegative metric or explicit unknown, with bilingual visible/text facts and no movement, category, geometry or summary inference.
+- Introduce model revision 4 and `PoolDepthDeclaration`; retain historical extension-depth rendering and document source migration from arbitrary depth prose. Intended for the next minor release; packages remain unpublished.
+
 - Add explicit unknown rappel height with null physical motion, schematic warnings and strict failure for complete elevation profiles or positioned stage/redirection details. Preserve localized uncertainty in visual/text output.
 - Introduce normalized-model revision 3 and `RappelHeightDeclaration`; readers must narrow before numeric access. Retain earlier revision fixtures and schedule this extension for the next minor release.
 

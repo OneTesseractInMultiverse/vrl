@@ -19,7 +19,7 @@ if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) 
 
 ## Stability classes
 
-[The revision 3 inventory](contracts/v3.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
+[The revision 4 inventory](contracts/v4.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
 
 | Surface | Stable facade | Advanced extension points |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ Use the facade for ordinary integrations. Advanced exports remain supported for 
 
 ## Contract revisions and releases
 
-The current inventory is revision **3**: normalized model revision 3, with AST, traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json) and [revision 2](contracts/v2.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
+The current inventory is revision **4**: normalized model revision 4, with AST, traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json) and [revision 3](contracts/v3.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
 
 Package versions and data-contract revisions have different purposes:
 
@@ -53,7 +53,7 @@ import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
-const envelope = { contract: "vrl/model", revision: 3, model: JSON.parse(result.json) };
+const envelope = { contract: "vrl/model", revision: 4, model: JSON.parse(result.json) };
 console.log(envelope.model.elements[1].id); // pitch
 ```
 
@@ -96,6 +96,24 @@ for (const element of result.model.elements) if (element.type === "rappel") {
 if (result.model.traversal.segments[0]?.verticalDeltaMeters !== null) throw new Error("Invented descent");
 ```
 
+## Pool depth: model revision 4
+
+Optional pool `depth` becomes `PoolDepthDeclaration = Measurement | "unknown"`; zero is valid. Other scopes retain literal depth extensions. Saved older models retain extension meaning, but recompiling pool source promotes numeric depth and rejects arbitrary prose. Rename old prose to `depth_note` or `note`. This requires the next minor release; [full semantics and migration](pool-depth.md).
+
+```ts
+import { compileRoute } from "@subvertic/vrl-core";
+import type { PoolDepthDeclaration } from "@subvertic/vrl-core";
+
+const result = compileRoute('route Evidence\npool P1 depth=0m');
+if (!result.ok) throw new Error("Invalid source");
+for (const element of result.model.elements) if (element.type === "pool") {
+  const depth: PoolDepthDeclaration | undefined = element.attributes.depth;
+  const meters = depth === undefined || depth === "unknown" ? null : depth.meters;
+  if (meters !== 0) throw new Error("Lost explicit zero depth");
+}
+if (result.model.traversal.segments.length !== 0) throw new Error("Invented movement");
+```
+
 ## Typed records
 
 Import types from the owning package root using `import type`. The declarations in each published `src/index.d.ts` are the detailed field/signature reference, including every advanced helper. The following records form the supported data vocabulary:
@@ -103,7 +121,7 @@ Import types from the owning package root using `import type`. The declarations 
 | Owner | Types | Meaning and preconditions |
 | --- | --- | --- |
 | Core | `RouteAst`, `RouteElementAst`, `ParsedRouteAst`, `SourceMap`, `SourceSpan`, `LexToken` | Raw decoded strings and recovery syntax, not semantic validity. Parser ASTs always contain `source` and `sourceMap`; programmatic ASTs may omit them. Names may be null in recovery. [Syntax provenance](diagnostics.md) uses one-based UTF-16 coordinates and exclusive span ends. |
-| Core | `Measurement`, `Inclination`, `Redirection`, `RouteElement`, `RouteModel`, `RouteSummary` | Validated known fields, separate string extensions, meters/percent units, normalized identities. `RouteElement` narrows by type: a rappel requires a `RappelHeightDeclaration` (metric value or `"unknown"`) and a `RopeDeclaration` (metric value or `"unknown"`), a climb requires height. `anchor_count` remains integer **text**. [Domain constraints](domain-model.md) still require runtime validation. |
+| Core | `Measurement`, `Inclination`, `Redirection`, `RouteElement`, `RouteModel`, `RouteSummary` | Validated known fields, separate string extensions, meters/percent units, normalized identities. `RouteElement` narrows by type: a rappel requires a `RappelHeightDeclaration` (metric value or `"unknown"`) and a `RopeDeclaration` (metric value or `"unknown"`), a climb requires height. A pool may carry `PoolDepthDeclaration`, including zero or explicit unknown. `anchor_count` remains integer **text**. [Domain constraints](domain-model.md) still require runtime validation. |
 | Core | `Traversal`, `TraversalPoint`, `TraversalSegment` | Physical progression and explicit technical ownership, with annotations outside that progression. A connection has no element owner/direction and zero vertical delta; a technical segment has an owner, direction, and signed rise (positive for climbing) or null if unmeasured. |
 | Core | `RouteLayout`, `LayoutPoint`, `LayoutNode`, `LayoutSegment`, `LayoutOptions` | Positioned traversal plus one node per element. Implicit boundary points have null element/index/id. Technical pixel deltas are downward-positive, unlike domain elevation deltas. Elevation fields are optional. [Layout contracts](api-reference.md#technical-traversal-and-geometry-validation) describe geometry constraints. |
 | Core | `Diagnostic`, `BuiltinDiagnostic`, `RelatedLocation` | Error/warning severity, kind, message and positive source point; optional code/span/related locations. Built-in diagnostics include suggestion text. Custom ports may omit it and use their own kind/code strings. Use codes, not messages, for programmatic matching. |
@@ -221,7 +239,7 @@ Warning-only output gains an outer wrapper around the existing image and new war
 
 ## Verification and migration
 
-The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values and revision 3 widens rappel height values as described above; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
+The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, and revision 4 promotes pool depth into a scoped known field as described above; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 

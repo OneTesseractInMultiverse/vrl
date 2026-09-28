@@ -1,4 +1,5 @@
 import { elementAttribute } from "./route-data.js";
+import { softTerrainText } from "./soft-terrain-text.js";
 import { diagramText, elementLabel, localizeDetailValue } from "./locale.js";
 
 const ELEMENT_COLOR_TOKENS = {
@@ -37,7 +38,8 @@ export function formatElementTitle(element, language = "en") {
 }
 
 /**
- * Format supplied element attributes as human-readable detail text, retaining explicit unknown height/rope.
+ * Format supplied element attributes as human-readable detail text, retaining explicit unknown height/rope/depth.
+ * Only normalized pool depth is interpreted; historical extension text remains literal documentary data.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to "en".
@@ -52,6 +54,13 @@ export function formatElementDetail(element, language = "en") {
 
   if (element.type === "walk") {
     return formatMeasurement(element.attributes.distance);
+  }
+
+  if (element.type === "pool" && element.attributes.depth !== undefined) {
+    const text = softTerrainText(language);
+    return [labeledDetail(text.depth, element.attributes.depth === "unknown" ? localizeDetailValue("unknown", language) : formatMeasurement(element.attributes.depth)),
+      labeledDetail(text.poolType, localizeDetailValue(element.attributes.type, language)), elementAttribute(element, "note")]
+      .filter(Boolean).join(" / ");
   }
 
   if (element.type === "downclimb" || element.type === "climb") {

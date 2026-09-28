@@ -72,7 +72,7 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_ROUTE_NAME_REQUIRED` | Route name is absent or empty |
 | `VRL_FIELD_REQUIRED` | Required field is absent or empty |
 | `VRL_FIELD_MEASUREMENT_SYNTAX` | Invalid metric spelling, magnitude, or precision |
-| `VRL_FIELD_MEASUREMENT_RANGE` | Nonpositive length where positivity is required |
+| `VRL_FIELD_MEASUREMENT_RANGE` | Nonpositive length where positivity is required, or negative pool depth |
 | `VRL_FIELD_INCLINATION_SYNTAX` | Invalid percentage spelling, magnitude, or precision |
 | `VRL_FIELD_INCLINATION_RANGE` | Inclination outside `(0, 100]` |
 | `VRL_FIELD_REDIRECTIONS_SYNTAX` | Invalid redirection list/measurement syntax |

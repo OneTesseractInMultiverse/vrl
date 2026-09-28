@@ -1534,5 +1534,42 @@
         ]
       }
     }
+  },
+  "pool-depth": {
+    "kind": "document",
+    "sha256": "638920ee6b9ad2844f2a51728a0c33aa0af739c0e656d3d441cc266c1e7ccc58",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Synthetic pool depth",
+        "/model/elements/0/attributes/depth/meters": 2.5,
+        "/model/elements/0/attributes/type": "deep",
+        "/model/elements/0/attributes/flow": "low",
+        "/model/elements/0/extensions/note": "Supplied example value",
+        "/model/elements/1/attributes/depth/meters": 0,
+        "/model/elements/2/attributes/depth": "unknown",
+        "/model/traversal/segments/0/verticalDeltaMeters": 0,
+        "/model/traversal/segments/1/verticalDeltaMeters": 0
+      },
+      "geometry": {
+        "points": [
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "technical": [],
+        "annotations": [],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
   }
 }

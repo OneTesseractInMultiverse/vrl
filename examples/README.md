@@ -53,3 +53,5 @@ The [capability matrix](../docs/canyon-capabilities.md) explains the synthetic [
 [canyon-unknown-rope.vrl](canyon-unknown-rope.vrl) is a synthetic measured drop with `rope=unknown`. It succeeds with `VRL_ROPE_LENGTH_UNKNOWN`; JSON and visible/accessible output preserve uncertainty. This does not add unknown-height support.
 
 [`canyon-unknown-height.vrl`](canyon-unknown-height.vrl) is a synthetic unmeasured rappel with an independent rope declaration; it warns and renders schematically without a physical delta.
+
+[`canyon-pool-depth.vrl`](canyon-pool-depth.vrl) retains synthetic 2.5 m, zero and unknown pool depths without warnings or technical motion. Category, flow and note remain independent; see [meaning and migration](../docs/pool-depth.md).

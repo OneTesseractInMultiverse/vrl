@@ -55,3 +55,5 @@ The [canyon capability matrix](canyon-capabilities.md) maps grammar, normalized 
 [Unknown rope declarations](unknown-rope.md) document the scoped language addition, warning, summary behavior and model-revision-2 migration.
 
 [Unknown height declarations](unknown-height.md) define schematic motion, profile/detail failure rules and revision-3 migration.
+
+[Explicit pool depth](pool-depth.md) defines metric/zero/unknown meaning, pool-only scope, presentation and revision-4 migration.

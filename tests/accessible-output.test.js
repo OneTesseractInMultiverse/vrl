@@ -76,12 +76,12 @@ test("unmeasured movement remains unknown and annotation-only routes remain unat
   assert.deepEqual([describeRoute(route).entries[0].facts,describeRoute(route).entries[1].facts,detached.entries[0].facts],[['Movement: descent','Vertical change: unknown','Physical height: unknown'],['Walking distance: unknown'],['No physical boundary','Text: Only note']]);
 });
 test("metadata and unfamiliar extensions retain literal supplied values", /**
- * Retain all route fields without promoting an unfamiliar depth extension into a measured pool depth.
+ * Retain all route fields without promoting an unfamiliar depth_note extension into a measured pool depth.
  * @responsibility coordinator
  * @returns {void} Completes after exact metadata and unknown extension labels are verified.
  */ () => {
-  const route=compileRoute('route Fields\nmetadata entrance_elevation=100m exit_elevation=100m country=CR\npool P type=deep depth="2m?" strange="<&>"').model;
-  assert.deepEqual([describeRoute(route).metadata,describeRoute(route).entries[0].facts],[['Additional field "country": CR','Entrance elevation: 100m','Exit elevation: 100m'],['Measured pool depth: unknown','Additional field "depth": 2m?','Additional field "strange": <&>','Type: deep']]);
+  const route=compileRoute('route Fields\nmetadata entrance_elevation=100m exit_elevation=100m country=CR\npool P type=deep depth_note="2m?" strange="<&>"').model;
+  assert.deepEqual([describeRoute(route).metadata,describeRoute(route).entries[0].facts],[['Additional field "country": CR','Entrance elevation: 100m','Exit elevation: 100m'],['Measured pool depth: unknown','Additional field "depth_note": 2m?','Additional field "strange": <&>','Type: deep']]);
 });
 test("HTML alternative preserves markup-bearing prose without creating elements", /**
  * Observe decoded authored text in an independent XML parser and require no injected script element.

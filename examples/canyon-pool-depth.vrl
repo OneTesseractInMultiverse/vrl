@@ -1,0 +1,4 @@
+route "Synthetic pool depth"
+pool P1 depth=2.5m type=deep flow=low note="Supplied example value"
+pool P2 depth=0m
+pool P3 depth=unknown
