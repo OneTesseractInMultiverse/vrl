@@ -185,5 +185,25 @@
       "/model/summary/highestRappelMeters": 0
     },
     "sha256": "9fdd4fab0ddfc62d6c8ef78c0f415b6e2608d9f621cc2ab0c0ee996eaa4cd10a"
+  },
+  "canyon-pool-depth.vrl": {
+    "warnings": [],
+    "ids": [
+      "P1",
+      "P2",
+      "P3"
+    ],
+    "facts": {
+      "/model/name": "Synthetic pool depth",
+      "/model/elements/0/attributes/depth/meters": 2.5,
+      "/model/elements/0/attributes/type": "deep",
+      "/model/elements/0/attributes/flow": "low",
+      "/model/elements/0/extensions/note": "Supplied example value",
+      "/model/elements/1/attributes/depth/meters": 0,
+      "/model/elements/2/attributes/depth": "unknown",
+      "/model/traversal/segments/0/verticalDeltaMeters": 0,
+      "/model/traversal/segments/1/verticalDeltaMeters": 0
+    },
+    "sha256": "cab263a284e1b120d81f8c2a9b663adfefb3aa83535cde1747527950667d320a"
   }
 }

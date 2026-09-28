@@ -12,7 +12,7 @@ import { createDiagramState } from "@subvertic/vrl-diagram";
  * @returns {unknown} The result returned by JSON.parse.
  */
 const readJson = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
-const contract = readJson("../docs/contracts/v3.json");
+const contract = readJson("../docs/contracts/v4.json");
 const fixture = readJson("./fixtures/model-v1.json");
 
 for (const [name, api] of Object.entries(contract.packages)) {

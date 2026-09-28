@@ -1,0 +1,73 @@
+{
+  "contract": "vrl/model",
+  "revision": 3,
+  "sourceCommit": "088fc3931f1a892fd54d0d3e35e5aa8931188985",
+  "source": "route \"Saved pool depth prose\"\nrappel R1 height=unknown rope=unknown\npool P1 depth=2m type=deep",
+  "model": {
+    "name": "Saved pool depth prose",
+    "metadata": {},
+    "extensions": {},
+    "elements": [
+      {
+        "type": "rappel",
+        "id": "R1",
+        "label": null,
+        "attributes": {
+          "height": "unknown",
+          "rope": "unknown"
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 2,
+          "column": 1
+        }
+      },
+      {
+        "type": "pool",
+        "id": "P1",
+        "label": null,
+        "attributes": {
+          "type": "deep"
+        },
+        "extensions": {
+          "depth": "2m"
+        },
+        "sourceLocation": {
+          "line": 3,
+          "column": 1
+        }
+      }
+    ],
+    "traversal": {
+      "points": [
+        {
+          "elementIndex": 0
+        },
+        {
+          "elementIndex": 1
+        }
+      ],
+      "segments": [
+        {
+          "from": 0,
+          "to": 1,
+          "elementIndex": 0,
+          "kind": "technical",
+          "direction": "down",
+          "verticalDeltaMeters": null
+        }
+      ],
+      "annotations": []
+    },
+    "summary": {
+      "numberOfRappels": 1,
+      "numberOfHazards": 0,
+      "highestRappelMeters": 0,
+      "requiredRopeMeters": 0,
+      "totalDistanceMeters": 0,
+      "entranceElevationMeters": null,
+      "exitElevationMeters": null,
+      "totalElevationChangeMeters": 0
+    }
+  }
+}

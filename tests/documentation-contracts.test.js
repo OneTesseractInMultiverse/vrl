@@ -134,11 +134,13 @@ test("documented numeric ranges retain exact bounds and source precision", /**
  */ () => {
   const length = fieldSpecification("height").range;
   const elevation = fieldSpecification("entrance_elevation").range;
+  const depth = fieldSpecification("depth").range;
   const inclination = fieldSpecification("inclination").range;
   const count = fieldSpecification("anchor_count").range;
   assert.deepEqual(contractTable(reference, "numeric-ranges"), [
     ["`entrance_elevation`, `exit_elevation`", `From \`${elevation.minimum}m\` to \`${elevation.maximum}m\`, including zero`],
     ["`distance`, `height`, `rope`, `traverse`, `total_distance`, `total_descent`, `vertical_gain`, `descent`", `${length.exclusiveMinimum ? "Greater than" : "At least"} ${length.minimum === 0 ? "zero" : length.minimum}, up to \`${length.maximum}m\``],
+    ["`depth` (pool only)", `From \`${depth.minimum}m\` to \`${depth.maximum}m\`, including zero`],
     ["`inclination`", `${inclination.exclusiveMinimum ? "Greater than" : "At least"} \`${inclination.minimum}%\` and at most \`${inclination.maximum}%\`, with up to ${MAX_DECIMAL_PLACES} fractional digits; \`%\` may be omitted`],
     ["`anchor_count`", `Decimal integer from \`${count.minimum}\` to \`${count.maximum}\`, without leading zeros`],
     ["`stages`, `redirection`, `redirections`", "Each contained measurement follows the same magnitude, precision, and positive-length rules"]

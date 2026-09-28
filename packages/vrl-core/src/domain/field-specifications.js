@@ -10,6 +10,8 @@ const REDIRECTIONS = {
 };
 
 const DEFINITIONS = {
+  depth: { ...METRIC, applicability: ["pool"], acceptsUnknown: true,
+    range: { minimum: 0, exclusiveMinimum: false, maximum: MAX_SOURCE_MAGNITUDE } },
   distance: METRIC,
   height: { ...METRIC, requiredOn: ["rappel", "climb"] },
   rope: { ...METRIC, requiredOn: ["rappel"] },
@@ -80,7 +82,7 @@ export function fieldSpecification(fieldName) {
 
 /**
  * Resolve a field's specification for its declared scope while retaining globally recognized numeric
- * validation. Only rappel rope and height specifications permit the explicit unknown sentinel.
+ * validation. Rappel rope/height and pool depth permit explicit unknown; depth is a known field only on pools.
  * @responsibility computation
  * @param {string} fieldName - Own field name selecting the applicable parsing or measurement rule.
  * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.

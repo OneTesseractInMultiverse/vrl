@@ -127,6 +127,25 @@ describe("production framework consumers", /**
       });
     }
 
+    for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}]) {
+      test(`${surface} preserves supplied pool depth in its hydrated accessible image: ${JSON.stringify(query)}`, /**
+       * Verify the packaged framework exposes one exact depth fact without an invented unknown or motion.
+       * @responsibility coordinator
+       * @param {Object} t - Test context that owns browser cleanup.
+       * @returns {Promise<void>} Resolves after independent accessible facts, empty warnings and client errors are checked.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"poolDepth",true,query);
+        t.after(/**
+         * Close the browser context created for this single pool-depth scenario.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves when the owned browser resources are released.
+         */ () => context.close());
+        const expectedText="Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. 1. Pool P1. Measured pool depth: 2.5m.";
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.warning,context.errors],[[["Synthetic pool depth topo",expectedText]],"",[]]);
+      });
+    }
+
     for (const hydrated of [false,true]) for (const query of [{}, {style:"soft-terrain",symbols:"annotations"}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"minimal",theme:"dark",width:"736"}]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} exposes one named image with complete route facts: ${JSON.stringify(query)}`, /**
        * Inspect the real Chromium accessibility tree, requiring one image and an independently specified complete description.
