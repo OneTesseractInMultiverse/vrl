@@ -15,16 +15,16 @@ Campo adicional &quot;season&quot;: December-May
 Descenso total declarado: 200m
 Distancia total declarada: 1300m
 1. Inicio S1 (Quebrada Pilas entrance).
-2. Aproximacion W1. Distancia a pie: 80m. Nota: Short creek walk after the hanging bridge; first slide can be bypassed on the right.
+2. Caminata W1. Distancia a pie: 80m. Nota: Short creek walk after the hanging bridge; first slide can be bypassed on the right.
 3. Poza P1. Profundidad medida de poza: desconocido. Nota: Small pool below the first slide. Tipo: poco profunda.
 4. Rapel R1. Movimiento: descenso. Cambio vertical: -25.2m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Flujo: medio. Altura fisica: 28m. Inclinacion (100% = vertical): 90%. Llegada: poza. Nota: Salto del Tepescuintle. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
-5. Aproximacion W2. Distancia a pie: 80m. Nota: Progress to twin falls at the Quebrada Gata confluence.
+5. Caminata W2. Distancia a pie: 80m. Nota: Progress to twin falls at the Quebrada Gata confluence.
 6. Rapel R2. Movimiento: descenso. Cambio vertical: -23.8m. Tipo de anclaje: arbol. Cantidad de anclajes: 1. Flujo: medio. Altura fisica: 28m. Inclinacion (100% = vertical): 85%. Llegada: poza. Nota: Natural tree anchor above the left side. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
-7. Aproximacion W3. Distancia a pie: 500m. Nota: Pools, occasional downclimbs, and several slides.
+7. Caminata W3. Distancia a pie: 500m. Nota: Pools, occasional downclimbs, and several slides.
 8. Destrepe D1. Movimiento: descenso. Cambio vertical: -1.7999999999999998m. Exposicion: medio. Flujo: medio. Altura fisica: 3m. Inclinacion (100% = vertical): 60%. Llegada: poza. Nota: Representative small downclimbs in the middle section. Forma tecnica: ladder.
 9. Rapel R3. Movimiento: descenso. Cambio vertical: -3.5m. Tipo de anclaje: natural. Cantidad de anclajes: desconocido. Flujo: bajo. Altura fisica: 5m. Inclinacion (100% = vertical): 70%. Llegada: poza. Nota: Upper Catarata Celestial; sometimes treated as a slide. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
 10. Rapel R4. Movimiento: descenso. Cambio vertical: -18m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Flujo: medio. Altura fisica: 20m. Inclinacion (100% = vertical): 90%. Llegada: poza. Nota: Main Catarata Celestial drop. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
-11. Aproximacion W4. Distancia a pie: 350m. Nota: Small downclimbs and a jump before Hombre Muerto.
+11. Caminata W4. Distancia a pie: 350m. Nota: Small downclimbs and a jump before Hombre Muerto.
 12. Destrepe D2. Movimiento: descenso. Cambio vertical: -2.2m. Exposicion: medio. Flujo: medio. Altura fisica: 4m. Inclinacion (100% = vertical): 55%. Llegada: poza. Nota: Representative lower downclimb. Forma tecnica: ladder.
 13. Rapel R5. Movimiento: descenso. Cambio vertical: -18m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Flujo: alto. Altura fisica: 20m. Inclinacion (100% = vertical): 90%. Llegada: poza. Nota: Hombre Muerto; narrow pool can be pushy. Cuerda declarada: 60m. Forma tecnica: ladder. Reunion: izquierda.
 14. Peligro H1. Anotacion en limite de ruta: 14. Nota: Concentrated water and flash-flood exposure; dry-season weather window recommended. Severidad: alto. Tipo: agua activa.
@@ -134,7 +134,7 @@ Distancia total declarada: 1300m
 
     <text x="124" y="111" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#111111" stroke="#f6f8fa" stroke-width="3" stroke-linejoin="round" paint-order="stroke">Quebrada Pilas entrance</text>
     <g class="vrl-detail-line"><g class="vrl-detail-row"><text x="124" y="129" font-family="system-ui, sans-serif" font-size="10" fill="#303030" stroke="#f6f8fa" stroke-width="3" stroke-linejoin="round" paint-order="stroke">1300m</text></g></g>
-  </g><g class="vrl-node vrl-node-walk" aria-label="Aproximacion W1">
+  </g><g class="vrl-node vrl-node-walk" aria-label="Caminata W1">
 
     <g class="vrl-symbol vrl-symbol-standard">
     <circle class="vrl-symbol-clearance" cx="163" cy="202" r="8" fill="#f6f8fa" stroke="#f6f8fa" stroke-width="2"/>
@@ -172,7 +172,7 @@ Distancia total declarada: 1300m
     <rect x="678" y="390" width="28" height="14" rx="3" fill="#c77700"/>
     <text x="692" y="399" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">90%</text>
   </g></g></g>
-  </g><g class="vrl-node vrl-node-walk" aria-label="Aproximacion W2">
+  </g><g class="vrl-node vrl-node-walk" aria-label="Caminata W2">
 
     <g class="vrl-symbol vrl-symbol-standard">
     <circle class="vrl-symbol-clearance" cx="347" cy="527" r="8" fill="#f6f8fa" stroke="#f6f8fa" stroke-width="2"/>
@@ -200,7 +200,7 @@ Distancia total declarada: 1300m
     <rect x="789" y="638" width="28" height="14" rx="3" fill="#c77700"/>
     <text x="803" y="647" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">85%</text>
   </g></g></g>
-  </g><g class="vrl-node vrl-node-walk" aria-label="Aproximacion W3">
+  </g><g class="vrl-node vrl-node-walk" aria-label="Caminata W3">
 
     <g class="vrl-symbol vrl-symbol-standard">
     <circle class="vrl-symbol-clearance" cx="464" cy="767" r="8" fill="#f6f8fa" stroke="#f6f8fa" stroke-width="2"/>
@@ -260,7 +260,7 @@ Distancia total declarada: 1300m
     <rect x="1012" y="991" width="28" height="14" rx="3" fill="#c77700"/>
     <text x="1026" y="1000" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#111111">90%</text>
   </g></g></g>
-  </g><g class="vrl-node vrl-node-walk" aria-label="Aproximacion W4">
+  </g><g class="vrl-node vrl-node-walk" aria-label="Caminata W4">
 
     <g class="vrl-symbol vrl-symbol-standard">
     <circle class="vrl-symbol-clearance" cx="680" cy="1090" r="8" fill="#f6f8fa" stroke="#f6f8fa" stroke-width="2"/>
@@ -347,8 +347,8 @@ Distancia total declarada: 1300m
     </text><text class="vrl-legend-symbol-entry" x="113" y="1557.5" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">OUT</tspan><tspan> = Salida</tspan>
     </text><text class="vrl-legend-symbol-entry" x="193" y="1557.5" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
-      <tspan font-weight="800" fill="#111111">M</tspan><tspan> = Aproximacion</tspan>
-    </text><text class="vrl-legend-symbol-entry" x="294" y="1557.5" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
+      <tspan font-weight="800" fill="#111111">M</tspan><tspan> = Caminata</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="273" y="1557.5" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">R</tspan><tspan> = Rapel</tspan>
     </text></g><g class="vrl-legend-symbol-row"><text class="vrl-legend-symbol-entry" x="38" y="1573.5" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">D</tspan><tspan> = Destrepe</tspan>

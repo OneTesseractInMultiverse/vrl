@@ -188,12 +188,13 @@ Categorical fields apply in the following contexts:
 | `station` | Rappel, downclimb, climb | `left`, `right`, `center`, `floor`, `tree`, `natural`, `unknown` |
 | `landing` | Rappel, downclimb, climb | `pool`, `ledge`, `dry`, `chaos`, `gallery`, `trail`, `unknown` |
 | `exposure` | Downclimb, climb | `low`, `medium`, `high` |
+| `phase` | Every element | `approach`, `canyon`, `return` |
 | `flow` | Every element | `dry`, `low`, `medium`, `high` |
 | `type` | Pool | `deep`, `shallow`, `swimmer`, `dry`, `unknown` |
 | `severity` | Hazard | `low`, `medium`, `high`, `critical` |
 <!-- /vrl-table:field-vocabularies -->
 
-These enums are case-sensitive. A present empty value is invalid in its defined context; omit optional fields when unknown. Outside the listed contexts, these names remain extension text: for example, `hazard type=swift_water` does not use the pool vocabulary, and metadata `flow` remains descriptive text. Unknown names such as `survey_team` are preserved without a vocabulary check. Known-field validation does not promise that every accepted attribute has a visual representation.
+Source `note` statements remain free text; only programmatic note AST attributes can declare phase membership. These enums are case-sensitive. A present empty value is invalid in its defined context; omit optional fields when unknown. Outside the listed contexts, these names remain extension text: for example, `hazard type=swift_water` does not use the pool vocabulary, and metadata `flow` remains descriptive text. Unknown names such as `survey_team` are preserved without a vocabulary check. Known-field validation does not promise that every accepted attribute has a visual representation.
 
 Source `note` statements consume free-form text, so `note exposure=banana` is literal note content. Programmatic note attributes supplied through a parser port follow the same numeric and element-field rules as other elements.
 
@@ -358,3 +359,7 @@ The target language also includes richer block syntax for routes, sections, acce
 ## Explicit swimming
 
 `swim` adds an ordered nontechnical progression entry with optional positive metric `distance`. Omission remains absent/unknown; `distance=unknown` and zero are invalid. Its SW identity, flow and literal notes follow existing rules. Pool depth/type, swimming choice and walking totals remain independent. See [the complete contract and executable example](swimming.md).
+
+## Explicit phase membership
+
+Optional `phase=approach|canyon|return` describes only its owning element. Omission stays unspecified, without inheritance, transition rules or phase totals. Metadata keeps phase as extension text; source `note` bodies remain literal. All supported views and full text retain localized phase labels. See [semantics, examples and model revision 6 migration](route-phases.md).

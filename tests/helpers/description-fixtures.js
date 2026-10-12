@@ -11,7 +11,7 @@ export const DESCRIPTION_ES = `Ruta esquematica, sin escala. Lea los elementos e
 1. Inicio S1 (Entry).
 2. Rapel R1. Movimiento: descenso. Cambio vertical: -18m. Tipo de anclaje: parabolts. Cantidad de anclajes: 2. Altura fisica: 18m. Cuerda declarada: 40m. Reunion: derecha.
 3. Poza P1. Profundidad medida de poza: desconocido. Tipo: desconocido.
-4. Aproximacion W1. Distancia a pie: 120m.
+4. Caminata W1. Distancia a pie: 120m.
 5. Rapel R2. Movimiento: descenso. Cambio vertical: -12m. Tipo de anclaje: arbol. Cantidad de anclajes: desconocido. Altura fisica: 12m. Cuerda declarada: 30m.
 6. Peligro H1. Anotacion en limite de ruta: 6. Nota: Slippery landing. Tipo: slippery.
 7. Salida E1 (Exit).`;

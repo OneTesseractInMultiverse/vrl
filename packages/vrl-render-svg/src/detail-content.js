@@ -1,3 +1,4 @@
+import { phaseText } from "./phase-text.js";
 import { softTerrainText } from "./soft-terrain-text.js";
 import { anchorSummary } from "./anchor-presentation.js";
 import { formatElementDetail, formatMeasurement } from "./element-formatters.js";
@@ -5,17 +6,32 @@ import { diagramText, localizeDetailValue } from "./locale.js";
 import { elementAttribute } from "./route-data.js";
 
 /**
- * Project typed element facts into localized text and badge records; soft style explicitly represents unknown
- * measurements and quantities. Categories come from normalized fields; display text never supplies semantics.
+ * Project typed element facts into localized text and badge records followed by its explicitly supplied phase.
+ * Soft style represents unknown measurements and quantities; no membership is inherited or inferred.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @param {Object} node - Positioned route point with x/y and its owning normalized element when required; defaults to null.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy; defaults to "en".
  * @param {string} style - Renderer style, classic or soft-terrain; does not alter route facts; defaults to "classic".
- * @returns {unknown} The ordered records or values assembled above. The result returned by compactDetails.
+ * @returns {Object[]} Owned ordered detail records; absent phase adds no label and caller data stays unchanged.
  */
 
 export function detailRecordsForElement(element, node = null, language = "en", style = "classic") {
+  const records = elementSpecificDetails(element, node, language, style);
+  if (element.attributes.phase !== undefined) records.push(plainDetail(phaseText(element.attributes.phase, language)));
+  return records;
+}
+
+/**
+ * Project type-specific details without introducing membership, geometry or facts from other elements.
+ * @responsibility computation
+ * @param {Object} element - Normalized element owning the details; never mutated.
+ * @param {Object|null} node - Optional positioned node with supplied elevation, or null.
+ * @param {string} language - Resolved display language.
+ * @param {string} style - Classic or soft-terrain presentation selection.
+ * @returns {Object[]} New ordered details; missing optional facts are omitted.
+ */
+function elementSpecificDetails(element, node, language, style) {
   const text = diagramText(language);
   const attributes = element.attributes;
   if ((element.type === "start" || element.type === "exit") && typeof node?.elevationMeters === "number") {

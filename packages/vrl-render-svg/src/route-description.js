@@ -1,3 +1,4 @@
+import { phaseText } from "./phase-text.js";
 import { assertOptionsRecord, createTraversal } from "@subvertic/vrl-core";
 import { diagramText, elementLabel } from "./locale.js";
 import { resolveRenderLanguage } from "./presentation.js";
@@ -83,6 +84,10 @@ function describeElement(element, elementIndex, technical, pointIndex, language)
 function describeFields(attributes, extensions, language) {
   const words = descriptionText(language), fields = { ...extensions, ...attributes }, facts = [];
   for (const key of Object.keys(fields).sort()) {
+    if (key === "phase" && Object.hasOwn(attributes ?? {}, key)) {
+      facts.push(phaseText(fields[key], language));
+      continue;
+    }
     const known = Object.hasOwn(words.fields, key) && (Object.hasOwn(attributes ?? {}, key) || ["note", "text", "type"].includes(key));
     const value = known && key === "station" ? descriptionSide(fields[key], language) : descriptionValue(fields[key], language, ["note", "text"].includes(key) || !known);
     const label = known ? words.fields[key] : `${words.additional} "${key}"`;

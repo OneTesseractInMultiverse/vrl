@@ -53,3 +53,5 @@ See the [diagram-state contract](https://github.com/OneTesseractInMultiverse/vrl
 MIT. Copyright (c) 2026 Pedro Guzmán.
 
 For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).
+
+Optional element `phase=approach|canyon|return` preserves explicit membership through model revision 6 and bilingual visible/accessible text. Missing membership never inherits; existing geometry and route-wide summaries remain unchanged. Free-form source notes keep their literal grammar. See [the contract and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/route-phases.md).

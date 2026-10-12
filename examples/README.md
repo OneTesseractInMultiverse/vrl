@@ -57,3 +57,5 @@ The [capability matrix](../docs/canyon-capabilities.md) explains the synthetic [
 [`canyon-pool-depth.vrl`](canyon-pool-depth.vrl) retains synthetic 2.5 m, zero and unknown pool depths without warnings or technical motion. Category, flow and note remain independent; see [meaning and migration](../docs/pool-depth.md).
 
 [`canyon-swim.vrl`](canyon-swim.vrl) records a pool, measured and unmeasured swims, a rappel and a walk. It has no warnings; walking totals remain 6 m and the sole technical delta is −4 m. See [swimming semantics](../docs/swimming.md).
+
+`canyon-phases.vrl` is a synthetic example of explicit approach/canyon/return membership with an unassigned note and walk. It compiles without warnings; walking remains 155 m across all supplied walks, swimming remains 12 m on its own element, and technical descent is 8 m. See [the phase guide and narrow bilingual views](../docs/route-phases.md).

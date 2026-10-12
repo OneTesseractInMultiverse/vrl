@@ -124,8 +124,8 @@
     </text><text class="vrl-legend-symbol-entry" x="118" y="517" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">FIN</tspan><tspan> = Salida</tspan>
     </text><text class="vrl-legend-symbol-entry" x="198" y="517" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
-      <tspan font-weight="800" fill="#111111">A</tspan><tspan> = Aproximacion</tspan>
-    </text><text class="vrl-legend-symbol-entry" x="299" y="517" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
+      <tspan font-weight="800" fill="#111111">A</tspan><tspan> = Caminata</tspan>
+    </text><text class="vrl-legend-symbol-entry" x="278" y="517" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">R</tspan><tspan> = Rapel</tspan>
     </text></g><g class="vrl-legend-symbol-row"><text class="vrl-legend-symbol-entry" x="38" y="533" font-family="system-ui, sans-serif" font-size="9" fill="#303030">
       <tspan font-weight="800" fill="#111111">D</tspan><tspan> = Destrepe</tspan>

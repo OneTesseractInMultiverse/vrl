@@ -1,0 +1,10 @@
+route "Synthetic phase membership"
+start "Trailhead" phase=approach
+walk W1 distance=100m phase=approach
+rappel R1 height=8m rope=20m phase=canyon
+hazard H1 type=slippery phase=canyon
+note "Phase unspecified for this observation"
+swim SW1 distance=12m phase=canyon
+walk W2 distance=50m phase=return
+walk W3 distance=5m
+exit "Finish" phase=return

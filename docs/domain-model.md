@@ -129,3 +129,5 @@ For the shared fictional canyon, the two rappel heights are 18 m and 12 m, decla
 The additive `summarizeRouteMeasurements` helper exposes explicit measurement names, observation counts and null unknowns without replacing these legacy fields. See [summary meaning and provenance](route-summary.md) for its full contract and distance-conflict warning. Consumers must use the contract shipped in their installed version; this addition is scheduled for the next minor release.
 
 [Swimming](swimming.md) is explicit `type: "swim"` with optional metric distance, introduced in AST revision 2 / model revision 5. It uses existing nontechnical progression points and annotations without inferring a pool relationship, measured elevation or walking aggregate. Exhaustive consumers must handle the new discriminator.
+
+Model revision 6 promotes element `phase` to optional `RoutePhase` (`approach`, `canyon`, `return`) in `attributes`. No inheritance, transition or completeness rules apply. Metadata and stored legacy `extensions.phase` stay literal; source notes retain free-text grammar. See [ownership, unchanged traversal and migration](route-phases.md).

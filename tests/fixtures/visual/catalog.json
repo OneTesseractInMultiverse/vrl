@@ -1,5 +1,5 @@
 {
-  "revision": 2,
+  "revision": 3,
   "baselineCommit": "40b981848f6ca51590ee01d053ea87b068b7ce34",
   "fixtureKind": "synthetic",
   "review": "Automated and visual inspection only; practitioner review pending.",
@@ -227,6 +227,36 @@
       ],
       "sha256": "6d2237f5705dff4b374da5f95247ebb13ab56f719ab76b5c4e8397cd26821e22",
       "warnings": []
+    },
+    "phases": {
+      "source": "examples/canyon-phases.vrl",
+      "types": [
+        "start",
+        "walk",
+        "rappel",
+        "hazard",
+        "note",
+        "swim",
+        "walk",
+        "walk",
+        "exit"
+      ],
+      "deltas": [
+        -8
+      ],
+      "facts": [
+        "Phase: approach",
+        "Phase: canyon",
+        "Phase: return",
+        "Walking distance: 100m",
+        "Walking distance: 50m",
+        "Walking distance: 5m",
+        "Swimming distance: 12m",
+        "Vertical change: -8m",
+        "Text: Phase unspecified for this observation"
+      ],
+      "sha256": "5f7f84a534b149e32cd7d6b3e61c009eb1cee3026aa3289f28f26995d6f41c45",
+      "warnings": []
     }
   },
   "cases": [
@@ -368,6 +398,28 @@
     {
       "id": "swim-mono-es-320",
       "fixture": "swim",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal",
+        "monochrome": true,
+        "language": "es"
+      }
+    },
+    {
+      "id": "phases-color-320",
+      "fixture": "phases",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal"
+      }
+    },
+    {
+      "id": "phases-mono-es-320",
+      "fixture": "phases",
       "width": 320,
       "render": {
         "style": "soft-terrain",

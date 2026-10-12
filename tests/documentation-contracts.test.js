@@ -102,7 +102,7 @@ test("documented enum contexts and vocabularies agree with their domain owner", 
  * @responsibility coordinator
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
-  const fields = ["anchor", "shape", "station", "landing", "exposure", "flow", "type", "severity"];
+  const fields = ["anchor", "shape", "station", "landing", "exposure", "phase", "flow", "type", "severity"];
   const rows = fields.map(/**
    * Format a known enum field's applicability and vocabulary as the normative table row expected by the
    * documentation assertion.

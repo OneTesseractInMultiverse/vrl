@@ -100,3 +100,5 @@ Pass `options={{ style: "soft-terrain", symbols: "annotations" }}` through the c
 For narrow displays, set `options` to `{ style: "soft-terrain", flow: "rows", layout: { width: 320 } }`. The same deterministic policy works in SSR and hydration. See [row layout and width constraints](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/row-layout.md).
 
 The wrapper has no image role by default; the inner SVG owns its accessible name and complete ordered description. Leave the wrapper role absent to preserve these semantics. See [accessible descriptions and monochrome rows](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/accessible-output.md).
+
+Optional element `phase=approach|canyon|return` preserves explicit membership through model revision 6 and bilingual visible/accessible text. Missing membership never inherits; existing geometry and route-wide summaries remain unchanged. Free-form source notes keep their literal grammar. See [the contract and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/route-phases.md).

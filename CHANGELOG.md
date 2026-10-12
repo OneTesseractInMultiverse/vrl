@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add optional explicit approach/canyon/return membership for route elements, with localized text in every view and no inherited phases, geometry changes or phase totals. Source notes remain literal; invalid category values fail. Correct the Spanish walk title to `Caminata` so return and unspecified walks are not labeled as approach.
+- Introduce model revision 6 for the promoted phase field with legacy-extension migration, executable examples, visual/browser checks and a semantic mutation witness. Intended for the next minor release, without publication here.
+
 - Add explicit `swim` itinerary elements with optional metric distance, separate from pool features and walking totals. Preserve unknown distance, flow, notes, bilingual text and compressed/icon/monochrome output.
 - Introduce AST revision 2 / model revision 5 for the expanded element union; retain prior fixtures and document exhaustive-reader migration. Reuse the existing swim icon, update legends and add two aquatic gallery views. Intended for the next minor release, without publication here.
 

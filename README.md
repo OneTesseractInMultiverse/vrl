@@ -305,3 +305,5 @@ See the [canyon capability matrix](docs/canyon-capabilities.md) for supported se
 [Explicit pool depth](docs/pool-depth.md) preserves supplied metric values, zero and unknown without inferring movement or rescaling symbolic pools; model revision 4 documents the scoped-field migration.
 
 [Explicit swimming](docs/swimming.md) records supplied swimming distances separately from pools and walking totals; AST revision 2 / model revision 5 document the new element and migration.
+
+[Explicit phase membership](docs/route-phases.md) records approach, canyon or return on individual elements, without inheritance or phase totals. Model revision 6 documents the promoted field and source migration.

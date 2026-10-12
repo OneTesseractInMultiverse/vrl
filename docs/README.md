@@ -59,3 +59,5 @@ The [canyon capability matrix](canyon-capabilities.md) maps grammar, normalized 
 [Explicit pool depth](pool-depth.md) defines metric/zero/unknown meaning, pool-only scope, presentation and revision-4 migration.
 
 [Explicit swimming](swimming.md) adds a distinct optional-distance movement with bilingual visual/text output and an executable aquatic itinerary.
+
+[Route phase membership](route-phases.md) preserves explicit approach/canyon/return labels on individual elements; omission stays unspecified and existing route-wide summaries remain unchanged.

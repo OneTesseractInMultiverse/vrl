@@ -44,6 +44,7 @@ const NUMERIC_CASES = [
   ["stages", "10m+20m", [metric(10), metric(20)], "10m++20m"]
 ];
 const ENUM_CASES = [
+  ["phase", ELEMENTS, ["approach", "canyon", "return"]],
   ["anchor", ["rappel"], ["bolts", "natural", "tree", "thread", "removable", "fixed", "unknown", "mixed"]],
   ["shape", ["rappel", "downclimb", "climb"], ["ladder", "direct", "slab"]],
   ["station", ["rappel", "downclimb", "climb"], ["left", "right", "center", "floor", "tree", "natural", "unknown"]],

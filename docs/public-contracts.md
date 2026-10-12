@@ -19,7 +19,7 @@ if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) 
 
 ## Stability classes
 
-[The revision 5 inventory](contracts/v5.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
+[The revision 6 inventory](contracts/v6.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
 
 | Surface | Stable facade | Advanced extension points |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ Use the facade for ordinary integrations. Advanced exports remain supported for 
 
 ## Contract revisions and releases
 
-The current inventory is revision **5**: AST revision 2 and normalized model revision 5, with traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json) [revision 3](contracts/v3.json) and [revision 4](contracts/v4.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
+The current inventory is revision **6**: AST revision 2 and normalized model revision 6, with traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json), [revision 3](contracts/v3.json), [revision 4](contracts/v4.json) and [revision 5](contracts/v5.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
 
 Package versions and data-contract revisions have different purposes:
 
@@ -53,7 +53,7 @@ import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
-const envelope = { contract: "vrl/model", revision: 5, model: JSON.parse(result.json) };
+const envelope = { contract: "vrl/model", revision: 6, model: JSON.parse(result.json) };
 console.log(envelope.model.elements[1].id); // pitch
 ```
 
@@ -254,7 +254,7 @@ Warning-only output gains an outer wrapper around the existing image and new war
 
 ## Verification and migration
 
-The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, revision 4 promotes pool depth into a scoped known field, and revision 5 adds explicit swimming (AST revision 2) as described above; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
+The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, revision 4 promotes pool depth into a scoped known field, revision 5 adds explicit swimming (AST revision 2), and revision 6 promotes element phase membership as described above; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 
@@ -355,4 +355,22 @@ const html = renderRouteText(result.model, { idPrefix: "canyon" });
 const svg = renderTopoSvg(result.model, result.layout, { flow: "rows", style: "soft-terrain", monochrome: true, idPrefix: "canyon" });
 if (description.entries[0]?.facts[0] !== "Walking distance: 120m") throw new Error("Lost distance");
 if (!html.includes('id="canyon-text"') || !svg.includes('aria-describedby="canyon-description"')) throw new Error("Lost description relationship");
+```
+
+## Explicit phase membership: model revision 6
+
+Element `attributes.phase?: RoutePhase` accepts `"approach" | "canyon" | "return"`. Omission stays unspecified; labels do not propagate, impose a phase order or change traversal/summary scope. Source notes keep free-form text, while programmatic notes may carry typed membership. Existing stored extension values remain literal; recompiling old phase prose requires renaming it to `phase_note` or moving it to `note`. AST revision 2 and all other structures retain their revisions. See [the complete contract and migration](route-phases.md).
+
+```ts
+import { compileRoute, type RoutePhase } from "@subvertic/vrl-core";
+import { describeRoute } from "@subvertic/vrl-render-svg";
+
+const result = compileRoute('route Example\nwalk W1 distance=5m phase=approach\nwalk W2 distance=2m');
+if (!result.ok) throw new Error("Invalid source");
+const first = result.model.elements[0];
+const second = result.model.elements[1];
+if (first === undefined || second === undefined) throw new Error("Missing elements");
+const phase: RoutePhase | undefined = first.attributes.phase;
+if (phase !== "approach" || second.attributes.phase !== undefined) throw new Error("Invented membership");
+if (!describeRoute(result.model, { language: "es" }).text.includes("Fase: aproximacion")) throw new Error("Lost phase");
 ```

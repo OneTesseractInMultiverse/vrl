@@ -1,6 +1,6 @@
 # Canyon visual specification — revision 2
 
-The [reviewable gallery](assets/visual/index.html) defines optional canyon presentation for the current element vocabulary. Its seven fictional sources and fifteen selected views cover all ten element kinds, all anchor/station/pool categories, flow and hazard severity levels, three classic technical shapes, adjacent ascent/descent, full anchor counts, stages/redirections, long multilingual text, narrow rows, dark color and monochrome. These are controlled design and regression cases, not observations of real canyons.
+The [reviewable gallery](assets/visual/index.html) defines optional canyon presentation for the current element vocabulary. Its eight fictional sources and seventeen selected views cover all ten element kinds, all anchor/station/pool categories, flow and hazard severity levels, three classic technical shapes, adjacent ascent/descent, full anchor counts, stages/redirections, long multilingual text, narrow rows, dark color and monochrome. These are controlled design and regression cases, not observations of real canyons.
 
 The inventory is [versioned JSON](../tests/fixtures/visual/catalog.json) with explicit source fingerprints, ordered types, signed technical changes, required facts and expected warning codes. Renderer/icon baseline is commit `40b981848f6ca51590ee01d053ea87b068b7ce34`; subsequent artifact revisions are identified by their enclosing Git commit. Package version alone does not identify an unreleased visual baseline. The first-party icon geometry and mappings remain owned by `@subvertic/vrl-icons`.
 
@@ -58,3 +58,5 @@ node --test tests/visual-fixtures.test.js
 [Export regression guidance](testing.md) distinguishes exact deterministic SVG comparisons from semantic oracles, browser observations and pending human evaluation. A screenshot alone is never acceptance evidence.
 
 [Explicit swimming](swimming.md) is now adopted as a distinct itinerary entry. The aquatic views preserve known/unknown distance and pool/movement separation in icon and Spanish monochrome rows. Their synthetic fidelity evidence does not establish practitioner recognition.
+
+Explicit [phase membership](route-phases.md) appears as localized text in every presentation, without color-only encoding or an inferred phase boundary. The two narrow phase examples include unspecified elements; their row breaks have no phase meaning.

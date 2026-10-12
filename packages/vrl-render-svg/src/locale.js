@@ -84,7 +84,7 @@ const DIAGRAM_TEXT = Object.freeze({
     elements: Object.freeze({
       start: "Inicio",
       exit: "Salida",
-      walk: "Aproximacion",
+      walk: "Caminata",
       swim: "Nado",
       rappel: "Rapel",
       downclimb: "Destrepe",
