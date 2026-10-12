@@ -52,7 +52,8 @@ function elementSpecificDetails(element, node, language, style) {
   }
   if (element.type === "swim") {
     return compactDetails([plainDetail(formatElementDetail(element, language)),
-      levelDetail("flow", attributes.flow, text.flow, language), plainDetail(elementAttribute(element, "note") ?? "")]);
+      levelDetail("flow", attributes.flow, text.flow, language), plainDetail(elementAttribute(element, "note") ?? ""),
+      attributes.pool_ref === undefined ? null : plainDetail(`${text.poolReference}: ${attributes.pool_ref}`)]);
   }
   if (element.type === "pool" && attributes.depth !== undefined) {
     return compactDetails([plainDetail(formatElementDetail(element, language)), levelDetail("flow", attributes.flow, text.flow, language)]);

@@ -14,7 +14,7 @@ swim
 exit E1
 ```
 
-The [synthetic executable example](../examples/canyon-swim.vrl) has a 2.5 m pool depth, a distinct 12 m swim, a 4 m rappel, a 6 m walk and an unmeasured swim. It succeeds without warnings. The pool's depth is not the swim's length; their adjacency establishes order, not a typed feature association. No route conditions or suitability are asserted by these fictional values.
+The [synthetic executable example](../examples/canyon-swim.vrl) has a 2.5 m pool depth, a distinct 12 m swim, a 4 m rappel, a 6 m walk and an unmeasured swim. It succeeds without warnings. The pool's depth is not the swim's length; their adjacency establishes order, not a typed feature association. An association is supplied only by an explicit `pool_ref`; this example leaves it absent. No route conditions or suitability are asserted by these fictional values.
 
 ## Language and normalized meaning
 
@@ -22,7 +22,7 @@ The [synthetic executable example](../examples/canyon-swim.vrl) has a 2.5 m pool
 
 Distance, when present, is a positive metric from `0.000001m` through `1000000000m` with at most six fractional digits. Omission stays absent and descriptions say unknown. Unlike required rappel declarations and optional pool depth, swim distance does **not** accept the string `unknown`; omit it for missing information. Zero, negative, empty, nonmetric, scientific, nonfinite, overprecise and overflowing values fail with located existing field diagnostics. Duplicate attributes/IDs, invalid flow and illegal document order also fail. Compilation returns no model/layout/JSON on blocking errors; direct normalization enforces domain invariants.
 
-The normalized element is `type: "swim"`, with optional `attributes.distance: Measurement`, existing applicable known fields and separate extensions. The element records a supplied movement mode, not a recommendation. Neither a nearby pool, a swimmer icon, a flow observation nor prose adds this mode automatically. No new feature reference, alternatives, water-current model or claim provenance is introduced.
+The normalized element is `type: "swim"`, with optional `attributes.distance: Measurement`, existing applicable known fields and separate extensions. The element records a supplied movement mode, not a recommendation. Neither a nearby pool, a swimmer icon, a flow observation nor prose adds this mode automatically. An optional [explicit pool reference](pool-references.md) is now supported in model revision 7. Alternatives, water-current modeling and claim provenance remain deferred.
 
 ## Traversal, profiles and totals
 
@@ -44,7 +44,7 @@ The gallery includes [English icon rows](assets/visual/swim-icons-320.svg) and [
 
 Inventory revision **5** records AST revision **2** and normalized-model revision **5** for the expanded closed `ElementType` union. Traversal, layout, diagnostics, compiler and diagram structures retain revision 1. Update exhaustive switches, element maps and readers before accepting `swim`; older readers cannot interpret it. Existing valid source retains model/summary meaning. Legends and generated presentation artifacts now include the new vocabulary. Prior inventories remain available, and a pinned revision-4 pool fixture verifies unchanged JSON and feature meaning.
 
-Applications store the current model revision (now 6 for [phase membership](route-phases.md)) in their own envelopes; JSON has no added schema-version field. Retain source for migration. This requires a minor package release before 1.0; this implementation does not publish or change package versions. The [public contracts](public-contracts.md) include a typed example.
+Applications store the current model revision (now 7 for [pool associations](pool-references.md)) in their own envelopes; JSON has no added schema-version field. Retain source for migration. This requires a minor package release before 1.0; this implementation does not publish or change package versions. The [public contracts](public-contracts.md) include a typed example.
 
 Domain vocabulary owns the new discriminator and ID prefix; existing field policy owns numeric validation. Parser and validation adapters retain their existing roles. Application coordination, traversal, summaries and export ports are reused. Renderer computations own labels/compression; the icon package owns the mapping/artwork. No new runtime dependency, general movement graph or external-tool importer is introduced.
 
@@ -54,4 +54,4 @@ The [FFME canyon practice page](https://www.ffme.fr/montagne-canyon/canyon/prati
 
 The engineering decision compares three representations: retain swimming only in prose (no validated movement identity/distance), infer it from pool category (invents a choice), or add an explicit optional-distance itinerary entry. Adopt the third within the existing linear contract. Synthetic cases and deliberate lost-meaning failures support implementation fidelity only; no new real-canyon measurements, practitioner timings or comprehension findings are claimed. The earlier Davis experiment remains pinned to its historical baseline.
 
-Follow-up work needs source-backed aquatic cases, location/date/conflict evidence, movement-to-feature references and actual reader evaluation before broader graph or observation semantics. Jumping, sliding, independent traverses, alternatives/escapes and cave expansion remain separately scoped.
+Follow-up work needs source-backed aquatic cases, location/date/conflict evidence, broader movement-to-feature relationships and actual reader evaluation before broader graph or observation semantics. Jumping, sliding, independent traverses, alternatives/escapes and cave expansion remain separately scoped.

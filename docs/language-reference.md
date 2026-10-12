@@ -363,3 +363,7 @@ The target language also includes richer block syntax for routes, sections, acce
 ## Explicit phase membership
 
 Optional `phase=approach|canyon|return` describes only its owning element. Omission stays unspecified, without inheritance, transition rules or phase totals. Metadata keeps phase as extension text; source `note` bodies remain literal. All supported views and full text retain localized phase labels. See [semantics, examples and model revision 6 migration](route-phases.md).
+
+## Explicit pool associations
+
+Optional swim-only `pool_ref` must exactly name a uniquely explicit pool ID in the same document. Forward/backward references are valid; omitted or automatically generated target IDs do not qualify. Missing/wrong-type targets and blank references block compilation. Other scopes retain literal extensions; source notes remain free text. No swimming, physical motion, navigation edge or measurement is inferred. See [complete semantics, diagnostics and model revision 7 migration](pool-references.md).

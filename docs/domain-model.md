@@ -131,3 +131,5 @@ The additive `summarizeRouteMeasurements` helper exposes explicit measurement na
 [Swimming](swimming.md) is explicit `type: "swim"` with optional metric distance, introduced in AST revision 2 / model revision 5. It uses existing nontechnical progression points and annotations without inferring a pool relationship, measured elevation or walking aggregate. Exhaustive consumers must handle the new discriminator.
 
 Model revision 6 promotes element `phase` to optional `RoutePhase` (`approach`, `canyon`, `return`) in `attributes`. No inheritance, transition or completeness rules apply. Metadata and stored legacy `extensions.phase` stay literal; source notes retain free-text grammar. See [ownership, unchanged traversal and migration](route-phases.md).
+
+Model revision 7 adds swim-only `attributes.pool_ref?: string`. Whole-route validation/normalization require an exact explicit pool ID; generated IDs are not targets. The raw ID string remains in the model, without target-object duplication, point merging or navigation edges. Saved extensions stay literal; see [resolution, isolated-helper limits and migration](pool-references.md).

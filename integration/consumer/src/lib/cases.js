@@ -1,4 +1,6 @@
 export const SOURCES = {
+  poolReference: 'route "Synthetic pool link"\npool P1 depth=2m\nswim SW1 distance=12m pool_ref=P1',
+  invalidPoolReference: 'route "Missing pool"\nswim SW1 pool_ref=P1',
   phases: 'route "Synthetic phases"\nwalk W1 distance=5m phase=approach\npool P1 depth=0m phase=canyon\nwalk W2 distance=7m phase=return\nwalk W3',
   swim: 'route "Synthetic swim"\nswim SW1 distance=12m flow=low note="Supplied example"\nswim SW2',
   poolDepth: 'route "Synthetic pool depth"\npool P1 depth=2.5m',

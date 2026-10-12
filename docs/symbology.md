@@ -70,3 +70,5 @@ The [revision 1 canyon visual specification](visual-specification.md) defines hi
 Explicit `swim` uses the project abbreviation `SW` in every profile and a localized legend entry. `symbols: "icons"` uses the existing transparent swim pictogram. This is not standardized federation notation; the older pool `type=swimmer` pictogram mapping stays categorical, so retained text distinguishes a pool feature from movement. See [the bounded decision](swimming.md).
 
 Phase membership uses explicit localized text (`Phase: approach/canyon/return`, Spanish `Fase: aproximacion/barranco/retorno`) rather than a new symbol or color. Unspecified membership adds no label; diagram row breaks are not phase boundaries. See [phase presentation](route-phases.md).
+
+A supplied pool association is displayed as `Pool reference: <ID>` or `Referencia de poza: <ID>`. The exact ID is text, never translated or replaced by a pictogram. This adds no connector arrow, implied travel direction or new symbol; see [pool references](pool-references.md).

@@ -49,6 +49,7 @@ function fieldDiagnostic(element, subject, { kind, name, specification, reason, 
  */
 function syntaxDiagnostic(element, subject, name, specification, reason) {
   switch (specification.parser) {
+    case "reference": return diagnostic(element, name, "VRL_FIELD_REFERENCE_SYNTAX", `Field "${name}" must be a non-blank element identifier.`, "Use an exact explicitly declared pool ID, or omit the optional reference.");
     case "measurement": return diagnostic(element, name, "VRL_FIELD_MEASUREMENT_SYNTAX", `${subject} "${name}" must be a metric ${specification.range.minimum < 0 ? "elevation" : "measurement"}.`, reason);
     case "inclination": return diagnostic(element, name, "VRL_FIELD_INCLINATION_SYNTAX", 'Field "inclination" must be a percentage.', reason);
     case "redirections": return diagnostic(element, name, "VRL_FIELD_REDIRECTIONS_SYNTAX", `Field "${name}" must list metric redirection anchors.`, reason);

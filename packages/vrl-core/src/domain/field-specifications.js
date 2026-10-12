@@ -12,6 +12,7 @@ const REDIRECTIONS = {
 const DEFINITIONS = {
   depth: { ...METRIC, applicability: ["pool"], acceptsUnknown: true,
     range: { minimum: 0, exclusiveMinimum: false, maximum: MAX_SOURCE_MAGNITUDE } },
+  pool_ref: { parser: "reference", applicability: ["swim"] },
   distance: METRIC,
   height: { ...METRIC, requiredOn: ["rappel", "climb"] },
   rope: { ...METRIC, requiredOn: ["rappel"] },

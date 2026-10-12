@@ -1,3 +1,4 @@
+import { requirePoolReferences } from "./pool-references.js";
 import { normalizeAttributeSet } from "./normalize-attributes.js";
 import { createTraversal } from "./traversal.js";
 import { allocateElementIdentifiers } from "./element-identifiers.js";
@@ -5,8 +6,8 @@ import { requireElementInput, requireRouteInput } from "./route-input.js";
 import { summarizeRoute } from "./route-summary.js";
 
 /**
- * Validate raw syntax, allocate route-wide identifiers, normalize attributes and elements, then compose
- * traversal and summary into the explicit domain model.
+ * Validate raw syntax, allocate route-wide identifiers, normalize attributes and elements, then
+ * validate pool associations and compose traversal and summary into the explicit domain model.
  * @responsibility coordinator
  * @param {Object} ast - Unvalidated route syntax record with raw string metadata and elements.
  * @returns {Object} Explicit normalized model containing metadata/extensions, unique elements, canonical traversal and route summary.
@@ -22,13 +23,14 @@ export function normalizeRoute(ast) {
    * @param {number} index - Zero-based position in the current ordered collection.
    * @returns {unknown} The result returned by normalizeIdentifiedElement.
    */ (element, index) => normalizeIdentifiedElement(element, identifiers[index]));
+  requirePoolReferences(ast.elements);
   return { name: ast.name, metadata: metadata.fields, extensions: metadata.extensions, elements,
     traversal: createTraversal(elements), summary: summarizeRoute(elements, metadata.fields) };
 }
 
 /**
  * Validate and normalize one raw element, updating caller-owned ID counters; collection-wide uniqueness
- * requires normalizeRoute.
+ * and reference resolution require normalizeRoute.
  * @responsibility coordinator
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @param {unknown} counters - Caller-owned per-element-type counters, advanced during identifier allocation.

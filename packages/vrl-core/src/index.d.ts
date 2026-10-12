@@ -1,4 +1,4 @@
-/** Public AST revision 2 and model revision 6; other contracts retain revision 1. See docs/public-contracts.md. */
+/** Public AST revision 2 and model revision 7; other contracts retain revision 1. See docs/public-contracts.md. */
 export type ElementType = "start" | "exit" | "walk" | "swim" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
 export type Direction = "up" | "down";
 /** One-based UTF-16 coordinates; end positions in spans are exclusive. */
@@ -85,6 +85,8 @@ export interface ElementFields extends Omit<CommonFields, "rope" | "height">, Te
   height?: RappelHeightDeclaration;
   depth?: PoolDepthDeclaration;
   phase?: RoutePhase;
+  /** Exact explicit pool ID; only whole-route compilation/normalization establishes resolution. */
+  pool_ref?: string;
   anchor?: "bolts" | "natural" | "tree" | "thread" | "removable" | "fixed" | "unknown" | "mixed";
   exposure?: Level;
   flow?: "dry" | Level;
@@ -99,6 +101,7 @@ type FieldsFor<T extends ElementType> = Pick<ElementFields, "flow" | "phase">
       & TechnicalFields & Pick<ElementFields, "anchor"> & { rope: RopeDeclaration } & RappelHeightFields
     : CommonFields & (T extends "climb" ? TechnicalFields & Pick<ElementFields, "exposure"> & { height: Measurement }
       : T extends "downclimb" ? TechnicalFields & Pick<ElementFields, "exposure">
+      : T extends "swim" ? Pick<ElementFields, "pool_ref">
       : T extends "pool" ? Pick<ElementFields, "type" | "depth">
       : T extends "hazard" ? Pick<ElementFields, "severity"> : {}));
 /** Known fields live in attributes; unrecognized or inapplicable fields remain string extensions. */
@@ -304,7 +307,7 @@ export function parseVrl(source: string, options?: ParseOptions): ParseResult;
  */
 export function validateRoute(ast: RouteAst): Diagnostic[];
 /**
- * Validate one raw element's identity, fields and relationships; route-wide uniqueness requires whole-route validation.
+ * Validate one raw element's identity, fields and relationships; route-wide uniqueness and reference resolution require whole-route validation.
  * @responsibility coordinator
  * @param {RouteElementAst} element - Owning route element with its type, identity and declared attributes.
  * @param {DeclarationSource} [source] - Optional declaration source record with span and attribute ranges.
@@ -313,15 +316,15 @@ export function validateRoute(ast: RouteAst): Diagnostic[];
 export function validateElement(element: RouteElementAst, source?: DeclarationSource): Diagnostic[];
 /**
  * Throws TypeError for malformed syntax records, RangeError for invalid domain invariants.
- * Validate raw syntax, allocate route-wide identifiers, normalize attributes and elements, then compose traversal and summary into the explicit domain model.
+ * Validate raw syntax, allocate route-wide identifiers, normalize attributes and elements, then validate explicit pool associations and compose traversal and summary into the explicit domain model.
  * @responsibility coordinator
  * @param {RouteAst} ast - Unvalidated route syntax record with raw string metadata and elements.
  * @returns {RouteModel} Explicit normalized model containing metadata/extensions, unique elements, canonical traversal and route summary.
  */
 export function normalizeRoute(ast: RouteAst): RouteModel;
 /**
- * Mutates supplied identifier counters; route-wide uniqueness requires normalizeRoute.
- * Validate and normalize one raw element, updating caller-owned ID counters; collection-wide uniqueness requires normalizeRoute.
+ * Mutates supplied identifier counters; route-wide uniqueness and reference resolution require normalizeRoute.
+ * Validate and normalize one raw element, updating caller-owned ID counters; collection-wide uniqueness and reference resolution require normalizeRoute.
  * @responsibility coordinator
  * @param {RouteElementAst} element - Owning route element with its type, identity and declared attributes.
  * @param {Partial<Record<ElementType, number>>} [counters] - Caller-owned per-element-type counters, advanced during identifier allocation.

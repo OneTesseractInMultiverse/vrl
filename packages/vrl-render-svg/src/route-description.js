@@ -89,7 +89,7 @@ function describeFields(attributes, extensions, language) {
       continue;
     }
     const known = Object.hasOwn(words.fields, key) && (Object.hasOwn(attributes ?? {}, key) || ["note", "text", "type"].includes(key));
-    const value = known && key === "station" ? descriptionSide(fields[key], language) : descriptionValue(fields[key], language, ["note", "text"].includes(key) || !known);
+    const value = known && key === "station" ? descriptionSide(fields[key], language) : descriptionValue(fields[key], language, ["note", "text", "pool_ref"].includes(key) || !known);
     const label = known ? words.fields[key] : `${words.additional} "${key}"`;
     facts.push(`${label}: ${value}`);
   }

@@ -1,5 +1,5 @@
 {
-  "revision": 3,
+  "revision": 4,
   "baselineCommit": "40b981848f6ca51590ee01d053ea87b068b7ce34",
   "fixtureKind": "synthetic",
   "review": "Automated and visual inspection only; practitioner review pending.",
@@ -257,6 +257,35 @@
       ],
       "sha256": "5f7f84a534b149e32cd7d6b3e61c009eb1cee3026aa3289f28f26995d6f41c45",
       "warnings": []
+    },
+    "pool-links": {
+      "source": "examples/canyon-pool-references.vrl",
+      "types": [
+        "start",
+        "pool",
+        "swim",
+        "hazard",
+        "swim",
+        "pool",
+        "swim",
+        "walk",
+        "exit"
+      ],
+      "deltas": [],
+      "facts": [
+        "Pool reference: Upper basin",
+        "Pool reference: Lower basin",
+        "Measured pool depth: 2m",
+        "Measured pool depth: unknown",
+        "Swimming distance: 12m",
+        "Swimming distance: unknown",
+        "Swimming distance: 3m",
+        "Walking distance: 5m",
+        "Phase: canyon",
+        "Phase: return"
+      ],
+      "sha256": "4e30890ca72efee77963bf03e984c23203833e467934e3958a5de0d81d66fa28",
+      "warnings": []
     }
   },
   "cases": [
@@ -420,6 +449,28 @@
     {
       "id": "phases-mono-es-320",
       "fixture": "phases",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal",
+        "monochrome": true,
+        "language": "es"
+      }
+    },
+    {
+      "id": "pool-links-color-320",
+      "fixture": "pool-links",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal"
+      }
+    },
+    {
+      "id": "pool-links-mono-es-320",
+      "fixture": "pool-links",
       "width": 320,
       "render": {
         "style": "soft-terrain",

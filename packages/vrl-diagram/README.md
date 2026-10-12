@@ -55,3 +55,5 @@ MIT. Copyright (c) 2026 Pedro Guzmán.
 For multiple inline diagrams, set a stable, document-unique `options.idPrefix` per occurrence. Supplied diagram states preserve their existing IDs. See the [namespace contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/svg-identifiers.md).
 
 Optional element `phase=approach|canyon|return` preserves explicit membership through model revision 6 and bilingual visible/accessible text. Missing membership never inherits; existing geometry and route-wide summaries remain unchanged. Free-form source notes keep their literal grammar. See [the contract and migration](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/route-phases.md).
+
+Optional swim-only `pool_ref` names an explicitly identified pool. Model revision 7 validates whole-route targets and preserves exact reference text in visible/accessible output, without changing physical traversal or totals. Isolated element helpers cannot resolve targets; old extension prose needs source migration. See [semantics and examples](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/pool-references.md).
