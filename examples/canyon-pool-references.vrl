@@ -1,0 +1,10 @@
+route "Synthetic pool associations"
+start "Entry"
+pool "Upper basin" depth=2m
+swim SW1 distance=12m pool_ref="Upper basin" phase=canyon
+hazard H1 type=slippery note="Supplied observation"
+swim SW2 pool_ref="Lower basin"
+pool "Lower basin" depth=unknown
+swim SW3 distance=3m
+walk W1 distance=5m phase=return
+exit "Exit"

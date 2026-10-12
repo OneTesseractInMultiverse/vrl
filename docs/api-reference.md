@@ -639,3 +639,5 @@ Model revision 4 adds optional pool-only `PoolDepthDeclaration` (`Measurement | 
 AST revision 2 / model revision 5 adds `"swim"` to `ElementType`. Its optional `Measurement` distance remains absent when unknown; summaries still count only walks. See [swimming semantics, traversal limitations and typed migration](swimming.md).
 
 Model revision 6 adds the type-only `RoutePhase` union and optional `ElementFields.phase` on every normalized element type. Metadata does not acquire this field. Renderer entry points retain explicit phase text; compilation and state factories retain their signatures. See [phase semantics and migration](route-phases.md).
+
+Model revision 7 adds optional string `pool_ref` only to normalized swimming attributes. `compileRoute`, `validateRoute` and `normalizeRoute` enforce explicit pool identity and type; `validateElement`/`normalizeElement` only validate local field syntax. Renderer/state factories retain exact reference text or blocking errors with unchanged signatures. See [the pool association contract](pool-references.md).

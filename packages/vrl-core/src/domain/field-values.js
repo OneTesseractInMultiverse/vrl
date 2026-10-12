@@ -8,6 +8,7 @@ const PARSERS = {
   redirections: parseRedirectionsToken,
   stages: parseRappelStagesToken,
   integerText: parseIntegerText,
+  reference: parseReference,
   enum: parseEnum
 };
 
@@ -100,4 +101,14 @@ function outsideRange(value, range) {
 function redirectionProblems(specification, entry) {
   if (outsideRange(entry.distance.meters, specification.range)) return ["distance"];
   return specification.values.includes(entry.side) ? [] : ["side"];
+}
+
+/**
+ * Accept a nonblank identifier without trimming, translating or resolving its exact spelling.
+ * @responsibility computation
+ * @param {unknown} raw - Raw attribute value; nonstrings are rejected by this permissive token boundary.
+ * @returns {Object} Successful unchanged string or failed token result; route-wide target checks are separate.
+ */
+function parseReference(raw) {
+  return typeof raw === "string" && raw.trim() !== "" ? { ok: true, value: raw } : { ok: false };
 }

@@ -307,3 +307,5 @@ See the [canyon capability matrix](docs/canyon-capabilities.md) for supported se
 [Explicit swimming](docs/swimming.md) records supplied swimming distances separately from pools and walking totals; AST revision 2 / model revision 5 document the new element and migration.
 
 [Explicit phase membership](docs/route-phases.md) records approach, canyon or return on individual elements, without inheritance or phase totals. Model revision 6 documents the promoted field and source migration.
+
+[Swimming-to-pool references](docs/pool-references.md) preserve an explicit association with a named pool, reject unresolved targets and retain exact IDs in bilingual output. Model revision 7 documents source migration.

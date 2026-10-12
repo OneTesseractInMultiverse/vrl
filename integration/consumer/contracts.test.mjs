@@ -59,7 +59,7 @@ for (const [name, source] of Object.entries(SOURCES)) {
      * @param {unknown} item - Current prepared record or test case.
      * @returns {unknown} The item.severity value selected or validated above.
      */ item => item.severity), state.svg.startsWith("<svg "), state.model === null],
-      name === "invalid" ? [false, ["error"], false, true] : [true, ["warning", "unknownRope", "unknownHeight"].includes(name) ? ["warning"] : [], true, false]);
+      ["invalid", "invalidPoolReference"].includes(name) ? [false, ["error"], false, true] : [true, ["warning", "unknownRope", "unknownHeight"].includes(name) ? ["warning"] : [], true, false]);
   });
 }
 test("caller configuration errors propagate from packed state", /**

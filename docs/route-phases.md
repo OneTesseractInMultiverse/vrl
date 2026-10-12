@@ -37,7 +37,7 @@ The [English narrow gallery](assets/visual/phases-color-320.svg) and [Spanish mo
 
 ## Compatibility and migration
 
-Revision **6** promotes element `phase` from an arbitrary extension to a validated known field: `attributes.phase?: RoutePhase`, where `RoutePhase` is `"approach" | "canyon" | "return"`. AST revision 2 and other structural contract revisions remain unchanged. No runtime export, dependency or package version changes. Upgrade readers before recompiling and store revision 6 in your own model envelope; JSON itself gains no version property.
+Revision **6** promotes element `phase` from an arbitrary extension to a validated known field: `attributes.phase?: RoutePhase`, where `RoutePhase` is `"approach" | "canyon" | "return"`. AST revision 2 and other structural contract revisions remain unchanged. No runtime export, dependency or package version changes. Upgrade readers before recompiling and store the current revision (now 7 for [pool associations](pool-references.md)) in your own model envelope; JSON itself gains no version property.
 
 Previously saved `extensions.phase` values remain literal when rendered, even when they equal a supported category. They are not silently promoted or translated. Recompiling source with a supported value now produces typed membership; arbitrary earlier prose must be renamed to `phase_note` or moved to `note`. For example, migrate `walk phase="approach & return"` to `walk phase_note="approach & return"` to preserve the literal claim. Metadata and free-form notes retain their old meanings. The pinned revision-5 fixture checks saved extension behavior; earlier model fixtures and inventories remain retained. See [public contracts](public-contracts.md) for a typed example.
 

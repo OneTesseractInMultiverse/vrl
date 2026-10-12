@@ -61,3 +61,5 @@ The [canyon capability matrix](canyon-capabilities.md) maps grammar, normalized 
 [Explicit swimming](swimming.md) adds a distinct optional-distance movement with bilingual visual/text output and an executable aquatic itinerary.
 
 [Route phase membership](route-phases.md) preserves explicit approach/canyon/return labels on individual elements; omission stays unspecified and existing route-wide summaries remain unchanged.
+
+[Pool associations](pool-references.md) add optional swim-owned references to explicitly identified pools, with located failures and unchanged geometry/summary meaning.

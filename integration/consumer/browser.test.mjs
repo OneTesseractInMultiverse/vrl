@@ -184,6 +184,41 @@ describe("production framework consumers", /**
       });
     }
 
+    for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}]) {
+      test(`${surface} exposes explicit pool associations in its accessible image: ${JSON.stringify(query)}`, /**
+       * Read independently specified feature, movement and reference facts from the actual browser accessibility tree.
+       * @responsibility coordinator
+       * @param {Object} t - Test context owning the isolated browser resources.
+       * @returns {Promise<void>} Resolves after exact facts, empty warnings and client errors are checked.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"poolReference",true,query);
+        t.after(/**
+         * Release this successful association scenario's owned browser context.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves after cleanup.
+         */ () => context.close());
+        const expectedText="Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. 1. Pool P1. Measured pool depth: 2m. 2. Swim SW1. Movement: swimming. Swimming distance: 12m. Pool reference: P1.";
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.warning,context.errors],[[["Synthetic pool link topo",expectedText]],"",[]]);
+      });
+      test(`${surface} blocks a missing pool association without an accessible image: ${JSON.stringify(query)}`, /**
+       * Observe independent failure text and absence of the route image after hydration.
+       * @responsibility coordinator
+       * @param {Object} t - Test context owning the isolated browser resources.
+       * @returns {Promise<void>} Resolves after blocking failure and client error checks.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,"invalidPoolReference",true,query);
+        t.after(/**
+         * Release this failed association scenario's owned browser context.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves after cleanup.
+         */ () => context.close());
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.svg,state.diagnostics,context.errors],
+          [[],0,['ERROR validation at 2:19: Pool reference "P1" has no explicitly identified target. Suggestion: Declare a unique explicit pool ID and reference its exact spelling, or omit pool_ref.'],[]]);
+      });
+    }
+
     for (const hydrated of [false,true]) for (const query of [{}, {style:"soft-terrain",symbols:"annotations"}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}, {style:"soft-terrain",flow:"rows",monochrome:"true",symbols:"minimal",theme:"dark",width:"736"}]) {
       test(`${surface} ${hydrated ? "hydrated" : "SSR"} exposes one named image with complete route facts: ${JSON.stringify(query)}`, /**
        * Inspect the real Chromium accessibility tree, requiring one image and an independently specified complete description.

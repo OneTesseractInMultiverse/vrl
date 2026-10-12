@@ -70,6 +70,9 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_SYNTAX_EXPECTED_ATTRIBUTE` | Non-attribute token in an attribute list |
 | `VRL_SYNTAX_DUPLICATE_ATTRIBUTE` | Repeated key in the same attribute scope |
 | `VRL_ROUTE_NAME_REQUIRED` | Route name is absent or empty |
+| `VRL_FIELD_REFERENCE_SYNTAX` | Blank or whitespace-only known reference value |
+| `VRL_REFERENCE_TARGET_MISSING` | No exact explicitly identified pool target for a swim reference |
+| `VRL_REFERENCE_TARGET_TYPE` | Explicit swim-reference target is not a pool; related location identifies the target |
 | `VRL_FIELD_REQUIRED` | Required field is absent or empty |
 | `VRL_FIELD_MEASUREMENT_SYNTAX` | Invalid metric spelling, magnitude, or precision |
 | `VRL_FIELD_MEASUREMENT_RANGE` | Nonpositive length where positivity is required, or negative pool depth |
@@ -110,3 +113,5 @@ Distance-summary conflicts are checked only after semantic fields are valid, usi
 Swimming uses the existing distance diagnostics: zero/negative metrics produce `VRL_FIELD_MEASUREMENT_RANGE`; malformed, unsupported-unit, excessive and explicit `unknown` values produce `VRL_FIELD_MEASUREMENT_SYNTAX`. Omit optional swim distance when unavailable. Pool depth is not inferred. See [full failure semantics](swimming.md).
 
 Element `phase` uses `VRL_FIELD_UNSUPPORTED_VALUE` for empty, padded or unsupported category values and the existing duplicate-attribute syntax diagnostic for repeated keys. No phase-order warning is emitted: membership is explicit and independent. Metadata phase and assignment-shaped free-form note text remain literal; see [phase validation](route-phases.md).
+
+Pool reference checks run after local field/identity validation. Duplicate IDs retain `VRL_IDENTIFIER_DUPLICATE` and skip resolution; invalid local fields suppress cascading reference errors. A wrong-type reference highlights its value and links the target identifier/declaration. Programmatic input retains existing location fallbacks. See [the scoped association contract](pool-references.md).

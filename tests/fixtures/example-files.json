@@ -270,5 +270,44 @@
       "/model/summary/totalDistanceMeters": 155
     },
     "sha256": "5f7f84a534b149e32cd7d6b3e61c009eb1cee3026aa3289f28f26995d6f41c45"
+  },
+  "canyon-pool-references.vrl": {
+    "warnings": [],
+    "ids": [
+      "S1",
+      "Upper basin",
+      "SW1",
+      "H1",
+      "SW2",
+      "Lower basin",
+      "SW3",
+      "W1",
+      "E1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic pool associations",
+      "/model/elements/1/id": "Upper basin",
+      "/model/elements/1/attributes/depth/meters": 2,
+      "/model/elements/2/attributes/distance/meters": 12,
+      "/model/elements/2/attributes/pool_ref": "Upper basin",
+      "/model/elements/2/attributes/phase": "canyon",
+      "/model/elements/3/extensions/note": "Supplied observation",
+      "/model/elements/4/attributes": {
+        "pool_ref": "Lower basin"
+      },
+      "/model/elements/5/id": "Lower basin",
+      "/model/elements/5/attributes/depth": "unknown",
+      "/model/elements/6/attributes": {
+        "distance": {
+          "value": 3,
+          "unit": "m",
+          "meters": 3
+        }
+      },
+      "/model/elements/7/attributes/phase": "return",
+      "/model/summary/totalDistanceMeters": 5,
+      "/model/summary/numberOfRappels": 0
+    },
+    "sha256": "4e30890ca72efee77963bf03e984c23203833e467934e3958a5de0d81d66fa28"
   }
 }

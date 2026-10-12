@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "pool reference accepts a non-pool target", file: "packages/vrl-core/src/domain/pool-references.js",
+    before: 'else if (elements[targetIndex].type !== "pool")', after: 'else if (false)',
+    testFile: "tests/pool-reference.test.js", testName: "pool reference to a walk fails instead of accepting a non-pool feature" },
   { name: "phase membership is lost from the complete description", file: "packages/vrl-render-svg/src/route-description.js",
     before: 'facts.push(phaseText(fields[key], language));', after: 'void fields[key];',
     testFile: "tests/phase.test.js", testName: "phase facts preserve their exact localized membership" },

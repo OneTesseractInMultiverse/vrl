@@ -85,3 +85,5 @@ The historical baseline above is unchanged. The former unknown-rappel-height fai
 The historical unsupported-swimming result above remains a result for the pinned baseline. AST revision 2 / model revision 5 now adopts [explicit swimming](../../swimming.md) with optional distance independently of pool features; the current unsupported-movement probe uses `slide`. This is a separate vocabulary/engineering decision, not a reclassification of Davis facts or a new practitioner result.
 
 Model revision 6 separately adopts [explicit element phase membership](../../route-phases.md), informed by federation trip-scope vocabulary and synthetic engineering cases. Source prose is never reclassified automatically. This does not revise the pinned Davis findings, validate section boundaries or add practitioner evidence.
+
+Model revision 7 separately adopts [explicit swim-to-pool associations](../../pool-references.md), using exact authored IDs and bounded source vocabulary evidence. It neither infers associations from the historical Davis coordinates nor adds a practitioner result. Multi-feature/navigation relationships remain open research work.
