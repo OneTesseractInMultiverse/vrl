@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "phase membership is lost from the complete description", file: "packages/vrl-render-svg/src/route-description.js",
+    before: 'facts.push(phaseText(fields[key], language));', after: 'void fields[key];',
+    testFile: "tests/phase.test.js", testName: "phase facts preserve their exact localized membership" },
   { name: "swimming distance is mislabeled as walking", file: "packages/vrl-render-svg/src/description-text.js",
     before: 'swimDistance: "Swimming distance"', after: 'swimDistance: "Walking distance"',
     testFile: "tests/swim.test.js", testName: "swimming has exact movement and distance facts independent of pools" },

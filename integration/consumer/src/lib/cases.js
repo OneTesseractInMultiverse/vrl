@@ -1,4 +1,5 @@
 export const SOURCES = {
+  phases: 'route "Synthetic phases"\nwalk W1 distance=5m phase=approach\npool P1 depth=0m phase=canyon\nwalk W2 distance=7m phase=return\nwalk W3',
   swim: 'route "Synthetic swim"\nswim SW1 distance=12m flow=low note="Supplied example"\nswim SW2',
   poolDepth: 'route "Synthetic pool depth"\npool P1 depth=2.5m',
   unknownHeight: 'route "Synthetic unknown height"\nrappel R1 height=unknown rope=20m anchor=bolts',

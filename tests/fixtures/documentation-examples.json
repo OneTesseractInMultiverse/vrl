@@ -1624,5 +1624,74 @@
         ]
       }
     }
+  },
+  "explicit-route-phases": {
+    "kind": "document",
+    "sha256": "8528df2da0bfc9909639855c15266da848a9b31362d2fccf68e014e55f3b375f",
+    "expected": {
+      "ok": true,
+      "diagnostics": [],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/name": "Synthetic phase membership",
+        "/model/elements/0/attributes/phase": "approach",
+        "/model/elements/1/attributes/distance/meters": 100,
+        "/model/elements/1/attributes/phase": "approach",
+        "/model/elements/2/attributes/phase": "canyon",
+        "/model/elements/2/attributes/height/meters": 8,
+        "/model/elements/3/attributes/phase": "canyon",
+        "/model/elements/4/attributes": {},
+        "/model/elements/4/extensions/text": "Phase unspecified for this observation",
+        "/model/elements/5/attributes/phase": "canyon",
+        "/model/elements/5/attributes/distance/meters": 12,
+        "/model/elements/6/attributes/phase": "return",
+        "/model/elements/6/attributes/distance/meters": 50,
+        "/model/elements/7/attributes": {
+          "distance": {
+            "value": 5,
+            "unit": "m",
+            "meters": 5
+          }
+        },
+        "/model/elements/8/attributes/phase": "return",
+        "/model/summary/totalDistanceMeters": 155
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "W1",
+          "R1",
+          "SW1",
+          "W2",
+          "W3",
+          "E1"
+        ],
+        "technical": [
+          [
+            "R1",
+            "down",
+            -8
+          ]
+        ],
+        "annotations": [
+          [
+            "H1",
+            3
+          ],
+          [
+            "N1",
+            3
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
   }
 }

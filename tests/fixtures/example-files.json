@@ -231,5 +231,44 @@
       "/model/traversal/segments/3/verticalDeltaMeters": -4
     },
     "sha256": "6d2237f5705dff4b374da5f95247ebb13ab56f719ab76b5c4e8397cd26821e22"
+  },
+  "canyon-phases.vrl": {
+    "warnings": [],
+    "ids": [
+      "S1",
+      "W1",
+      "R1",
+      "H1",
+      "N1",
+      "SW1",
+      "W2",
+      "W3",
+      "E1"
+    ],
+    "facts": {
+      "/model/name": "Synthetic phase membership",
+      "/model/elements/0/attributes/phase": "approach",
+      "/model/elements/1/attributes/distance/meters": 100,
+      "/model/elements/1/attributes/phase": "approach",
+      "/model/elements/2/attributes/phase": "canyon",
+      "/model/elements/2/attributes/height/meters": 8,
+      "/model/elements/3/attributes/phase": "canyon",
+      "/model/elements/4/attributes": {},
+      "/model/elements/4/extensions/text": "Phase unspecified for this observation",
+      "/model/elements/5/attributes/phase": "canyon",
+      "/model/elements/5/attributes/distance/meters": 12,
+      "/model/elements/6/attributes/phase": "return",
+      "/model/elements/6/attributes/distance/meters": 50,
+      "/model/elements/7/attributes": {
+        "distance": {
+          "value": 5,
+          "unit": "m",
+          "meters": 5
+        }
+      },
+      "/model/elements/8/attributes/phase": "return",
+      "/model/summary/totalDistanceMeters": 155
+    },
+    "sha256": "5f7f84a534b149e32cd7d6b3e61c009eb1cee3026aa3289f28f26995d6f41c45"
   }
 }

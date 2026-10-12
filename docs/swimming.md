@@ -44,7 +44,7 @@ The gallery includes [English icon rows](assets/visual/swim-icons-320.svg) and [
 
 Inventory revision **5** records AST revision **2** and normalized-model revision **5** for the expanded closed `ElementType` union. Traversal, layout, diagnostics, compiler and diagram structures retain revision 1. Update exhaustive switches, element maps and readers before accepting `swim`; older readers cannot interpret it. Existing valid source retains model/summary meaning. Legends and generated presentation artifacts now include the new vocabulary. Prior inventories remain available, and a pinned revision-4 pool fixture verifies unchanged JSON and feature meaning.
 
-Applications store model revision 5 in their own envelopes; JSON has no added schema-version field. Retain source for migration. This requires a minor package release before 1.0; this implementation does not publish or change package versions. The [public contracts](public-contracts.md) include a typed example.
+Applications store the current model revision (now 6 for [phase membership](route-phases.md)) in their own envelopes; JSON has no added schema-version field. Retain source for migration. This requires a minor package release before 1.0; this implementation does not publish or change package versions. The [public contracts](public-contracts.md) include a typed example.
 
 Domain vocabulary owns the new discriminator and ID prefix; existing field policy owns numeric validation. Parser and validation adapters retain their existing roles. Application coordination, traversal, summaries and export ports are reused. Renderer computations own labels/compression; the icon package owns the mapping/artwork. No new runtime dependency, general movement graph or external-tool importer is introduced.
 

@@ -41,6 +41,7 @@ const DEFINITIONS = {
   station: { parser: "enum", applicability: TECHNICAL, values: ["left", "right", "center", "floor", "tree", "natural", "unknown"] },
   landing: { parser: "enum", applicability: TECHNICAL, values: ["pool", "ledge", "dry", "chaos", "gallery", "trail", "unknown"] },
   exposure: { parser: "enum", applicability: ["downclimb", "climb"], values: ["low", "medium", "high"] },
+  phase: { parser: "enum", applicability: "elements", values: ["approach", "canyon", "return"] },
   flow: { parser: "enum", applicability: "elements", values: ["dry", "low", "medium", "high"] },
   type: { parser: "enum", applicability: ["pool"], values: ["deep", "shallow", "swimmer", "dry", "unknown"] },
   severity: { parser: "enum", applicability: ["hazard"], values: ["low", "medium", "high", "critical"] }

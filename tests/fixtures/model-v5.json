@@ -1,0 +1,82 @@
+{
+  "contract": "vrl/model",
+  "revision": 5,
+  "sourceCommit": "e525f4a538623326392b33ade951ce8257750381",
+  "source": "route \"Saved swimming and phase prose\"\nswim SW1 distance=12m phase=\"approach & return\"\nwalk W1 distance=5m phase=approach",
+  "model": {
+    "name": "Saved swimming and phase prose",
+    "metadata": {},
+    "extensions": {},
+    "elements": [
+      {
+        "type": "swim",
+        "id": "SW1",
+        "label": null,
+        "attributes": {
+          "distance": {
+            "value": 12,
+            "unit": "m",
+            "meters": 12
+          }
+        },
+        "extensions": {
+          "phase": "approach & return"
+        },
+        "sourceLocation": {
+          "line": 2,
+          "column": 1
+        }
+      },
+      {
+        "type": "walk",
+        "id": "W1",
+        "label": null,
+        "attributes": {
+          "distance": {
+            "value": 5,
+            "unit": "m",
+            "meters": 5
+          }
+        },
+        "extensions": {
+          "phase": "approach"
+        },
+        "sourceLocation": {
+          "line": 3,
+          "column": 1
+        }
+      }
+    ],
+    "traversal": {
+      "points": [
+        {
+          "elementIndex": 0
+        },
+        {
+          "elementIndex": 1
+        }
+      ],
+      "segments": [
+        {
+          "from": 0,
+          "to": 1,
+          "elementIndex": null,
+          "kind": "connection",
+          "direction": null,
+          "verticalDeltaMeters": 0
+        }
+      ],
+      "annotations": []
+    },
+    "summary": {
+      "numberOfRappels": 0,
+      "numberOfHazards": 0,
+      "highestRappelMeters": 0,
+      "requiredRopeMeters": 0,
+      "totalDistanceMeters": 5,
+      "entranceElevationMeters": null,
+      "exitElevationMeters": null,
+      "totalElevationChangeMeters": 0
+    }
+  }
+}

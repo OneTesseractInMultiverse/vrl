@@ -108,3 +108,5 @@ This is an additive AST/diagnostic contract change. Consumers with exact propert
 Distance-summary conflicts are checked only after semantic fields are valid, using exact source millionths rather than floating-point sums. The warning points to the declared total value. A larger/equal total or missing observations produce no conflict warning; neither total nor walks are rewritten. See [aggregate provenance](route-summary.md).
 
 Swimming uses the existing distance diagnostics: zero/negative metrics produce `VRL_FIELD_MEASUREMENT_RANGE`; malformed, unsupported-unit, excessive and explicit `unknown` values produce `VRL_FIELD_MEASUREMENT_SYNTAX`. Omit optional swim distance when unavailable. Pool depth is not inferred. See [full failure semantics](swimming.md).
+
+Element `phase` uses `VRL_FIELD_UNSUPPORTED_VALUE` for empty, padded or unsupported category values and the existing duplicate-attribute syntax diagnostic for repeated keys. No phase-order warning is emitted: membership is explicit and independent. Metadata phase and assignment-shaped free-form note text remain literal; see [phase validation](route-phases.md).
