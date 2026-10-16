@@ -89,6 +89,43 @@ describe("production framework consumers", /**
     assert.deepEqual([cues,await accessibleImages(context.page)],[{counts:{water:1,pool:1,station:2,"distance-break":1,technical:2,contour:2},hazard:true},[["Synthetic two-rappel canyon topo",DESCRIPTION_EN.replace(/\s+/g," ")]]]);
   });
   for (const surface of ["react", "svelte", "sveltekit"]) {
+    for (const [name,title,facts,warning] of [
+      ["jump","Synthetic jump topo","1. Jump J1. Movement: descent. Vertical change: -3m. Physical height: 3m. Landing: pool. Phase: canyon.",false],
+      ["unknownJump","Synthetic unknown jump topo","1. Jump J1. Movement: descent. Vertical change: unknown. Physical height: unknown.",true]
+    ]) for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}]) {
+      test(`${surface} retains jump facts and warning state: ${name} ${JSON.stringify(query)}`, /**
+       * Observe independent jump height, descent and uncertainty facts in the actual hydrated accessibility tree.
+       * @responsibility coordinator
+       * @param {Object} t - Test context owning browser cleanup.
+       * @returns {Promise<void>} Resolves after exact accessible text, warning state and client errors are checked.
+       */ async t => {
+        const context=await openPage(browser,application.origin,surface,name,true,query);
+        t.after(/**
+         * Release this jump scenario's owned browser context.
+         * @responsibility coordinator
+         * @returns {Promise<void>} Resolves after cleanup.
+         */ () => context.close());
+        const expectedText="Schematic route, not to scale. Read elements in order. Rope lengths are supplied declarations, not equipment requirements. "+facts;
+        const state=await snapshot(context.page);
+        assert.deepEqual([await accessibleImages(context.page),state.warning.includes("explicitly unknown"),context.errors],[[[title,expectedText]],warning,[]]);
+      });
+    }
+    test(`${surface} rejects a jump without its required height`, /**
+     * Verify a missing physical declaration cannot become a fabricated successful diagram after hydration.
+     * @responsibility coordinator
+     * @param {Object} t - Test context owning browser cleanup.
+     * @returns {Promise<void>} Resolves after blocking output and browser errors are checked.
+     */ async t => {
+      const context=await openPage(browser,application.origin,surface,"invalidJump",true);
+      t.after(/**
+       * Close this failed jump scenario's owned browser context.
+       * @responsibility coordinator
+       * @returns {Promise<void>} Resolves after cleanup.
+       */ () => context.close());
+      const state=await snapshot(context.page);
+      assert.deepEqual([await accessibleImages(context.page),state.diagnostics.join(" ").includes('requires "height"'),context.errors],[[],true,[]]);
+    });
+
     for (const query of [{}, {style:"soft-terrain",flow:"rows",monochrome:"true",width:"320"}]) {
       test(`${surface} preserves unknown rope in its hydrated accessible image: ${JSON.stringify(query)}`, /**
        * Verify the packaged framework exposes the exact independent unknown-rope description in Chromium.

@@ -17,6 +17,7 @@ const ELEMENT_WEIGHTS = {
   exit: 0.7,
   walk: 0.9,
   swim: 0.9,
+  jump: 1,
   rappel: 1.25,
   downclimb: 1,
   climb: 1,

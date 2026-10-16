@@ -4,6 +4,11 @@ VRL documents are text files. The implemented grammar supports a compact line-or
 
 Each tagged VRL fence is checked as a complete document or explicitly wrapped fragment. The [success/failure examples](language-examples.md) and [documentation contract guide](documentation-contracts.md) explain expected outcomes and maintenance. Normative rules below describe the implemented compact language; future block syntax is identified separately.
 
+
+## Explicit jumps
+
+`jump [id] height=<positive metric|unknown>` owns one downward vertical event with distinct J identity. Height is required; unknown stays null physical motion with a schematic warning and fails for complete measured endpoint profiles. Optional flow, phase and landing remain independent observations. Other jump fields are literal extensions and cannot establish rigging, inclination, distance or pool association. [Full contract and executable examples](jumping.md).
+
 ## Quoted Text, Escapes, and Token Boundaries
 
 Double quotes delimit text within one physical line. Quoted text preserves equals signs, hashes, Unicode, and all interior whitespace, including leading/trailing spaces and literal tabs. Only two escape sequences are supported: `\"` produces a literal double quote, and `\\` produces one literal backslash. Decoding happens once, from left to right. Spellings such as `\n`, `\t`, `\u0041`, and `\#` are errors; write Unicode and hashes directly, or double a backslash when the spelling itself is intended as text.
@@ -93,7 +98,7 @@ The metadata example above is a header fragment following a route declaration. I
 
 ## Elements
 
-VRL supports these ordered elements: `start`, `exit`, `walk`, `swim`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
+VRL supports these ordered elements: `start`, `exit`, `walk`, `swim`, `jump`, `rappel`, `downclimb`, `climb`, `pool`, `hazard`, and `note`. Source order is preserved in the normalized elements and layout nodes. Notes and hazards are annotations; the remaining elements define physical progression. The following fragment belongs after a route declaration.
 
 ```vrl example=element-catalog kind=fragment
 metadata country="Costa Rica" region="Bajos del Toro" difficulty="V3 A4 III" entrance_elevation=1300m exit_elevation=1100m
@@ -114,7 +119,7 @@ Measurements must use meters in the first release. Values such as `35m`, `120m`,
 
 Normalized element IDs are unique across **all element types in one route**, including start, exit, and annotations. Different routes have independent namespaces; these IDs are not globally unique or SVG document IDs. IDs use exact, case-sensitive comparison after the usual text decoding: `R1` and `r1` differ, as do Unicode strings with different code-unit spellings. Explicit IDs must contain at least one non-whitespace character. Valid text is preserved without trimming or Unicode normalization.
 
-Text before the first attribute on `walk`, `swim`, `rappel`, `downclimb`, `climb`, `pool`, or `hazard` declares its ID. For example, `rappel "survey-drop" height=5m rope=10m` uses `survey-drop`. Omit that text to request generation. Text on `start`/`exit` is a label, and `note` text is content; neither reserves an ID. An `id=...` attribute is ordinary extension data and does not set the element ID. Programmatic AST consumers can set explicit `element.id` on any element type under the same uniqueness rule.
+Text before the first attribute on `walk`, `swim`, `jump`, `rappel`, `downclimb`, `climb`, `pool`, or `hazard` declares its ID. For example, `rappel "survey-drop" height=5m rope=10m` uses `survey-drop`. Omit that text to request generation. Text on `start`/`exit` is a label, and `note` text is content; neither reserves an ID. An `id=...` attribute is ordinary extension data and does not set the element ID. Programmatic AST consumers can set explicit `element.id` on any element type under the same uniqueness rule.
 
 All explicit IDs are reserved before any generated ID is allocated, even when the declaration occurs later or uses another type’s prefix. Repeated explicit IDs are semantic errors, including repetitions across types or differently quoted spellings that decode to the same text. Compilation returns no model, layout, or JSON; diagnostics highlight the offending explicit identifier and the first declaration. An explicit blank ID is an error, not a request for numbering.
 
@@ -127,6 +132,7 @@ Generated IDs use these prefixes:
 | `exit` | `E` |
 | `walk` | `W` |
 | `swim` | `SW` |
+| `jump` | `J` |
 | `rappel` | `R` |
 | `downclimb` | `D` |
 | `climb` | `C` |
@@ -166,7 +172,7 @@ Source measurements use ordinary decimal notation with at most six fractional di
 | `stages`, `redirection`, `redirections` | Each contained measurement follows the same magnitude, precision, and positive-length rules |
 <!-- /vrl-table:numeric-ranges -->
 
-Except pool-only `depth`, recognized numeric declarations follow these rules in metadata and on every element. Pool `depth` accepts nonnegative metrics or exact `unknown`; elsewhere it stays literal extension text. Rappel `rope` and `height` also accept the exact `unknown` sentinel, as described below. Both redirection aliases are checked if both are supplied. Existing stage/height and redirection-position checks still apply. Empty numeric fields are invalid; omit an optional field when unknown. Negative zero in a parsed measurement or percentage is normalized to positive zero, so JSON preserves its numeric meaning.
+Except pool-only `depth` and the restricted jump scope, recognized numeric declarations follow these rules in metadata and on older elements. Jumps recognize only `height`, `flow`, `phase` and `landing`; all other fields are literal extensions. Pool `depth` accepts nonnegative metrics or exact `unknown`; elsewhere it stays literal extension text. Rappel `rope` and `height` also accept the exact `unknown` sentinel, as described below. Both redirection aliases are checked if both are supplied. Existing stage/height and redirection-position checks still apply. Empty numeric fields are invalid; omit an optional field when unknown. Negative zero in a parsed measurement or percentage is normalized to positive zero, so JSON preserves its numeric meaning.
 
 Unrecognized metadata remains text. Use `rope_inventory="1x60m"` for an inventory description; `rope=60m` is a metric measurement. The example route now uses `rope_inventory` to preserve its original description without overloading a numeric field.
 
@@ -186,7 +192,7 @@ Categorical fields apply in the following contexts:
 | `anchor` | Rappel | `bolts`, `natural`, `tree`, `thread`, `removable`, `fixed`, `unknown`, `mixed` |
 | `shape` | Rappel, downclimb, climb | `ladder`, `direct`, `slab` |
 | `station` | Rappel, downclimb, climb | `left`, `right`, `center`, `floor`, `tree`, `natural`, `unknown` |
-| `landing` | Rappel, downclimb, climb | `pool`, `ledge`, `dry`, `chaos`, `gallery`, `trail`, `unknown` |
+| `landing` | Rappel, downclimb, climb, jump | `pool`, `ledge`, `dry`, `chaos`, `gallery`, `trail`, `unknown` |
 | `exposure` | Downclimb, climb | `low`, `medium`, `high` |
 | `phase` | Every element | `approach`, `canyon`, `return` |
 | `flow` | Every element | `dry`, `low`, `medium`, `high` |
@@ -218,11 +224,11 @@ Compatibility: invalid climb exposure, empty applicable enums, and malformed lis
 
 ## Elevation Profile
 
-When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Any remaining signed elevation change is distributed across non-technical connections between progression elements. Annotations never create such connections or receive a share of that residual. Entrance metadata binds to the explicit `start`, and exit metadata binds to the explicit `exit`; if a marker is omitted, its outer physical traversal boundary is used. The default layout also enforces readable visual spacing between progression points; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the technical line itself proportional to `height * inclination% * pixelsPerMeter`; readable spacing beyond that technical length is drawn as a connector after the drop or climb.
+When both `entrance_elevation` and `exit_elevation` are present on metadata, VRL computes the route profile against that total elevation change. Rappels and downclimbs contribute `height * inclination%` as vertical descent; climbs contribute the same value upward. Jumps contribute their declared vertical height directly downward, without inclination scaling; unknown jump heights block a complete measured profile. Any remaining signed elevation change is distributed across non-technical connections between progression elements. Annotations never create such connections or receive a share of that residual. Entrance metadata binds to the explicit `start`, and exit metadata binds to the explicit `exit`; if a marker is omitted, its outer physical traversal boundary is used. The default layout also enforces readable visual spacing between progression points; pass `layout.minNodeGap=0` when strict elevation scale is more important than symbol separation. The renderer keeps the measured technical line itself proportional to `height * inclination% * pixelsPerMeter` (jumps use `height * pixelsPerMeter`); readable spacing beyond that technical length is drawn as a connector after the drop or climb.
 
 ## Technical Event Boundaries
 
-A rappel or downclimb starts at its element node and proceeds to its lower boundary. A climb ends at its element node, with its upward traversal immediately before that node. When a descent is followed directly by a climb, an intermediate boundary separates them; neither event takes precedence. A leading climb receives an implicit entry boundary, and a trailing rappel/downclimb receives an implicit final boundary. These are traversal boundaries, not additional DSL statements or named route elements.
+A rappel, downclimb or jump starts at its element node and proceeds to its lower boundary. A climb ends at its element node, with its upward traversal immediately before that node. When a descent is followed directly by a climb, an intermediate boundary separates them; neither event takes precedence. A leading climb receives an implicit entry boundary, and a trailing rappel/downclimb/jump receives an implicit final boundary. These are traversal boundaries, not additional DSL statements or named route elements.
 
 ```vrl example=descent-ascent kind=document
 route "Descent and ascent"
@@ -241,7 +247,7 @@ If technical measurements cannot match the endpoint elevations and no non-techni
 
 A route may contain at most one `start` and one `exit`. A declared start must be the first progression element; a declared exit must be the last. Repeated markers, progression before start, and progression after exit produce blocking geometry diagnostics at the offending declaration, even without elevation metadata. Neither marker is required: implicit boundaries continue to support standalone technical features.
 
-`note` and `hazard` statements can appear before start, between features, or after exit. Each attaches to the boundary reached after the preceding progression element: the lower end of a rappel/downclimb, the upper end of a climb, or the point of another element. Leading annotations attach to the first physical boundary. A note between a rappel and a climb therefore attaches to their shared lower boundary. Feature attributes such as `note=`, anchor details, and redirections still belong to the feature that declares them.
+`note` and `hazard` statements can appear before start, between features, or after exit. Each attaches to the boundary reached after the preceding progression element: the lower end of a rappel/downclimb/jump, the upper end of a climb, or the point of another element. Leading annotations attach to the first physical boundary. A note between a rappel and a climb therefore attaches to their shared lower boundary. Feature attributes such as `note=`, anchor details, and redirections still belong to the feature that declares them.
 
 Annotations are drawn beside their attachment point and retain its physical elevation. Adding, removing, or moving annotations does not change progression coordinates, technical ownership, residual allocation, or endpoint elevations. Multiple annotations at one boundary receive separate visual rows without adding route segments. Their symbol positions are presentation coordinates, not extra measured positions. An annotation-only document has no physical traversal, and its annotations have no measured elevation; it cannot explain a nonzero endpoint elevation change.
 

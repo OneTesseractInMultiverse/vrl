@@ -17,6 +17,11 @@ metadata region=CR
 
 With one literal tab before `metadata`, compilation reports `VRL_FIELD_MEASUREMENT_SYNTAX` at line 4, column 30, with a span ending at column 36. The highlighted source is `"high"`. The original field message and measurement suggestion remain readable. Compilation returns no model, layout, or JSON.
 
+
+## Jump height diagnostics
+
+Jumps reuse required-field, metric syntax/range and duplicate identity/key diagnostics. `height=unknown` produces `VRL_GEOMETRY_HEIGHT_UNKNOWN` at the supplied value: a schematic warning or a blocking error when both endpoint elevations are declared. No jump-specific code or diagnostic shape is added. [Executable failure](jumping.md).
+
 ## AST Source Map
 
 `parseVrl` and `createEmptyRoute` include this additional AST property:

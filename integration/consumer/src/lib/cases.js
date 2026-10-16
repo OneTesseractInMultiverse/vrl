@@ -1,4 +1,7 @@
 export const SOURCES = {
+  jump: 'route "Synthetic jump"\njump J1 height=3m landing=pool phase=canyon',
+  unknownJump: 'route "Synthetic unknown jump"\njump J1 height=unknown',
+  invalidJump: 'route "Missing jump height"\njump J1',
   poolReference: 'route "Synthetic pool link"\npool P1 depth=2m\nswim SW1 distance=12m pool_ref=P1',
   invalidPoolReference: 'route "Missing pool"\nswim SW1 pool_ref=P1',
   phases: 'route "Synthetic phases"\nwalk W1 distance=5m phase=approach\npool P1 depth=0m phase=canyon\nwalk W2 distance=7m phase=return\nwalk W3',

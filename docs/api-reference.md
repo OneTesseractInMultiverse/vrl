@@ -6,6 +6,11 @@ See the [public API classifications, typed contracts, and revision policy](publi
 
 VRL is split into small packages so consumers can choose the layer they need. The core package is framework-free. Renderers and framework adapters depend inward on the core.
 
+
+## Explicit jump entries
+
+`ElementType` includes `jump`; `JumpHeightDeclaration` is `Measurement | "unknown"`. Concrete jump attributes require height and optionally accept flow, phase and landing. Other fields remain extensions. `normalizeRoute`/`normalizeElement` enforce field invariants; `compileRoute` also applies geometry warning/error rules for unknown heights. Canonical technical segments retain negative measured deltas or null uncertainty. [Complete behavior and migration](jumping.md).
+
 ## @subvertic/vrl-core
 
 Install:
@@ -210,7 +215,7 @@ Compatibility: documents that previously exceeded these defaults now return limi
 
 ### Known-field validation and normalization
 
-`validateRoute(ast)` and `validateElement(element)` use the same domain field specification as normalization. It defines numeric fields in metadata and every element, required rappel/climb fields, and the contextual enum vocabularies in the [known-field contract](language-reference.md#known-fields-and-extensions). Climb and downclimb exposure use the same vocabulary. Present empty enums are invalid where applicable; optional unknown values should be omitted. Rappel `rope` and `height` may instead explicitly declare `unknown` under the scoped [revision-3 model contract](unknown-height.md). Unknown attributes and categorical names outside their documented contexts remain extension text, including hazard `type` and descriptive metadata.
+`validateRoute(ast)` and `validateElement(element)` use the same domain field specification as normalization. It defines numeric fields in metadata and legacy elements, the restricted jump field scope, required rappel/climb/jump fields, and the contextual enum vocabularies in the [known-field contract](language-reference.md#known-fields-and-extensions). Climb and downclimb exposure use the same vocabulary. Present empty enums are invalid where applicable; optional unknown values should be omitted. Rappel `rope` and `height` may instead explicitly declare `unknown` under the scoped [revision-3 model contract](unknown-height.md); required jump height supports the same sentinel under [model revision 8](jumping.md). Unknown attributes and categorical names outside their documented contexts remain extension text, including hazard `type` and descriptive metadata.
 
 Validation returns stable codes and offending value spans from the AST source map, including metadata across repeated lines. Missing fields use their declaration span; legacy ASTs fall back to statement locations or `1:1`. It does not mutate the AST. Errors stop the default compiler before normalization, geometry validation, layout, or JSON export. Custom parser ports supplying attributes on notes receive the same semantic checks, while source note statements continue to consume free-form text.
 

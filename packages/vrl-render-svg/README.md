@@ -16,6 +16,9 @@ This package renders normalized VRL route models and layout data as accessible S
 
 This source README may include unreleased behavior. Check the [changelog](https://github.com/OneTesseractInMultiverse/vrl/blob/main/CHANGELOG.md) against your installed version.
 
+
+Explicit `jump` entries require a positive metric or `unknown` height. AST revision 3 / model revision 8 preserve downward movement, uncertainty and bilingual output; nonapplicable fields stay literal extensions. See the [jump guide](../../docs/jumping.md) for scope, failure and reader migration.
+
 ## Install
 
 ```sh

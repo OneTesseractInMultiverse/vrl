@@ -8,6 +8,9 @@ VRL is MIT licensed. Pedro Guzmán is the initial author and maintainer, and the
 
 These docs describe this checkout, including unreleased changes. Check [CHANGELOG.md](CHANGELOG.md) and the README bundled with your installed package before adopting a new option. A merged PR or updated manifest does not establish npm publication.
 
+
+Explicit [jump entries](docs/jumping.md) now retain measured or unknown vertical height, scoped observations, signed descent and bilingual output. Existing prose and pool features never infer jumps; compatibility and executable examples are documented.
+
 ## Quick Start
 
 Install the core compiler and SVG renderer:

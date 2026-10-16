@@ -30,6 +30,7 @@ export function prepareRouteSegments(layout, language, style = "classic") {
 
 /**
  * Select connection or technical preparation and validate soft-style direction before computing its shape.
+ * Classic jumps use a direct path without ladder rungs; curves remain schematic in soft terrain.
  * @responsibility coordinator
  * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
@@ -40,7 +41,7 @@ function prepareRouteSegment(segment, language, style) {
   if (segment.element === null) return { kind: "connection", path: routeSegmentPath(segment.start, segment.end, segment.start.element), start: segment.start, end: segment.end };
   if (style === "soft-terrain") validateSoftSegment(segment);
   return prepareTechnicalSegment(segment.start, segment.end, segment.element, language, segment,
-    style === "soft-terrain" ? "curve" : (segment.element.attributes.shape ?? "ladder") === "ladder" ? "ladder" : "direct");
+    style === "soft-terrain" ? "curve" : segment.element.type === "jump" ? "direct" : (segment.element.attributes.shape ?? "ladder") === "ladder" ? "ladder" : "direct");
 }
 
 /**

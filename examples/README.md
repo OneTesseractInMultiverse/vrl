@@ -10,6 +10,9 @@ Examples target this checkout, including unreleased options. Start with the fict
 
 The legacy fixture declares a 200 m endpoint difference while its technical elements account for only part of that change. Successful compilation does not make the intermediate elevations measured. The maximum declared rope is not an equipment recommendation, and the sum of explicit walk distances is not a complete route distance.
 
+
+Explicit [jump entries](../docs/jumping.md) now retain measured or unknown vertical height, scoped observations, signed descent and bilingual output. Existing prose and pool features never infer jumps; compatibility and executable examples are documented.
+
 ## Run and review
 
 After `npm ci` with the repository development runtime:

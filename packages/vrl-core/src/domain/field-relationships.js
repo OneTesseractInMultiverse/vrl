@@ -6,14 +6,14 @@ import { stageTotalMatchesHeight } from "./stage-totals.js";
 /**
  * Compare valid declared heights with rope, redirection and stage fields; malformed tokens are left to field
  * validation. Explicit unknown rappel heights retain independent rope warnings but reject measured details
- * whose positions require a known height.
+ * whose positions require a known height. Jump extension fields never establish rigging relationships.
  * @responsibility computation
  * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
  * @param {string} scope - Metadata or element-type scope that determines applicability and requiredness.
  * @returns {Array} The ordered records or values assembled above.
  */
 export function attributeRelationshipProblems(attributes, scope) {
-  if (!hasAttributeValue(attributes, "height")) return [];
+  if (scope === "jump" || !hasAttributeValue(attributes, "height")) return [];
   if (scope === "rappel" && attributes.height === "unknown") {
     return [...ropeProblems(attributes, scope, null), ...unplaceableDetailProblems(attributes)];
   }

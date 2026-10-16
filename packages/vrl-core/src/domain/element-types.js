@@ -3,6 +3,7 @@ export const ID_PREFIXES = Object.freeze({
   exit: "E",
   walk: "W",
   swim: "SW",
+  jump: "J",
   rappel: "R",
   downclimb: "D",
   climb: "C",

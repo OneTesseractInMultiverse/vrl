@@ -190,7 +190,7 @@ for(const symbology of ["federation","french","spanish"]) {
    * @returns {void} Completes one assertion of SW abbreviation and the exact legend entry.
    */ () => {
     const element=compileRoute('route Example\nswim arbitrary').model.elements[0];
-    assert.deepEqual([symbolCode(element,symbology),legendSymbolRows("en",symbology).flat().at(-1)],["SW",["SW","Swim"]]);
+    assert.deepEqual([symbolCode(element,symbology),new Map(legendSymbolRows("en",symbology).flat()).get("SW")],["SW","Swim"]);
   });
 }
 test("explicit swimming selects the existing transparent icon without changing pool mapping", /**

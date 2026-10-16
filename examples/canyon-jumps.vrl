@@ -1,0 +1,10 @@
+route "Synthetic jumps"
+start "Entry"
+jump J1 height=3m landing=pool phase=canyon flow=low
+hazard H1 type=slippery note="Supplied observation"
+pool P1 depth=2m
+swim SW1 distance=12m pool_ref=P1
+jump J2 height=unknown
+note No landing association inferred.
+walk W1 distance=5m phase=return
+exit "Exit"

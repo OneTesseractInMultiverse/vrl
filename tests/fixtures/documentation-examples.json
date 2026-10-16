@@ -1776,5 +1776,97 @@
       "geometry": null
     },
     "sha256": "0ba4677516ea5ee25a0a21f17973895ffe58aca675b007f1c00cb45a70e99451"
+  },
+  "explicit-jumps": {
+    "kind": "document",
+    "sha256": "fe562ad605ffaa4a92200bee8e2cee750d83b291b66f5b4e5ebcc6657c5d90d2",
+    "expected": {
+      "ok": true,
+      "diagnostics": [
+        [
+          "geometry",
+          "warning",
+          "VRL_GEOMETRY_HEIGHT_UNKNOWN",
+          7,
+          16
+        ]
+      ],
+      "outputs": [
+        true,
+        true,
+        true
+      ],
+      "facts": {
+        "/model/elements/1/type": "jump",
+        "/model/elements/1/attributes/height/meters": 3,
+        "/model/elements/1/attributes/landing": "pool",
+        "/model/elements/3/attributes/depth/meters": 2,
+        "/model/elements/4/attributes/distance/meters": 12,
+        "/model/elements/4/attributes/pool_ref": "P1",
+        "/model/elements/5/attributes/height": "unknown",
+        "/model/summary/numberOfRappels": 0,
+        "/model/summary/totalDistanceMeters": 5
+      },
+      "geometry": {
+        "points": [
+          "S1",
+          "J1",
+          "P1",
+          "SW1",
+          "J2",
+          "W1",
+          "E1"
+        ],
+        "technical": [
+          [
+            "J1",
+            "down",
+            -3
+          ],
+          [
+            "J2",
+            "down",
+            null
+          ]
+        ],
+        "annotations": [
+          [
+            "H1",
+            2
+          ],
+          [
+            "N1",
+            5
+          ]
+        ],
+        "endpoints": [
+          null,
+          null
+        ]
+      }
+    }
+  },
+  "unknown-jump-profile": {
+    "kind": "invalid",
+    "sha256": "6d422334b26e061dad9a5864dfca95d97eb516ce7a6d60a90552649749606f4d",
+    "expected": {
+      "ok": false,
+      "diagnostics": [
+        [
+          "geometry",
+          "error",
+          "VRL_GEOMETRY_HEIGHT_UNKNOWN",
+          3,
+          16
+        ]
+      ],
+      "outputs": [
+        false,
+        false,
+        false
+      ],
+      "facts": {},
+      "geometry": null
+    }
   }
 }

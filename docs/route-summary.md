@@ -2,6 +2,11 @@
 
 VRL records route descriptions. It does not derive an equipment inventory or a complete route distance from partial measurements. Use `summarizeRouteMeasurements(model.elements, model.metadata)` to keep declared totals, computed partial observations and unknown values separate. The helper returns a new object; it does not replace `model.summary` or change persisted model JSON.
 
+
+## Jump scope
+
+Jump heights remain element-owned vertical declarations. They do not enter rappel counts/maxima, declared-rope aggregates or walking-only sums. Unknown jump heights retain null canonical motion; no new jump total is introduced. [Jump semantics](jumping.md).
+
 ## Explicit measurement summary
 
 | Field | Source and computation | Missing-data meaning |
@@ -65,7 +70,7 @@ This has declared totals but no recorded walk or rope observations. Both observe
 
 The ambiguous rope and distance names are deprecated in the declarations. New consumers should use the explicit helper and handle nulls. Do not interpret the old zero sentinel as proof that no rope or walking is involved. A helper result may be serialized separately by an application; it is not automatically embedded in the route model.
 
-The additive export and warning are intended for the next minor package release. The summary shape retains its revision-1 behavior; the enclosing normalized model now uses revision 7 for pool associations (revision 6 introduced phase membership; revision 5 introduced swimming; revision 4 introduced pool depth; revision 3 unknown rappel height; revision 2 unknown rope). Swim distances remain outside walking-only aggregates. Pool depth contributes no distance, rope or elevation aggregate. Previously valid sources remain successful. A previously silent conflicting total now produces a warning and therefore may show the default framework warning panel. Consumers that match diagnostics should handle the new code; see [public contracts](public-contracts.md) and [warning presentation](warning-presentation.md).
+The additive export and warning are intended for the next minor package release. The summary shape retains its revision-1 behavior; the enclosing normalized model now uses revision 8 for jump entries (revision 6 introduced phase membership; revision 5 introduced swimming; revision 4 introduced pool depth; revision 3 unknown rappel height; revision 2 unknown rope). Swim distances remain outside walking-only aggregates. Pool depth contributes no distance, rope or elevation aggregate. Previously valid sources remain successful. A previously silent conflicting total now produces a warning and therefore may show the default framework warning panel. Consumers that match diagnostics should handle the new code; see [public contracts](public-contracts.md) and [warning presentation](warning-presentation.md).
 
 Domain computations own observed aggregates and the exact partial-total comparison. Validation translates the comparison into a located warning; compiler/application code only coordinates the existing ports. Renderers and framework adapters retain their existing data and presentation responsibilities.
 

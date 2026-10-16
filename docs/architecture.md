@@ -34,6 +34,11 @@ Tests parse generated SVG with a strict independent XML parser to check structur
 
 Framework adapters are intentionally thin. They accept framework-specific inputs, delegate state creation to the shared diagram application, and render blocking diagnostics or successful SVG with optional accompanying warnings. This makes React, Svelte, SvelteKit, Angular, CLI tools, static site generators, and future applications replaceable adapters.
 
+
+## Jump ownership
+
+The domain element vocabulary and traversal classify explicit jumps as downward owned motion. Field policy restricts jump attributes to height, flow, phase and landing; extension strings cannot scale height or establish rigging relationships. Existing geometry validation handles unknown heights and endpoint consistency. Renderers consume canonical segments and choose direct classic paths or schematic soft curves without ladder rungs; adapters only project and serialize. [Jump contract](jumping.md).
+
 ## Function responsibilities
 
 Every implementation documents exactly one coordinator or computation responsibility, including private helpers and callbacks. [Internal function contracts](internal-documentation.md) describe required parameter, result, failure and ownership documentation. The structural gate stays in development tooling; it cannot prove semantic accuracy, purity or SRP. Computations own rules and transformations; coordinators sequence independently owned operations and preserve failure propagation.
