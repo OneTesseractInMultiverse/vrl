@@ -1,6 +1,6 @@
 # Explicit swimming-to-pool associations
 
-Optional swim-only `pool_ref` records an authored association with a pool's explicit identifier. It does not derive swimming from the pool, prescribe a maneuver or establish geographic geometry. This unreleased addition is intended for the next minor release and uses normalized model revision 7.
+Optional swim-only `pool_ref` records an authored association with a pool's explicit identifier. It does not derive swimming from the pool, prescribe a maneuver or establish geographic geometry. This unreleased addition is intended for the next minor release and was introduced in normalized model revision 7. The current model is revision 8 for [jump entries](jumping.md).
 
 ```vrl example=explicit-pool-references kind=document
 route "Synthetic pool associations"

@@ -1,5 +1,5 @@
-/** Public AST revision 2 and model revision 7; other contracts retain revision 1. See docs/public-contracts.md. */
-export type ElementType = "start" | "exit" | "walk" | "swim" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
+/** Public AST revision 3 and model revision 8; other contracts retain revision 1. See docs/public-contracts.md. */
+export type ElementType = "start" | "exit" | "walk" | "swim" | "jump" | "rappel" | "downclimb" | "climb" | "pool" | "hazard" | "note";
 export type Direction = "up" | "down";
 /** One-based UTF-16 coordinates; end positions in spans are exclusive. */
 export interface SourceLocation { line: number; column: number }
@@ -54,6 +54,8 @@ export interface Measurement { value: number; unit: "m"; meters: number }
 export type RopeDeclaration = Measurement | "unknown";
 /** Rappel physical height: a metric value or explicitly unknown; rope and pixel geometry never fill it. */
 export type RappelHeightDeclaration = Measurement | "unknown";
+/** Supplied vertical jump height, never inferred from pool depth or rope. */
+export type JumpHeightDeclaration = Measurement | "unknown";
 /** Author-supplied nonnegative pool depth or explicit unknown; no movement, survey completeness or category is inferred. */
 export type PoolDepthDeclaration = Measurement | "unknown";
 export interface Inclination { value: number; unit: "%"; percent: number }
@@ -97,7 +99,8 @@ export interface ElementFields extends Omit<CommonFields, "rope" | "height">, Te
 type RappelHeightFields = ({ height: Measurement } & Pick<CommonFields, "stages" | "redirection" | "redirections">)
   | { height: "unknown"; stages?: never; redirection?: never; redirections?: never };
 type FieldsFor<T extends ElementType> = Pick<ElementFields, "flow" | "phase">
-  & (T extends "rappel" ? Omit<CommonFields, "height" | "rope" | "stages" | "redirection" | "redirections">
+  & (T extends "jump" ? { height: JumpHeightDeclaration } & Pick<ElementFields, "landing">
+    : T extends "rappel" ? Omit<CommonFields, "height" | "rope" | "stages" | "redirection" | "redirections">
       & TechnicalFields & Pick<ElementFields, "anchor"> & { rope: RopeDeclaration } & RappelHeightFields
     : CommonFields & (T extends "climb" ? TechnicalFields & Pick<ElementFields, "exposure"> & { height: Measurement }
       : T extends "downclimb" ? TechnicalFields & Pick<ElementFields, "exposure">

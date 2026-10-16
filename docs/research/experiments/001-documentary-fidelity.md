@@ -87,3 +87,7 @@ The historical unsupported-swimming result above remains a result for the pinned
 Model revision 6 separately adopts [explicit element phase membership](../../route-phases.md), informed by federation trip-scope vocabulary and synthetic engineering cases. Source prose is never reclassified automatically. This does not revise the pinned Davis findings, validate section boundaries or add practitioner evidence.
 
 Model revision 7 separately adopts [explicit swim-to-pool associations](../../pool-references.md), using exact authored IDs and bounded source vocabulary evidence. It neither infers associations from the historical Davis coordinates nor adds a practitioner result. Multi-feature/navigation relationships remain open research work.
+
+## Bounded follow-up: explicit jumps (2026-10-16)
+
+[Issue #90](https://github.com/OneTesseractInMultiverse/vrl/issues/90) adopts explicit measured/unknown vertical jump entries under AST 3 / model 8. The [decision record](../../jumping.md#evidence-and-decision) separates FFME activity vocabulary, engineering schema choices and synthetic implementation tests. This adds no real-case measurement or confirmation of Davis relationships and does not reinterpret prose as selected movement. Historical results stay pinned; jump alternatives, landing associations and practitioner comprehension remain unresolved.

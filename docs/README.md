@@ -2,6 +2,9 @@
 
 These guides describe the implementation in this checkout, including unreleased changes. Use the [changelog](../CHANGELOG.md), package version and README shipped in your installed tarball to determine release availability. Repository changes, package-name corrections and npm publication are separate steps.
 
+
+Explicit [jump entries](jumping.md) now retain measured or unknown vertical height, scoped observations, signed descent and bilingual output. Existing prose and pool features never infer jumps; compatibility and executable examples are documented.
+
 ## Start here
 
 - [Quick start](../README.md#quick-start): compile a fictional canyon and render SVG, including nonblocking warnings.

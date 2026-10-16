@@ -1,0 +1,79 @@
+{
+  "revision": 7,
+  "producerCommit": "296cb9e572a567dbce48ad29028543a35b71f5c8",
+  "source": "route \"Saved pool reference\"\npool P1 depth=2m\nswim SW1 distance=12m phase=canyon pool_ref=P1",
+  "model": {
+    "name": "Saved pool reference",
+    "metadata": {},
+    "extensions": {},
+    "elements": [
+      {
+        "type": "pool",
+        "id": "P1",
+        "label": null,
+        "attributes": {
+          "depth": {
+            "value": 2,
+            "unit": "m",
+            "meters": 2
+          }
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 2,
+          "column": 1
+        }
+      },
+      {
+        "type": "swim",
+        "id": "SW1",
+        "label": null,
+        "attributes": {
+          "distance": {
+            "value": 12,
+            "unit": "m",
+            "meters": 12
+          },
+          "phase": "canyon",
+          "pool_ref": "P1"
+        },
+        "extensions": {},
+        "sourceLocation": {
+          "line": 3,
+          "column": 1
+        }
+      }
+    ],
+    "traversal": {
+      "points": [
+        {
+          "elementIndex": 0
+        },
+        {
+          "elementIndex": 1
+        }
+      ],
+      "segments": [
+        {
+          "from": 0,
+          "to": 1,
+          "elementIndex": null,
+          "kind": "connection",
+          "direction": null,
+          "verticalDeltaMeters": 0
+        }
+      ],
+      "annotations": []
+    },
+    "summary": {
+      "numberOfRappels": 0,
+      "numberOfHazards": 0,
+      "highestRappelMeters": 0,
+      "requiredRopeMeters": 0,
+      "totalDistanceMeters": 0,
+      "entranceElevationMeters": null,
+      "exitElevationMeters": null,
+      "totalElevationChangeMeters": 0
+    }
+  }
+}

@@ -309,5 +309,33 @@
       "/model/summary/numberOfRappels": 0
     },
     "sha256": "4e30890ca72efee77963bf03e984c23203833e467934e3958a5de0d81d66fa28"
+  },
+  "canyon-jumps.vrl": {
+    "warnings": [
+      "VRL_GEOMETRY_HEIGHT_UNKNOWN"
+    ],
+    "ids": [
+      "S1",
+      "J1",
+      "H1",
+      "P1",
+      "SW1",
+      "J2",
+      "N1",
+      "W1",
+      "E1"
+    ],
+    "facts": {
+      "/model/elements/1/type": "jump",
+      "/model/elements/1/attributes/height/meters": 3,
+      "/model/elements/1/attributes/landing": "pool",
+      "/model/elements/3/attributes/depth/meters": 2,
+      "/model/elements/4/attributes/distance/meters": 12,
+      "/model/elements/4/attributes/pool_ref": "P1",
+      "/model/elements/5/attributes/height": "unknown",
+      "/model/summary/numberOfRappels": 0,
+      "/model/summary/totalDistanceMeters": 5
+    },
+    "sha256": "58e287926b4ddd0d211cd7d43b514ed2f20b06f7cf520f8de6b07c59d75ae370"
   }
 }

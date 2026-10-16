@@ -17,13 +17,13 @@ export function technicalElementIndexesBetween(elements, index) {
 }
 
 /**
- * Recognize rappel and downclimb elements as downward technical events.
+ * Recognize rappel, downclimb and jump elements as downward technical events.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @returns {unknown} The result of the documented comparison or calculation.
  */
 export function isDescent(element) {
-  return element?.type === "rappel" || element?.type === "downclimb";
+  return element?.type === "rappel" || element?.type === "downclimb" || element?.type === "jump";
 }
 
 /**

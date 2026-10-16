@@ -7,6 +7,7 @@ const ELEMENT_COLOR_TOKENS = {
   exit: "exit",
   walk: "routeLine",
   swim: "water",
+  jump: "routeLine",
   rappel: "rappel",
   downclimb: "anchor",
   climb: "anchor",
@@ -55,6 +56,10 @@ export function formatElementDetail(element, language = "en") {
 
   if (element.type === "walk") {
     return formatMeasurement(element.attributes.distance);
+  }
+
+  if (element.type === "jump") {
+    return element.attributes.height === "unknown" ? localizeDetailValue("unknown", language) : formatMeasurement(element.attributes.height);
   }
 
   if (element.type === "swim") {

@@ -1,5 +1,5 @@
 {
-  "revision": 4,
+  "revision": 5,
   "baselineCommit": "40b981848f6ca51590ee01d053ea87b068b7ce34",
   "fixtureKind": "synthetic",
   "review": "Automated and visual inspection only; practitioner review pending.",
@@ -286,6 +286,40 @@
       ],
       "sha256": "4e30890ca72efee77963bf03e984c23203833e467934e3958a5de0d81d66fa28",
       "warnings": []
+    },
+    "jumps": {
+      "source": "examples/canyon-jumps.vrl",
+      "types": [
+        "start",
+        "jump",
+        "hazard",
+        "pool",
+        "swim",
+        "jump",
+        "note",
+        "walk",
+        "exit"
+      ],
+      "deltas": [
+        -3,
+        null
+      ],
+      "facts": [
+        "Physical height: 3m",
+        "Physical height: unknown",
+        "Vertical change: -3m",
+        "Vertical change: unknown",
+        "Landing: pool",
+        "Measured pool depth: 2m",
+        "Swimming distance: 12m",
+        "Pool reference: P1",
+        "Walking distance: 5m",
+        "No landing association inferred."
+      ],
+      "sha256": "58e287926b4ddd0d211cd7d43b514ed2f20b06f7cf520f8de6b07c59d75ae370",
+      "warnings": [
+        "VRL_GEOMETRY_HEIGHT_UNKNOWN"
+      ]
     }
   },
   "cases": [
@@ -478,6 +512,28 @@
         "symbols": "minimal",
         "monochrome": true,
         "language": "es"
+      }
+    },
+    {
+      "id": "jumps-color-320",
+      "fixture": "jumps",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal"
+      }
+    },
+    {
+      "id": "jumps-mono-es-320",
+      "fixture": "jumps",
+      "width": 320,
+      "render": {
+        "style": "soft-terrain",
+        "flow": "rows",
+        "symbols": "minimal",
+        "language": "es",
+        "monochrome": true
       }
     }
   ]

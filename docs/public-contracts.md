@@ -19,7 +19,7 @@ if (!svg.includes("declared rope: 40m") || !svg.includes("pool depth unknown")) 
 
 ## Stability classes
 
-[The revision 7 inventory](contracts/v7.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
+[The revision 8 inventory](contracts/v8.json) classifies every current runtime export and supported component subpath. Tests compare that inventory and the declared value exports with the real package namespaces. Classification does not remove or rename existing exports.
 
 | Surface | Stable facade | Advanced extension points |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ Use the facade for ordinary integrations. Advanced exports remain supported for 
 
 ## Contract revisions and releases
 
-The current inventory is revision **7**: AST revision 2 and normalized model revision 7, with traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json), [revision 3](contracts/v3.json), [revision 4](contracts/v4.json), [revision 5](contracts/v5.json) and [revision 6](contracts/v6.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
+The current inventory is revision **8**: AST revision 3 and normalized model revision 8, with traversal, layout, diagnostic, compiler and diagram contracts retaining revision 1. The [revision 1](contracts/v1.json), [revision 2](contracts/v2.json), [revision 3](contracts/v3.json), [revision 4](contracts/v4.json), [revision 5](contracts/v5.json), [revision 6](contracts/v6.json) and [revision 7](contracts/v7.json) inventories and their compatibility fixtures remain available. No `schemaVersion` property is added to route JSON.
 
 Package versions and data-contract revisions have different purposes:
 
@@ -53,7 +53,7 @@ import { compileRoute } from "@subvertic/vrl-core";
 
 const result = compileRoute('route Archive\nstart\nrappel pitch height=12m rope=24m\nexit');
 if (!result.ok) throw new Error(result.diagnostics.map(item => item.message).join("\n"));
-const envelope = { contract: "vrl/model", revision: 7, model: JSON.parse(result.json) };
+const envelope = { contract: "vrl/model", revision: 8, model: JSON.parse(result.json) };
 console.log(envelope.model.elements[1].id); // pitch
 ```
 
@@ -254,7 +254,7 @@ Warning-only output gains an outer wrapper around the existing image and new war
 
 ## Verification and migration
 
-The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, revision 4 promotes pool depth into a scoped known field, revision 5 adds explicit swimming (AST revision 2), revision 6 promotes element phase membership, and revision 7 promotes swim-owned explicit pool references as described below; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
+The revision-1 baseline introduced declarations without changing persisted data shapes. Revision 2 widens rappel rope values, revision 3 widens rappel height values, revision 4 promotes pool depth into a scoped known field, revision 5 adds explicit swimming (AST revision 2), revision 6 promotes element phase membership, revision 7 promotes swim-owned explicit pool references, and revision 8 adds explicit jumping (AST revision 3) as described below; retain source and upgrade readers before storing unknown declarations. Existing entry points and state factory signatures remain available. TypeScript consumers should handle the `ok`, height and rope unions and optional fields, keep extension strings in `extensions`, and supply complete custom ports when changing pipeline shapes. JavaScript users may import the same types in JSDoc.
 
 `make check` runs test-policy/inventory checks, positive/negative consumer type checks, behavioral tests with coverage thresholds, selected mutation probes, package dry runs, and an isolated consumer check using actual tarballs. See [behavioral verification and replay](testing.md) for invariant oracles and limits. Negative fixtures must keep producing errors (`@ts-expect-error` fails if an invalid call becomes accepted). Checks exercise real React/Svelte types, custom ports, null failure outputs, units, required fields, configuration mistakes, exception behavior, saved model compatibility, identity and provenance effects. Packed checks preserve locked dependency resolutions, replace workspace links with the tarballs under test, and run `npm ci --offline` with the configured npm cache. No registry metadata or registry access is needed after dependency installation.
 
@@ -390,4 +390,19 @@ if (swim?.type !== "swim") throw new Error("Missing swim");
 const reference: string | undefined = swim.attributes.pool_ref;
 if (reference !== "P1") throw new Error("Lost reference identity");
 if (!describeRoute(result.model, { language: "es" }).text.includes("Referencia de poza: P1")) throw new Error("Lost association");
+```
+
+## Jump vocabulary: AST revision 3 / model revision 8
+
+`jump` expands the closed element union. Update exhaustive readers and maps before accepting it; existing valid source and saved revision-7 pool associations preserve their meaning. `JumpHeightDeclaration` requires a positive metric or exact unknown. Jump known fields are height, flow, phase and landing; other source fields are literal extensions. Existing traversal/layout/diagnostic structures retain revision 1. [Scope and migration](jumping.md).
+
+```ts
+import { compileRoute, type JumpHeightDeclaration } from "@subvertic/vrl-core";
+const result = compileRoute('route Example\njump J1 height=unknown');
+if (!result.ok) throw new Error("Expected schematic jump");
+const jump = result.model.elements[0];
+if (jump?.type !== "jump") throw new Error("Expected jump");
+const height: JumpHeightDeclaration = jump.attributes.height;
+if (height !== "unknown") throw new Error("Unknown must remain explicit");
+if (result.model.traversal.segments[0]?.verticalDeltaMeters !== null) throw new Error("Missing height cannot become zero");
 ```

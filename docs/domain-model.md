@@ -4,6 +4,11 @@ See the [public API classifications, typed contracts, and revision policy](publi
 
 Parsing and normalization produce different records. The AST retains decoded text, source coordinates, and recovery data. Normalization establishes known-field and identity invariants, classifies extension text separately, and computes domain traversal and summaries. These operations remain synchronous and have no runtime dependencies.
 
+
+## Jump movement
+
+AST revision 3 / model revision 8 add `jump` with required positive or explicitly unknown vertical height and optional flow, phase and landing. Each owns a downward technical segment; technical denotes owned vertical motion, not rope use. Unknown delta is null, reached annotations stay attached and walk/rappel/rope summaries are unchanged. Jump-specific scope leaves other fields as literal extensions. [Semantics, failure and compatibility](jumping.md).
+
 ## Raw AST Contract
 
 `parseVrl` produces a route record with:

@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Add explicit jumps with measured/unknown vertical height, scoped observations, downward ownership and bilingual schematic output without ladder rungs.
+- Publish AST revision 3 / model revision 8 migration, executable jump examples and narrow visual/accessible regression evidence.
+
 - Add optional swim-only `pool_ref` associations to explicit pool IDs, including forward/backward references and located failures for missing, wrong-type or blank targets. Preserve geometry, annotations and route-wide summaries.
 - Introduce model revision 7 with legacy-extension migration, exact bilingual reference labels, executable examples, visual/browser checks and a wrong-target mutation witness. Intended for the next minor release, without publication here.
 

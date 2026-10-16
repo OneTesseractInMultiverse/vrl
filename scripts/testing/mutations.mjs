@@ -9,6 +9,9 @@ const caseName = (name, index = 0) => `${name}: seed=1448234018 case=${index}`;
 
 /** Small, reviewed faults tied to observable contracts, not a mutation-score target. */
 export const MUTATIONS = [
+  { name: "jump descent loses its technical owner", file: "packages/vrl-core/src/domain/traversal.js",
+    before: ' || element?.type === "jump"', after: '',
+    testFile: "tests/jump.test.js", testName: "jump has exactly one downward physical segment" },
   { name: "pool reference accepts a non-pool target", file: "packages/vrl-core/src/domain/pool-references.js",
     before: 'else if (elements[targetIndex].type !== "pool")', after: 'else if (false)',
     testFile: "tests/pool-reference.test.js", testName: "pool reference to a walk fails instead of accepting a non-pool feature" },

@@ -86,10 +86,11 @@ export function legendSymbolRows(language = "en", symbology = "federation") {
     [profile.climb, text.elements.climb],
     [profile.pool, text.elements.pool],
     [profile.hazard, text.elements.hazard],
-    [profile.swim, text.elements.swim]
+    [profile.swim, text.elements.swim],
+    [profile.jump, text.elements.jump]
   ];
 
-  return [entries.slice(0, 4), entries.slice(4)];
+  return [entries.slice(0, 5), entries.slice(5)];
 }
 
 /**
@@ -371,6 +372,10 @@ export function formatTopoLabel(element, language = "en") {
     return element.label ?? formatElementTitle(element, language);
   }
 
+  if (element.type === "jump") {
+    return `${formatElementTitle(element, language)}, ${element.attributes.height === "unknown" ? softTerrainText(language).heightUnknown : formatMeasurement(element.attributes.height)}`;
+  }
+
   if (needsSegmentArrow(element)) {
     return `${element.id}, ${element.attributes.height === "unknown" ? softTerrainText(language).heightUnknown : formatMeasurement(element.attributes.height)}`;
   }
@@ -466,13 +471,13 @@ export function resolveLevelValue(value, language = "en") {
 }
 
 /**
- * Recognize rappel, downclimb and climb elements as technical directional motion.
+ * Recognize rappel, downclimb, climb and jump elements as technical directional motion.
  * @responsibility computation
  * @param {Object} element - Owning route element with its type, identity and declared attributes.
  * @returns {unknown} The result of the documented comparison or calculation.
  */
 export function needsSegmentArrow(element) {
-  return element.type === "rappel" || element.type === "downclimb" || element.type === "climb";
+  return element.type === "rappel" || element.type === "downclimb" || element.type === "climb" || element.type === "jump";
 }
 
 /**

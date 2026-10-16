@@ -28,7 +28,7 @@ for (const fixture of cases) {
     assert.deepEqual({ ok: result.ok, diagnostics: result.diagnostics, technical, notes, absent }, { ok: true, diagnostics: [], technical: fixture.technical, notes: fixture.notes, absent: [] });
   });
 }
-for (const keyword of ["jump", "slide", "traverse", "approach", "return", "escape"]) {
+for (const keyword of ["slide", "traverse", "approach", "return", "escape"]) {
   test(`canyon scope does not silently accept the deferred ${keyword} keyword`, /**
    * Reject a proposed unsupported statement before constructing a model or serialized output.
    * @responsibility coordinator

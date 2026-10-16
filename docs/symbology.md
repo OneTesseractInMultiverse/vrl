@@ -24,6 +24,11 @@ The Spanish profile uses `P` for pool/poza and `A` for walking/on-foot travel. T
 
 The renderer does not copy federation artwork. It renders these as text symbols on the route profile and explains the active profile in the SVG legend so public documentation stays portable and easy to diff. Classic ladder-style technical slopes, inclination, rungs, segment labels, station ticks, anchor-count marks, rappel stage labels, and mid-rappel redirection anchors are diagram structure and route detail, not a new general symbol family.
 
+
+## Jump representation
+
+Explicit jumps use project abbreviation `J` in every profile, with English `Jump` / Spanish `Salto` text. Classic progression uses a directed straight path without rungs; soft and row views retain schematic curves and height/uncertainty labels. No jump pictogram is mapped, including in icon mode; labeled fallback remains available. These paths do not model a ballistic trajectory. [Details](jumping.md).
+
 ## Anchor Count Shorthand
 
 Anchor-count circles are bounded visual shorthand for the declared quantity. Up to four circles are drawn; additional anchors use `+N` beside the row. For example, four circles and `+1` mean five declared anchors, and detail/accessibility text says `5 anchors`. Omitting `anchor_count` leaves the count unknown. Circle positions do not describe the physical arrangement of a station.

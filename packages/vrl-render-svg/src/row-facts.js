@@ -46,7 +46,7 @@ export function rowElementFacts(element, node, index, language, symbols) {
   const kind = element.type === "hazard" ? elementAttribute(element, "type") : undefined;
   const title = formatElementTitle(element, language) + (element.label != null && element.label !== element.id ? ` [${element.id}]` : "") + (kind === undefined ? "" : `: ${localizeDetailValue(kind, language)}`);
   const result = [rowFact(title, index, true, primary ?? (element.type === "rappel" ? null : pilot))];
-  if (["rappel", "downclimb", "climb"].includes(element.type)) result.push(rowFact(`${words.drop}: ${formatMeasurement(element.attributes.height) || words.unknown}`, index));
+  if (["rappel", "downclimb", "climb", "jump"].includes(element.type)) result.push(rowFact(`${words.drop}: ${formatMeasurement(element.attributes.height) || words.unknown}`, index));
   const details = detailRecordsForElement(element, node, language, "soft-terrain");
   for (const [position, record] of details.entries()) result.push(rowFact(detailRecordText(record), index, false, element.type === "rappel" && position === 1 ? pilot : null));
   if (element.attributes.station !== undefined) result.push(rowFact(`${words.station}: ${descriptionSide(element.attributes.station, language)}`, index));

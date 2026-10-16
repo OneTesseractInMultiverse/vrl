@@ -50,6 +50,10 @@ function elementSpecificDetails(element, node, language, style) {
       landingDetail(attributes.landing, language), inclinationDetail(attributes.inclination), styleNote(element, style)
     ]);
   }
+  if (element.type === "jump") {
+    return compactDetails([landingDetail(attributes.landing, language),
+      levelDetail("flow", attributes.flow, text.flow, language), plainDetail(elementAttribute(element, "note") ?? "")]);
+  }
   if (element.type === "swim") {
     return compactDetails([plainDetail(formatElementDetail(element, language)),
       levelDetail("flow", attributes.flow, text.flow, language), plainDetail(elementAttribute(element, "note") ?? ""),
