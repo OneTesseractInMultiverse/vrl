@@ -15,9 +15,9 @@ The composition module, application contracts/coordinator, and JSON adapter are 
 | Port | Arguments | Result |
 | --- | --- | --- |
 | `parse` | Source string; `{ limits }` containing the immutable, resolved processing budgets | `{ ast, diagnostics }` |
-| `validate` | The parser's AST | Diagnostic array |
+| `validate` | The parser's AST and remaining diagnostic capacity | Diagnostic array |
 | `normalize` | The same AST, after nonblocking syntax/semantic validation | Model record |
-| `validateGeometry` | Model; optional AST `sourceMap` passed separately | Diagnostic array |
+| `validateGeometry` | Model, optional AST `sourceMap`, and remaining diagnostic capacity | Diagnostic array |
 | `layout` | Model; caller's `options.layout` (possibly undefined) | Layout record |
 | `exportJson` | Model | String |
 
@@ -44,7 +44,7 @@ The stages run in this order:
 5. Normalize, then validate geometry using the original provenance. Geometry errors stop before layout/export.
 6. Check model numbers, compute and check layout, then export text.
 
-A source diagnostic failure returns `{ ok: false, ast, diagnostics, model: null, layout: null, json: null }`. Warnings remain nonblocking and preserve parser, semantic, then geometry order. Success retains the same result shape and the stage results. Diagnostic accumulation does not modify adapter-owned arrays.
+A source diagnostic failure returns `{ ok: false, ast, diagnostics, model: null, layout: null, json: null }`. Warnings remain nonblocking and preserve parser, semantic, then geometry order. Success retains the same result shape and the stage results. The capacity argument to both validation ports includes one slot for locating the first excess diagnostic. Each port can stop producing records at that point. The compiler enforces the combined count on returned records and preserves the adapter-owned arrays.
 
 Malformed port results throw a `TypeError` naming the responsible port before a later port is called. Invalid wiring fails at configuration time, even if a later compilation would fail source preflight. Unsupported numeric values throw `RangeError` as described above. Exceptions thrown by adapters propagate unchanged; the coordinator does not turn programming, configuration, or I/O failures into source diagnostics or successful partial outputs. No retry or asynchronous scheduling occurs.
 

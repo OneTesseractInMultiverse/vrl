@@ -1,4 +1,4 @@
-import { codedDiagnostic } from "../domain/diagnostics.js";
+import { codedDiagnostic, diagnosticExcerpt } from "../domain/diagnostics.js";
 import { lexVrlLine } from "./lexer.js";
 
 /**
@@ -21,36 +21,32 @@ export function parseAttributeTokens(tokens, location) {
  * @responsibility computation
  * @param {Object[]} tokens - Ordered typed lexemes with raw/decoded values and end-exclusive source spans.
  * @param {unknown} previousLocations - Read-only map of earlier attribute key spans for duplicate detection; defaults to new Map().
+ * @param {number} maximum - Stop this statement after retaining this many diagnostics.
  * @returns {Object} A record containing attributes, diagnostics, keyLocations, attributeSpans.
  */
 
-export function parseAttributes(tokens, previousLocations = new Map()) {
+export function parseAttributes(tokens, previousLocations = new Map(), maximum = Infinity) {
   const entries = [];
   const diagnostics = [];
   const keyLocations = new Map();
   const spans = [];
-  tokens.forEach(/**
-   * Accept one typed attribute and retain its first location, or append a located wrong-token/duplicate
-   * diagnostic without replacing earlier values.
-   * @responsibility computation
-   * @param {unknown} token - Current typed lexeme or raw token text, according to the owning parser.
-   * @returns {void} Completes the documented operation; no return value is consumed.
-   */ (token) => {
+  for (const token of tokens) {
+    if (diagnostics.length >= maximum) break;
     if (token.kind !== "attribute") {
-      diagnostics.push(codedDiagnostic("VRL_SYNTAX_EXPECTED_ATTRIBUTE", "syntax", "error", `Expected key=value attribute but found "${token.raw}"`,
+      diagnostics.push(codedDiagnostic("VRL_SYNTAX_EXPECTED_ATTRIBUTE", "syntax", "error", `Expected key=value attribute but found "${diagnosticExcerpt(token.raw)}"`,
         { location: token.span.start, span: token.span }, 'Write attributes such as height=35m or note="Main line".'));
-      return;
+      continue;
     }
     const firstLocation = previousLocations.get(token.key) ?? keyLocations.get(token.key);
     if (firstLocation !== undefined) {
-      diagnostics.push(codedDiagnostic("VRL_SYNTAX_DUPLICATE_ATTRIBUTE", "syntax", "error", `Attribute "${token.key}" is declared more than once.`, { location: token.keySpan.start, span: token.keySpan },
+      diagnostics.push(codedDiagnostic("VRL_SYNTAX_DUPLICATE_ATTRIBUTE", "syntax", "error", `Attribute "${diagnosticExcerpt(token.key)}" is declared more than once.`, { location: token.keySpan.start, span: token.keySpan },
         "Keep a single value for this key; repeated keys are errors even when their values match.",
         [{ message: "First declaration of this key", location: firstLocation.start, span: firstLocation }]));
-      return;
+      continue;
     }
     entries.push([token.key, token.value]);
     keyLocations.set(token.key, token.keySpan);
     spans.push([token.key, { span: token.span, keySpan: token.keySpan, valueSpan: token.valueSpan }]);
-  });
+  }
   return { attributes: Object.fromEntries(entries), diagnostics, keyLocations, attributeSpans: Object.fromEntries(spans) };
 }

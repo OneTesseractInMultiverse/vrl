@@ -1,5 +1,5 @@
 import { declarationReference, fieldReference, metadataSource } from "../domain/source-references.js";
-import { codedDiagnostic } from "../domain/diagnostics.js";
+import { codedDiagnostic, diagnosticExcerpt } from "../domain/diagnostics.js";
 import { hasElevationResidual, routeElevationProfile, routeTraversal } from "../domain/traversal.js";
 import { invalidNumberPath } from "../domain/numeric-policy.js";
 import { validateBoundaries } from "./validate-boundaries.js";
@@ -10,14 +10,15 @@ import { validateBoundaries } from "./validate-boundaries.js";
  * @responsibility coordinator
  * @param {Object} route - Normalized route view containing elements and optional metadata/traversal required by this operation.
  * @param {Object} sourceMap - Parser-owned source ranges; may be absent for programmatic input.
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Array} Ordered numeric/boundary/geometry diagnostics; absent heights may be warnings without endpoint constraints.
  */
-export function validateGeometry(route, sourceMap) {
+export function validateGeometry(route, sourceMap, maximum = Infinity) {
   const invalid = invalidNumberPath(route, "Route");
   if (invalid !== null) {
-    return [codedDiagnostic("VRL_GEOMETRY_NUMERIC_RANGE", "geometry", "error", `${invalid} is outside the supported numeric range.`, declarationReference(sourceMap?.route), "Use finite numeric values with absolute magnitude no greater than Number.MAX_SAFE_INTEGER.")];
+    return [codedDiagnostic("VRL_GEOMETRY_NUMERIC_RANGE", "geometry", "error", `${diagnosticExcerpt(invalid)} is outside the supported numeric range.`, declarationReference(sourceMap?.route), "Use finite numeric values with absolute magnitude no greater than Number.MAX_SAFE_INTEGER.")];
   }
-  const boundaryDiagnostics = validateBoundaries(route.elements, sourceMap?.elements);
+  const boundaryDiagnostics = validateBoundaries(route.elements, sourceMap?.elements, maximum);
   if (boundaryDiagnostics.length > 0) return boundaryDiagnostics;
   const traversal = routeTraversal(route);
   const profile = routeElevationProfile(route);
@@ -27,7 +28,7 @@ export function validateGeometry(route, sourceMap) {
    * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
    * @returns {unknown} The result of the documented comparison or calculation.
    */ (segment) => segment.kind === "technical" && segment.verticalDeltaMeters === null);
-  const diagnostics = missing.map(/**
+  const diagnostics = missing.slice(0, maximum).map(/**
    * Locate and classify one unmeasured technical height against the optional complete elevation profile.
    * @responsibility computation
    * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.

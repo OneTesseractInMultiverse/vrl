@@ -5,7 +5,7 @@ import { createVrlReactDiagramState } from "@subvertic/vrl-react";
 import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
 
 const SOURCE = 'route "Limits"\nwalk distance=1m';
-const LIMITS = { maxSourceBytes: 1048576, maxLines: 20000, maxLineBytes: 16384, maxElements: 10000, maxListEntries: 1024 };
+const LIMITS = { maxSourceBytes: 1048576, maxLines: 20000, maxLineBytes: 16384, maxElements: 10000, maxListEntries: 1024, maxDiagnostics: 100 };
 
 /**
  * Project compilation success, ordered diagnostic kinds and derived outputs for processing-budget
@@ -624,7 +624,7 @@ test("large geometry diagnostic batches retain order without argument expansion"
    * I/O is performed by this fixture.
    * @responsibility computation
    * @returns {unknown} The diagnostics value selected or validated above.
-   */ validateGeometry: () => diagnostics })(SOURCE);
+   */ validateGeometry: () => diagnostics })(SOURCE, { limits: { maxDiagnostics: diagnostics.length } });
   assert.deepEqual([result.ok, result.diagnostics.length, result.diagnostics[0].message, result.diagnostics.at(-1).message], [true, 150000, "0", "149999"]);
 });
 
@@ -707,5 +707,92 @@ test("large direct redirection validation does not overflow diagnostic arguments
  * @returns {void} Completes the documented operation; no return value is consumed.
  */ () => {
   const element = core.createRouteElement("rappel", { height: "1m", rope: "2m", redirections: Array(150000).fill("2m").join(",") }, { line: 1, column: 1 });
-  assert.equal(core.validateElement(element).length, 150000);
+  assert.equal(core.validateElement(element).length, 1);
+});
+
+const diagnosticOptions = { limits: { maxDiagnostics: 1 } };
+
+for (const [name, source, firstCode, line, column] of [
+  ["parser attributes", "route Survey\nmetadata first second third fourth", "VRL_SYNTAX_EXPECTED_ATTRIBUTE", 2, 16],
+  ["syntax and fields", "route Survey\nother\nrappel", "VRL_SYNTAX_UNKNOWN_STATEMENT", 3, 1],
+  ["duplicate identities", "route Survey\nwalk A\nwalk A\nwalk A\nwalk A", "VRL_IDENTIFIER_DUPLICATE", 4, 6],
+  ["semantic fields", "route Survey\nrappel\nrappel\nrappel", "VRL_FIELD_REQUIRED", 2, 1],
+  ["pool references", "route Survey\nswim pool_ref=A\nswim pool_ref=B\nswim pool_ref=C", "VRL_REFERENCE_TARGET_MISSING", 3, 15],
+  ["technical heights", "route Survey\ndownclimb\ndownclimb\ndownclimb", "VRL_GEOMETRY_HEIGHT_REQUIRED", 3, 1],
+  ["boundary declarations", "route Survey\nstart\nstart\nstart\nstart", "VRL_BOUNDARY_DUPLICATE", 4, 1],
+  ["semantic and geometry warnings", "route Survey\nrappel height=unknown rope=unknown", "VRL_ROPE_LENGTH_UNKNOWN", 2, 15]
+]) {
+  test(`diagnostic capacity retains the first ${name} report and locates the next`, /**
+   * Check the public compiler's reporting order, overflow location, and suppressed derived output.
+   * @responsibility coordinator
+   * @returns {void} Asserts the complete blocking outcome for this document.
+   */ () => {
+    const result = core.compileRoute(source, diagnosticOptions);
+    const [first, overflow] = result.diagnostics;
+    assert.deepEqual([result.ok, result.model, result.layout, result.json, result.diagnostics.length, first.code, overflow.code, overflow.location],
+      [false, null, null, null, 2, firstCode, "VRL_LIMIT_MAX_DIAGNOSTICS", { line, column }]);
+  });
+}
+
+test("parser diagnostic capacity stops recovery on the overflowing line", /**
+ * Check that the parser stops before the next declaration and locates the omitted issue.
+ * @responsibility coordinator
+ * @returns {void} Asserts the recovery AST and located summary.
+ */ () => {
+  const result = core.parseVrl("route Survey\nfirst\nsecond\nwalk", diagnosticOptions);
+  const last = result.diagnostics.at(-1);
+  assert.deepEqual([result.ast.elements, result.diagnostics.length, last.code, last.location],
+    [[], 2, "VRL_LIMIT_MAX_DIAGNOSTICS", { line: 3, column: 1 }]);
+});
+
+test("diagnostic capacity accepts exactly one warning", /**
+ * Verify that the exact configured boundary preserves a successful diagram and its warning.
+ * @responsibility coordinator
+ * @returns {void} Asserts success, the warning code, and its formatted representation.
+ */ () => {
+  const result = createVrlReactDiagramState("route Survey\ndownclimb", diagnosticOptions);
+  assert.deepEqual([result.ok, result.diagnostics.length, result.diagnostics[0].code, result.diagnosticsText],
+    [true, 1, "VRL_GEOMETRY_HEIGHT_REQUIRED", core.formatDiagnostic(result.diagnostics[0])]);
+});
+
+test("list diagnostics group repeated defects by reason and retain their source ranges", /**
+ * Compare two repeated invalid values for each supported list against their located grouped reports.
+ * @responsibility coordinator
+ * @returns {void} Asserts the ordered diagnostic codes, value starts and repair hints.
+ */ () => {
+  const result = core.compileRoute("route Survey\nrappel height=1m rope=2m stages=-1m+-1m redirections=0m,0m,2m:across,3m:across");
+  assert.deepEqual(result.diagnostics.map(/**
+   * Select each code and the original value's source column.
+   * @responsibility computation
+   * @param {Object} diagnostic - One located validation record.
+   * @returns {Array} Code, value column and suggested repair.
+   */ diagnostic => [diagnostic.code, diagnostic.span.start.column, diagnostic.suggestion]), [
+    ["VRL_FIELD_UNSUPPORTED_VALUE", 33, "Expected positive metric stage lengths."],
+    ["VRL_FIELD_UNSUPPORTED_VALUE", 54, "Expected positive metric distances inside the rappel."],
+    ["VRL_FIELD_UNSUPPORTED_VALUE", 54, "Expected sides left, right, center, or unknown."],
+    ["VRL_REDIRECTION_OUTSIDE_HEIGHT", 54, "Use distances greater than 0m and shorter than the rappel height."],
+    ["VRL_STAGE_TOTAL_MISMATCH", 33, "Adjust stages or height if these are meant to describe the same rappel."]
+  ]);
+});
+
+test("source excerpts preserve a complete UTF-16 prefix and the full value range", /**
+ * Check message abbreviation at a surrogate pair boundary with complete source provenance.
+ * @responsibility coordinator
+ * @returns {void} Asserts bounded excerpt text and the unsliced source range.
+ */ () => {
+  const value = "a".repeat(158) + "🧗ab";
+  const [diagnostic] = core.compileRoute(`route Survey\npool flow=${value}`).diagnostics;
+  assert.deepEqual([diagnostic.message, diagnostic.span],
+    [`Field "flow" has unsupported value "${"a".repeat(158)}…".`, { start: { line: 2, column: 11 }, end: { line: 2, column: 11 + value.length } }]);
+});
+
+test("diagnostic formatting bounds related text on long custom records", /**
+ * Verify that long messages with related locations respect the per-record display budget.
+ * @responsibility coordinator
+ * @returns {void} Asserts the exact bounded display shape.
+ */ () => {
+  const location = { line: 1, column: 1 };
+  const diagnostic = core.createDiagnostic("custom", "warning", "a".repeat(2048), location, "", [{ message: "Origin", location }]);
+  const text = core.formatDiagnostic(diagnostic);
+  assert.deepEqual([text.length, text.endsWith("…")], [2048, true]);
 });

@@ -186,6 +186,7 @@ This tightens the previous API: invalid horizontal scales no longer silently fal
 | `maxLineBytes` | `16384` (16 KiB) | UTF-8 bytes in each physical line, excluding its LF or CRLF delimiter |
 | `maxElements` | `10000` | Accepted route elements, including start, exit, notes, and hazards; excludes route/metadata declarations |
 | `maxListEntries` | `1024` | Entries in each `stages`, `redirection`, or `redirections` attribute, independently |
+| `maxDiagnostics` | `100` | Ordinary diagnostic records across parse, semantic and geometry stages. The first excess record becomes one additional located limit error. |
 
 A document exactly at a limit is allowed. Every configured value must be a positive safe integer; there is no unlimited sentinel. Unknown keys, nonnumeric values, and non-plain limits objects throw `TypeError`; zero, negative, fractional, nonfinite, or unsafe numbers throw `RangeError`. A field set to `undefined` retains its default. Null-prototype records are accepted. Each call resolves an immutable snapshot without changing caller options or later calls.
 
@@ -205,7 +206,7 @@ Limits concern the supplied JavaScript string's UTF-8 representation, not UTF-16
 
 Source preflight scans until the first byte/line violation before lexing, line-array allocation, or any injected parser call. It checks total bytes before line count/line bytes at each position. The parser then processes lines incrementally and stops at the first element/list violation, before adding the offending statement or parsing list entries into measurements. Source preflight failures return an empty recovery AST retaining the original source reference; statement-limit failures retain only the accepted prefix and earlier diagnostics. Limits are processing policy, not truncation into a successful route.
 
-Failures use the existing diagnostic shape with `kind: "limit"`, `severity: "error"`, the limit name and maximum in `message`, a source `location`, and a corrective `suggestion`. Compilation returns `ok: false` and null model/layout/JSON. It skips semantic validation and every later port after a limit failure; framework states expose the diagnostics and an empty SVG. Syntax and semantic failures within the budget retain their existing behavior. Invalid configuration and unrelated internal/port exceptions still propagate; the compiler does not catch them as limit failures.
+Failures use the existing diagnostic shape with `kind: "limit"`, `severity: "error"`, the limit name and maximum in `message`, a source `location`, and a corrective `suggestion`. Compilation returns `ok: false` and null model/layout/JSON. It skips semantic validation and every later port after a limit failure; framework states expose the diagnostics and an empty SVG. The diagnostic count includes warnings. Formatted diagram text also has a fixed display bound. [Diagnostic output limits](diagnostics.md#diagnostic-output-limits). Invalid configuration and unrelated internal/port exceptions still propagate; the compiler does not catch them as limit failures.
 
 The parser port now receives `parse(source, { limits })`, with the immutable resolved limits record. Existing one-argument parsers remain compatible. A custom parser owns its internal allocations and should honor those budgets; the application also checks its returned AST element count and known list attributes before semantic validation. Those AST checks use statement locations (metadata `1:1`), while the default parser reports a list value's source column. Custom normalizer/layout/exporter ports remain responsible for the size of the outputs they generate.
 
@@ -625,11 +626,9 @@ make publish-plan RELEASE=minor
 make release-prepare RELEASE=minor
 # Review, test, commit and merge the prepared release before publication.
 make publish
-# When npm requests a fresh one-time code:
-make publish OTP=123456
 ```
 
-`make release-prepare` updates all workspace versions and internal pins without publishing. Commit those changes before creating the GitHub release. `make publish-ci` is reserved for GitHub Actions and publishes the committed version through npm Trusted Publishers. `make publish` runs checks and publishes the current committed version in dependency order; it does not update versions. Version changes must be prepared, reviewed and committed first. Per-package npm bootstrap/trusted-publisher setup is a separate prerequisite; see the [release checklist](release-checklist.md). If npm returns `E403` requiring two-factor authentication during a local publish, rerun with a fresh one-time password: `make publish OTP=123456`.
+`make release-prepare` updates all workspace versions and internal pins. Review, commit and merge those changes before tagging the release. For local bootstrap, run `make publish` in an interactive terminal and answer npm's authentication challenge when prompted. It runs checks and publishes the committed version in dependency order. For CI publication, dispatch the Publish workflow from protected `main` while the release tag points to its tip. The publication job uses the `npm-production` environment and npm Trusted Publishers. See the [release checklist](release-checklist.md).
 
 ## Selective annotation icons
 
@@ -646,3 +645,7 @@ AST revision 2 / model revision 5 adds `"swim"` to `ElementType`. Its optional `
 Model revision 6 adds the type-only `RoutePhase` union and optional `ElementFields.phase` on every normalized element type. Metadata does not acquire this field. Renderer entry points retain explicit phase text; compilation and state factories retain their signatures. See [phase semantics and migration](route-phases.md).
 
 Model revision 7 adds optional string `pool_ref` only to normalized swimming attributes. `compileRoute`, `validateRoute` and `normalizeRoute` enforce explicit pool identity and type; `validateElement`/`normalizeElement` only validate local field syntax. Renderer/state factories retain exact reference text or blocking errors with unchanged signatures. See [the pool association contract](pool-references.md).
+
+### Complete diagram size
+
+`computeTopoScene` and `renderTopoSvg` enforce the [document drawing budgets](rendering-scene.md#document-drawing-budgets). Across all technical segments, the limit is 8,192 stage labels, internal boundaries, redirection markers and redirection labels combined. Complete SVG output also has a limit of 8,388,608 UTF-16 code units. Either limit produces a `RangeError` and framework adapters propagate that failure.

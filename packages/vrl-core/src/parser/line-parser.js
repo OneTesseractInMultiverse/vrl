@@ -1,5 +1,5 @@
 import { isElementType } from "../domain/element-types.js";
-import { appendDiagnostics, limitDiagnostic, codedDiagnostic } from "../domain/diagnostics.js";
+import { appendDiagnostics, limitDiagnostic, codedDiagnostic, enforceDiagnosticLimit, diagnosticExcerpt } from "../domain/diagnostics.js";
 import { createEmptyRoute, createRouteElement } from "../application/route-ast.js";
 import { lexVrlLine } from "./lexer.js";
 import { declarationSpans, tokenRange } from "./source-spans.js";
@@ -42,7 +42,7 @@ function parseDocumentLines(context, source) {
     const end = newline === -1 ? source.length : newline;
     const contentEnd = newline !== -1 && source[end - 1] === "\r" ? end - 1 : end;
     parseDocumentLine(context, source.slice(start, contentEnd), line);
-    if (context.stopped || newline === -1) return;
+    if (enforceDiagnosticLimit(context.diagnostics, context.limits.maxDiagnostics) || context.stopped || newline === -1) return;
     start = newline + 1;
     line += 1;
   }
@@ -66,7 +66,7 @@ function parseDocumentLine(context, rawLine, line) {
   const keyword = tokens[0].raw;
   const location = tokens[0].span.start;
   if (keyword !== "route" && keyword !== "metadata" && !isElementType(keyword)) {
-    context.diagnostics.push(codedDiagnostic("VRL_SYNTAX_UNKNOWN_STATEMENT", "syntax", "error", `Unknown VRL statement "${keyword}"`, { location, span: tokens[0].span },
+    context.diagnostics.push(codedDiagnostic("VRL_SYNTAX_UNKNOWN_STATEMENT", "syntax", "error", `Unknown VRL statement "${diagnosticExcerpt(keyword)}"`, { location, span: tokens[0].span },
       "Use route, metadata, start, exit, walk, swim, rappel, downclimb, climb, pool, hazard, or note."));
     return;
   }
@@ -113,18 +113,20 @@ function statementLimitProblem({ ast, limits }, keyword, tokens, location) {
  * @param {Object} input1.ast - Unvalidated route syntax record with raw string metadata and elements.
  * @param {Array} input1.diagnostics - Ordered diagnostic records; append helpers mutate the supplied destination list.
  * @param {unknown} input1.metadataKeys - Per-parse map of first metadata declarations; updated after accepted attributes.
+ * @param {Object} input1.limits - Resolved document budgets.
  * @param {string} keyword - Recognized VRL statement keyword.
  * @param {Object[]} tokens - Ordered typed lexemes with raw/decoded values and end-exclusive source spans.
  * @param {Object} location - One-based line and UTF-16 column used as the diagnostic origin.
  * @returns {void} Completes the documented operation; no return value is consumed.
  */
-function parseStatement({ ast, diagnostics, metadataKeys }, keyword, tokens, location) {
+function parseStatement({ ast, diagnostics, metadataKeys, limits }, keyword, tokens, location) {
+  const remaining = limits.maxDiagnostics - diagnostics.length + 1;
   if (keyword === "route") {
     parseRouteLine(ast, tokens, diagnostics, location);
   } else if (keyword === "metadata") {
-    parseMetadataLine(ast, tokens, diagnostics, metadataKeys);
+    parseMetadataLine(ast, tokens, diagnostics, metadataKeys, remaining);
   } else {
-    const parsed = parseElementLine(keyword, tokens, diagnostics, location);
+    const parsed = parseElementLine(keyword, tokens, diagnostics, location, remaining);
     ast.elements.push(parsed.element);
     ast.sourceMap.elements.push(parsed.source);
   }
@@ -173,10 +175,11 @@ function parseRouteLine(ast, tokens, diagnostics, location) {
  * @param {Object[]} tokens - Ordered typed lexemes with raw/decoded values and end-exclusive source spans.
  * @param {Array} diagnostics - Ordered diagnostic records; append helpers mutate the supplied destination list.
  * @param {unknown} metadataKeys - Per-parse map of first metadata declarations; updated after accepted attributes.
+ * @param {number} remaining - Remaining diagnostic capacity including the first excess record.
  * @returns {void} Completes the documented operation; no return value is consumed.
  */
-function parseMetadataLine(ast, tokens, diagnostics, metadataKeys) {
-  const parsed = parseAttributes(tokens.slice(1), metadataKeys);
+function parseMetadataLine(ast, tokens, diagnostics, metadataKeys, remaining) {
+  const parsed = parseAttributes(tokens.slice(1), metadataKeys, remaining);
   ast.sourceMap.metadata.push(declarationSpans(tokens, parsed.attributeSpans));
   // Define own properties so keys such as __proto__ remain ordinary source data.
   Object.defineProperties(ast.metadata, Object.getOwnPropertyDescriptors(parsed.attributes));
@@ -198,9 +201,10 @@ function parseMetadataLine(ast, tokens, diagnostics, metadataKeys) {
  * @param {Object[]} tokens - Ordered typed lexemes with raw/decoded values and end-exclusive source spans.
  * @param {Array} diagnostics - Ordered diagnostic records; append helpers mutate the supplied destination list.
  * @param {Object} location - One-based line and UTF-16 column used as the diagnostic origin.
+ * @param {number} remaining - Remaining diagnostic capacity including the first excess record.
  * @returns {Object} A record containing element, source.
  */
-function parseElementLine(keyword, tokens, diagnostics, location) {
+function parseElementLine(keyword, tokens, diagnostics, location, remaining) {
   if (keyword === "note") {
     return { element: createRouteElement("note", { text: textOf(tokens.slice(1)) }, location), source: { ...declarationSpans(tokens), textSpan: tokenRange(tokens.slice(1)) } };
   }
@@ -214,7 +218,7 @@ function parseElementLine(keyword, tokens, diagnostics, location) {
    */ (token) => token.kind === "attribute");
   const labelTokens = firstAttributeIndex === -1 ? payload : payload.slice(0, firstAttributeIndex);
   const attributeTokens = firstAttributeIndex === -1 ? [] : payload.slice(firstAttributeIndex);
-  const parsed = parseAttributes(attributeTokens);
+  const parsed = parseAttributes(attributeTokens, undefined, remaining);
   appendDiagnostics(diagnostics, parsed.diagnostics);
 
   const element = createRouteElement(

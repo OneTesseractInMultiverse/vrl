@@ -15,8 +15,7 @@ if (args.includes("--help") || args.includes("-h")) {
   --skip-check              For a commit already verified by the release gate
   --trusted-publisher       Require GitHub Actions OIDC
   --provenance              Publish provenance (CI only)
-  --provenance=false        Local bootstrap without CI provenance
-  --otp VALUE               Local publication authentication`);
+  --provenance=false        Local bootstrap without CI provenance`);
 } else {
   try {
     const result = runRelease(parseOptions(args), systemPorts());

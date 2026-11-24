@@ -7,9 +7,10 @@ import { identifierReference } from "../domain/source-references.js";
  * @responsibility coordinator
  * @param {Array} elements - Route elements in source order.
  * @param {unknown} sources - Declaration source records aligned with their corresponding elements; defaults to [].
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Array} Located invalid/duplicate identity diagnostics with the first duplicate as a related location.
  */
-export function validateElementIdentifiers(elements, sources = []) {
+export function validateElementIdentifiers(elements, sources = [], maximum = Infinity) {
   const sourceByElement = new Map(sources.map(/**
    * Associate each source declaration with its original element object for located identity errors.
    * @responsibility computation
@@ -17,7 +18,7 @@ export function validateElementIdentifiers(elements, sources = []) {
    * @param {number} index - Zero-based position in the current ordered collection.
    * @returns {Array} The ordered records or values assembled above.
    */ (source, index) => [elements[index], source]));
-  return elementIdentifierProblems(elements).map(/**
+  return elementIdentifierProblems(elements, maximum).map(/**
    * Apply identifierDiagnostic to the supplied arguments; retain the callee's return and failure behavior.
    * @responsibility computation
    * @param {unknown} problem - Classified domain or budget problem to translate.

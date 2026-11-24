@@ -1,6 +1,6 @@
 RELEASE ?= current
 PROVENANCE ?= false
-PUBLISH_ARGS = $(if $(VERSION),--version $(VERSION),--release $(RELEASE)) $(if $(OTP),--otp $(OTP),) $(if $(filter true,$(RESUME)),--resume,) $(if $(filter true,$(PROVENANCE)),--provenance,)
+PUBLISH_ARGS = $(if $(VERSION),--version $(VERSION),--release $(RELEASE)) $(if $(filter true,$(RESUME)),--resume,) $(if $(filter true,$(PROVENANCE)),--provenance,)
 
 .PHONY: help install ci test coverage check run render-assets pack-dry-run publish-dry-run publish-plan release-prepare publish publish-ci clean
 
@@ -17,7 +17,7 @@ help:
 	@printf '  %-18s %s\n' 'make publish-dry-run' 'Validate npm publish file lists without registry login'
 	@printf '  %-18s %s\n' 'make publish-plan' 'Show the next local npm publish plan'
 	@printf '  %-18s %s\n' 'make release-prepare' 'Update workspace versions before cutting a GitHub release'
-	@printf '  %-18s %s\n' 'make publish' 'Publish workspaces to npm; use OTP=123456 when npm 2FA is required'
+	@printf '  %-18s %s\n' 'make publish' 'Publish workspaces to npm with interactive authentication'
 	@printf '  %-18s %s\n' 'make publish-ci' 'Publish the committed version from trusted GitHub Actions'
 	@printf '  %-18s %s\n' 'make clean' 'Remove generated local artifacts'
 

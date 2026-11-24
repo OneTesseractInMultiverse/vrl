@@ -107,3 +107,9 @@ Tests inspect pure rung, stage, redirection, text, badge, symbol, and panel plac
 Explicit `flow: "rows"` produces `RowTopoScene`, retaining original physical points, canonical segments and annotation ownership alongside independent row coordinates. Default/continuous calls retain `TopoScene`. Dynamic options require narrowing with `"rows" in scene`. [The row guide](row-layout.md) specifies bounds, readable fonts and failure limits.
 
 Both scene variants carry `identifiers: { arrow, title, description, text }`. `describeRoute` supplies the logical description independently of scene coordinates, themes and symbols. SVG title/description references and optional adjacent HTML share the [namespace contract](svg-identifiers.md); [monochrome policy](accessible-output.md) resolves achromatic paints before row preparation.
+
+## Document drawing budgets
+
+Both continuous and row scenes check the combined cost of technical annotations before allocating their geometry. The inclusive limit is 8,192 primitives per diagram. Each stage draws one label and each internal stage boundary draws one mark. Each redirection draws a marker and a label. Connections consume no technical annotation budget. Classic and soft-terrain views use the same counts.
+
+Full SVG serialization also has an inclusive limit of 8,388,608 UTF-16 code units, including markup, escaped text and whitespace. Exceeding either limit throws `RangeError`. The renderer returns a complete SVG or an error. Core compilation and JSON export are available independently when a route is too detailed for one diagram. Row layout retains its existing size and extent constraints.

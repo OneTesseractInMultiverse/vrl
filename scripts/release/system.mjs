@@ -189,13 +189,13 @@ export function systemPorts() {
      * @returns {Array} The ordered records or values assembled above.
      */ pkg => [pkg.name, registryValue(`${pkg.name}@${plan.version}`, "dist.integrity")])),
     /**
-     * Publish one prepared artifact to the fixed public registry with configured provenance and optional OTP.
+     * Publish one prepared artifact to the fixed public registry with the configured provenance and npm's inherited terminal.
      * @responsibility coordinator
      * @param {Object} artifact - Prepared package tarball metadata.
      * @param {Object} options - Operation-specific option record; must be supplied by the calling coordinator. Contains validated release mode, version, registry and authentication flags.
      * @returns {unknown} The result returned by command.
      */
-    publish: (artifact, options) => command("npm", ["publish", artifact.path, "--ignore-scripts", "--access=public", `--registry=${REGISTRY}`, `--provenance=${options.provenance}`, ...(options.otp ? ["--otp", options.otp] : [])]),
+    publish: (artifact, options) => command("npm", ["publish", artifact.path, "--ignore-scripts", "--access=public", `--registry=${REGISTRY}`, `--provenance=${options.provenance}`]),
     /**
      * Remove this release invocation's temporary artifact directory when one was created.
      * @responsibility coordinator

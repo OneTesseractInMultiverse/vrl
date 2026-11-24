@@ -3,13 +3,15 @@
  * Call after field and unique-identity checks; input is raw AST data, not normalized generated identities.
  * @responsibility computation
  * @param {Object[]} elements - Raw elements with valid fields and unique explicit IDs; never mutated.
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Object[]} Source-ordered missing/wrong-type problems, with owning and optional target indexes.
  */
-export function poolReferenceProblems(elements) {
+export function poolReferenceProblems(elements, maximum = Infinity) {
   const explicit = new Map();
   for (const [index, element] of elements.entries()) if (element.id != null) explicit.set(element.id, index);
   const problems = [];
   for (const [elementIndex, element] of elements.entries()) {
+    if (problems.length >= maximum) break;
     if (element.type !== "swim" || !Object.hasOwn(element.attributes, "pool_ref")) continue;
     const reference = element.attributes.pool_ref;
     const targetIndex = explicit.get(reference);

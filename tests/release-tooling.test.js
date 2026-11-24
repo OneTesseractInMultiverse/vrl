@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { WORKSPACES, REPOSITORY } from "../scripts/release/config.mjs";
 import { parseOptions } from "../scripts/release/options.mjs";
 import { validateManifests, prepareFiles, createPlan, publicationActions, requireVersion } from "../scripts/release/planning.mjs";
@@ -139,7 +142,7 @@ function harness(overrides = {}) {
   return { ports, calls, writes, attempted, artifacts };
 }
 
-for (const args of [["--unknown"], ["--version"], ["--version", "--plan"], ["--release", "next"], ["--version", "1.0.0", "--release", "current"], ["--plan", "--prepare"], ["--prepare", "--dry-run"], ["--plan", "--otp", "123456"], ["--trusted-publisher", "--otp", "123456"], ["--skip-registry"], ["--resume", "--prepare"], ["--resume", "--skip-registry", "--plan"], ["--resume", "--dry-run"], ["--trusted-publisher", "--prepare"]]) {
+for (const args of [["--unknown"], ["--version"], ["--version", "--plan"], ["--release", "next"], ["--version", "1.0.0", "--release", "current"], ["--plan", "--prepare"], ["--prepare", "--dry-run"], ["--skip-registry"], ["--resume", "--prepare"], ["--resume", "--skip-registry", "--plan"], ["--resume", "--dry-run"], ["--trusted-publisher", "--prepare"]]) {
   test(`invalid release options fail before effects: ${args.join(" ")}`, /**
    * Verify invalid release options fail before effects: ${args.join(" ")}; arrange the scenario and make its
    * single direct assertion. Assertion and setup failures propagate to the test runner.
@@ -602,4 +605,122 @@ test("CLI help exits successfully without authenticating or changing versions", 
  */ () => {
   const result = spawnSync(process.execPath, ["scripts/publish-workspaces.mjs", "--help"], { encoding: "utf8" });
   assert.deepEqual([result.status, result.stdout.includes("--resume"), readFiles()], [0, true, original]);
+});
+
+const workflow = readFileSync(".github/workflows/publish.yml", "utf8");
+
+/**
+ * Read one literal shell block from the release workflow so the tests run the production guard.
+ * @responsibility computation
+ * @param {string} id - Identifier of the workflow step whose run block immediately follows.
+ * @returns {string} The Bash commands for the selected step.
+ */
+function workflowCommands(id) {
+  const block = workflow.match(new RegExp(`^        id: ${id}\\n        run: \\|\\n((?:          [^\\n]*\\n)+)`, "m"));
+  if (!block) throw new Error(`Missing inline release step: ${id}`);
+  return block[1].replace(/^          /gm, "");
+}
+
+const dispatch = {
+  GITHUB_REPOSITORY: REPOSITORY,
+  GITHUB_EVENT_NAME: "workflow_dispatch",
+  GITHUB_REF: "refs/heads/main",
+  GITHUB_REF_PROTECTED: "true",
+  RELEASE_TAG: "v1.0.0"
+};
+for (const [scenario, override, expected] of [
+  ["a protected main dispatch", {}, 0],
+  ["a topic branch dispatch", { GITHUB_REF: "refs/heads/topic" }, 1],
+  ["an unprotected main dispatch", { GITHUB_REF_PROTECTED: "false" }, 1],
+  ["a release event", { GITHUB_EVENT_NAME: "release" }, 1],
+  ["a fork dispatch", { GITHUB_REPOSITORY: "example/vrl" }, 1],
+  ["a prerelease tag", { RELEASE_TAG: "v1.0.0-rc.1" }, 1]
+]) {
+  test(`release workflow checks ${scenario} before resolving a tag`, /**
+   * Run the dispatch guard with one controlled change to GitHub's event metadata.
+   * @responsibility coordinator
+   * @returns {void} Verifies the shell's decision for this dispatch.
+   */ () => {
+    const result = spawnSync("bash", ["-ec", workflowCommands("dispatch")], { env: { ...process.env, ...dispatch, ...override } });
+    assert.equal(result.status, expected);
+  });
+}
+
+for (const [scenario, operation, tag, approved] of [
+  ["dry-runs an ancestor", "dry-run", "v1.0.0", true],
+  ["refuses an off-main tag", "dry-run", "v2.0.0", false],
+  ["refuses stale publication provenance", "publish", "v1.0.0", false],
+  ["refuses stale recovery provenance", "resume", "v1.0.0", false],
+  ["publishes the dispatch SHA", "publish", "v1.0.1", true],
+  ["resumes the dispatch SHA", "resume", "v1.0.1", true]
+]) {
+  test(`release workflow ${scenario}`, /**
+   * Run the workflow's resolver on a local commit graph and inspect its job output.
+   * @responsibility coordinator
+   * @param {Object} t - Node test context that owns the temporary Git repository.
+   * @returns {void} Verifies both the resolution status and the exact value available to later jobs.
+   */ t => {
+    const cwd = mkdtempSync(join(tmpdir(), "vrl-release-gate-"));
+    t.after(/**
+     * Remove this test's Git objects, refs and simulated GitHub output file.
+     * @responsibility coordinator
+     * @returns {void} Deletes the invocation-owned temporary directory.
+     */ () => { rmSync(cwd, { recursive: true, force: true }); });
+    /**
+     * Run Git in the isolated fixture with a local test identity.
+     * @responsibility coordinator
+     * @param {string[]} args - Git subcommand and arguments.
+     * @returns {string} Standard output with its trailing line ending removed.
+     */
+    function git(...args) {
+      return execFileSync("git", ["-c", "user.name=Release fixture", "-c", "user.email=fixture@example.invalid",
+        "-c", "commit.gpgSign=false", "-c", "tag.gpgSign=false", "-c", "core.hooksPath=/dev/null", ...args], { cwd, encoding: "utf8" }).trim();
+    }
+    git("init", "--quiet", "--initial-branch=main");
+    git("commit", "--quiet", "--allow-empty", "-m", "Release");
+    const release = git("rev-parse", "HEAD");
+    git("tag", "-a", "v1.0.0", "-m", "Release");
+    git("commit", "--quiet", "--allow-empty", "-m", "Main advances");
+    const main = git("rev-parse", "HEAD");
+    git("tag", "v1.0.1");
+    git("switch", "--quiet", "-c", "topic");
+    git("commit", "--quiet", "--allow-empty", "-m", "Topic work");
+    git("tag", "v2.0.0");
+    git("switch", "--quiet", "main");
+    const output = join(cwd, "output");
+    writeFileSync(output, "");
+    const result = spawnSync("bash", ["-ec", workflowCommands("identity")], {
+      cwd, env: { ...process.env, GITHUB_SHA: main, RELEASE_TAG: tag, OPERATION: operation, GITHUB_OUTPUT: output }
+    });
+    assert.deepEqual([result.status, readFileSync(output, "utf8")], approved ? [0, `commit=${tag === "v1.0.0" ? release : main}\n`] : [1, ""]);
+  });
+}
+
+for (const [operation, attempt, resume] of [["publish", 1, false], ["publish", 2, true], ["resume", 1, true]]) {
+  test(`workflow ${operation} attempt ${attempt} selects the expected registry integrity policy`, /**
+   * Record the workflow's command arguments in a shell double without invoking the release CLI.
+   * @responsibility coordinator
+   * @returns {void} Checks normal first publication and integrity-based recovery.
+   */ () => {
+    const commands = `node() { printf '%s\\n' "$@"; }\n` + workflowCommands("publication");
+    const result = spawnSync("bash", ["-ec", commands], {
+      env: { ...process.env, OPERATION: operation, GITHUB_RUN_ATTEMPT: String(attempt) }, encoding: "utf8"
+    });
+    const args = result.stdout.trimEnd().split("\n");
+    assert.deepEqual([result.status, args.at(-1)], [0, resume ? "--resume" : "--skip-check"]);
+  });
+}
+
+test("every release checkout pins either the dispatch SHA or the independently approved commit", /**
+ * Inspect checkout refs in execution order across authorization, verification, consumers and publication.
+ * @responsibility coordinator
+ * @returns {void} Checks that downstream jobs all pin the output of the read-only authorization job.
+ */ () => {
+  const refs = [];
+  for (const step of workflow.split(/^      - /m)) {
+    if (!step.includes("uses: actions/checkout@")) continue;
+    const pinned = /uses: actions\/checkout@[0-9a-f]{40}(?:\s|$)/.test(step);
+    refs.push(pinned ? step.match(/^          ref: (.+)$/m)?.[1] : undefined);
+  }
+  assert.deepEqual(refs, ["${{ github.sha }}", ...Array(3).fill("${{ needs.authorize.outputs.commit }}")]);
 });

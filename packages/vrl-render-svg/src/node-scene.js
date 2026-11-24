@@ -1,5 +1,6 @@
 import { resolveElementIconId } from "@subvertic/vrl-icons/semantics";
 import { annotationIconId, annotationClearanceX, placeAnnotationIcon, selectiveSymbols } from "./annotation-icons.js";
+import { createClearanceIndex, rightmostEdge } from "./clearance-index.js";
 import { elementAttribute } from "./route-data.js";
 import { scenePath } from "./scene-path.js";
 import { softTerrainText } from "./soft-terrain-text.js";
@@ -27,14 +28,19 @@ import {
  * @returns {Array} Owned prepared nodes in the selected visual or source order, retaining canonical element ownership.
  */
 export function prepareNodes(layout, language, symbology = "federation", style = "classic", symbols = "classic", obstacles = []) {
+  const selective = selectiveSymbols(symbols);
+  const clearance = {
+    symbols: style === "soft-terrain" ? createClearanceIndex(layout.nodes.map(symbolEnvelope)) : null,
+    obstacles: selective ? createClearanceIndex(obstacles) : null
+  };
   let nextTitleY = null;
-  return (selectiveSymbols(symbols) ? layout.nodes : nodesInVisualOrder(layout.nodes)).map(/**
+  return (selective ? layout.nodes : nodesInVisualOrder(layout.nodes)).map(/**
    * Prepare one node at the next available title baseline and carry its occupied detail height forward.
    * @responsibility coordinator
    * @param {Object} node - Positioned route point with x/y and its owning normalized element when required.
    * @returns {unknown} The prepared value selected or validated above.
    */ (node) => {
-    const prepared = preparePlacedNode(node, nodeLabelPlacement(node, nextTitleY), layout, language, symbology, style, symbols, obstacles);
+    const prepared = preparePlacedNode(node, nodeLabelPlacement(node, nextTitleY), layout.width, language, symbology, style, symbols, clearance);
     const { placement, drawing } = prepared;
     if (drawing.title !== "" || drawing.details.length > 0) nextTitleY = nextLabelTitleY(placement, drawing.details.length);
     return prepared;
@@ -47,20 +53,20 @@ export function prepareNodes(layout, language, symbology = "federation", style =
  * @responsibility coordinator
  * @param {Object} node - Positioned route point with x/y and its owning normalized element when required.
  * @param {Object} initialPlacement - Initial title/detail coordinates before iterative symbol clearance.
- * @param {Object} layout - Positioned route geometry in drawing units, including nodes and canonical segments.
+ * @param {number} width - Available layout width in drawing units.
  * @param {string} language - Requested diagram language; supported dictionaries resolve through the localization policy.
  * @param {string} symbology - Symbol profile name used for element codes and legend entries.
  * @param {string} style - Renderer style, classic or soft-terrain; does not alter route facts.
  * @param {string} symbols - Symbol presentation; defaults to classic. Annotation and minimal modes reserve identical icon space.
- * @param {Object[]} obstacles - Prepared protected geometry envelopes; defaults to an empty collection.
+ * @param {Object} clearance - Shared symbol and obstacle indexes for the selected presentation.
  * @returns {Object} A record containing node, placement, title, detail, maxDetailWidth, detailRows, drawing.
  */
-function preparePlacedNode(node, initialPlacement, layout, language, symbology, style, symbols, obstacles) {
+function preparePlacedNode(node, initialPlacement, width, language, symbology, style, symbols, clearance) {
   let placement = initialPlacement;
   for (;;) {
-    const maxDetailWidth = detailLineMaxWidth(layout.width, placement.labelX);
+    const maxDetailWidth = detailLineMaxWidth(width, placement.labelX);
     const drawing = prepareNode(node, symbology, placement, language, { maxDetailWidth, style, symbols });
-    const clearX = placedLabelClearanceX(layout.nodes, placement, drawing.details.length, style, symbols, obstacles);
+    const clearX = placedLabelClearanceX(clearance, placement, drawing.details.length);
     if (clearX === placement.labelX) return { node, placement, title: drawing.title, detail: drawing.detail, maxDetailWidth,
       detailRows: drawing.detailRecords.map(/**
        * Apply row.map to the supplied arguments; retain the callee's return and failure behavior.
@@ -73,26 +79,13 @@ function preparePlacedNode(node, initialPlacement, layout, language, symbology, 
 }
 
 /**
- * Find the rightmost symbol envelope intersecting a label block's vertical extent; labels only move right.
- * Move only right; each iteration clears another finite symbol envelope before rewrapping.
+ * Reserve the inclusive vertical extent and right edge of a soft-terrain node symbol.
  * @responsibility computation
- * @param {Array} nodes - Prepared or positioned route nodes retaining their element ownership and drawing coordinates.
- * @param {Object} placement - Prepared coordinates for a node label, symbol, anchor group or panel.
- * @param {number} rowCount - Number of occupied detail rows.
- * @returns {unknown} The result returned by nodes.reduce.
+ * @param {Object} node - Positioned route symbol.
+ * @returns {Object} Conservative envelope with the original symbol clearance in drawing units.
  */
-
-function symbolClearanceX(nodes, placement, rowCount) {
-  const top = placement.titleY - 20;
-  const bottom = nextLabelTitleY(placement, rowCount);
-  return nodes.reduce(/**
-   * Retain the current label x unless this node's symbol intersects its vertical extent, then move beyond the
-   * symbol's right edge.
-   * @responsibility computation
-   * @param {number} x - Horizontal position in SVG drawing units.
-   * @param {Object} node - Positioned route point with x/y and its owning normalized element when required.
-   * @returns {unknown} The selected result, including the documented absent-value fallback.
-   */ (x, node) => node.y + 32 < top || node.y - 32 > bottom ? x : Math.max(x, node.x + 44), placement.labelX);
+function symbolEnvelope(node) {
+  return { minY: node.y - 32, maxY: node.y + 32, maxX: node.x + 44 };
 }
 
 /**
@@ -245,17 +238,16 @@ function annotationTitle(element, language) {
 /**
  * Compute the required text origin for node symbols and optional full-stroke annotation gutters.
  * @responsibility computation
- * @param {Object[]} nodes - Positioned symbols whose conservative envelopes are protected.
+ * @param {Object} clearance - Shared indexes of symbol and annotation envelopes, each null when unused.
  * @param {Object} placement - Candidate label origin and baselines.
  * @param {number} rowCount - Wrapped detail-row count determining the occupied vertical extent.
- * @param {string} style - Classic or soft-terrain geometry policy.
- * @param {string} symbols - Selected symbol presentation; only selective modes reserve an annotation gutter.
- * @param {Object[]} obstacles - Scene-owned path, text, contour, pool and node envelopes.
  * @returns {number} Monotonic rightward text coordinate satisfying the selected clearance policy.
  */
-function placedLabelClearanceX(nodes, placement, rowCount, style, symbols, obstacles) {
-  const symbolX = style === "soft-terrain" ? symbolClearanceX(nodes, placement, rowCount) : placement.labelX;
-  return selectiveSymbols(symbols)
-    ? Math.max(symbolX + (symbolX > placement.labelX ? 32 : 0), annotationClearanceX(obstacles, placement, nextLabelTitleY(placement, rowCount)))
-    : symbolX;
+function placedLabelClearanceX(clearance, placement, rowCount) {
+  const bottom = nextLabelTitleY(placement, rowCount);
+  const symbolX = clearance.symbols === null ? placement.labelX
+    : Math.max(placement.labelX, rightmostEdge(clearance.symbols, placement.titleY - 20, bottom));
+  if (clearance.obstacles === null) return symbolX;
+  const gutterX = symbolX > placement.labelX ? symbolX + 32 : symbolX;
+  return Math.max(gutterX, annotationClearanceX(clearance.obstacles, placement, bottom));
 }

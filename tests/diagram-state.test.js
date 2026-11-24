@@ -9,7 +9,7 @@ import { createVrlReactDiagramState, createVrlDiagramComponent } from "@subverti
 import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 import { createVrlSvelteKitData, createVrlSvelteKitLoad } from "@subvertic/vrl-sveltekit";
 import { createDiagramStateWithPorts } from "../packages/vrl-diagram/src/application/create-diagram-state.js";
-import { assembleDiagramState } from "../packages/vrl-diagram/src/application/diagram-state.js";
+import { assembleDiagramState, formatDiagramDiagnostics } from "../packages/vrl-diagram/src/application/diagram-state.js";
 
 const VALID = 'route "Survey & descent"\nstart\nrappel height=10m rope=20m flow=high\nexit';
 const WARNING = 'route "Short rope"\nrappel height=10m rope=5m';
@@ -560,3 +560,13 @@ for (const options of [{ layout: { width: 0 } }, { theme: "unsupported" }]) {
     await assert.rejects(load({}), options.layout ? RangeError : TypeError);
   });
 }
+
+test("diagram display stops at its exact text budget before formatting later records", /**
+ * Use a short text budget and a final unreadable record to check when display formatting stops.
+ * @responsibility coordinator
+ * @returns {void} Asserts the abbreviated visible text.
+ */ () => {
+  const record = { severity: "error", kind: "custom", location: { line: 1, column: 1 }, message: "Check", suggestion: "" };
+  const first = formatDiagnostic(record);
+  assert.equal(formatDiagramDiagnostics([record, record, null], undefined, first.length + 1), first + "…");
+});

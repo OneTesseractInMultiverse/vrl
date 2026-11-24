@@ -183,7 +183,7 @@ export interface LayoutOptions {
   marginBottom?: number | undefined; minNodeGap?: number | undefined;
 }
 export interface ProcessingLimits {
-  maxSourceBytes: number; maxLines: number; maxLineBytes: number; maxElements: number; maxListEntries: number;
+  maxSourceBytes: number; maxLines: number; maxLineBytes: number; maxElements: number; maxListEntries: number; maxDiagnostics: number;
 }
 export type LimitOptions = { [K in keyof ProcessingLimits]?: number | undefined };
 export interface ParseOptions { limits?: LimitOptions | undefined }
@@ -214,9 +214,10 @@ export interface CompilerPorts<A extends RouteAst = ParsedRouteAst, M extends ob
    * Coordinate semantic checks on raw syntax without normalizing it.
    * @responsibility coordinator
    * @param {A} ast - Accepted parser AST, including raw attributes.
+   * @param {number} maximum - Remaining diagnostic slots including the first excess record.
    * @returns {Diagnostic[]} Ordered synchronous warnings and errors.
    */
-  validate: (ast: A) => Diagnostic[];
+  validate: (ast: A, maximum?: number) => Diagnostic[];
   /**
    * Coordinate conversion of validated syntax into the domain model.
    * @responsibility coordinator
@@ -229,9 +230,10 @@ export interface CompilerPorts<A extends RouteAst = ParsedRouteAst, M extends ob
    * @responsibility coordinator
    * @param {M} model - Normalized domain model.
    * @param {SourceMap} [sourceMap] - Optional parser ranges for located failures.
+   * @param {number} maximum - Remaining diagnostic slots including the first excess record.
    * @returns {Diagnostic[]} Synchronous geometry diagnostics; errors block later ports.
    */
-  validateGeometry: (model: M, sourceMap?: SourceMap) => Diagnostic[];
+  validateGeometry: (model: M, sourceMap?: SourceMap, maximum?: number) => Diagnostic[];
   /**
    * Coordinate validated physical/schematic layout computations.
    * @responsibility coordinator

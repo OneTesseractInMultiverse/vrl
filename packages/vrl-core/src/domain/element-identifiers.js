@@ -1,3 +1,4 @@
+import { diagnosticExcerpt } from "./diagnostics.js";
 import { ID_PREFIXES } from "./element-types.js";
 
 /**
@@ -5,13 +6,15 @@ import { ID_PREFIXES } from "./element-types.js";
  * namespace. Identifiers share one case-sensitive namespace across all route elements.
  * @responsibility computation
  * @param {Array} elements - Route elements in source order.
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {unknown} The problems value selected or validated above.
  */
 
-export function elementIdentifierProblems(elements) {
+export function elementIdentifierProblems(elements, maximum = Infinity) {
   const firstById = new Map();
   const problems = [];
   for (const element of elements) {
+    if (problems.length >= maximum) break;
     if (element.id === null || element.id === undefined) continue;
     const problem = identifierProblem(element, firstById);
     if (problem !== null) problems.push(problem);
@@ -33,7 +36,7 @@ function identifierProblem(element, firstById) {
     return { element, first: null, message: "An explicit element identifier must be a non-blank string." };
   }
   if (firstById.has(element.id)) {
-    return { element, first: firstById.get(element.id), message: `Duplicate element identifier "${element.id}".` };
+    return { element, first: firstById.get(element.id), message: `Duplicate element identifier "${diagnosticExcerpt(element.id)}".` };
   }
   return null;
 }

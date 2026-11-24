@@ -1,11 +1,11 @@
 import { posix } from "node:path";
 
 const COMPUTATIONS = new Set([
-  "phase-text.js", "description-text.js", "route-description.js", "row-policy.js", "row-text.js", "row-facts.js", "row-geometry.js", "row-scene.js", "annotation-icons.js", "anchor-presentation.js", "badge-style.js", "detail-content.js", "detail-layout.js",
+  "phase-text.js", "description-text.js", "route-description.js", "row-policy.js", "row-text.js", "row-facts.js", "row-geometry.js", "row-scene.js", "annotation-icons.js", "clearance-index.js", "anchor-presentation.js", "badge-style.js", "detail-content.js", "detail-layout.js",
   "element-formatters.js", "locale.js", "node-scene.js", "panel-scene.js", "presentation.js",
-  "render-options.js", "route-data.js", "scene-bounds.js", "scene-path.js", "segment-scene.js", "symbol-registry.js", "svg-identifiers.js", "soft-terrain-geometry.js", "soft-terrain-text.js", "topo-scene.js"
+  "technical-drawing-budget.js", "render-options.js", "route-data.js", "scene-bounds.js", "scene-path.js", "segment-scene.js", "symbol-registry.js", "svg-identifiers.js", "soft-terrain-geometry.js", "soft-terrain-text.js", "topo-scene.js"
 ]);
-const ENCODING = new Set(["attributes.js", "badge-style.js", "paint.js", "xml.js"]);
+const ENCODING = new Set(["svg-output.js", "attributes.js", "badge-style.js", "paint.js", "xml.js"]);
 
 /**
  * Inspect renderer imports for forbidden reverse dependencies and serialization/geometry boundary violations.
