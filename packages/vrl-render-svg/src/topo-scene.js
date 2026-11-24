@@ -7,6 +7,7 @@ import { diagramText } from "./locale.js";
 import { validateRenderLayout, validateRenderOptions } from "./render-options.js";
 import { bounds, unionBounds, textBounds, fitSceneBounds } from "./scene-bounds.js";
 import { terrainProfilePath, resolveRenderLanguage } from "./presentation.js";
+import { requireTechnicalDrawingBudget } from "./technical-drawing-budget.js";
 import { prepareNodes } from "./node-scene.js";
 import { prepareInfoBox, prepareLegend } from "./panel-scene.js";
 import { prepareRouteSegments, prepareWaterSegments, prepareSegmentLabels, prepareStationTicks } from "./segment-scene.js";
@@ -26,6 +27,7 @@ export function computeTopoScene(route, layout, options = {}) {
   validateRenderOptions(options);
   const identifiers = resolveSvgIdentifiers(options.idPrefix);
   validateRenderLayout(layout);
+  requireTechnicalDrawingBudget(layout.segments);
   if (options.flow === "rows") return computeRowScene(route, layout, options);
   const language = resolveRenderLanguage(options);
   const style = options.style ?? "classic";

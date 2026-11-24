@@ -1,8 +1,6 @@
 name: Publish
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -24,43 +22,66 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+  RELEASE_TAG: ${{ inputs.tag }}
+  OPERATION: ${{ inputs.operation }}
 
 jobs:
-  verify:
+  authorize:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     outputs:
       commit: ${{ steps.identity.outputs.commit }}
     steps:
-      - name: Validate trigger
-        env:
-          EVENT: ${{ github.event_name }}
-          REF: ${{ github.ref }}
+      - name: Require a stable tag and a protected main dispatch
+        id: dispatch
         run: |
-          [[ "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
-          if [[ "$EVENT" == workflow_dispatch ]]; then
-            [[ "$REF" == refs/heads/main ]]
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" != workflow_dispatch || "$GITHUB_REPOSITORY" != OneTesseractInMultiverse/vrl ||
+                "$GITHUB_REF" != refs/heads/main || "$GITHUB_REF_PROTECTED" != true ]]; then
+            echo "Dispatch Publish from the protected main branch of the release repository." >&2
+            exit 1
           fi
-      - uses: actions/checkout@v6
+          if [[ ! "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Enter a stable version tag in vX.Y.Z format." >&2
+            exit 1
+          fi
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
-          ref: ${{ env.RELEASE_TAG }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@v6
+      - name: Resolve the tag against the protected main commit
+        id: identity
+        run: |
+          set -euo pipefail
+          commit=$(git rev-parse --verify "refs/tags/${RELEASE_TAG}^{commit}")
+          git merge-base --is-ancestor "$commit" "$GITHUB_SHA"
+          if [[ "$OPERATION" != dry-run && "$commit" != "$GITHUB_SHA" ]]; then
+            echo "Publication requires the tag to match the protected main dispatch SHA recorded in npm provenance." >&2
+            exit 1
+          fi
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+  verify:
+    needs: authorize
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ needs.authorize.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "26.10.0"
           package-manager-cache: false
-      - name: Verify release identity
-        id: identity
-        run: |
-          node scripts/verify-release.mjs
-          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - run: node scripts/verify-release.mjs
       - run: npm ci
       - run: make check
 
   consumers:
-    needs: verify
+    needs: [authorize, verify]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -74,11 +95,11 @@ jobs:
           - profile: current
             node: "26.10.0"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
-          ref: ${{ needs.verify.outputs.commit }}
+          ref: ${{ needs.authorize.outputs.commit }}
           persist-credentials: false
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: ${{ matrix.node }}
           package-manager-cache: false
@@ -87,20 +108,21 @@ jobs:
       - run: node scripts/check-consumers.mjs ${{ matrix.profile }}
 
   publish:
-    needs: [verify, consumers]
-    if: github.event_name == 'release' || inputs.operation != 'dry-run'
+    needs: [authorize, verify, consumers]
+    if: inputs.operation == 'publish' || inputs.operation == 'resume'
+    environment: npm-production
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
-          ref: ${{ needs.verify.outputs.commit }}
+          ref: ${{ needs.authorize.outputs.commit }}
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "26.10.0"
           registry-url: "https://registry.npmjs.org"
@@ -108,9 +130,12 @@ jobs:
       - run: node scripts/verify-release.mjs
       # Package sources require no build or install; validation ran without OIDC.
       - name: Publish verified tarballs with npm OIDC
-        env:
-          OPERATION: ${{ inputs.operation }}
+        id: publication
         run: |
+          set -euo pipefail
           args=(--release current --provenance --trusted-publisher --skip-check)
-          if [[ "$OPERATION" == resume ]]; then args+=(--resume); fi
+          if [[ "$OPERATION" == resume || "$GITHUB_RUN_ATTEMPT" -gt 1 ]]; then
+            echo "Recovering this release: verify existing tarball integrity before publishing missing packages."
+            args+=(--resume)
+          fi
           node scripts/publish-workspaces.mjs "${args[@]}"

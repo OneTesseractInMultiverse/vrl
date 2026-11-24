@@ -42,6 +42,12 @@ The recovery contract is unchanged: only accepted declarations and first accepte
 
 Source maps are syntax provenance, not route facts. Normalized models, layouts, and exported model JSON do not acquire this map or attribute ranges. The existing element `sourceLocation` remains available as a fallback. Parsing, validation, and normalization do not share mutable provenance state across calls.
 
+## Diagnostic output limits
+
+By default the parser and compiler retain the first 100 diagnostics in reporting order. The first additional diagnostic becomes a blocking `VRL_LIMIT_MAX_DIAGNOSTICS` at its source location. Warnings count toward this limit. Set `options.limits.maxDiagnostics` to a positive safe integer to change the count. At the exact limit warnings still permit compilation.
+
+Stage and redirection lists report each distinct problem once per attribute. The value span covers the complete original list. Embedded source excerpts show up to 160 UTF-16 code units, including an ellipsis when abbreviated. Use the span and the original source to inspect a longer value. `formatDiagnostic` returns up to 2,048 UTF-16 code units per record. Diagram diagnostic and warning text retain up to 32,768 UTF-16 code units. Abbreviated text ends in an ellipsis.
+
 ## Selecting Diagnostic Ranges
 
 - Known-field syntax, ranges, vocabularies, and relationship checks highlight the offending value, including quotes. Stage and redirection failures highlight the entire attribute value, not an individual list entry.
@@ -106,6 +112,7 @@ Code meanings are stable independently of human-readable wording. Do not match `
 | `VRL_LIMIT_MAX_LINE_BYTES` | Per-line byte budget exceeded |
 | `VRL_LIMIT_MAX_ELEMENTS` | Element budget exceeded |
 | `VRL_LIMIT_MAX_LIST_ENTRIES` | Per-attribute list budget exceeded |
+| `VRL_LIMIT_MAX_DIAGNOSTICS` | Parser or compiler reached the first diagnostic beyond its reporting budget |
 
 The existing `createDiagnostic(kind, severity, message, location, suggestion, relatedLocations)` calls keep their previous shape. Its optional seventh argument is `{ code, span }`; omitted properties are not emitted. Custom diagnostics and injected ports may omit codes/spans. Custom applications should use their own code prefix instead of the reserved `VRL_` prefix.
 

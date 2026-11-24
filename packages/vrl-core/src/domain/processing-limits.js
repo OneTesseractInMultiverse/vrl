@@ -5,7 +5,8 @@ const DEFAULT_LIMITS = Object.freeze({
   maxLines: 20_000,
   maxLineBytes: 16_384,
   maxElements: 10_000,
-  maxListEntries: 1_024
+  maxListEntries: 1_024,
+  maxDiagnostics: 100
 });
 
 /**

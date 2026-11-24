@@ -10,6 +10,12 @@ Precomputed `diagram.svg` is trusted markup, not an input to a sanitizer. Supply
 
 Low-level rendering helpers encode attribute values and validate paint, but require callers to honor their normalized-model and geometry contracts. Configuration validation does not establish that arbitrary route objects, arbitrary SVG, or route safety claims are valid.
 
+The compiler and diagram layers have separate resource budgets. For untrusted route submissions, see [compiler limits](docs/api-reference.md) and [drawing and SVG limits](docs/rendering-scene.md#document-drawing-budgets). A route that compiles successfully can exceed the drawing budget for a single diagram.
+
+## Dependency and release maintenance
+
+Dependabot checks root npm dependencies and GitHub Actions weekly. The integration manifests pin framework versions for repeatable compatibility tests. Their security alerts need individual review against the minimum and current profiles. See [trusted publishing](docs/trusted-publishing.md) for the protected branch, environment, and npm publisher requirements.
+
 ## Supported Versions
 
 Until the first stable release, only the latest `main` branch and latest published prerelease are supported.

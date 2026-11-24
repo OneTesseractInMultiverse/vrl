@@ -7,6 +7,12 @@ import { createVrlReactDiagramState, createVrlDiagramComponent } from "@subverti
 import { createVrlSvelteDiagramState, renderVrlSvelteMarkup } from "@subvertic/vrl-svelte";
 import { svgAttribute } from "../packages/vrl-render-svg/src/attributes.js";
 
+import { requireTechnicalDrawingBudget } from "../packages/vrl-render-svg/src/technical-drawing-budget.js";
+
+import { serializeTopoScene } from "../packages/vrl-render-svg/src/svg-serializer.js";
+import { serializeRowScene } from "../packages/vrl-render-svg/src/row-serializer.js";
+import { joinSvgDocument } from "../packages/vrl-render-svg/src/svg-output.js";
+
 const SOURCE = 'route "Configuration"\nstart "Entry"\nrappel height=10m rope=20m anchor=bolts anchor_count=2 station=left stages=4m+6m redirection=3m:left\npool type=deep\nhazard type=snake severity=high\nexit "Finish"';
 const QUOTE_PAYLOAD = 'red" onload="void(0)';
 const ELEMENT_PAYLOAD = 'custom"><script>inert</script><g data-injected="yes';
@@ -639,3 +645,92 @@ test("caller-supplied Svelte diagram markup is an explicit trusted passthrough",
  */ () => {
   assert.match(renderVrlSvelteMarkup("", {}, { diagram: { ok: true, svg: '<svg data-owned="caller"/>' } }), /<svg data-owned="caller"\/>/);
 });
+
+const singleStage = { element: { attributes: { stages: [{}] } } };
+const twoStages = { element: { attributes: { stages: [{}, {}] } } };
+for (const spelling of ["redirection", "redirections"]) {
+  const marked = { element: { attributes: { [spelling]: [{}] } } };
+  test(`drawing budget admits exactly six primitives including ${spelling}`, /**
+   * Verify that a single stage has no trailing boundary, while two stages have one shared boundary.
+   * @responsibility coordinator
+   * @returns {void} Checks the inclusive budget across separate segments.
+   */ () => {
+    assert.equal(requireTechnicalDrawingBudget([singleStage, { element: null }, marked, twoStages], 6), undefined);
+  });
+  test(`drawing budget accumulates ${spelling} markers across segments`, /**
+   * Verify that adding a separate segment can exhaust a shared document budget.
+   * @responsibility coordinator
+   * @returns {void} Checks failure at one primitive above the limit.
+   */ () => {
+    assert.throws(/**
+     * Submit three individually admissible segments to the same budget.
+     * @responsibility coordinator
+     * @returns {void} Runs the preflight.
+     */ () => requireTechnicalDrawingBudget([twoStages, marked, singleStage], 5), /drawing budget of 5 primitives/);
+  });
+}
+
+test("complete SVG budget includes Unicode code units and all fragments at its exact limit", /**
+ * Check that serialized fragments retain their order and count supplementary characters correctly.
+ * @responsibility coordinator
+ * @returns {void} Verifies exact-boundary output.
+ */ () => {
+  assert.equal(joinSvgDocument(["A", "🗻", "Z"], 4), "A🗻Z");
+});
+
+test("SVG output stops consuming fragments immediately when the budget is exceeded", /**
+ * Verify that a rejected document is neither completed nor partially returned.
+ * @responsibility coordinator
+ * @returns {void} Checks the limit error before later serialization can run.
+ */ () => {
+  assert.throws(/**
+   * Consume a lazy document with a sentinel beyond the rejected chunk.
+   * @responsibility coordinator
+   * @returns {string} The document if every chunk fits.
+   */ () => joinSvgDocument(budgetFragments(), 2), /exceeds 2 UTF-16 code units/);
+});
+
+/**
+ * Supply fragments that reveal any continued serialization after the limit has failed.
+ * @responsibility computation
+ * @returns {IterableIterator<string>} Two fragments followed by an unreachable sentinel error.
+ */
+function* budgetFragments() {
+  yield "ab";
+  yield "c";
+  throw new Error("Serialized past the limit");
+}
+
+test("scene preparation rejects excessive combined technical drawings before computing their geometry", /**
+ * Use a legitimate segment blueprint across multiple entries to exercise the public scene boundary.
+ * @responsibility coordinator
+ * @returns {void} Checks shared preflight failure in the default renderer.
+ */ () => {
+  const { model, layout } = core.compileRoute('route "Budget"\nrappel height=2m rope=4m stages=1m+1m');
+  const segment = layout.segments[0];
+  const stages = Array(1024).fill({ meters: 1 });
+  const detailed = { ...segment, element: { ...segment.element, attributes: { stages } } };
+  assert.throws(/**
+   * Invoke scene preparation for five individually bounded technical lists.
+   * @responsibility coordinator
+   * @returns {Object} Prepared scene when it fits.
+   */ () => svg.computeTopoScene(model, { ...layout, segments: Array(5).fill(detailed) }), /drawing budget of 8192 primitives/);
+});
+
+for (const [flow, serialize] of [["continuous", serializeTopoScene], ["rows", serializeRowScene]]) {
+  test(`the ${flow} serializer includes the document footer in its output budget`, /**
+   * Use a complete public renderer output as the expected serialized length.
+   * @responsibility coordinator
+   * @returns {void} Checks that a document exceeding the limit by its final character fails.
+   */ () => {
+    const { model, layout } = core.compileRoute(SOURCE);
+    const options = { style: "soft-terrain", flow };
+    const scene = svg.computeTopoScene(model, layout, options);
+    const required = svg.renderTopoSvg(model, layout, options).length;
+    assert.throws(/**
+     * Serialize the same scene with one fewer code unit than required.
+     * @responsibility coordinator
+     * @returns {string} Complete document when it fits.
+     */ () => serialize(scene, svg.resolveTheme(), required - 1), /SVG output exceeds/);
+  });
+}

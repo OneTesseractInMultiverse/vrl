@@ -62,42 +62,60 @@ export function hasBlockingDiagnostics(diagnostics) {
  * Format a diagnostic and its related locations as readable plain text without changing its source data.
  * @responsibility computation
  * @param {unknown} diagnostic - Structured diagnostic with kind, severity, message and source location.
- * @returns {string} Formatted text retaining the supplied values and ordering.
+ * @returns {string} Up to 2,048 UTF-16 units of formatted text in diagnostic order.
  */
 export function formatDiagnostic(diagnostic) {
-  const suffix = diagnostic.suggestion === "" ? "" : ` Suggestion: ${diagnostic.suggestion}`;
-  const related = formatRelatedLocations(diagnostic.relatedLocations ?? []);
-  return `${diagnostic.severity.toUpperCase()} ${diagnostic.kind} at ${diagnostic.location.line}:${diagnostic.location.column}: ${diagnostic.message}${suffix}${related}`;
+  const maximum = 2048;
+  const kind = diagnosticExcerpt(diagnostic.kind, maximum);
+  const message = diagnosticExcerpt(diagnostic.message, maximum);
+  let text = `${diagnostic.severity.toUpperCase()} ${kind} at ${diagnostic.location.line}:${diagnostic.location.column}: ${message}`;
+  if (diagnostic.suggestion !== "") text += ` Suggestion: ${diagnosticExcerpt(String(diagnostic.suggestion), maximum)}`;
+  for (const related of diagnostic.relatedLocations ?? []) {
+    if (text.length >= maximum) return diagnosticExcerpt(text + "…", maximum);
+    text += ` Related: ${diagnosticExcerpt(related.message, maximum)} at ${related.location.line}:${related.location.column}.`;
+  }
+  return diagnosticExcerpt(text, maximum);
 }
 
 /**
- * Append related source positions and messages in their declared order.
+ * Keep a short excerpt of authored text in diagnostic messages and retain the full source in the AST.
  * @responsibility computation
- * @param {unknown} locations - Ordered related source locations.
- * @returns {string} The result returned by locations.map(({ message, location }) => ` Related: ${message} at ${location.line}:${location.column}.`).join.
+ * @param {string} value - Authored value or diagnostic text.
+ * @param {number} maximum - Maximum UTF-16 length including the ellipsis.
+ * @returns {string} Original short text or a bounded prefix with an ellipsis.
  */
-function formatRelatedLocations(locations) {
-  return locations.map(/**
-   * Format one related diagnostic message with its one-based line and column.
-   * @responsibility computation
-   * @param {Object} input1 - Input record destructured into the separately documented members below.
-   * @param {string} input1.message - Human-readable explanation retained in the diagnostic.
-   * @param {Object} input1.location - One-based line and UTF-16 column used as the diagnostic origin.
-   * @returns {string} Formatted text retaining the supplied values and ordering.
-   */ ({ message, location }) => ` Related: ${message} at ${location.line}:${location.column}.`).join("");
+export function diagnosticExcerpt(value, maximum = 160) {
+  return value.length <= maximum ? value : value.slice(0, maximum - 1).replace(/[\uD800-\uDBFF]$/, "") + "…";
 }
 
 /**
- * Append diagnostics iteratively to a caller-owned list, avoiding argument-count limits from spread calls.
- * Append arbitrary diagnostic counts without expanding function arguments.
+ * Append ordered records until the destination holds the requested number.
  * @responsibility computation
- * @param {Array} target - Caller-owned diagnostic destination; appended to in place.
- * @param {Array} diagnostics - Ordered diagnostic records; append helpers mutate the supplied destination list.
- * @returns {void} Completes the documented operation; no return value is consumed.
+ * @param {Array} target - Caller-owned diagnostic array.
+ * @param {Array} diagnostics - Ordered records from a validation or parsing stage.
+ * @param {number} maximum - Maximum total records to retain in the destination.
+ * @returns {void} Updates the destination without expanding function arguments.
  */
+export function appendDiagnostics(target, diagnostics, maximum = Infinity) {
+  for (const diagnostic of diagnostics) {
+    if (target.length >= maximum) break;
+    target.push(diagnostic);
+  }
+}
 
-export function appendDiagnostics(target, diagnostics) {
-  for (const diagnostic of diagnostics) target.push(diagnostic);
+/**
+ * Replace excess diagnostics with one blocking limit record at the first omitted location.
+ * @responsibility computation
+ * @param {Array} diagnostics - Owned records in reporting order, including the first excess record if present.
+ * @param {number} maximum - Maximum number of ordinary diagnostics to retain.
+ * @returns {boolean} Whether the diagnostic budget stopped processing.
+ */
+export function enforceDiagnosticLimit(diagnostics, maximum) {
+  if (diagnostics.length <= maximum) return false;
+  const location = diagnostics[maximum].location;
+  diagnostics.length = maximum;
+  diagnostics.push(limitDiagnostic({ name: "maxDiagnostics", maximum, location }));
+  return true;
 }
 
 /**

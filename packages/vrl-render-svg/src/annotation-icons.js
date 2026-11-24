@@ -1,5 +1,6 @@
 import { resolveAttributeIconId, resolveElementIconId } from "@subvertic/vrl-icons/semantics";
 import { elementAttribute } from "./route-data.js";
+import { rightmostEdge } from "./clearance-index.js";
 import { bounds } from "./scene-bounds.js";
 import { DETAIL_LINE_HEIGHT } from "./presentation.js";
 
@@ -46,17 +47,13 @@ export function placeAnnotationIcon(id, placement, precedingRows) {
 /**
  * Move a complete annotation block right until its reserved icon gutter clears all overlapping geometry.
  * @responsibility computation
- * @param {Object[]} obstacles - Conservative geometry and technical-text bounds prepared by the scene coordinator.
+ * @param {Object} index - Vertical clearance index of conservative geometry and technical-text bounds.
  * @param {Object} placement - Candidate text origin and baselines.
  * @param {number} bottom - Last occupied vertical coordinate including text and icon strokes.
  * @returns {number} Monotonic text x with a 40-unit reserve to the right of every overlapping obstacle.
  */
-export function annotationClearanceX(obstacles, placement, bottom) {
-  let x = placement.labelX;
-  for (const obstacle of obstacles) {
-    if (obstacle.maxY >= placement.titleY - 24 && obstacle.minY <= bottom) x = Math.max(x, obstacle.maxX + 40);
-  }
-  return x;
+export function annotationClearanceX(index, placement, bottom) {
+  return Math.max(placement.labelX, rightmostEdge(index, placement.titleY - 24, bottom) + 40);
 }
 
 /**

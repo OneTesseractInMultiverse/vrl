@@ -1,3 +1,4 @@
+import { joinSvgDocument } from "./svg-output.js";
 import { svgAttribute, svgPaint } from "./attributes.js";
 import { escapeXml } from "./xml.js";
 import { serializeAnnotationIcon } from "./icon-serializer.js";
@@ -7,17 +8,29 @@ import { serializeAnnotationIcon } from "./icon-serializer.js";
  * @responsibility coordinator
  * @param {Object} scene - Complete row scene with absolute coordinates and original ownership metadata.
  * @param {Object} theme - Validated renderer paint tokens.
+ * @param {number} maximum - Optional serialized output budget in UTF-16 code units.
  * @returns {string} Standalone accessible SVG at the requested width, retaining minimum readable text size.
  */
-export function serializeRowScene(scene, theme) {
+export function serializeRowScene(scene, theme, maximum) {
+  return joinSvgDocument(rowChunks(scene, theme), maximum);
+}
+
+/**
+ * Emit a row document incrementally so earlier rows count toward the same output budget as later rows.
+ * @responsibility coordinator
+ * @param {Object} scene - Complete bounded row scene.
+ * @param {Object} theme - Resolved drawing colors.
+ * @returns {IterableIterator<string>} Header, rows and footer in paint order.
+ */
+function* rowChunks(scene, theme) {
   const v = scene.viewBox;
-  let rows = "";
-  for (const row of scene.rows) rows += serializeRow(row, scene.identifiers.arrow, theme);
-  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="${svgAttribute(scene.language)}" xml:lang="${svgAttribute(scene.language)}" aria-labelledby="${svgAttribute(scene.identifiers.title)}" aria-describedby="${svgAttribute(scene.identifiers.description)}" viewBox="${svgAttribute(v.x)} ${svgAttribute(v.y)} ${svgAttribute(v.width)} ${svgAttribute(v.height)}" width="${svgAttribute(v.width)}" height="${svgAttribute(v.height)}" style="max-width: none; min-width: ${svgAttribute(v.width)}px; height: auto;" data-vrl-flow="rows">
+  yield `<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="${svgAttribute(scene.language)}" xml:lang="${svgAttribute(scene.language)}" aria-labelledby="${svgAttribute(scene.identifiers.title)}" aria-describedby="${svgAttribute(scene.identifiers.description)}" viewBox="${svgAttribute(v.x)} ${svgAttribute(v.y)} ${svgAttribute(v.width)} ${svgAttribute(v.height)}" width="${svgAttribute(v.width)}" height="${svgAttribute(v.height)}" style="max-width: none; min-width: ${svgAttribute(v.width)}px; height: auto;" data-vrl-flow="rows">
 <title id="${svgAttribute(scene.identifiers.title)}">${escapeXml(scene.title)}</title><desc id="${svgAttribute(scene.identifiers.description)}">${escapeXml(scene.description)}</desc>
 <defs><marker id="${svgAttribute(scene.identifiers.arrow)}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L7,3 z" fill="${svgPaint(theme.routeLine)}"/></marker></defs>
 <rect x="${svgAttribute(v.x)}" y="${svgAttribute(v.y)}" width="${svgAttribute(v.width)}" height="${svgAttribute(v.height)}" fill="${svgPaint(theme.background)}"/>
-${serializeRowText(scene.header, theme)}${rows}${scene.legend === null ? "" : serializeRowText(scene.legend, theme)}
+${serializeRowText(scene.header, theme)}`;
+  for (const row of scene.rows) yield serializeRow(row, scene.identifiers.arrow, theme);
+  yield `${scene.legend === null ? "" : serializeRowText(scene.legend, theme)}
 </svg>`;
 }
 

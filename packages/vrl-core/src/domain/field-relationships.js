@@ -53,8 +53,8 @@ function unplaceableDetailProblems(attributes) {
 }
 
 /**
- * Assess redirection constraints using the supplied validated range or route height, retaining each offending
- * entry.
+ * Assess redirection constraints using the supplied validated range or route height, reporting each affected
+ * field once.
  * @responsibility computation
  * @param {unknown} attributes - Attribute record for this scope; raw text before normalization and typed values afterward.
  * @param {number} height - Validated declared technical height in meters.
@@ -67,7 +67,10 @@ function redirectionProblems(attributes, height) {
     const parsed = parseRedirectionsToken(attributes[name]);
     if (parsed.ok) {
       for (const entry of parsed.value) {
-        if (entry.distance.meters >= height) problems.push({ kind: "redirection", name, severity: "error" });
+        if (entry.distance.meters >= height) {
+          problems.push({ kind: "redirection", name, severity: "error" });
+          break;
+        }
       }
     }
   }

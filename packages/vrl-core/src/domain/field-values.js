@@ -51,7 +51,7 @@ function parseEnum(raw, specification) {
  * @responsibility computation
  * @param {Object} specification - Immutable field contract defining parser, allowed range, vocabulary and applicability.
  * @param {unknown} value - Candidate value; accepted shape, missing-value behavior and rejection rules are described above.
- * @returns {unknown} The selected result, including the documented absent-value fallback. The result returned by value.filter((stage) => outsideRange(stage.meters, specification.range)).map. The result returned by value.flatMap. The ordered records or values assembled above.
+ * @returns {string[]} Distinct failure reasons for this field, in order of first occurrence.
  */
 export function fieldValueProblems(specification, value) {
   if (specification.acceptsUnknown && value === "unknown") return [];
@@ -59,22 +59,19 @@ export function fieldValueProblems(specification, value) {
     case "measurement": return outsideRange(value.meters, specification.range) ? ["range"] : [];
     case "inclination": return outsideRange(value.percent, specification.range) ? ["range"] : [];
     case "integerText": return outsideRange(Number(value), specification.range) ? ["range"] : [];
-    case "stages": return value.filter(/**
-     * Evaluate the selection condition outsideRange(stage.meters, specification.range).
+    case "stages": return value.some(/**
+     * Identify a stage outside its declared metric range.
      * @responsibility computation
-     * @param {unknown} stage - One declared metric stage in source order.
-     * @returns {unknown} The result returned by outsideRange.
-     */ (stage) => outsideRange(stage.meters, specification.range)).map(/**
-     * Supply the fixed "stage" value.
-     * @responsibility computation
-     * @returns {string} The literal "stage" for this branch.
-     */ () => "stage");
-    case "redirections": return value.flatMap(/**
-     * Apply redirectionProblems to the supplied arguments; retain the callee's return and failure behavior.
-     * @responsibility computation
-     * @param {Object} entry - Parsed redirection with typed distance.meters and side text.
-     * @returns {unknown} The result returned by redirectionProblems.
-     */ (entry) => redirectionProblems(specification, entry));
+     * @param {Object} stage - Typed stage measurement.
+     * @returns {boolean} Whether the stage violates the specification.
+     */ stage => outsideRange(stage.meters, specification.range)) ? ["stage"] : [];
+    case "redirections": {
+      const problems = new Set();
+      for (const entry of value) {
+        for (const reason of redirectionProblems(specification, entry)) problems.add(reason);
+      }
+      return Array.from(problems);
+    }
     default: return [];
   }
 }

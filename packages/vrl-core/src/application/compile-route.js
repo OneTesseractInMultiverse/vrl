@@ -1,4 +1,4 @@
-import { appendDiagnostics, limitDiagnostic, hasBlockingDiagnostics } from "../domain/diagnostics.js";
+import { appendDiagnostics, enforceDiagnosticLimit, limitDiagnostic, hasBlockingDiagnostics } from "../domain/diagnostics.js";
 import { createEmptyRoute } from "./route-ast.js";
 import { requireNumericData } from "../domain/numeric-policy.js";
 import { astLimitProblem, resolveProcessingLimits, sourceLimitProblem } from "../domain/processing-limits.js";
@@ -19,24 +19,30 @@ export function compileRouteWithPorts(source, options, dependencies) {
   const sourceProblem = sourceLimitProblem(source, limits);
   if (sourceProblem !== null) return failedCompilation(createEmptyRoute(source), [limitDiagnostic(sourceProblem)]);
   const parsed = requireParsedRoute(dependencies.parse(source, { limits }));
-  if (parsed.diagnostics.some(/**
+  const diagnostics = [];
+  const capacity = limits.maxDiagnostics + 1;
+  appendDiagnostics(diagnostics, parsed.diagnostics, capacity);
+  if (enforceDiagnosticLimit(diagnostics, limits.maxDiagnostics) || diagnostics.some(/**
    * Evaluate the selection condition diagnostic.kind === "limit" && diagnostic.severity === "error".
    * @responsibility computation
    * @param {unknown} diagnostic - Structured diagnostic with kind, severity, message and source location.
    * @returns {unknown} The result of the documented comparison or calculation.
-   */ (diagnostic) => diagnostic.kind === "limit" && diagnostic.severity === "error")) return failedCompilation(parsed.ast, parsed.diagnostics);
+   */ (diagnostic) => diagnostic.kind === "limit" && diagnostic.severity === "error")) return failedCompilation(parsed.ast, diagnostics);
   const astProblem = astLimitProblem(parsed.ast, limits);
-  if (astProblem !== null) return failedCompilation(parsed.ast, [...parsed.diagnostics, limitDiagnostic(astProblem)]);
-  const validationDiagnostics = requireDiagnostics(dependencies.validate(parsed.ast), "validate");
-  const diagnostics = [...parsed.diagnostics, ...validationDiagnostics];
-
-  if (hasBlockingDiagnostics(diagnostics)) {
+  if (astProblem !== null) {
+    diagnostics.push(limitDiagnostic(astProblem));
+    enforceDiagnosticLimit(diagnostics, limits.maxDiagnostics);
+    return failedCompilation(parsed.ast, diagnostics);
+  }
+  const validationDiagnostics = requireDiagnostics(dependencies.validate(parsed.ast, capacity - diagnostics.length), "validate");
+  appendDiagnostics(diagnostics, validationDiagnostics, capacity);
+  if (enforceDiagnosticLimit(diagnostics, limits.maxDiagnostics) || hasBlockingDiagnostics(diagnostics)) {
     return failedCompilation(parsed.ast, diagnostics);
   }
 
   const model = requirePortRecord(dependencies.normalize(parsed.ast), "normalize");
-  appendDiagnostics(diagnostics, requireDiagnostics(dependencies.validateGeometry(model, parsed.ast.sourceMap), "validateGeometry"));
-  if (hasBlockingDiagnostics(diagnostics)) {
+  appendDiagnostics(diagnostics, requireDiagnostics(dependencies.validateGeometry(model, parsed.ast.sourceMap, capacity - diagnostics.length), "validateGeometry"), capacity);
+  if (enforceDiagnosticLimit(diagnostics, limits.maxDiagnostics) || hasBlockingDiagnostics(diagnostics)) {
     return failedCompilation(parsed.ast, diagnostics);
   }
   requireNumericData(model, "Normalized model");

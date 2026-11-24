@@ -2,7 +2,7 @@
 
 ## Prepare and review
 
-1. Confirm the seven current `@subvertic/vrl-*` package names, organization ownership, repository URLs and per-package trusted publisher settings. See [initial publication and npm configuration](trusted-publishing.md).
+1. Confirm the seven `@subvertic/vrl-*` package identities and repository URLs. Check that GitHub protects `main`, the `npm-production` environment allows only that branch, and each npm package binds this workflow to that exact environment. See [initial publication and trusted-publisher settings](trusted-publishing.md).
 2. Start from current `main` in an isolated checkout and run `npm ci`.
 3. Inspect the read-only plan: `make publish-plan RELEASE=minor`.
 4. Prepare explicitly: `make release-prepare RELEASE=minor`. Preparation updates only root/workspace manifests and the lockfile, including its top-level version and internal dependency pins. It does not publish or run the quality gate.
@@ -13,10 +13,10 @@
 ## Validate and publish
 
 8. In GitHub Actions, choose **Publish → Run workflow**, select `main`, enter the existing tag and choose `dry-run`. All release checks run; no package is published.
-9. Publish the matching GitHub Release, or choose the manual `publish` operation. Both paths publish the committed version only, through trusted OIDC with provenance, after verification and consumer tests.
-10. Verify all seven registry versions, provenance and package installation. If interrupted, follow [partial-publication recovery](trusted-publishing.md#partial-publication-recovery) using the same tag and `resume`.
+9. While the tag points to the tip of `main`, dispatch **Publish** again from `main`, select the same tag and choose `publish`. GitHub requires the tagged commit to equal the SHA recorded in npm provenance before running its code. The publication job uses the `npm-production` environment and npm OIDC with provenance. Publish the GitHub Release notes separately.
+10. Verify all seven registry versions, provenance and package installation. If interrupted, follow [partial-publication recovery](trusted-publishing.md#partial-publication-recovery) by re-running the original failed publication on the same SHA.
 
-Initial publication is a separate prerequisite when the package names do not yet exist. Complete the local bootstrap and per-package npm configuration before triggering a GitHub release.
+Initial publication is a separate prerequisite when the package names do not yet exist. Complete the local bootstrap and per-package npm configuration before dispatching CI publication.
 
 ## Command semantics and failures
 
@@ -35,6 +35,6 @@ Planning/validation failures make no file or registry changes. Preparation compu
 
 Publication requires a clean checkout. Checks, authentication, packing and all existing-artifact comparisons precede the first publish. Tarballs live in a temporary directory and are removed on success or caught failure. A publishing command failure retains its exit status and identifies confirmed progress; a retry must query actual registry state because a network failure can hide a successful publish. No version files are rewritten and no registry operation is rolled back.
 
-Local bootstrapping uses `npm login --auth-type=web`; `make publish OTP=123456` can forward an interactive one-time code when required. Codes expire, so repeat with a fresh code and `RESUME=true` after inspecting an interrupted release. Local publication disables provenance; CI enables it. Never commit credentials, codes or npm tokens.
+For local bootstrap, authenticate with `npm login --auth-type=web` and run `make publish` in an interactive terminal. Complete npm’s challenge when prompted. Inspect an interrupted release before retrying with `make publish RESUME=true`. CI publications include provenance.
 
 Pure release options, validation, version projection and artifact comparisons live in `scripts/release/`. The coordinator depends on injected filesystem, registry and command ports; `system.mjs` implements those adapters. `tests/release-tooling.test.js` verifies order, absent side effects, rollback, failure status, partial progress and idempotent retry with fake publishers. Tests never perform actual publication. Package coverage remains a separate configured gate; behavioral release tests validate operational failure contracts.

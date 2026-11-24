@@ -4,6 +4,9 @@ This project follows Semantic Versioning once public releases begin.
 
 ## Unreleased
 
+- Verify release tags from protected main before checking out package sources. Publishing uses a manual dispatch and a branch-restricted npm environment. Local publication uses npm’s interactive authentication.
+- Bound diagnostic feedback and aggregate technical drawing output. Continuous soft-terrain and annotation label placement queries a vertical index; existing fixtures retain their layout.
+
 - Add explicit jumps with measured/unknown vertical height, scoped observations, downward ownership and bilingual schematic output without ladder rungs.
 - Publish AST revision 3 / model revision 8 migration, executable jump examples and narrow visual/accessible regression evidence.
 

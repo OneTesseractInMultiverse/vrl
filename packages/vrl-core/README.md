@@ -90,7 +90,7 @@ This changes the model/JSON paths for extensions; known metric and enum paths re
 
 ## Processing Limits
 
-`compileRoute` and standalone `parseVrl` accept `options.limits`: `maxSourceBytes` (1 MiB), `maxLines` (20,000), `maxLineBytes` (16 KiB), `maxElements` (10,000), and `maxListEntries` (1,024 per stage/redirection attribute). Overrides must be positive safe integers; omitted fields use defaults. Source and line sizes count UTF-8 bytes, with LF/CRLF excluded from per-line size. Exact boundaries are accepted.
+`compileRoute` and standalone `parseVrl` accept `options.limits`: `maxSourceBytes` (1 MiB), `maxLines` (20,000), `maxLineBytes` (16 KiB), `maxElements` (10,000), `maxListEntries` (1,024 per stage/redirection attribute), and `maxDiagnostics` (100 ordinary records, with one additional blocking record on overflow). Overrides must be positive safe integers; omitted fields use defaults. Source and line sizes count UTF-8 bytes, with LF/CRLF excluded from per-line size. Exact boundaries are accepted.
 
 Over-budget input produces a structured `limit` error; compilation returns no model, layout, or JSON and does not continue downstream. Source preflight runs before parser allocations; element/list overflow stops parsing with only a recovery prefix. Invalid configuration and unrelated exceptions still throw. Parser ports receive `parse(source, { limits })`; returned AST counts/lists are checked before semantic validation. Direct token, validation, normalization, and layout helpers remain caller-sized. See the [complete budget contract](https://github.com/OneTesseractInMultiverse/vrl/blob/main/docs/api-reference.md#document-processing-limits).
 

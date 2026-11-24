@@ -1,15 +1,16 @@
 import { poolReferenceProblems } from "../domain/pool-references.js";
-import { codedDiagnostic } from "../domain/diagnostics.js";
+import { codedDiagnostic, diagnosticExcerpt } from "../domain/diagnostics.js";
 import { fieldReference, identifierReference } from "../domain/source-references.js";
 
 /**
  * Translate domain association problems into source-located blocking diagnostics after local validation.
  * @responsibility coordinator
  * @param {Object} ast - Raw route with valid fields/unique IDs and optional parser provenance; never mutated.
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Object[]} Ordered missing/wrong-type diagnostics; wrong types retain the target as related context.
  */
-export function validatePoolReferences(ast) {
-  return poolReferenceProblems(ast.elements).map(/**
+export function validatePoolReferences(ast, maximum) {
+  return poolReferenceProblems(ast.elements, maximum).map(/**
    * Attach parser ranges to one classified domain problem without changing its meaning.
    * @responsibility computation
    * @param {Object} problem - Domain problem containing owner index, exact reference and optional target index.
@@ -29,8 +30,8 @@ function poolReferenceDiagnostic(problem, ast) {
   const related = problem.targetIndex === null ? [] : [{ message: "Referenced non-pool declaration",
     ...identifierReference(ast.sourceMap?.elements?.[problem.targetIndex], ast.elements[problem.targetIndex].sourceLocation) }];
   const code = problem.kind === "missing" ? "VRL_REFERENCE_TARGET_MISSING" : "VRL_REFERENCE_TARGET_TYPE";
-  const message = problem.kind === "missing" ? `Pool reference "${problem.reference}" has no explicitly identified target.`
-    : `Pool reference "${problem.reference}" must name a pool element.`;
+  const message = problem.kind === "missing" ? `Pool reference "${diagnosticExcerpt(problem.reference)}" has no explicitly identified target.`
+    : `Pool reference "${diagnosticExcerpt(problem.reference)}" must name a pool element.`;
   return codedDiagnostic(code, "validation", "error", message, source,
     "Declare a unique explicit pool ID and reference its exact spelling, or omit pool_ref.", related);
 }

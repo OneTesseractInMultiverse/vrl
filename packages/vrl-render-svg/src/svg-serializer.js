@@ -1,3 +1,4 @@
+import { joinSvgDocument } from "./svg-output.js";
 import { serializeAnnotationIcon, serializeIconMarker } from "./icon-serializer.js";
 import { assertXmlCharacters, escapeXml } from "./xml.js";
 import { svgAttribute, svgPaint } from "./attributes.js";
@@ -11,29 +12,23 @@ import { detailBadgeStyle, themeSafeStroke } from "./badge-style.js";
  * @responsibility coordinator
  * @param {Object} scene - Complete renderer-owned scene with positioned primitives, IDs and fitted viewBox.
  * @param {Object} theme - Resolved theme record mapping semantic token names to supported paint strings.
+ * @param {number} maximum - Optional serialized output budget in UTF-16 code units.
  * @returns {string} Escaped SVG markup for the prepared drawing records; optional absent primitives serialize to empty text.
  */
-export function serializeTopoScene(scene, theme) {
+export function serializeTopoScene(scene, theme, maximum) {
+  return joinSvgDocument(topoChunks(scene, theme), maximum);
+}
+
+/**
+ * Emit topographic layers in paint order and stream repeated drawing records into the document budget.
+ * @responsibility coordinator
+ * @param {Object} scene - Positioned scene with its identifier namespace and accessibility strings.
+ * @param {Object} theme - Resolved theme tokens used by the individual fragment serializers.
+ * @returns {IterableIterator<string>} Ordered fragments for one complete SVG.
+ */
+function* topoChunks(scene, theme) {
   const { viewBox } = scene;
-  const terrainProfile = scene.style === "soft-terrain" ? serializeSoftTerrain(scene.terrain, theme) : serializeTerrain(scene.terrainPath, theme);
-  const nodes = scene.nodes.map(/**
-   * Apply serializeNode to the supplied arguments; retain the callee's return and failure behavior.
-   * @responsibility computation
-   * @param {unknown} item - Current prepared record or test case.
-   * @returns {unknown} The result returned by serializeNode.
-   */ (item) => serializeNode(item.drawing, theme)).join("");
-  const waterSegments = scene.style === "soft-terrain" ? serializeSoftPools(scene.pools, theme) : serializeWaterSegments(scene.waterPaths, theme);
-  const routeSegments = serializeRouteSegments(scene.segments, theme, scene.identifiers);
-  const segmentLabels = serializeSegmentLabels(scene.segmentLabels, theme);
-  const stationTicks = scene.stationTicks.map(/**
-   * Apply serializeStationTick to the supplied arguments; retain the callee's return and failure behavior.
-   * @responsibility computation
-   * @param {unknown} item - Current prepared record or test case.
-   * @returns {unknown} The result returned by serializeStationTick.
-   */ (item) => serializeStationTick(item, theme)).join("");
-  const infoBox = serializeInfoBox(scene.infoBox, theme, scene.style === "soft-terrain");
-  const legend = scene.legend === null ? "" : serializeLegend(scene.legend, theme);
-  return `<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="${svgAttribute(scene.language)}" xml:lang="${svgAttribute(scene.language)}" aria-labelledby="${svgAttribute(scene.identifiers.title)}" aria-describedby="${svgAttribute(scene.identifiers.description)}" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
+  yield `<svg xmlns="http://www.w3.org/2000/svg" role="img" lang="${svgAttribute(scene.language)}" xml:lang="${svgAttribute(scene.language)}" aria-labelledby="${svgAttribute(scene.identifiers.title)}" aria-describedby="${svgAttribute(scene.identifiers.description)}" viewBox="${svgAttribute(viewBox.x)} ${svgAttribute(viewBox.y)} ${svgAttribute(viewBox.width)} ${svgAttribute(viewBox.height)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" style="max-width: 100%; height: auto;">
   <title id="${svgAttribute(scene.identifiers.title)}">${escapeXml(scene.title)}</title>
   <desc id="${svgAttribute(scene.identifiers.description)}">${escapeXml(scene.description)}</desc>
   <defs>
@@ -42,15 +37,23 @@ export function serializeTopoScene(scene, theme) {
     </marker>
   </defs>
   <rect x="${svgAttribute(viewBox.x)}" y="${svgAttribute(viewBox.y)}" width="${svgAttribute(viewBox.width)}" height="${svgAttribute(viewBox.height)}" fill="${svgPaint(theme.background)}"/>
-  ${terrainProfile}
-  ${infoBox}
-  ${waterSegments}
-  ${routeSegments}
-  ${segmentLabels}
-  ${stationTicks}
-  ${nodes}
-  ${legend}
-</svg>`;
+  `;
+  yield scene.style === "soft-terrain" ? serializeSoftTerrain(scene.terrain, theme) : serializeTerrain(scene.terrainPath, theme);
+  yield `\n  ${serializeInfoBox(scene.infoBox, theme, scene.style === "soft-terrain")}\n  `;
+  if (scene.style === "soft-terrain") {
+    for (const pool of scene.pools) yield serializeSoftPool(pool, theme);
+  } else {
+    for (const path of scene.waterPaths) yield serializeWaterPath(path, theme);
+  }
+  yield "\n  ";
+  for (const segment of scene.segments) yield serializeSegment(segment, theme, scene.identifiers);
+  yield "\n  ";
+  for (const label of scene.segmentLabels) yield serializeSegmentLabel(label, theme);
+  yield "\n  ";
+  for (const tick of scene.stationTicks) yield serializeStationTick(tick, theme);
+  yield "\n  ";
+  for (const node of scene.nodes) yield serializeNode(node.drawing, theme);
+  yield `\n  ${scene.legend === null ? "" : serializeLegend(scene.legend, theme)}\n</svg>`;
 }
 
 /**
@@ -183,11 +186,22 @@ export function serializeInfoBox({ x, y, width, height, label, textLines }, them
  */
 export function serializeWaterSegments(paths, theme) {
   return paths.map(/**
-   * Serialize a prepared classic water path with validated water paint and rounded stroke caps.
-   * @responsibility computation
-   * @param {string|null} path - Prepared SVG path data; optional leader paths may be null.
-   * @returns {string} Formatted text retaining the supplied values and ordering.
-   */ (path) => `<path class="vrl-water-run" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.water)}" stroke-width="6" stroke-linecap="round"/>`).join("");
+   * Serialize one prepared item in paint order.
+   * @responsibility coordinator
+   * @param {Object|string} item - Prepared drawing record or path.
+   * @returns {string} Escaped fragment.
+   */ item => serializeWaterPath(item, theme)).join("");
+}
+
+/**
+ * Serialize one positioned water path.
+ * @responsibility computation
+ * @param {Object|string} path - Prepared drawing record or path.
+ * @param {Object} theme - Resolved drawing colors.
+ * @returns {string} Escaped SVG fragment.
+ */
+function serializeWaterPath(path, theme) {
+  return `<path class="vrl-water-run" d="${svgAttribute(path)}" fill="none" stroke="${svgPaint(theme.water)}" stroke-width="6" stroke-linecap="round"/>`;
 }
 
 /**
@@ -205,7 +219,19 @@ export function serializeRouteSegments(segments, theme, identifiers) {
    * @responsibility coordinator
    * @param {Object} segment - Canonical or positioned route segment retaining its technical owner and direction.
    * @returns {unknown} The selected result, including the documented absent-value fallback.
-   */ (segment) => segment.kind === "connection" ? serializeConnection(segment, theme) : serializeTechnicalSegment(segment, theme, identifiers)).join("");
+   */ (segment) => serializeSegment(segment, theme, identifiers)).join("");
+}
+
+/**
+ * Select the serializer for one positioned route segment.
+ * @responsibility coordinator
+ * @param {Object} segment - A connection or technical drawing record.
+ * @param {Object} theme - Resolved paint tokens.
+ * @param {Object} identifiers - Marker namespace of the containing document.
+ * @returns {string} Markup for this segment.
+ */
+function serializeSegment(segment, theme, identifiers) {
+  return segment.kind === "connection" ? serializeConnection(segment, theme) : serializeTechnicalSegment(segment, theme, identifiers);
 }
 
 /**
@@ -343,14 +369,23 @@ export function serializeRedirections(redirections, theme) {
  */
 export function serializeSegmentLabels(labels, theme) {
   return labels.map(/**
-   * Serialize one positioned traverse label with escaped text and clearance stroke.
-   * @responsibility computation
-   * @param {Object} input1 - Input record destructured into the separately documented members below.
-   * @param {number} input1.x - Horizontal position in SVG drawing units.
-   * @param {number} input1.y - Vertical position in SVG drawing units.
-   * @param {unknown} input1.text - Unescaped text owned by the caller; encoding occurs at the serialization boundary.
-   * @returns {string} Formatted text retaining the supplied values and ordering.
-   */ ({ x, y, text }) => `<text class="vrl-segment-label" x="${svgAttribute(x)}" y="${svgAttribute(y)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(text)}</text>`).join("");
+   * Serialize one prepared item in paint order.
+   * @responsibility coordinator
+   * @param {Object|string} item - Prepared drawing record or path.
+   * @returns {string} Escaped fragment.
+   */ item => serializeSegmentLabel(item, theme)).join("");
+}
+
+/**
+ * Serialize one positioned text label.
+ * @responsibility computation
+ * @param {Object|string} label - Prepared drawing record or path.
+ * @param {Object} theme - Resolved drawing colors.
+ * @returns {string} Escaped SVG fragment.
+ */
+function serializeSegmentLabel(label, theme) {
+  const { x, y, text } = label;
+  return `<text class="vrl-segment-label" x="${svgAttribute(x)}" y="${svgAttribute(y)}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="${svgPaint(theme.text)}" stroke="${svgPaint(theme.panel)}" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${escapeXml(text)}</text>`;
 }
 
 /**
@@ -574,19 +609,13 @@ export function serializeSoftTerrain(terrain, theme) {
  * Serialize prepared soft pools as SVG markup with XML-escaped values and validated paint; consume supplied
  * geometry without performing layout.
  * @responsibility computation
- * @param {Array} pools - Prepared symbolic pool drawing records.
+ * @param {Object} pool - Prepared symbolic pool drawing records.
  * @param {Object} theme - Resolved theme record mapping semantic token names to supported paint strings.
  * @returns {string} Escaped SVG markup for the prepared drawing records; optional absent primitives serialize to empty text.
  */
-export function serializeSoftPools(pools, theme) {
-  return pools.map(/**
-   * Serialize a symbolic pool basin and optional water surface while retaining owner identity and explicit
-   * dry-state styling.
-   * @responsibility computation
-   * @param {unknown} pool - Prepared symbolic pool record retaining its owner and dry-state cues.
-   * @returns {string} Formatted text retaining the supplied values and ordering.
-   */ pool => `<g class="vrl-pool-symbol" data-owner-id="${svgAttribute(pool.ownerId)}">
+function serializeSoftPool(pool, theme) {
+  return `<g class="vrl-pool-symbol" data-owner-id="${svgAttribute(pool.ownerId)}">
     <path class="vrl-pool-basin" d="${svgAttribute(pool.basin)}" fill="${pool.dry ? "none" : svgPaint(theme.water)}" fill-opacity="0.16" stroke="${svgPaint(pool.dry ? theme.mutedText : theme.water)}" stroke-width="1.5"/>
     ${pool.surface === null ? "" : `<path class="vrl-pool-surface" d="${svgAttribute(pool.surface)}" fill="none" stroke="${svgPaint(theme.water)}" stroke-width="1.5"/>`}
-  </g>`).join("");
+  </g>`;
 }

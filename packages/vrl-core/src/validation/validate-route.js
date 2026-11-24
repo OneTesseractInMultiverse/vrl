@@ -14,26 +14,24 @@ import { validateRouteDistance } from "./validate-route-distance.js";
  * or aggregate errors for invalid fields/identities.
  * @responsibility coordinator
  * @param {Object} ast - Unvalidated route syntax record with raw string metadata and elements.
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Array} Ordered semantic diagnostics; error severity blocks compilation while warnings preserve success.
  */
-export function validateRoute(ast) {
+export function validateRoute(ast, maximum = Infinity) {
   const diagnostics = [];
   if (!hasRouteName(ast.name)) {
     diagnostics.push(codedDiagnostic("VRL_ROUTE_NAME_REQUIRED", "validation", "error", "A route name is required.", sourceReference(ast.sourceMap?.route?.nameSpan ?? ast.sourceMap?.route?.span), 'Start with route "Name".'));
   }
   const metadata = { attributes: ast.metadata, sourceLocation: { line: 1, column: 1 }, source: metadataSource(ast.sourceMap) };
-  appendDiagnostics(diagnostics, validateFields(metadata, "metadata", "Metadata field"));
-  appendDiagnostics(diagnostics, validateFieldRelationships(metadata));
-  appendDiagnostics(diagnostics, validateElementIdentifiers(ast.elements, ast.sourceMap?.elements));
-  ast.elements.forEach(/**
-   * Validate one raw element and append its diagnostics to the captured route-local accumulator.
-   * @responsibility coordinator
-   * @param {Object} element - Owning route element with its type, identity and declared attributes.
-   * @param {number} index - Zero-based position in the current ordered collection.
-   * @returns {void} Updates the captured diagnostics array in source order without changing the AST.
-   */ (element, index) => appendDiagnostics(diagnostics, validateElementAttributes(element, ast.sourceMap?.elements?.[index])));
-  if (!hasBlockingDiagnostics(diagnostics)) appendDiagnostics(diagnostics, validatePoolReferences(ast));
-  if (!hasBlockingDiagnostics(diagnostics)) appendDiagnostics(diagnostics, validateRouteDistance(ast));
+  appendDiagnostics(diagnostics, validateFields(metadata, "metadata", "Metadata field"), maximum);
+  appendDiagnostics(diagnostics, validateFieldRelationships(metadata), maximum);
+  appendDiagnostics(diagnostics, validateElementIdentifiers(ast.elements, ast.sourceMap?.elements, maximum - diagnostics.length));
+  for (const [index, element] of ast.elements.entries()) {
+    if (diagnostics.length >= maximum) break;
+    appendDiagnostics(diagnostics, validateElementAttributes(element, ast.sourceMap?.elements?.[index]), maximum);
+  }
+  if (!hasBlockingDiagnostics(diagnostics)) appendDiagnostics(diagnostics, validatePoolReferences(ast, maximum - diagnostics.length));
+  if (!hasBlockingDiagnostics(diagnostics)) appendDiagnostics(diagnostics, validateRouteDistance(ast), maximum);
   return diagnostics;
 }
 

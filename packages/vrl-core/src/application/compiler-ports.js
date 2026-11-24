@@ -2,9 +2,9 @@
  * Synchronous application-owned contracts. See docs/compiler-ports.md for values and failures.
  * @typedef {Object} CompilerPorts
  * @property {(source: string, options: {limits: Object}) => {ast: Object, diagnostics: Object[]}} parse
- * @property {(ast: Object) => Object[]} validate
+ * @property {(ast: Object, maximum: number) => Object[]} validate
  * @property {(ast: Object) => Object} normalize
- * @property {(model: Object, sourceMap?: Object) => Object[]} validateGeometry
+ * @property {(model: Object, sourceMap: Object|undefined, maximum: number) => Object[]} validateGeometry
  * @property {(model: Object, options?: Object) => Object} layout
  * @property {(model: Object) => string} exportJson
  */

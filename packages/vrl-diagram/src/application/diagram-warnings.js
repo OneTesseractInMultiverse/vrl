@@ -1,4 +1,4 @@
-import { formatDiagnostic } from "@subvertic/vrl-core";
+import { formatDiagramDiagnostics } from "./diagram-state.js";
 
 /**
  * Select warning text only for successful states when enabled; validate the display flag without mutating
@@ -13,13 +13,5 @@ import { formatDiagnostic } from "@subvertic/vrl-core";
 export function diagramWarningText(diagram, showWarnings = true) {
   if (typeof showWarnings !== "boolean") throw new TypeError("showWarnings must be a boolean.");
   if (!showWarnings || diagram.ok === false) return "";
-  return (diagram.diagnostics ?? [])
-    .filter(/**
-     * Evaluate the selection condition diagnostic.severity === "warning".
-     * @responsibility computation
-     * @param {unknown} diagnostic - Structured diagnostic with kind, severity, message and source location.
-     * @returns {boolean} The result of the documented comparison or calculation.
-     */ (diagnostic) => diagnostic.severity === "warning")
-    .map(formatDiagnostic)
-    .join("\n");
+  return formatDiagramDiagnostics(diagram.diagnostics ?? [], "warning");
 }

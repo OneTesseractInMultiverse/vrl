@@ -1,5 +1,5 @@
 import { declarationReference, fieldReference } from "../domain/source-references.js";
-import { codedDiagnostic } from "../domain/diagnostics.js";
+import { codedDiagnostic, diagnosticExcerpt } from "../domain/diagnostics.js";
 import { inspectAttributes } from "../domain/attribute-contract.js";
 
 /**
@@ -125,7 +125,7 @@ function enumeration(values) {
  * @returns {unknown} The result returned by diagnostic.
  */
 function unsupportedValueDiagnostic(element, name, expected) {
-  return diagnostic(element, name, "VRL_FIELD_UNSUPPORTED_VALUE", `Field "${name}" has unsupported value "${element.attributes[name]}".`, `Expected ${expected}.`);
+  return diagnostic(element, name, "VRL_FIELD_UNSUPPORTED_VALUE", `Field "${name}" has unsupported value "${diagnosticExcerpt(String(element.attributes[name]))}".`, `Expected ${expected}.`);
 }
 
 /**

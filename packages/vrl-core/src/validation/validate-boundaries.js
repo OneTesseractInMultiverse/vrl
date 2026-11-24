@@ -8,10 +8,11 @@ import { isAnnotation } from "../domain/traversal.js";
  * @responsibility coordinator
  * @param {Array} elements - Route elements in source order.
  * @param {unknown} sources - Declaration source records aligned with their corresponding elements; defaults to [].
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Array} Located duplicate or ordering errors for explicit start/exit declarations.
  */
 
-export function validateBoundaries(elements, sources = []) {
+export function validateBoundaries(elements, sources = [], maximum) {
   const sourceByElement = new Map(sources.map(/**
    * Associate each source declaration with its original element object for located boundary errors.
    * @responsibility computation
@@ -30,7 +31,7 @@ export function validateBoundaries(elements, sources = []) {
    * @responsibility computation
    * @param {unknown} type - Declared element or record discriminator.
    * @returns {unknown} The result returned by validateBoundary.
-   */ (type) => validateBoundary(progression, type, sourceByElement));
+   */ (type) => validateBoundary(progression, type, sourceByElement, maximum)).slice(0, maximum);
 }
 
 /**
@@ -39,9 +40,10 @@ export function validateBoundaries(elements, sources = []) {
  * @param {unknown} progression - Ordered nonannotation entries retaining original element indexes.
  * @param {unknown} type - Declared element or record discriminator.
  * @param {unknown} sources - Declaration source records aligned with their corresponding elements.
+ * @param {number} maximum - Maximum diagnostic records requested, including the first excess record during compilation.
  * @returns {Array} Located problems for the selected boundary type, or an empty list.
  */
-function validateBoundary(progression, type, sources) {
+function validateBoundary(progression, type, sources, maximum) {
   const declarations = progression.filter(/**
    * Evaluate the selection condition element.type === type.
    * @responsibility computation
@@ -49,7 +51,7 @@ function validateBoundary(progression, type, sources) {
    * @returns {boolean} The result of the documented comparison or calculation.
    */ (element) => element.type === type);
   if (declarations.length > 1) {
-    return declarations.slice(1).map(/**
+    return declarations.slice(1, maximum + 1).map(/**
      * Apply boundaryDiagnostic to the supplied arguments; retain the callee's return and failure behavior.
      * @responsibility computation
      * @param {Object} element - Owning route element with its type, identity and declared attributes.

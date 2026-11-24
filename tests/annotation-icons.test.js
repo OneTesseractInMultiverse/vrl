@@ -9,6 +9,8 @@ import { createDiagramState } from "@subvertic/vrl-diagram";
 import { createVrlReactDiagramState } from "@subvertic/vrl-react";
 import { createVrlSvelteDiagramState } from "@subvertic/vrl-svelte";
 import { createVrlSvelteKitData } from "@subvertic/vrl-sveltekit";
+import { createClearanceIndex, rightmostEdge } from "../packages/vrl-render-svg/src/clearance-index.js";
+import { prepareNodes } from "../packages/vrl-render-svg/src/node-scene.js";
 import { annotationIconId, annotationClearanceX, placeAnnotationIcon, contourObstacles } from "../packages/vrl-render-svg/src/annotation-icons.js";
 
 const source = readFileSync(new URL("../examples/soft-terrain-canyon.vrl", import.meta.url), "utf8");
@@ -147,7 +149,93 @@ test("annotation clearance moves beyond every overlapping obstacle including its
  * @responsibility coordinator
  * @returns {void} Completes after its single correctness or failure assertion succeeds.
  */ () => {
-  assert.equal(annotationClearanceX([{ minX: 0, maxX: 300, minY: 10, maxY: 90 }, { minX: 0, maxX: 900, minY: 150, maxY: 200 }], { labelX: 200, titleY: 50 }, 100), 340);
+  const index = createClearanceIndex([{ minY: 10, maxY: 90, maxX: 300 }, { minY: 150, maxY: 200, maxX: 900 }]);
+  assert.equal(annotationClearanceX(index, { labelX: 200, titleY: 50 }, 100), 340);
+});
+test("indexed clearance matches closed-interval overlap at endpoints and in the gaps between them", /**
+ * Compare all short spans across nested, coincident, disjoint and single-point obstacles in arbitrary order.
+ * @responsibility coordinator
+ * @returns {void} Completes when indexed results match the independent overlap predicate for every span.
+ */ () => {
+  const obstacles = [
+    { minY: 2, maxY: 4, maxX: 6 },
+    { minY: -2, maxY: 2, maxX: -5 },
+    { minY: 1, maxY: 2, maxX: 8 },
+    { minY: 6, maxY: 6, maxX: 7 },
+    { minY: 2, maxY: 2, maxX: 12 },
+    { minY: 0, maxY: 4, maxX: 2 }
+  ];
+  const index = createClearanceIndex(obstacles);
+  const expected = [], actual = [];
+  for (let top = -3; top <= 7; top += 0.5) {
+    for (let bottom = top; bottom <= 7; bottom += 0.5) {
+      let edge = -Infinity;
+      for (const obstacle of obstacles) {
+        if (obstacle.minY <= bottom && obstacle.maxY >= top) edge = Math.max(edge, obstacle.maxX);
+      }
+      expected.push(edge);
+      actual.push(rightmostEdge(index, top, bottom));
+    }
+  }
+  assert.deepEqual(actual, expected);
+});
+test("a clearance query reads at most logarithmically many index entries even when all obstacles overlap", /**
+ * Count endpoint searches and maximum lookups for narrow and wide spans in a nested family of intervals.
+ * @responsibility coordinator
+ * @returns {void} Completes when each query respects a bound determined solely by the number of obstacles.
+ */ () => {
+  const obstacles = [];
+  for (let depth = 0; depth < 256; depth += 1) obstacles.push({ minY: -depth, maxY: depth, maxX: depth });
+  const index = createClearanceIndex(obstacles);
+  let reads = 0, worst = 0;
+  const counter = {
+    /**
+     * Observe every indexed read without changing the underlying typed array's value.
+     * @responsibility computation
+     * @param {Float64Array} target - Endpoint or maximum array consulted by the query.
+     * @param {string} property - Index or length property requested by the query.
+     * @returns {number} Original value at the requested position.
+     */
+    get(target, property) { reads += 1; return target[property]; }
+  };
+  const counted = { ...index, endpoints: new Proxy(index.endpoints, counter), maxima: new Proxy(index.maxima, counter) };
+  for (const [top, bottom] of [[0, 0], [-255, 255], [-224.5, 113], [0.5, 1.5]]) {
+    reads = 0;
+    rightmostEdge(counted, top, bottom);
+    worst = Math.max(reads, worst);
+  }
+  // Two endpoint searches, then at most two disjoint maxima per level and four fixed reads.
+  assert.ok(worst <= 4 * Math.ceil(Math.log2(4 * obstacles.length + 1)) + 4, `read ${worst} index entries`);
+});
+test("label placement indexes symbol and obstacle geometry once per scene", /**
+ * Count coordinate reads for a cluster of nodes and protected intervals shared by every annotation.
+ * @responsibility coordinator
+ * @returns {void} Completes when scene preparation stays within a linear number of source coordinate reads.
+ */ () => {
+  let nodeReads = 0;
+  let obstacleReads = 0;
+  const nodes = [], obstacles = [];
+  for (let index = 0; index < 128; index += 1) {
+    nodes.push({ ...compiled.layout.nodes[0], x: index,
+      /**
+       * Count reads of the common symbol elevation while the renderer prepares the scene.
+       * @responsibility computation
+       * @returns {number} Shared vertical position of this fixture's symbol.
+       */
+      get y() { nodeReads += 1; return 100; }
+    });
+    obstacles.push({ minY: 0, maxY: 10000,
+      /**
+       * Count reads of this obstacle's right edge while preparing the annotation gutter.
+       * @responsibility computation
+       * @returns {number} Horizontal edge of this fixture's obstacle.
+       */
+      get maxX() { obstacleReads += 1; return index; }
+    });
+  }
+  prepareNodes({ width: 736, nodes }, "en", "federation", "soft-terrain", "annotations", obstacles);
+  assert.ok(nodeReads <= 24 * nodes.length && obstacleReads <= 2 * obstacles.length,
+    `read ${nodeReads} node elevations and ${obstacleReads} obstacle edges`);
 });
 test("missing annotation identity does not fabricate a placeholder", /**
  * Verify missing annotation identity does not fabricate a placeholder using explicit fixture expectations; setup and assertion failures propagate to the runner.
